@@ -120,10 +120,10 @@ import {mapGetters} from 'vuex'
 		        jurisdictionManageShow:true
 				
 			}
-		}, 
+		},
 		methods:{
 			companyClose(){
-				this.compamyShow = false
+				this.compamyShow = true
 			},
 			manageCompanyClose(){
 				this.manageCompanyShow = false
