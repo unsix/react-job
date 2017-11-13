@@ -1,0 +1,260 @@
+<template>
+	<div class="index">
+		<div class="top">
+			<div class="title">
+				<span>{{nowCompany_name}}</span>
+				<span class="changeCompany">更换公司
+					<ul @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" v-show="userOperationLeftShow">
+						<li v-for="(item,index) in userCompanyInfo" @click="changeCompany(item,index)">{{item.company_name}}</li>
+					</ul>
+					<img src="../../assets/down.svg" @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" ref="userIconLeft"/>
+				</span>
+			
+			</div>
+			<div class="nav">
+				<div class="nav_main">
+					<a v-for="(item,index) in typeArr" @click="changeType(item,index)">{{item.title}}</a>
+				</div>
+			</div>
+			<div class="search">
+				<input type="text" placeholder="搜索工人，同事等" />
+				<img src="../../assets/find.svg" alt="" />
+			</div>
+			<div class="personInfo">
+				<div class="person_main">
+					<a>{{user.name}}</a>
+					<img src="../../assets/down.svg" alt="" @mouseover ="userIconOver" @mouseout="userIconOut"   ref="userIcon"/>
+					<div class="userOperation" v-show="userOperationShow" @mouseover ="userIconOver" @mouseout="userIconOut" >
+						<router-link to="">升级说明</router-link>
+						<router-link to="">个人设置</router-link>
+						<router-link to="">退出登录</router-link>
+					</div>
+				</div>
+			</div>
+		</div>
+		<router-view :nowCompanyId="nowCompanyId"></router-view>		
+	</div>
+</template>
+
+<script>
+
+import {prefixStyle} from '@/common/js/dom'
+const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
+import {mapGetters} from 'vuex'
+	export default{
+		data(){
+			return{
+				typeArr:[
+					{'title':'工作','url':'/work'},
+					{'title':'应用','url':'/apply'}
+				],
+				userCompanyInfo:[],
+				nowCompany_name:'',
+				nowCompanyId:'',
+				userOperationShow:false,
+				userOperationLeftShow:false
+			}
+		},
+		methods:{
+			changeType(item,index){
+				if(index === 0){
+					this.$router.push('/index/work');
+				}else{
+					this.$router.push('/index/apply/mineApp');
+				}
+			},
+			userIconOver(){
+				this.$refs.userIcon.style.transition = 'all 0.4s'
+				this.$refs.userIcon.style[transform] = `rotate(180deg)`
+				this.userOperationShow=true
+			},
+			userIconOut(){
+				this.$refs.userIcon.style.transition = 'all 0.4s'
+				this.$refs.userIcon.style[transform] = `rotate(360deg)`
+				this.userOperationShow=false
+			},
+			userIconOverLeft(){
+				this.$refs.userIconLeft.style.transition = 'all 0.4s'
+				this.$refs.userIconLeft.style[transform] = `rotate(180deg)`
+				this.userOperationLeftShow=true
+			},
+			userIconOutLeft(){
+				this.$refs.userIconLeft.style.transition = 'all 0.4s'
+				this.$refs.userIconLeft.style[transform] = `rotate(360deg)`
+				this.userOperationLeftShow=false
+			},
+			changeCompany(item,index){
+				this.userOperationLeftShow=false
+				this.nowCompany_name=item.company_name
+				this.nowCompanyId=item.company_id
+				console.log(this.nowCompanyId)
+			},
+			_getUserCompanyList(){
+				let param = new URLSearchParams();
+				param.append("uid",this.user.id);
+				this.$http.post("/index/Mobile/user/companies_list",param)
+				.then((res)=>{
+				    this.userCompanyInfo=res.data.data
+				    this.nowCompany_name=res.data.data[0].company_name
+				})
+			}
+		},
+		computed:{
+			...mapGetters([
+		        'user'
+		      ])
+		},
+		created(){
+			this._getUserCompanyList()
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+.index{
+	position: fixed;
+	min-width: 1200px;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background:rgb(227,228,233);
+	.top{
+		width: 100%;
+		background: #f4f6fc;
+		display: flex;
+		color:#666666;
+		height: 60px;
+		font-size: 14px;
+		text-decoration: none;
+		box-shadow: 0 0 2px rgba(0,0,0,.2);
+		-webkit-box-shadow:0 0 2px rgba(0,0,0,.2);
+		.title{
+			flex: 1;
+			align-self: center;
+			span{
+				display: inline-block;
+				float: left;
+				margin-left: 40px;
+				&.changeCompany{
+					margin-left:10px;
+					font-size: 12px;
+					color: #67C23A;
+					cursor: pointer;
+					margin-top: 1px;
+					position: absolute;
+					ul{
+						position: absolute;
+					    top: 15px;
+					    left: 0px;
+					    background:#f4f6fc;
+					    padding: 10px 0;
+					    border-radius: 2px;
+					    box-shadow: 0 0 2px rgba(0,0,0,.2);
+					    z-index: 2;
+					    color: #666666;
+					    li{
+					    	display: block;
+					    	padding: 10px 6px;
+					    };
+					}
+					img{
+						width: 20px;
+						height: 20px;
+						position: absolute;
+						top: -4px;
+						left: 50px;
+						cursor: pointer;
+					}
+				}
+			}
+			
+		}
+		.nav{
+			flex: 0 20%;
+			align-self: center;
+			a{
+				display: inline-block;
+				border-bottom: 3px solid transparent;
+				padding: 22px 10px 20px;
+				color: #666666;
+				cursor: pointer;
+				&.active{
+					border-bottom: 3px solid #fc923f;
+				}
+				&:hover{
+					color: #FC923F;
+				}
+			}
+		}
+		.search{
+			flex:  0 20%;
+			align-self: center;
+			position: relative;
+			input{
+				float: right;
+				border: 1px solid #ccc; 
+                padding: 12px 100px;
+                border-radius: 3px; /*css3属性IE不支持*/
+                padding-left:5px; 
+                text-indent: 10px;
+                outline: none;
+			}
+			img{
+				width: 16px;
+				height: 16px;
+				position: absolute;
+				top: 12px;
+				right: 20px;
+				cursor: pointer;
+			}
+		}
+		.personInfo{
+			flex:1;
+			align-self: center;
+			/*position:relative;
+			right: 0;*/
+			.person_main{
+				position: relative;
+				float: right;
+				margin-right: 40px;
+				.userOperation{
+					position: absolute;
+				    top: 20px;
+				    right: 0px;
+				    width: 84px;
+				    padding: 10px 0;
+				    background: #FFF;
+				    border-radius: 2px;
+				    box-shadow: 0 0 2px rgba(0,0,0,.2);
+				    line-height: 27px;
+				    z-index: 2;
+				    a{
+				    	display: block;
+					    height: 26px;
+					    line-height: 26px;
+					    padding: 0 15px;
+					    color: #333;
+					    font-size: 13px;
+					    &:hover{
+					    	color: #3487E2;
+					    }
+				    }
+				}
+				a{
+					cursor: pointer;
+					display: inline-block;
+					height: 20px;
+					line-height: 20px;
+				}
+				img{
+					width: 20px;
+					vertical-align: top;
+					cursor: pointer;
+				}
+			}
+				
+		}
+	}
+}
+</style>

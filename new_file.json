@@ -1,0 +1,24 @@
+[
+	{
+		"name":"总经办",
+		"positions":[
+		{
+			"name":"总经理",
+			"persons":[{
+				"name":"苏苏",
+				"uid":"10000143"
+			}]
+		}]
+	},
+	{
+		"name":"财务部",
+		"positions":[{
+			"isSelect":true,
+			"name":"财务总监",
+			"persons":[{
+				"name":"Ceshi",
+				"uid":"10000287"
+			}]
+		}]
+	}
+]

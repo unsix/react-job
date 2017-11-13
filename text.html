@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body{
+				width: 100%;
+				height: 600px;
+			}
+			#app{
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body >
+		<div id="app" @click="whichButton($event)" >
+			<input type="text" name="" id="" value="111"/>			
+			<p>{{money}}</p>
+		</div>
+
+	</body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.1/vue.js"></script>
+	<script type="text/javascript">
+		var vm =new Vue({
+			el:"#app",
+			data:{
+				money:0
+			},
+			methods:{
+				whichButton:function(event){
+					console.log(event.keyCode)
+				}
+			}
+		})
+	</script>
+</html>
