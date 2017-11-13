@@ -32,7 +32,7 @@
 				</div>
 			</div>
 		</div>
-		<router-view :nowCompanyId="nowCompanyId"></router-view>		
+		<router-view></router-view>		
 	</div>
 </template>
 
@@ -41,7 +41,7 @@
 import {prefixStyle} from '@/common/js/dom'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
-import {mapGetters} from 'vuex'
+import {mapGetters,mapMutations} from 'vuex'
 	export default{
 		data(){
 			return{
@@ -51,7 +51,6 @@ import {mapGetters} from 'vuex'
 				],
 				userCompanyInfo:[],
 				nowCompany_name:'',
-				nowCompanyId:'',
 				userOperationShow:false,
 				userOperationLeftShow:false
 			}
@@ -87,8 +86,7 @@ import {mapGetters} from 'vuex'
 			changeCompany(item,index){
 				this.userOperationLeftShow=false
 				this.nowCompany_name=item.company_name
-				this.nowCompanyId=item.company_id
-				console.log(this.nowCompanyId)
+				this.setNowCompanyId(item.company_id)
 			},
 			_getUserCompanyList(){
 				let param = new URLSearchParams();
@@ -98,7 +96,10 @@ import {mapGetters} from 'vuex'
 				    this.userCompanyInfo=res.data.data
 				    this.nowCompany_name=res.data.data[0].company_name
 				})
-			}
+			},
+			...mapMutations({
+				setNowCompanyId:'SET_NOWCOMPANY_ID' 
+			})
 		},
 		computed:{
 			...mapGetters([

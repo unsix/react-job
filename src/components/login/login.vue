@@ -69,6 +69,7 @@
 				this.isB = true
 			},
 			login(){
+				
 				let password_num = md5(this.password_num)
 				let param = new URLSearchParams();
 			    param.append("phone",this.account_num);
@@ -84,19 +85,33 @@
 //							this.$router.push('/worker_list');
 //							this.uncreatedCompanyShow=false
 //						},3000)
-						this.$router.push('/index/work');
+						
+						
 						this.setUser({
-							'id':res.data.data.uid,
+							'uid':res.data.data.uid,
 							'name':res.data.data.name,
 							'avatar':getAvatar(res.data.data.avatar)
 						})
+						this._getUserCompanyList(res.data.data.uid)
+						setTimeout(()=>{
+							this.$router.push('/index/work');
+						},300)
 					}else{
   						this.errorShow = true;
 					}
 			    })
 			},
+			_getUserCompanyList(user_id){
+				let param = new URLSearchParams();
+				param.append("uid",user_id);
+				this.$http.post("/index/Mobile/user/companies_list",param)
+				.then((res)=>{
+				    this.setNowCompanyId(res.data.data[0].company_id)
+				})
+			},
 			...mapMutations({
-				setUser: 'SET_USER'
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID'
 			})
 		},
 		components:{

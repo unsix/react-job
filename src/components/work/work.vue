@@ -3,7 +3,7 @@
 			<div class="side_left">
 				<div class="info_wrapper">
 					<a class="info">
-						<img :src="user.avatar" alt="" />
+						<img  alt="" />
 						<span>{{user.name}}</span>
 					</a>
 				</div>
@@ -53,7 +53,7 @@
 										</li>
 									</ul>
 								<manageCompany v-show="manageCompanyShow" @close="manageCompanyClose"></manageCompany>	
-								<jurisdictionManage v-show="jurisdictionManageShow" @close="jurisdictionManageClose"></jurisdictionManage>
+								<jurisdictionManage v-if="jurisdictionManageShow" @close="jurisdictionManageClose"></jurisdictionManage>
 									
 									
 								</div>
@@ -116,8 +116,8 @@ import {mapGetters} from 'vuex'
 		        },
 		        value1: '',
 		        compamyShow:false,
-		        manageCompanyShow:false,
-		        jurisdictionManageShow:true
+		        manageCompanyShow:true,
+		        jurisdictionManageShow:false
 				
 			}
 		},

@@ -7,20 +7,40 @@
 			</div>-->
 			<div class="nav">
 				<ul>
-					<li @click="inciteCol">邀请同事</li>
-					<li @click="addAdmin">添加管理员</li>
-					<li >添加工程项目</li>
+					<li v-for="(item,index) in typeName" :class="{'active': index == navIndex}"  @click="chooseNav(item,index)">{{item}}</li>
 				</ul>
 			</div>
 			<div class="type">
 				<div class="list" v-show="listShow">
-					<el-collapse v-model="activeNames" @change="handleChange">
-					  <el-collapse-item :title="item.name" name="1" v-for="(item,index) in groupList">
-					    <div>
-					    	{{item.infos.name}}
-					    </div>
-					  </el-collapse-item>
-					</el-collapse>
+					<ul>
+						<li>
+							<span>管理员</span>
+							<div v-for="(item,index) in adminArr">
+								<div class="img">
+									<img :src="item.avatar" alt="" />
+								</div>
+								<div class="content">
+									<span class="name">{{item.username}}</span>
+									<span class="phone">{{item.phone}}</span>
+								</div>
+								<i class="close el-icon-circle-close-outline"  @click="_deleteManager(item,index)"></i>
+							</div>
+						</li>
+						<li v-for="(item,index) in groupList">
+							<span>{{item.department_name}}</span>
+							<div v-for="(list,index) in item.infos" >
+								<div class="img">
+									<img :src="list.avatar" alt="" />
+								</div>
+								<div class="content">
+									<span class="name">{{list.username}}</span>
+									<span class="phone">{{list.phone}}</span>
+									
+								</div>
+								<i class="close el-icon-circle-close-outline"></i>
+							</div>
+						</li>
+					</ul>
 				</div>
 				<div class="inviteColleagues" v-show="inviteColleaguesShow">
 					<div class="inviteCo">
@@ -40,9 +60,9 @@
 						<div class="sec">
 							<span class="title">职位</span>
 							<div class="position">  
-								<el-radio v-for="(item,index) in radioArr" v-model="radio" :label="index">{{item.name}}</el-radio>
+								<!--<el-radio v-for="(item,index) in radioArr" v-model="radio" :label="index">{{item.name}}</el-radio>-->
   								<!--<el-radio v-model="radio" label="2">备选项</el-radio>-->
-  								<i class="addGroup el-icon-circle-plus" @click="addGroup"></i>
+  								<!--<i class="addGroup el-icon-circle-plus" @click="addGroup"></i>-->
 							</div>
 						</div>
 						<div class="submit">
@@ -52,6 +72,7 @@
 				</div>
 				<div class="addAdministrator" v-show="addAdministratorShow">
 					<div class="addAdmin">
+						<div class="submit" @click="submitAddManager">确认添加</div>
 						<div class="close el-icon-circle-close" @click="closeInvite"></div>
 						<div class="list">
 							<div class="title">
@@ -59,11 +80,9 @@
 							</div>
 							<div class="add el-icon-circle-plus" @click="addAdminPerson" ></div>
 							<ul>
-								<transition name="slideLi">
-									<li v-for="(item,index) in adminArr">{{item.name}} 	
-										<i class="close el-icon-error" @click="reAdmin(item,index)"></i> 
+									<li v-for="(item,index) in adminArr">{{item.username}} 	
+										<i class="close el-icon-error" @click="_deleteManager(item,index)"></i> 
 									</li>
-								</transition>
 							</ul>
 						</div>
 					</div>
@@ -74,12 +93,12 @@
 				<div class="close el-icon-circle-close" @click="closePersonList" ></div>
 				<div class="personList" id="person">
 					<ul>
-						<li v-for="(item,index) in workerInfo" @click="choosePerson(item,index)">
+						<li v-for="(item,index) in companyPersonList" @click="choosePerson(item,index)" :key="index">
 							<div class="avatar">
 								<img :src="item.avatar" alt="" />
 							</div>
 							<div class="content">
-								<span class="name">{{item.name}}</span>
+								<span class="name">{{item.username}}</span>
 								<span class="phone">{{item.phone}}</span>
 							</div>
 						</li>
@@ -92,6 +111,8 @@
 </template>
 
 <script>
+import {getAvatar} from '@/common/js/avatar.js'
+import {mapGetters} from 'vuex'
 	export default{
 		data(){
 			return{
@@ -99,130 +120,185 @@
 				companyId:'',
 				groupList:[],
 				smObj:{},
+				navIndex:-1,
 				listShow:true,
 				inviteColleaguesShow:false,
 				addAdministratorShow:false,
 				typeInfo:'',
-				radioArr:[
-					{name:"职位1"},
-					{name:"职位2"}
-				],
+				typeName:['添加部门','添加管理员','添加工程项目'],
 				radio: '2',
-				workerInfo:[],
 				adminArr:[],
-				personShow:false
+				companyPersonList:[],
+				personShow:false,
+				numOne:0
 			}
 		},
 		created(){
-			this.getCompanyId()
-			this.getAdminListData()
+			
+			this._getCompanyId()
+		},
+		computed:{
+			...mapGetters([
+				'nowCompanyId'
+			])
+		},
+		watch:{
+			nowCompanyId:function (){
+//				this.groupList=[]
+//				this.numOne=0
+//				this._getCompanyId()
+			}
 		},
 		methods:{
 			handleChange(){
 				
 			},
-			reAdmin(item,index){
-				this.adminArr.splice(index,1)
-				setTimeout(()=>{
-					this.workerInfo.push(item)
-				},400)
+			submitAddManager(){
 				
 			},
+
 			addAdminPerson(){
 				this.personShow=true
 			},
-			addGroup() {
-		        this.$prompt('请输入新职位', '提示', {
-		          confirmButtonText: '确定',
-		          cancelButtonText: '取消',
-		        }).then(({ value }) => {
-		          this.$message({
-		            type: 'success',
-					message: '添加'+value+'成功'
-		          });
-		          this.radioArr.push({name:value})
-		        }).catch(() => {
-		          this.$message({
-		            type: 'info',
-		            message: '取消输入'
-		          });       
-		        });
-      		},
-      		
+			submitAddManager(){
+				let newAdminArr=[]
+				this.adminArr.forEach((item)=>{
+					newAdminArr.push(item.personnel_id)
+				})
+				let param = new URLSearchParams();
+			    param.append("uid","10000216");
+			    param.append("personnel_id",JSON.stringify(newAdminArr));
+			    console.log(JSON.stringify(newAdminArr))
+			    param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/User/give_manage",param)
+			    .then((res)=>{
+			    	console.log(res)
+			    })
+			},
+			_deleteManager(item,index){
+				
+				if(item.personnel_id==='11'){
+					alert('管理员不可删除自己')
+					return
+					
+				}
+				this.adminArr.splice(index,1)
+				let param = new URLSearchParams();
+			    param.append("uid","10000216");
+			    param.append("my_personnel_id",'11');
+			    param.append("personnel_id",item.personnel_id);
+			    param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/User/del_manage",param)
+			    .then((res)=>{
+			    	console.log(res)
+			    })
+			},
+			chooseNav(item,index){
+				this.navIndex=index
+				if(index===0){
+//					this.listShow=false
+//					this.inviteColleaguesShow=true
+//					this.addAdministratorShow=false
+	    			this.$prompt('请输入新职位', '提示', {
+			          confirmButtonText: '确定',
+			          cancelButtonText: '取消',
+			        }).then(({ value }) => {
+			          this.$message({
+			            type: 'success',
+						message: '添加'+value+'成功'
+			          });
+			          this.groupList.push({
+			          	department_name:value
+			          })
+			        }).catch(() => {
+			          this.$message({
+			            type: 'info',
+			            message: '取消输入'
+			          });       
+			        });
+				}else if(index===1){
+					this.listShow=false
+					this.inviteColleaguesShow=false
+					this.addAdministratorShow=true
+				}
+			},
       		closePersonList(){
 		    	this.personShow=false
 		    },
 		    choosePerson(item,index){
+		    	console.log(item.username)
+		    	for(let i = 0;i<this.adminArr.length;i++){
+		    		if(item.username===this.adminArr[i].username){
+		    			alert(item.username+'已经是管理员了！')
+		    			return
+		    		}	
+		    	}
+
 		    	this.adminArr.push(item)
-		    	this.workerInfo.splice(index,1)
 		    },
-			inciteCol(){
-				this.listShow=false
-				this.inviteColleaguesShow=true
-				this.addAdministratorShow=false
-				this.typeInfo="邀请同事"
-			},
 			closeInvite(){
+				this.navIndex=-1
 				this.listShow=true
 				this.inviteColleaguesShow=false
 				this.addAdministratorShow=false
-				this.typeInfo=""
 			},
-			addAdmin(){
-				this.listShow=false
-				this.inviteColleaguesShow=false
-				this.addAdministratorShow=true
-				this.typeInfo="添加管理员"
-			},
-//			close(){
-//				this.$emit('close')
-//			},
-			getAdminListData(){	
-			    let rec=[]
+			_getCompanyId(){			
 			    let param = new URLSearchParams();
-			    param.append("uid","10000163");
-			    this.$http.post("/index/Mobile/Find/nearby_worker",param)
-			    .then((res)=>{
-			    	 for (let x in res.data.data.nworker)  
-					  {  
-					    if(res.data.data.nworker[x].avatar.indexOf('jpg')!== -1){
-					   		res.data.data.nworker[x].avatar = 'http://img-bbsf.6655.la/FnF0MmO7g-WONz-QYU6BsWMTwNR_'
-					    }else{
-					   	 	res.data.data.nworker[x].avatar = 'http://img-bbsf.6655.la/' + res.data.data.nworker[x].avatar
-					    }
-					    if(res.data.data.nworker[x].type){
-					    	res.data.data.nworker[x].type = res.data.data.nworker[x].type[0]
-					    }
-					  }
-			     	this.workerInfo=res.data.data.nworker
-			    })
-    		},
-			getCompanyId(){	
-			    let param = new URLSearchParams();
-			    param.append("company_id","135");
+			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/user/get_department_lest",param)
 			    .then((res)=>{
-			    	res.data.data.forEach((item)=>{
-			    		this.companyId=item.department_id
-			    		this.smObj.name=item.department_name
-			    	})			    	
-			    	this.getCompanyPersonnel(this.companyId)
-			    })
-	   		},
-	   		getCompanyPersonnel(cid){
-	   			let param = new URLSearchParams();
-			    param.append("company_id","135");
-			    param.append("department_id",cid);
-			    this.$http.post("/index/Mobile/user/get_company_personnel",param)
-			    .then((res)=>{
-			    	res.data.data.forEach((list)=>{
-			    		let newObj={}
-			    		newObj.name=list.name
-			    		newObj.phone=list.phone
-			    		newObj.avatar=list.avatar
-			    		this.smObj.infos=newObj
-			    		this.groupList.push(this.smObj)
-			    	})
+			    	let resData=res.data.data
+			    	let mparam = new URLSearchParams();
+					mparam.append("company_id",this.nowCompanyId);
+					mparam.append("department_id",-1);  
+					this.$http.post("/index/Mobile/user/get_company_personnel",mparam)
+					.then((res)=>{
+						
+						if(res.data.data.length != 0){
+							res.data.data.forEach((list)=>{	
+						    		let mewObj={}
+						    		mewObj.personnel_id=list.personnel_id
+						    		mewObj.department_name=list.department_name
+						    		mewObj.username=list.name
+						    		mewObj.phone=list.phone
+						    		mewObj.avatar=getAvatar(list.avatar)
+						    		this.adminArr.push(mewObj)  
+					   		})
+						}
+					})
+			    	for(let j = 0,len=resData.length; j < len; j++) {
+			    		if(this.numOne>=len){
+			    			return
+			    		}
+			    		let obj={}
+			    		
+			    		this.$set(obj,'department_name',resData[j].department_name)
+//			    		根据部门id获取列表				
+			    		let zparam = new URLSearchParams();
+					    zparam.append("company_id",this.nowCompanyId);
+					    zparam.append("department_id",resData[j].department_id);
+					    
+					    this.$http.post("/index/Mobile/user/get_company_personnel",zparam)
+					    .then((res)=>{	
+					    	if(res.data.code===0){
+					    		let narr=[]
+					    		res.data.data.forEach((list)=>{		
+						    		let newObj={}
+						    		newObj.personnel_id = list.personnel_id
+						    		newObj.department_name=list.department_name
+						    		newObj.username=list.name
+						    		newObj.phone=list.phone
+						    		newObj.avatar=getAvatar(list.avatar)
+						    		this.companyPersonList.push(newObj)
+						    		narr.push(newObj)   
+						    		this.$set(obj,'infos',narr)
+					    		})
+					    		
+					    	}
+					    }) 
+					     this.numOne++
+					     this.groupList.push(obj)
+			    	}		
 			    })
 	   		}
 		}
@@ -247,7 +323,6 @@
 	.manageCompany{
 		position: relative;
 		width: 560px;
-		height: 400px;
 		padding: 4px;
 		background: #FFFFFF;
 		overflow: hidden;
@@ -277,6 +352,7 @@
 			ul{
 				display:flex;
 				li{
+					cursor: pointer;
 					flex: 1;
 					font-size: 12px;
 					height: 35px;
@@ -284,7 +360,6 @@
 					text-align: center;
 					&.active{
 						background: #f9f9f9;
-					    font-weight: 700;
 					    color: #333333;
 					}
 				}
@@ -293,14 +368,69 @@
 		.type{
 			width: 100%;
 			height: 100%;
-			.list{}
+			.list{
+				ul{
+					li{
+						margin-bottom:4px;
+						>span{
+							display: block;
+							height: 24px;
+							line-height: 24px;
+							color: #3487E2;
+							font-size: 14px;
+							text-indent: 6px;
+							
+						}
+						>div{
+							cursor: default;
+							border-top: 1px solid #DDDDDD;
+							.img{
+								margin-top: 2px;
+								display: inline-block;
+								img{
+									display: block;
+									width: 30px;
+									height: 30px;
+									border-radius: 50%;
+								}
+							}
+							.content{
+								display: inline-block;
+								span{
+									display: block;
+									font-size: 12px;
+									line-height: 17px;
+								}
+							}
+							i{
+								margin-top: 2px;
+								margin-right: 2px;
+								float: right;
+								&:hover{
+									color: #FA5555;
+								}
+							}
+						}
+						
+					}
+				}
+			}
 			.addAdministrator{
 				width: 100%;
-				height: 100%;
+				min-height: 400px;
 				background: #f1f1f1;
 				.addAdmin{
 					padding: 10px;
 					position: relative;
+					.submit{
+						position: absolute;
+						left: 400px;
+						display: block;
+						padding: 4px 10px;
+						color: #FFFFFF;
+						background: #64A6FF;
+						cursor: pointer;
+					}
 					.close{
 						position: absolute;
 						top: 5px;
@@ -466,6 +596,12 @@
 						display: inline-block;
 						float: left;
 						margin-top: 2px;
+						img {
+							display: block;
+							width: 30px;
+							height: 30px;
+							border-radius: 50%;
+						}
 					}
 					.content {
 						display: inline-block;
@@ -478,11 +614,7 @@
 							line-height: 17px;
 						}
 					}
-					img {
-						width: 30px;
-						height: 30px;
-						border-radius: 50%;
-					}
+					
 				}
 			}
 		}
