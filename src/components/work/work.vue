@@ -123,7 +123,7 @@ import {mapGetters} from 'vuex'
 		},
 		methods:{
 			companyClose(){
-				this.compamyShow = true
+				this.compamyShow = false
 			},
 			manageCompanyClose(){
 				this.manageCompanyShow = false
