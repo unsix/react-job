@@ -47,14 +47,14 @@
 								</div>
 								<!--审批选项-->
 								<div class="extend">
-									<ul class="extend_ul">
+									<ul class="extend_ul" v-show="listShow">
 										<li v-for="(item,index) in examNav" v-bind:class="{'active': index == currentIndex}" @click="currentIndex=index">
 											<a>{{item}}</a>
 										</li>
 									</ul>
 								<manageCompany v-show="manageCompanyShow" @close="manageCompanyClose"></manageCompany>	
 								<jurisdictionManage v-if="jurisdictionManageShow" @close="jurisdictionManageClose"></jurisdictionManage>
-									
+								<exam v-if="examShow"></exam>
 									
 								</div>
 							</form>
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import exam from '@/base/exam/exam'
 import createCompany from '@/base/create_company/create_company'
 import manageCompany from '@/base/manage_company/manage_company'
 import jurisdictionManage from '@/base/jurisdiction_manage/jurisdiction_manage'
@@ -86,7 +87,7 @@ import {mapGetters} from 'vuex'
 				examNav:['日常','审批'],
 				pStr:'',
 				currentIndex:-1,
-				navIndex:0,
+				navIndex:-1,
 				pickerOptions0: {
 		          disabledDate(time) {
 		            return time.getTime() > Date.now();
@@ -115,9 +116,11 @@ import {mapGetters} from 'vuex'
 		          }]
 		        },
 		        value1: '',
+		        listShow:true,
 		        compamyShow:false,
-		        manageCompanyShow:true,
-		        jurisdictionManageShow:false
+		        manageCompanyShow:false,
+		        jurisdictionManageShow:false,
+		        examShow:true
 				
 			}
 		},
@@ -132,12 +135,14 @@ import {mapGetters} from 'vuex'
 				this.jurisdictionManageShow=false
 			},
 			navCli(item,index){
+				console.log(this.navIndex)
 				this.navIndex = index
-				let num = index*51
-				this.$refs.icon1.style.transition = 'all 0.2s ease-out'
-				this.$refs.icon1.style[transform] = `translate3d(${num}px,0px,0) `
 			},
 			doList(item,index){
+				this.listShow=false,
+		        this.compamyShow=false,
+		        this.manageCompanyShow=false,
+		        this.jurisdictionManageShow=false
 				switch (index)
 				{
 				case 1:
@@ -161,7 +166,8 @@ import {mapGetters} from 'vuex'
 			sysP,
 			createCompany,
 			manageCompany,
-			jurisdictionManage
+			jurisdictionManage,
+			exam
 		},
 		created(){
 		}
@@ -193,7 +199,6 @@ import {mapGetters} from 'vuex'
 								    border-radius: 2px;
 								    margin-top: 10px;
 								    .extend_ul{
-								    	display: none;
 								    }
 								    .extend_item3_wrapper{
 								    	display: none;
@@ -341,17 +346,14 @@ import {mapGetters} from 'vuex'
 								    		font-size: 12px;
     										cursor: pointer;
     										color:#0082CB; 
-    										box-sizing:bborder-box; 
+    										box-sizing:border-box; 
     										text-align: center;
-    										&:first-child{
-    											background: #f9f9f9;
-    											font-weight: 700;
-    											color: #333333;
-    										}
+    										border-bottom: 2px solid transparent;
     										&.active{
-    											background: #f9f9f9;
+    											border-bottom: 2px solid #FC923F;
+    											/*background: #f9f9f9;
     											font-weight: 700;
-    											color: #333333;
+    											color: #333333;*/
     										}
     										a{
     											height: 35px;

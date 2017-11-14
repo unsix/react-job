@@ -1,53 +1,71 @@
 <template>
 	<div class="jurisdictionManage_wrapper">
 		<div class="jurisdictionManage">
-			<!--<div class="title">
-				<span>权限管理</span><span v-show="typeInfo"> - </span><span class="typeInfo">{{typeInfo}}</span>
-				<i class="close el-icon-close" @click="close"></i>
-			</div>-->
 			<div class="nav">
 				<ul>
-					<li v-for="(item,index) in typeList" @click="chooseType(item,index)">{{item}}</li>
+					<li v-for="(item,index) in typeList" :class="{'active': index == navIndex}"  @click="chooseNav(item,index)">{{item}}</li>
 				</ul>
 			</div>
 			<div class="wrapper">
 
-				<!--<transition name="sildeThree">-->
 					<div class="setFormRePer" v-show="setFormRePerShow">
-						<!--<div class="return">
-							<i class="el-icon-d-arrow-left" @click="returnList"></i>
-						</div>-->
 						<div class="type">
+							
 							<div class="sec" v-for="(item,index) in setFormRe">
 								<div class="secHead">
 									<span class="headerName">{{item.name}}</span>
 									 <el-button type="primary" round @click="perShow(index)">编辑</el-button>
 								</div>
-									<personList :infoList="infoList" :personShow="personShow" @close="closePersonList" @choosePerson="choosePerson"></personList>
 								<ul class="secUl">
 									<li v-for="(group,gindex) in item.groups">
 										<div class="avatar">
-											<img :src="group.avatar" alt="" />
+											<img :src="group.avatar" v-show="group.avatar" alt="" />
 										</div>
 										<div class="content">
-											<span class="name">{{group.name}}</span>
-											<span class="phone" v-show="group.phone">{{group.phone}}</span>
+											<span class="name" v-show="group.name">{{group.name}}</span>
 											<span class="depart" v-show="group.department_name">{{group.department_name}}</span>
 										</div>
 										<div class="delete">
-											<i class="el-icon-circle-close-outline" @click="deleted(gindex,index)"></i>
+											<i class="el-icon-circle-close-outline" @click="deleted(gindex,index)" v-show="personShow"></i>
 										</div>
 									</li>
 								</ul>
 							</div>
+							<div class="person" v-show="personShow" ref="person">
+								<div class="submit">
+									<span @click="submit">确认修改</span>
+								</div>	
+								<div class="close" >
+									<i class="el-icon-error" @click="closePersonList"></i>
+								</div>
+								<div class="personList" id="person">
+									<ul>
+										<div class="content">
+											<li v-for="(item,index) in huizhiPersonList" @click="choosePerson(item,index)">
+					
+												<div class="avatar">
+													<img :src="item.avatar" alt="" />
+												</div>
+												<div class="content">
+													<span class="name">{{item.department_name}}</span>
+													<span class="name">{{item.name}}</span>	
+												</div>
+											</li>
+										</div>
+									</ul>
+								</div>	
+							</div>
 						</div>
 					</div>
-				<!--</transition>-->
-					<jurisdictionItem 
-						v-show="jurisdictionItemShow"
-						:formType="formType"
-						@return="returnJur"
-						:jurisdictionFormList="jurisdictionFormList"></jurisdictionItem>
+					<keep-alive>
+						<jurisdictionItem 
+							v-show="jurisdictionItemShow"
+							:formType="formType"
+							@return="returnJur"
+							:submitAddPersonShow="submitAddPersonShow"
+							:jurisdictionFormList="jurisdictionFormList">
+						</jurisdictionItem>
+					</keep-alive>
 			</div>
 		</div>
 		
@@ -55,6 +73,8 @@
 </template>
 
 <script>
+import {createJurisdictionList} from 'common/js/jurisdiction_list.js'
+import {mapGetters} from 'vuex' 
 import {createPersonInfo} from 'common/js/person_info'
 import personList from '@/base/person_list/person_list'
 import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
@@ -63,20 +83,23 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			return{
 				typeInfo:'',
 				typeList:['设置表单回执人员','合同评审表','请购单','请款单','印章申请','呈批件'],
-				setFormRe:[
-					{
+				setFormRe:{
+					pingshen:{
 						name:'合同评审人',
+						type:1,
 						groups:[]
 					},
-					{
+					qinggou:{
 						name:'请购单',
+						type:3,
 						groups:[]
 					},
-					{
+					qingkuan:{
 						name:'请款单',
+						type:7,
 						groups:[]
 					},
-				],	
+				},	
 			    value6: '',
 				setFormRePerShow:false,
 				listShow:true,
@@ -85,13 +108,25 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				jurisdictionFormList:[],
 				contractApproval:[],
 				jurisdictionItemShow:false,
+				submitAddPersonShow:false,
+				huizhiPersonList:[],
 				infoList:[],
-				formType:-1
+				formType:-1,
+				navIndex:-1,
+				closeShow:false,
+				num:0
 				
 			}
 		},
 		created(){
-			this._getCompanyPersonInfo()
+//			this._getCompanyPersonInfo()
+		},
+		computed:{
+			...mapGetters([
+				'nowCompanyId',
+				'user',
+				'comPersonList'
+			])
 		},
 		methods:{
 			handleClose(){
@@ -100,18 +135,63 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			close(){
 				this.$emit('close')
 			},
+			submit(){
+				let zz=0
+				if(this.formRePersonIndex==='pingshen'){
+					zz=1
+				}else if(this.formRePersonIndex === 'qinggou'){
+					zz=3
+				}else if(this.formRePersonIndex === 'qingkuan'){
+					zz=7
+				}
+				let narr=[]
+				this.setFormRe[this.formRePersonIndex].groups.forEach((item)=>{
+					narr.push(item.uid)
+				})
+				let param = new URLSearchParams();
+			    param.append("company_id",this.nowCompanyId);
+			    param.append("type",zz);
+			    param.append("personnel",JSON.stringify(narr));
+			    param.append("uid",this.user.uid);
+			    this.$http.post("/index/Mobile/user/give_finance_new",param)
+			    .then((res)=>{
+			    	
+			    })
+			},
+			deleted(gindex,index){
+				this.setFormRe[index].groups.splice(gindex,1)
+				this.submit()
+			},
 			returnList(){
 				this.setFormRePerShow = false
-				this.listShow=true
-				this.personShow=false
+				this.listShow = true
+				this.personShow = false
 			},
 			returnJur(){
-				this.typeInfo=''
-				this.jurisdictionItemShow=false
+				this.submitAddPersonShow =! this.submitAddPersonShow
 			},
-			chooseType(item,index){
-				this.typeInfo=item
+			chooseNav(item,index){
+				this.navIndex=index
+				switch(index)
+				{
+				case 1:
+				  this.formType=1
+				  break;
+				case 2:
+				  this.formType=3
+				  break;
+				case 3:
+				  this.formType=7
+				  break;
+				case 4:
+				  this.formType=5
+				  break;
+				case 4:
+				  this.formType=6
+				  break;
+				}
 				if(index===0){
+					this._getHuizhi()
 					this.setFormRePerShow=true
 					this.jurisdictionItemShow = false
 				}else{
@@ -119,49 +199,67 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					this.jurisdictionItemShow = true
 					this._getApproval()
 				}
-				switch (index)
-				{
-				case 1:
-					this.formType=1
-					break;
-				case 2:
-					this.formType=3
-					break;
-				case 3:
-					this.formType=7
-					break;
-				case 3:
-					this.formType=5
-					break;
-				case 3:
-					this.formType=6
-					break;
-				}
 			},
 			choosePerson(item,index){
 				if(this.setFormRe[this.formRePersonIndex].groups.indexOf(item) != -1){
+					alert('列表中已存在')
 					return
 				}
 				this.setFormRe[this.formRePersonIndex].groups.push(item)
 			},
 			perShow(index){
-				
 				this.formRePersonIndex=index
 				this.personShow=true
-
+				if(this.num===1){
+					return
+				}
+				this.comPersonList.forEach((item)=>{
+					if(item.person.length != 0){
+						item.person.forEach((list)=>{
+							this.huizhiPersonList.push(list)
+						})
+					}
+				})
+				++this.num
 			},
 			closePersonList(){
 				this.personShow=false
 			},
 			
-			deleted(gindex,index){
-				this.setFormRe[index].groups.splice(gindex,1)
+			_getHuizhi(){
+				let param = new URLSearchParams();
+			    param.append("company_id",this.nowCompanyId);
+			    param.append("uid",this.user.uid);
+			    this.$http.post("/index/Mobile/find/finance_personnel_list",param)
+				.then((res)=>{
+					res.data.data.forEach((item)=>{
+						if(item.type===1){
+							let arr=[]
+							item.list.forEach((list)=>{
+								arr.push(createJurisdictionList(list))
+							})
+							this.$set(this.setFormRe.pingshen, 'groups', arr)
+						}else if(item.type === 3){
+							let arr=[]
+							item.list.forEach((list)=>{
+								arr.push(createJurisdictionList(list))
+							})
+							this.$set(this.setFormRe.qingkuan, 'groups', arr)
+						}else if(item.type === 7){
+							let arr=[]
+							item.list.forEach((list)=>{
+								arr.push(createJurisdictionList(list))
+							})
+							this.$set(this.setFormRe.qinggou, 'groups', arr)
+						}
+					})
+				})
 			},
-//			表单绘制人员联系表
+//			表单回执人员联系表
 			_getCompanyPersonInfo(){
 				let ret=[]
 				let param = new URLSearchParams();
-			    param.append("company_id","131");
+			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/user/get_company_personnel",param)
 			    .then((res)=>{
 					res.data.data.forEach((item)=>{
@@ -171,14 +269,19 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			    })
 			},
 			_getApproval(){
+				this.submitAddPersonShow=false
+				this.jurisdictionFormList=[]
 				let param = new URLSearchParams();
-			    param.append("company_id","135");
+			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/approval/approval_list",param)
 			    .then((res)=>{
 					res.data.data.approval.forEach((item)=>{
+						
 						if(item.type===this.formType){
 							if(item.list.length!=0){
-								this.jurisdictionFormList.push(item.list)
+								item.list.forEach((list)=>{
+									this.jurisdictionFormList.push(createJurisdictionList(list))
+								})								
 							}
 						}
 						
@@ -204,27 +307,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 	.jurisdictionManage{
 		width: 560px;
 		overflow: hidden;
-		/*.title{
-			background: #FFFFFF;
-			padding: 0 10px;
-			border-bottom: 1px solid #9293A7;
-			border-top-left-radius: 6px;
-			border-top-right-radius: 6px;
-			span{
-				color: #2D2F33;
-				height: 30px;
-				line-height: 30px;
-			}
-			.close{
-				display: inline-block;
-				line-height:30px;
-				float: right;
-				font-size: 16px;
-				&:hover{
-					color: #409EFF;
-				}
-			}
-		}*/
 		.nav{
 			width: 100%;
 			margin: 4px 0;
@@ -242,7 +324,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					}
 					&.active{
 						background: #f9f9f9;
-					    font-weight: 700;
 					    color: #333333;
 					}
 				}
@@ -287,12 +368,88 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 		.setFormRePer{
 			overflow-x: hidden;
 			.type{
+				position: relative;
 				margin-top: 10px;
-				.sec{
-					.person{
-						top: 10px;
-						right: 20px;
+				
+				>.person {
+					>.submit{
+						display: block;
+						>span{
+							cursor: pointer;
+							position: absolute;
+							top: -30px;
+							right: 10px;
+							padding: 5px 10px;
+							border: 1px solid #3487E2;
+							font-size: 12px;
+						}
 					}
+					position: absolute;
+					top: 30px;
+					right: 10px;
+					z-index: 10;
+					width: 150px;
+					height: 230px;
+					background: #F2F2F2;
+					border: 1px solid #999999;
+					.close {
+						display: block;
+						color: #999999;
+						i{
+							float: right;
+							margin-top: 2px;
+						}
+						&:hover {
+							color: #FA5555;
+						}
+					}
+					.personList {
+						width: 150px;
+						height: 210px;
+						background: #F2F2F2;
+						overflow-y: scroll;
+						-webkit-border-radius: 4px;
+						-moz-border-radius: 4px;
+						border-radius: 4px;
+						ul {
+							padding: 4px;
+							li {
+								width: 100%;
+								height: 30px;
+								cursor: default;
+								border-bottom: 1px solid #999999;
+								.avatar {
+									display: inline-block;
+									float: left;
+									margin-top: 2px;
+									>img{
+										width: 24px;
+										height: 24px;
+										border-radius: 50%;
+									}	
+								}
+								.content {
+									display: inline-block;
+									float: left;
+									margin-left: 8px;
+									>span {
+										display: block;
+										font-size: 12px;
+										height: 14px;
+										line-height: 14px;
+										&:first-child{
+											color: #5e8579;
+											font-size: 12px;
+										}
+									}
+								}
+								
+							}
+						}
+					}
+				}
+				.sec{
+					margin-bottom: 4px;
 					.secHead{
 						display: block;		
 						.headerName{
@@ -315,6 +472,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 						}
 					}
 					.secUl{
+						width:300px;
 						li{
 							width:300px;
 							margin: 2px 0;
@@ -322,6 +480,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 								display: inline-block;
 								margin-top: 2px;
 								img {
+									display: inline-block;
 									width: 28px;
 									height: 28px;
 									border-radius: 50%;
@@ -343,7 +502,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 							.delete{
 								float: right;
 								i{
-									margin-top: 10px;
+									margin-top: 1px;
 									margin-right: 2px;
 									cursor: pointer
 								}

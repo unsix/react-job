@@ -22,7 +22,8 @@
 						<span>账号或密码错误</span>
 					</div>
 					<div class="submit">
-						<a @click="login">登录</a>
+						<a @click="login">登录<i class="el-icon-loading" v-show="loadingShow"></i></a>
+						
 					</div>
 				</div>
 				<div class="forget">
@@ -35,8 +36,9 @@
 </template>
 
 <script>
+	import {createPersonInfo} from 'common/js/person_info'
 	import uncreatedCompany from '@/base/uncreated_company/uncreated_company'
-	import {mapMutations} from 'vuex'
+	import {mapMutations,mapGetters} from 'vuex'
 	import {getAvatar} from '@/common/js/avatar.js'
 	import md5 from 'js-md5';
 	export default{
@@ -47,10 +49,16 @@
 				account_num:'',
 				password_num:'',
 				uncreatedCompanyShow:false,
-				errorShow:false
+				errorShow:false,
+				loadingShow:false,
+				companyPersonList:[],
+				numOne:0
 			}
 		},
 		computed:{
+			...mapGetters([
+				'nowCompanyId'
+			]),
 			phone_num(){
 				if(this.account_num.length !== 11){
 					return true
@@ -69,7 +77,6 @@
 				this.isB = true
 			},
 			login(){
-				
 				let password_num = md5(this.password_num)
 				let param = new URLSearchParams();
 			    param.append("phone",this.account_num);
@@ -85,8 +92,6 @@
 //							this.$router.push('/worker_list');
 //							this.uncreatedCompanyShow=false
 //						},3000)
-						
-						
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,
@@ -94,11 +99,49 @@
 						})
 						this._getUserCompanyList(res.data.data.uid)
 						setTimeout(()=>{
-							this.$router.push('/index/work');
+							this._getComPersonList()
 						},300)
+						this.loadingShow=true
+						setTimeout(()=>{
+							this.$router.push('/index/work');
+							this.loadingShow=false
+						},1000)
 					}else{
   						this.errorShow = true;
 					}
+			    })
+			},
+			_getComPersonList(){
+				let param = new URLSearchParams();
+				param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+
+			    	let resData=res.data.data
+			    	for(let j = 0,len=resData.length; j < len; j++) {
+			    		if(this.numOne>=len){
+			    			return
+			    		}
+			    		let obj={}
+   						this.$set(obj,'department_name',resData[j].department_name)
+   						/**/
+						let newparam = new URLSearchParams();
+					    newparam.append("company_id",this.nowCompanyId); 
+					    newparam.append("department_id",resData[j].department_id);
+					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		reaDa.push(createPersonInfo(item))
+					    	})
+					    	this.$set(obj,'person',reaDa)					    	
+					    	this.companyPersonList.push(obj)
+					    })	
+					    this.numOne++				   
+					}   	
+					this.setComPersonList(this.companyPersonList)
+					console.log(this.companyPersonList)
 			    })
 			},
 			_getUserCompanyList(user_id){
@@ -111,7 +154,8 @@
 			},
 			...mapMutations({
 				setUser: 'SET_USER',
-				setNowCompanyId: 'SET_NOWCOMPANY_ID'
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setComPersonList: 'SET_COM_PERSON_LIST'
 			})
 		},
 		components:{
@@ -208,8 +252,9 @@ $color3:#409EFF;
 				.submit {
 					width: 100%;
 					a {
+						position: relative;
 						margin-top: 20px;
-						display: block;
+						display: inline-block;
 						width: 100%;
 						height: 34px;
 						color: #fff;
@@ -220,9 +265,17 @@ $color3:#409EFF;
 						-webkit-border-radius: 4px;
 						-moz-border-radius: 4px;
 						border-radius: 4px;
+						
 						&:hover {
 							background: #9293a7;
 						}
+					}
+					i{
+						position: absolute;
+						left: 160px;
+						top: 10px;
+						font-size: 16px;
+						display: inline-block;
 					}
 				}
 				.error {

@@ -226,7 +226,6 @@ import {mapGetters} from 'vuex'
 		    	this.personShow=false
 		    },
 		    choosePerson(item,index){
-		    	console.log(item.username)
 		    	for(let i = 0;i<this.adminArr.length;i++){
 		    		if(item.username===this.adminArr[i].username){
 		    			alert(item.username+'已经是管理员了！')
@@ -322,7 +321,7 @@ import {mapGetters} from 'vuex'
 	z-index: 20;
 	.manageCompany{
 		position: relative;
-		width: 560px;
+		width: 550px;
 		padding: 4px;
 		background: #FFFFFF;
 		overflow: hidden;

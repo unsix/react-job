@@ -6,6 +6,9 @@ const mutations = {
   },
   [types.SET_NOWCOMPANY_ID](state,nowCompanyId) {
   	state.nowCompanyId = nowCompanyId
+  },
+  [types.SET_COM_PERSON_LIST](state,comPersonList) {
+  	state.comPersonList = comPersonList
   }
 }
 

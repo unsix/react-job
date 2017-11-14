@@ -31,9 +31,9 @@
 					</div>
 					<div class="processTwo" v-show="processTwoShow">
 						<el-form :model="department">
-							 <el-form-item :label="item.name" v-for="(item,index) in department" >
+							 <el-form-item :label="item.name" v-for="(item,index) in department" :key="item.name">
 							    <el-checkbox-group v-model="item.type" >
-							      <el-checkbox v-for="(group,index) in item.groups" :label="group" :value="group" name="type" >{{group.name}}</el-checkbox>
+							      <el-checkbox v-for="(group,index) in item.groups" :label="group" :value="group" name="type" :key="index" >{{group.name}}</el-checkbox>
 							      <div class="addGroup_wrapper" @click="addGroup(index)" >
 							      	<div class="addGroup fa fa-plus-circle" ></div>
 							      </div>
@@ -46,7 +46,7 @@
 					</div>	
 					<div class="processThree" v-show="processThreeShow">
 						<div class="sec" v-for="(item,nowIn) in department" >
-							<div class="list" v-for="(group,inz) in item.type">
+							<div class="list" v-for="(group,inz) in item.type" :key="item.name">
 								<span class="title">
 									{{item.name}}-{{group.name}}
 									<i class="fa fa-plus-circle" @click="addPerson(inz,nowIn)"></i>

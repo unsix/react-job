@@ -90,7 +90,7 @@ import {mapGetters,mapMutations} from 'vuex'
 			},
 			_getUserCompanyList(){
 				let param = new URLSearchParams();
-				param.append("uid",this.user.id);
+				param.append("uid",this.user.uid);
 				this.$http.post("/index/Mobile/user/companies_list",param)
 				.then((res)=>{
 				    this.userCompanyInfo=res.data.data

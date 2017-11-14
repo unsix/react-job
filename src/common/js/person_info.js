@@ -9,11 +9,8 @@ export default class person_info {
   }
 }
 function getAvatar(str) {
-	if(str.indexOf('jpg') !== -1) {
-		return 'http://img-bbsf.6655.la/FnF0MmO7g-WONz-QYU6BsWMTwNR_'
-	} else {
-		return 'http://img-bbsf.6655.la/' + str
-	}
+	return 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+//		return 'http://img-bbsf.6655.la/' + str
 }
 export function createPersonInfo(item) {
   return new person_info({
