@@ -135,7 +135,6 @@ import {mapGetters} from 'vuex'
 				this.jurisdictionManageShow=false
 			},
 			navCli(item,index){
-				console.log(this.navIndex)
 				this.navIndex = index
 			},
 			doList(item,index){

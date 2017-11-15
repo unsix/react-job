@@ -168,11 +168,9 @@ import {mapGetters} from 'vuex'
 				let param = new URLSearchParams();
 			    param.append("uid","10000216");
 			    param.append("personnel_id",JSON.stringify(newAdminArr));
-			    console.log(JSON.stringify(newAdminArr))
 			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/User/give_manage",param)
 			    .then((res)=>{
-			    	console.log(res)
 			    })
 			},
 			_deleteManager(item,index){
@@ -190,7 +188,6 @@ import {mapGetters} from 'vuex'
 			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/User/del_manage",param)
 			    .then((res)=>{
-			    	console.log(res)
 			    })
 			},
 			chooseNav(item,index){
