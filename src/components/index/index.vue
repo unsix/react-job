@@ -120,6 +120,7 @@ import {mapGetters,mapMutations} from 'vuex'
 	width: 100%;
 	height: 100%;
 	background:rgb(227,228,233);
+	overflow-y: scroll;
 	.top{
 		width: 100%;
 		background: #f4f6fc;
