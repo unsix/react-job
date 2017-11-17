@@ -3,7 +3,7 @@
 //import VueAxios from 'vue-axios'
 //Vue.use(VueAxios, axios)
 export default class exam_list {
-  constructor({approval_id, name,avatar,company_name,add_time,type,title}) {
+  constructor({approval_id, name,avatar,company_name,add_time,type,title,approval_state}) {
     this.approval_id = approval_id
     this.name = name
     this.avatar = avatar
@@ -11,6 +11,7 @@ export default class exam_list {
     this.add_time = add_time
     this.type = type
     this.title = title
+    this.approval_state = approval_state
   }
 }
 function get_data(time){
@@ -26,10 +27,19 @@ export function create_exam_list(item) {
     company_name:item.company_name,
     add_time:get_data(item.add_time),
     type:get_type(item.type),
-    title:item.title
+    title:item.title,
+    approval_state:get_state(item.approval_state)
   })
 }
-
+function get_state(state){
+	if(state === '0'){
+		return '审批中'
+	}else if(state === '1'){
+		return '已通过'
+	}else if(state === '2'){
+		return '未通过'
+	}
+}
 function get_type(type){
 	if(type === '0'){
 		return '请款单'
@@ -42,11 +52,13 @@ function get_type(type){
 	}else if(type === '6'){
 		return '呈批件'
 	}else if(type === '7'){
-		return '工装请购'
+		return '请购单'
 	}else if(type === '8'){
 		return '请款单'
 	}else if(type === '9'){
 		return '其他请款'
+	}else if(type === '111'){
+		return '合同评审表'
 	}
 
 }
