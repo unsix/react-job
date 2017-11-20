@@ -27,7 +27,7 @@
 					<!--导航-->
 					<div class="nav">
 						<ul>
-							<li v-for="(item,index) in wkNav">
+							<li v-for="(item,index) in wkNav" ref="wk_nav">
 								<a @click="navCli(item,index)" v-bind:class="{'active': index == navIndex}">{{item}}</a>
 							</li>
 						</ul>
@@ -37,14 +37,16 @@
 					<div class="panel">
 						<div class="panel_exam">
 							<form action="" class="panel_exam_form">
-								<div class="input_wrapper">
+								<!--分享，日志-->
+								<!--<div class="input_wrapper">
 									<textarea class="input" placeholder="请输入审批事由" name="" rows="" cols=""></textarea>
 								</div>
 								<div class="input_btns">
 									<i class="fa fa-at" title="添加提到"></i>
 									<i class="fa fa-photo" title="添加图片(多张)"></i>
 									<i class="fa fa-paperclip" title="添加附件(多个)"></i>
-								</div>
+								</div>-->
+								<addApproval></addApproval>
 								<!--审批选项-->
 								<div class="extend">
 									<ul class="extend_ul" v-show="listShow">
@@ -71,6 +73,7 @@
 
 <script>
 import exam from '@/base/exam/exam'
+import addApproval from '@/base/add_approval/add_approval'
 import createCompany from '@/base/create_company/create_company'
 import manageCompany from '@/base/manage_company/manage_company'
 import jurisdictionManage from '@/base/jurisdiction_manage/jurisdiction_manage'
@@ -83,10 +86,10 @@ import {mapGetters} from 'vuex'
 		data(){
 			return{
 				workList:['全部','创建公司','公司管理','权限管理','指令','网盘','邮件','群通知','我的回执','我的回复','@我的','更多>'],
-				wkNav:['分享','日志','审批','任务','指令'],
+				wkNav:['分享','日志','发起审批'],
 				examNav:['日常','审批'],
 				pStr:'',
-				currentIndex:-1,
+				currentIndex:0,
 				navIndex:-1,
 				pickerOptions0: {
 		          disabledDate(time) {
@@ -120,7 +123,7 @@ import {mapGetters} from 'vuex'
 		        compamyShow:false,
 		        manageCompanyShow:false,
 		        jurisdictionManageShow:false,
-		        examShow:true
+		        examShow:false
 				
 			}
 		},
@@ -136,6 +139,13 @@ import {mapGetters} from 'vuex'
 			},
 			navCli(item,index){
 				this.navIndex = index
+				let x =this.$refs.wk_nav[index].clientWidth
+				x = x*index
+				if(index === 2){
+					x = 112
+				}
+				this.$refs.icon1.style.transition = 'all 0.4s'
+				this.$refs.icon1.style[transform] = `translate3d(${x}px,0,0)`
 			},
 			doList(item,index){
 				this.listShow=false,
@@ -166,7 +176,8 @@ import {mapGetters} from 'vuex'
 			createCompany,
 			manageCompany,
 			jurisdictionManage,
-			exam
+			exam,
+			addApproval
 		},
 		created(){
 		}
@@ -235,75 +246,7 @@ import {mapGetters} from 'vuex'
 								    	background:#f9f9f9;
 								    	display: none;
 								    }
-								    .extend_item4_wrapper{
-								    	background-color: #f9f9f9;
-								    	padding: 10px;
-								    	.extend_item2{
-								    		margin-top: 10px;
-								    		.add{
-								    			height:30px;
-								    			line-height: 30px;
-								    			font-size: 13px;
-								    			color: #0082CB;
-								    			.list{
-								    				padding-left: 10px;
-								    				float: left;
-								    			}
-								    			.addList{
-								    				padding-right: 10px;
-								    				float: right;
-								    				i{
-								    					margin: 0 5px;
-								    					font-size: 13px;
-								    					cursor: pointer;
-								    				}
-								    			}
-								    		}
-								    		table{
-								    			background:#FFFFFF;
-								    			td{
-								    				border: 1px solid #ddd;
-								    				text-indent: 14px;
-								    				line-height: 36px;
-								    				font-size: 12px;
-								    				color: #666;
-								    				.inputMid{
-								    						width: 140px;
-									    					height: 26px;
-									    					border: none;
-									    					outline: none;
-								    				}
-								    				input{
-								    					width: 90%;
-								    					height: 26px;
-								    					border: none;
-								    					outline: none;
-								    				}
-								    				.fbtInput{
-								    					width: 400px;
-								    					height: 26px;
-								    					border: none;
-								    					outline: none;
-								    					font-size: 12px;
-								    				}
-								    			}
-								    		}
-								    	}
-								    	.submit{
-								    		margin-top: 10px;
-								    		cursor: pointer;
-								    		span{
-								    			display: block;
-								    			padding: 10px;
-								    			background: #9DB5FB;
-								    			color: #fff;
-								    			font-size: 18px;
-								    			
-								    			text-align: center;
-								    			line-height: 1;
-								    		}
-								    	}
-								    }
+								    
 								    .extend_item2_wrapper{
 								    	background-color: #f9f9f9;
 								    	padding: 10px;

@@ -9,6 +9,9 @@ const mutations = {
   },
   [types.SET_COM_PERSON_LIST](state,comPersonList) {
   	state.comPersonList = comPersonList
+  },
+  [types.SET_COM_DEPART_LIST](state,comDepartList) {
+  	state.comDepartList = comDepartList
   }
 }
 

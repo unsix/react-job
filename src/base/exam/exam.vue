@@ -71,7 +71,7 @@
 					<div>
 						<span >图片附件：</span>
 						<a  v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-							<img :src="item" alt="" />
+							<img :src="item" alt="" @click="ctrl_pic_show"/>
 						</a>
 					</div>
 					<div>
@@ -154,7 +154,6 @@
 						<span>审批：</span>
 					</div>
 					<div class="menu">
-						
 						<span @click="handle">处理</span>
 						<div class="button" v-show="menuShow">
 							<span @click="agree($event)">同意</span>
@@ -218,7 +217,7 @@
 					<div>
 						<span >图片附件：</span>
 						<a  v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-							<img :src="item" alt="" />
+							<img :src="item" alt="" @click="ctrl_pic_show"/>
 						</a>
 					</div>
 					<div>
@@ -298,7 +297,7 @@
 					<div>
 						<span >图片附件：</span>
 						<a  v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-							<img :src="item" alt="" />
+							<img :src="item" alt="" @click="ctrl_pic_show"/>
 						</a>
 					</div>
 					<div>
@@ -327,7 +326,7 @@
 					</div>
 				</div>
 		</div>
-		<browsePic :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one"></browsePic>
+		<browsePic :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 	</div>
 	
 </template>
@@ -385,6 +384,9 @@ export default{
 		browsePic
 	},
 	methods:{
+		close_pic(){
+			this.pic_show = false
+		},
 		last_one(){
 			if(this.pic_index === 0){
 				return
@@ -398,6 +400,9 @@ export default{
 			}
 			++this.pic_index
 			console.log(this.pic_index)
+		},
+		ctrl_pic_show(){
+			this.pic_show=true
 		},
 		getFile(event) {
             this.file = event.target.files;
@@ -523,13 +528,11 @@ export default{
 			param.append("enclosure_id", enclosure_id);
 			this.$http.post("/index/Mobile/approval/look_enclosure", param)
 				.then((res) => {
-					
 					let arr=[]
 					res.data.data.picture.forEach((item)=>{
 						arr.push('http://img-bbsf.6655.la/'+item)
 					})
 					this.img_arr = arr
-					this.pic_show=true
 					this.$set(this.form_Lista,'img_list',arr)
 				})
 		},		
@@ -574,6 +577,11 @@ export default{
 				this.untreated=arr		
 				
 			})
+		}
+	},
+	watch:{
+		nowCompanyId(){
+			this._getExamList()
 		}
 	}
 }
@@ -627,6 +635,7 @@ export default{
 					display: inline-block;
 					height: 50px;
 					width: 80px;
+					cursor: pointer;
 				}
 			}
 			.menu{

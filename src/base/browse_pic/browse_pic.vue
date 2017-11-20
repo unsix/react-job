@@ -9,6 +9,9 @@
 				<i class="el-icon-arrow-right" @click="right"></i>
 			</div>
 		</div>
+		<div class="close">
+			<i class="el-icon-close" @click="close"></i>
+		</div>
 	</div>
 </template>
 
@@ -27,6 +30,9 @@
 		}
 	},
 	methods: {
+		close(){
+			this.$emit('close_pic')
+		},
 		left() {
 			this.$emit('left')
 		},
@@ -54,6 +60,7 @@
 	width: 100%;
 	height: 100%;
 	background: rgba(0, 0, 0, 0.5);
+	z-index: 10;
 	>div{
 		height: 100%;
 		display: flex;
@@ -77,6 +84,20 @@
 		}
 		img{
 			flex: 1;
+		}
+	}
+	.close{
+		position: fixed;
+		display: block;
+		top: 100px;
+		right:100px;
+		i{
+			font-size: 50px;
+			color: #FFFFFF;
+			cursor: pointer;
+			&:hover{
+				color: #FA5555;
+			}
 		}
 	}
 }

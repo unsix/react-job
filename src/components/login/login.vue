@@ -36,6 +36,7 @@
 </template>
 
 <script>
+	import {create_depart_list} from 'common/js/initial/depart.js'
 	import {createPersonInfo} from 'common/js/person_info'
 	import uncreatedCompany from '@/base/uncreated_company/uncreated_company'
 	import {mapMutations,mapGetters} from 'vuex'
@@ -99,6 +100,7 @@
 						})
 						this._getUserCompanyList(res.data.data.uid)
 						setTimeout(()=>{
+							this._getComDepart()
 							this._getComPersonList()
 						},300)
 						this.loadingShow=true
@@ -111,12 +113,11 @@
 					}
 			    })
 			},
-			_getComPersonList(){
+			_getComPartPersonList(){
 				let param = new URLSearchParams();
 				param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/user/get_department_lest",param)
 			    .then((res)=>{
-
 			    	let resData=res.data.data
 			    	for(let j = 0,len=resData.length; j < len; j++) {
 			    		if(this.numOne>=len){
@@ -130,7 +131,7 @@
 					    newparam.append("department_id",resData[j].department_id);
 					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
 					    .then((res)=>{
-					    
+					    	
 					    	let reaDa=[]
 					    	res.data.data.forEach((item)=>{
 					    		reaDa.push(createPersonInfo(item))
@@ -141,8 +142,34 @@
 					    this.numOne++				   
 					}   	
 					this.setComPersonList(this.companyPersonList)
-					console.log(this.companyPersonList)
 			    })
+			},
+			_getComDepart(){
+				let param = new URLSearchParams();
+				param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+			    	
+			    	let arr=[]
+			    	res.data.data.forEach((item)=>{
+			    		arr.push(create_depart_list(item))
+			    	})
+			    	this.setComDepartList(arr)
+			    })
+			},
+			_getComPersonList(){
+				let newparam = new URLSearchParams();
+				newparam.append("company_id",this.nowCompanyId); 
+				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+					    		reaDa.push(item)
+					    	})
+					    	this.setComPersonList(reaDa)
+					    	
+					    })
 			},
 			_getUserCompanyList(user_id){
 				let param = new URLSearchParams();
@@ -155,7 +182,8 @@
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
-				setComPersonList: 'SET_COM_PERSON_LIST'
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComDepartList: 'SET_COM_DEPART_LIST'
 			})
 		},
 		components:{

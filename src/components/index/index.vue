@@ -107,6 +107,7 @@ import {mapGetters,mapMutations} from 'vuex'
 		      ])
 		},
 		created(){
+			console.log(this.user.name)
 			this._getUserCompanyList()
 		}
 	}

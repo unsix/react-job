@@ -1,7 +1,8 @@
 const state = {
   user:{},
   nowCompanyId:-1,
-  comPersonList:[]
+  comPersonList:[],
+  comDepartList:[]
 }
 
 export default state
