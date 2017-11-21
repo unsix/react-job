@@ -52,7 +52,8 @@ import {mapGetters,mapMutations} from 'vuex'
 				userCompanyInfo:[],
 				nowCompany_name:'',
 				userOperationShow:false,
-				userOperationLeftShow:false
+				userOperationLeftShow:false,
+			
 			}
 		},
 		methods:{
@@ -97,9 +98,16 @@ import {mapGetters,mapMutations} from 'vuex'
 				    this.nowCompany_name=res.data.data[0].company_name
 				})
 			},
+			handleScroll () {
+				console.log('11')
+//			    this.scrolled = window.scrollY > 0;
+			 },
 			...mapMutations({
 				setNowCompanyId:'SET_NOWCOMPANY_ID' 
 			})
+		},
+		mounted(){
+			window.addEventListener('scroll', this.handleScroll);
 		},
 		computed:{
 			...mapGetters([
@@ -107,7 +115,6 @@ import {mapGetters,mapMutations} from 'vuex'
 		      ])
 		},
 		created(){
-			console.log(this.user.name)
 			this._getUserCompanyList()
 		}
 	}

@@ -52,6 +52,7 @@
 				uncreatedCompanyShow:false,
 				errorShow:false,
 				loadingShow:false,
+				ComPartPersonList:[],
 				companyPersonList:[],
 				numOne:0
 			}
@@ -102,6 +103,7 @@
 						setTimeout(()=>{
 							this._getComDepart()
 							this._getComPersonList()
+							this._getComPartPersonList()
 						},300)
 						this.loadingShow=true
 						setTimeout(()=>{
@@ -137,11 +139,12 @@
 					    		reaDa.push(createPersonInfo(item))
 					    	})
 					    	this.$set(obj,'person',reaDa)					    	
-					    	this.companyPersonList.push(obj)
+					    	this.ComPartPersonList.push(obj)
 					    })	
 					    this.numOne++				   
 					}   	
-					this.setComPersonList(this.companyPersonList)
+					
+					this.setComPartPersonList(this.ComPartPersonList)
 			    })
 			},
 			_getComDepart(){
@@ -183,7 +186,8 @@
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
 				setComPersonList: 'SET_COM_PERSON_LIST',
-				setComDepartList: 'SET_COM_DEPART_LIST'
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST'
 			})
 		},
 		components:{

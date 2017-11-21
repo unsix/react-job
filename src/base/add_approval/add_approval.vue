@@ -85,8 +85,11 @@
 						</el-form-item>
 						<el-form-item label="请购部门" prop="request_buy_department">
 							<el-select v-model="qgd_ruleForm.request_buy_department" placeholder="请选择请购部门">
-								<el-option :label="item.department_name" :value="item.department_name" v-for="item in comDepartList"></el-option>
+								<el-option :label="item.department_name" :value="item.department_name" v-for="item in comDepartList" :key="item.department_id"></el-option>
 							</el-select>
+						</el-form-item>
+						<el-form-item label="合同名称" prop="contract_name_new">
+							<el-input v-model="qgd_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
 						<el-form-item label="工程负责人" prop="contract_responsible">
 							<el-input v-model="qgd_ruleForm.contract_responsible" @focus="pro_leader()"></el-input>
@@ -124,10 +127,48 @@
 						<el-form-item label="请购内容" prop="content">
 							<el-input v-model="qgd_ruleForm.content"></el-input>
 						</el-form-item>
-
 						<el-form-item label="收货地址" prop="receive_address">
 							<el-input type="textarea" v-model="qgd_ruleForm.receive_address"></el-input>
 						</el-form-item>
+						<div class="add_qgd">添加清单条目 <i class="el-icon-circle-plus" @click="add_qgd"></i></div>
+						<div v-for="(item,index) in qgd_ruleForm.add" class="new_qgd">
+							<div class="close"><i class="el-icon-close" @click="close_qgd(item,index)"></i></div>
+							<el-form label-width="150px">
+								<el-form-item label="请购名称">
+									<el-input v-model="item.name"></el-input>
+								</el-form-item>
+								<el-form-item label="申报采购原因及用途">
+									<el-input v-model="item.purpose"></el-input>
+								</el-form-item>
+							</el-form>
+							<el-form :inline="true" class="demo-form-inline">
+								<el-form-item label="规格">
+									<el-input v-model="item.spec"></el-input>
+								</el-form-item>
+								<el-form-item label="型号">
+									<el-input v-model="item.model"></el-input>
+								</el-form-item>
+							</el-form>
+							<el-form :inline="true" class="demo-form-inline">
+								<el-form-item label="数量">
+									<el-input v-model="item.num"></el-input>
+								</el-form-item>
+								<el-form-item label="单位">
+									<el-select v-model="item.unit">
+										<el-option :label="item" :value="item" v-for="item in unit" :key="item"></el-option>
+									</el-select>
+								</el-form-item>
+							</el-form>
+							<el-form :inline="true" class="demo-form-inline">
+								<el-form-item label="单价">
+									<el-input v-model="item.subtotal"></el-input>
+								</el-form-item>
+								<el-form-item label="总额">
+									<el-input v-model="item.price"></el-input>
+								</el-form-item>
+
+							</el-form>
+						</div>
 						<el-form-item>
 							<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即创建</el-button>
 							<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>
@@ -155,7 +196,7 @@
 					<el-form :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
 						<el-form-item label="呈批部门" prop="department_name">
 							<el-select v-model="cpj_ruleForm.department_name" placeholder="请选择呈批部门">
-								<el-option v-for="item in comDepartList" :value="item.department_name"></el-option>
+								<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
 							</el-select>
 						</el-form-item>
 						<el-form-item label="呈批标题" prop="content">
@@ -171,8 +212,8 @@
 							<el-input v-model="cpj_ruleForm.project_manager_name" @focus="cpj_leader"></el-input>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" @click="submitForm_cpj('qkd_ruleForm')">立即创建</el-button>
-							<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
+							<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即创建</el-button>
+							<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
 					<div class="person" v-if="personShow" ref="person">
@@ -200,9 +241,7 @@
 						<el-form-item label="合同名称" prop="contract_name_new">
 							<el-input v-model="psb_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
-						<el-form-item label="合同编号" prop="contract_id">
-							<el-input v-model="psb_ruleForm.contract_id"></el-input>
-						</el-form-item>
+						
 						<el-form-item label="甲方" prop="a_name">
 							<el-input v-model="psb_ruleForm.a_name"></el-input>
 						</el-form-item>
@@ -230,12 +269,83 @@
 						<el-form-item label="完工时间" prop="end_time">
 							<el-date-picker type="date" v-model="psb_ruleForm.end_time" style="width: 100%;"></el-date-picker>
 						</el-form-item>
+						<el-form-item label="合同编号">
+							<el-input v-model="psb_ruleForm.contract_id"></el-input>
+						</el-form-item>
+						<el-form-item label="备注">
+							<el-input v-model="psb_ruleForm.remarks"></el-input>
+						</el-form-item>
 						<el-form-item label="项目负责人(部门经理)">
 							<el-input v-model="psb_ruleForm.project_manager_name" @focus="psb_leader"></el-input>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="submitForm_psb('psb_ruleForm')">立即创建</el-button>
 							<el-button @click="resetForm('psb_ruleForm')">重置</el-button>
+						</el-form-item>
+					</el-form>
+					<div class="person" v-if="personShow" ref="person">
+						<div class="close el-icon-circle-close" @click="closePersonList"></div>
+						<div class="personList" id="person">
+							<ul>
+								<li v-for="(item,index) in comPersonList" @click="choosePerson(item,index)" :key="index">
+									<div class="avatar">
+										<img :src="item.avatar" alt="" />
+									</div>
+									<div class="content">
+										<span class="name">{{item.username}}</span>
+										<span class="phone">{{item.phone}}</span>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="shenqinggongzhang" v-show="shenqinggongzhang_show">
+					<el-form :model="sqgz_ruleForm" :rules="sqgz_rules" ref="sqgz_ruleForm" label-width="150px" class="demo-sqgz_ruleForm">
+						<el-form-item label="用章部门" prop="departmental">
+							<el-select v-model="sqgz_ruleForm.departmental" placeholder="请选择呈批部门">
+								<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="申请人" prop="user_name">
+							<el-input v-model="sqgz_ruleForm.user_name"></el-input>
+						</el-form-item>
+						<el-form-item label="项目负责人(部门经理)">
+							<el-input v-model="sqgz_ruleForm.project_manager"></el-input>
+						</el-form-item>
+						<div class="add_sqgz">添加清单条目 <i class="el-icon-circle-plus" @click="add_sqgz"></i></div>
+						<div>
+							<el-form v-for="(item,index) in sqgz_ruleForm.add" label-width="150px" :key="item.seal_type">
+								<div class="close"><i class="el-icon-close" @click="close_sqgz(item,index)"></i></div>
+								<el-form-item label="印章类别">
+									<el-radio-group v-model="item.seal_type">
+										<el-radio label="1">公章</el-radio>
+										<el-radio label="2">法人章</el-radio>
+										<el-radio label="3">财务章</el-radio>
+										<el-radio label="4">发票章</el-radio>
+										<el-radio label="5">合同章</el-radio>
+									</el-radio-group>
+								</el-form-item>
+								<el-form-item label="盖章事由">
+									<el-input v-model="item.reason"></el-input>
+								</el-form-item>
+								<el-form-item label="资料名称">
+									<el-input v-model="item.contract_name"></el-input>
+								</el-form-item>
+								<el-form-item label="数量">
+									<el-input v-model="item.num"></el-input>
+								</el-form-item>
+								<el-form-item label="公司名称">
+									<el-input v-model="item.name_company"></el-input>
+								</el-form-item>
+								<el-form-item label="备注">
+									<el-input v-model="item.remarks"></el-input>
+								</el-form-item>
+							</el-form>
+						</div>
+						<el-form-item>
+							<el-button type="primary" @click="submitForm_sqgz('sqgz_ruleForm')">立即创建</el-button>
+							<el-button @click="resetForm('sqgz_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
 					<div class="person" v-if="personShow" ref="person">
@@ -268,15 +378,17 @@
 	export default {
 		data() {
 			return {
-				nav: ['请款单', '请购单', '呈批件', '合同审核表'],
+				nav: ['合同审核表', '请购单', '呈批件', '申请公章', '请款单'],
 				navIndex: 0,
 				radio: '1’',
 				personShow: false,
 				qingkuan_show: false,
 				qinggou_show: false,
 				chengpijian_show: false,
-				pingshenbiao_show:false,
+				pingshenbiao_show: true,
+				shenqinggongzhang_show: false,
 				insertType: 0,
+				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				qkd_ruleForm: {
 					contract_name: '',
 					project_name: '',
@@ -297,6 +409,7 @@
 					is_urgent: '1',
 					request_buy_department: '',
 					request_contract_address: '',
+					contract_name_new: '',
 					content: '',
 					contract_responsible: '',
 					responsible_tel: '',
@@ -310,7 +423,18 @@
 					consignee_uid: '',
 					receive_address: '',
 					project_manager_name: '',
-					project_manager: {}
+					project_manager: {},
+					add:[{
+							name: "",
+							spec: "",
+							unit: "",
+							model: "",
+							num: "",
+							price: "",
+							subtotal: "",
+							purpose: "",
+							remarks: ''
+					}]
 				},
 				cpj_ruleForm: {
 					department_id: '',
@@ -322,19 +446,59 @@
 					project_manager: {}
 				},
 				psb_ruleForm: {
-					contract_name:'',
-					contract_id:'',
+					contract_name: '',
+					contract_id: '',
 					a_name: '',
 					b_name: '',
 					prive: '',
 					total_prive: '',
 					difference: '',
 					pay_method: '',
-					arrive_time:'',
-					end_time:'',
-					executor:'',
-					contract_name_new:'',
+					arrive_time: '',
+					end_time: '',
+					executor: '',
+					contract_name_new: '',
+					remarks: '',
 					project_manager: {}
+				},
+				sqgz_ruleForm: {
+					departmental: '',
+					user_name: '',
+					project_manager: '',
+					department_id: '',
+					add: []
+				},
+				sqgz_rules: {
+					departmental: [{
+						required: true,
+						message: '请填写用章部门',
+						trigger: 'change'
+					}],
+					user_name: [{
+						required: true,
+						message: '请填写申请人姓名',
+						trigger: 'change'
+					}],
+					reason: [{
+						required: true,
+						message: '请填写盖章事由',
+						trigger: 'change'
+					}],
+					contract_name: [{
+						required: true,
+						message: '请填写呈资料名称',
+						trigger: 'change'
+					}],
+					num: [{
+						required: true,
+						message: '请填写数量',
+						trigger: 'change'
+					}],
+					name_company: [{
+						required: true,
+						message: '请填写公司名称',
+						trigger: 'change'
+					}]
 				},
 				psb_rules: {
 					contract_name: [{
@@ -423,6 +587,11 @@
 					}]
 				},
 				qgd_rules: {
+					contract_name_new: [{
+						required: true,
+						message: '请填写合同名称',
+						trigger: 'change'
+					}],
 					request_buy_department: [{
 						required: true,
 						message: '请填写请购部门',
@@ -559,6 +728,38 @@
 			])
 		},
 		methods: {
+			close_sqgz(item, index) {
+				this.sqgz_ruleForm.add.splice(index, 1)
+			},
+			close_qgd(item, index) {
+				this.qgd_ruleForm.add.splice(index, 1)
+			},
+			add_sqgz() {
+				let obj = {
+					seal_type: '1',
+					reason: "",
+					contract_name: "",
+					num: "",
+					remarks: "",
+					company_type: "1",
+					name_company: ""
+				}
+				this.sqgz_ruleForm.add.push(obj)
+			},
+			add_qgd() {
+				let obj = {
+					name: "",
+					spec: "",
+					unit: "",
+					model: "",
+					num: "",
+					price: "",
+					subtotal: "",
+					purpose: "",
+					remarks: ''
+				}
+				this.qgd_ruleForm.add.push(obj)
+			},
 			request_leader() {
 				this.personShow = true
 				this.insertType = 0
@@ -587,7 +788,7 @@
 				this.personShow = true
 				this.insertType = 6
 			},
-			psb_leader(){
+			psb_leader() {
 				this.personShow = true
 				this.insertType = 7
 			},
@@ -597,16 +798,18 @@
 				this.qinggou_show = false
 				this.chengpijian_show = false
 				this.pingshenbiao_show = false
-				if(index === 0){
-					this.qingkuan_show = true
-				}else if(index === 1){
-					this.qinggou_show = true
-				}
-				else if(index === 2){
-					this.chengpijian_show = true
-				}
-				else if(index === 3){
+				this.shenqinggongzhang_show = false
+				if(index === 0) {
 					this.pingshenbiao_show = true
+
+				} else if(index === 1) {
+					this.qinggou_show = true
+				} else if(index === 2) {
+					this.chengpijian_show = true
+				} else if(index === 3) {
+					this.shenqinggongzhang_show = true
+				} else if(index === 4) {
+					this.qingkuan_show = true
 				}
 			},
 			closePersonList() {
@@ -679,31 +882,61 @@
 					}
 				});
 			},
-			submitForm_psb(formName){
+			submitForm_psb(formName) {
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-						this.cpj_submit()
+						this.psb_submit()
 					} else {
 						console.log('error submit!!');
 						return false;
 					}
 				});
 			},
+			submitForm_sqgz(formName) {
+				this.comDepartList.forEach((item) => {
+					if(item.department_name === this.sqgz_ruleForm.departmental) {
+						this.sqgz_ruleForm.department_id = item.department_id
+					}
+				})
+				this.$refs[formName].validate((valid) => {
+					if(valid) {
+						this.sqgz_submit()
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
+			},
+			return_show(){
+				this.$emit('add_approval_showF')
+			},
 			created() {
 				//		    	console.log(this.comPersonList)
+			},
+			sqgz_submit() {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("company_id", this.nowCompanyId);
+				param.append("departmental", this.sqgz_ruleForm.department_id);
+				param.append("user_name", this.sqgz_ruleForm.user_name);
+				param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
+				this.$http.post("/index/Mobile/approval/add_request_seal", param)
+					.then((res) => {
+						console.log(res)
+					})
 			},
 			psb_submit() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
 				param.append("a_name", this.psb_ruleForm.a_name);
-				param.append("b_name", this.psb_ruleForm.b_name	);
+				param.append("b_name", this.psb_ruleForm.b_name);
 				param.append("prive", this.psb_ruleForm.prive);
 				param.append("total_prive", this.psb_ruleForm.total_prive);
 				param.append("difference", this.psb_ruleForm.difference);
 				param.append("pay_method", this.psb_ruleForm.pay_method);
 				param.append("contract_name", this.psb_ruleForm.contract_name);
-				param.append("project_manager", this.psb_ruleForm.JSON.stringify(this.psb_ruleForm.project_manager));
+				param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
 				param.append("arrive_time", this.psb_ruleForm.arrive_time);
 				param.append("end_time", this.psb_ruleForm.end_time);
 				param.append("executor", this.psb_ruleForm.executor);
@@ -729,14 +962,32 @@
 					})
 			},
 			qgd_submit() {
+				let buy_depart_id
+				this.comDepartList.forEach((item) => {
+					if(item.department_name === this.qgd_ruleForm.request_buy_department) {
+						buy_depart_id = item.department_id
+					}
+				})
+				let consignee_uid
+				this.comPersonList.forEach((item) => {
+					if(item.name === this.qgd_ruleForm.consignee) {
+						consignee_uid = item.uid
+					}
+				})
+				let buy_person_uid
+				this.comPersonList.forEach((item) => {
+					if(item.name === this.qgd_ruleForm.buy_person) {
+						buy_person_uid = item.uid
+					}
+				})
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
-				param.append("request_buy_department", this.qgd_ruleForm.request_buy_department);
+				param.append("request_buy_department", buy_depart_id);
 				param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
 				param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
 				param.append("is_urgent", this.qgd_ruleForm.is_urgent);
-				param.append("content", this.qgd_ruleForm.content);
+				param.append("content", JSON.stringify(this.qgd_ruleForm.add));
 				param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
 				param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
 				param.append("arrival_time", this.qgd_ruleForm.arrival_time);
@@ -746,10 +997,9 @@
 				param.append("receive_address", this.qgd_ruleForm.receive_address);
 				param.append("buy_person", this.qgd_ruleForm.buy_person);
 				param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
-				param.append("consignee_uid", this.qgd_ruleForm.request_buy_department);
-				param.append("buy_person_uid", this.qgd_ruleForm.request_buy_department);
-				param.append("request_buy_department", this.qgd_ruleForm.request_buy_department);
-				param.append("request_buy_department", this.qgd_ruleForm.request_buy_department);
+				param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
+				param.append("consignee_uid", consignee_uid);
+				param.append("buy_person_uid", buy_person_uid);
 				param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 				param.append("type", 2);
 				this.$http.post("/index/Mobile/approval/add_request_buy", param)
@@ -912,6 +1162,36 @@
 					}
 				}
 				.qinggou {
+					.new_qgd {
+						position: relative;
+						.close {
+							display: block;
+							height: 20px;
+							font-size: 16px;
+							color: #3487E2;
+							i {
+								float: right;
+								cursor: pointer;
+								&:hover {
+								color: #FA5555;
+							}
+							}
+							
+						}
+					}
+					.add_qgd {
+						display: block;
+						height: 30px;
+						font-size: 14px;
+						margin-left: 50px;
+						i {
+							cursor: pointer;
+							display: inline-block;
+							&:hover {
+								color: #FA5555;
+							}
+						}
+					}
 					.el-form-item[data-v-1e3f67aa] {
 						&:nth-child(1) {
 							margin-bottom: 10px;
@@ -980,6 +1260,90 @@
 					}
 				}
 				.chengpijian {
+					.person {
+						position: absolute;
+						left: 350px;
+						top: 400px;
+						z-index: 10;
+						.close {
+							position: absolute;
+							right: 2px;
+							top: 2px;
+							color: #3487E2;
+							&:hover {
+								color: #FA5555;
+							}
+						}
+						.personList {
+							width: 200px;
+							height: 280px;
+							background: rgb(241, 241, 241);
+							border: 1px solid #3487E2;
+							overflow-y: scroll;
+							-webkit-border-radius: 4px;
+							-moz-border-radius: 4px;
+							border-radius: 4px;
+							ul {
+								margin-top: 20px;
+								padding: 4px;
+								li {
+									width: 100%;
+									height: 60px;
+									border-bottom: 1px solid #409EFF;
+									color: #2D2F33;
+									cursor: default;
+									.avatar {
+										display: inline-block;
+										float: left;
+										margin: 10px 6px 0 6px;
+										img {
+											display: block;
+											width: 40px;
+											height: 40px;
+											border-radius: 50%;
+										}
+									}
+									.content {
+										display: inline-block;
+										float: left;
+										margin-left: 4px;
+										span {
+											display: block;
+											font-size: 12px;
+											height: 20px;
+											line-height: 20px;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				.shenqinggongzhang {
+					.close {
+						display: block;
+						height: 30px;
+						i {
+							cursor: pointer;
+							font-size: 20px;
+							display: block;
+							float: right;
+							&:hover {
+								color: #FA5555;
+							}
+						}
+					}
+					.add_sqgz {
+						font-size: 14px;
+						color: #5a5e66;
+						cursor: pointer;
+						margin-left: 10px;
+						i {
+							&:hover {
+								color: #3487E2;
+							}
+						}
+					}
 					.person {
 						position: absolute;
 						left: 350px;

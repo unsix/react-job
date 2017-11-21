@@ -38,15 +38,15 @@
 						<div class="panel_exam">
 							<form action="" class="panel_exam_form">
 								<!--分享，日志-->
-								<!--<div class="input_wrapper">
-									<textarea class="input" placeholder="请输入审批事由" name="" rows="" cols=""></textarea>
+								<div class="input_wrapper" v-show="shareShow">
+									<textarea class="input" placeholder="请输入" name="" rows="" cols=""></textarea>
 								</div>
-								<div class="input_btns">
+								<div class="input_btns" v-show="shareShow">
 									<i class="fa fa-at" title="添加提到"></i>
 									<i class="fa fa-photo" title="添加图片(多张)"></i>
 									<i class="fa fa-paperclip" title="添加附件(多个)"></i>
-								</div>-->
-								<addApproval></addApproval>
+								</div>
+								<addApproval v-if="addApprovalShow" @add_approval_showF="add_approval_showF"></addApproval>
 								<!--审批选项-->
 								<div class="extend">
 									<ul class="extend_ul" v-show="listShow">
@@ -123,7 +123,10 @@ import {mapGetters} from 'vuex'
 		        compamyShow:false,
 		        manageCompanyShow:false,
 		        jurisdictionManageShow:false,
-		        examShow:false
+		        examShow:false,
+		        addApprovalShow:false,
+		        shareShow:true,
+		        scroll:''
 				
 			}
 		},
@@ -135,17 +138,25 @@ import {mapGetters} from 'vuex'
 				this.manageCompanyShow = false
 			},
 			jurisdictionManageClose(){
-				this.jurisdictionManageShow=false
+				this.jurisdictionManageShow = false
 			},
 			navCli(item,index){
+				this.addApprovalShow = false
+				this.shareShow = false
 				this.navIndex = index
 				let x =this.$refs.wk_nav[index].clientWidth
 				x = x*index
 				if(index === 2){
+					this.addApprovalShow = true
 					x = 112
+				}else{
+					this.shareShow = true
 				}
 				this.$refs.icon1.style.transition = 'all 0.4s'
 				this.$refs.icon1.style[transform] = `translate3d(${x}px,0,0)`
+			},
+			add_approval_showF(){
+				this.addApprovalShow=false
 			},
 			doList(item,index){
 				this.listShow=false,
@@ -164,7 +175,11 @@ import {mapGetters} from 'vuex'
 				  this.jurisdictionManageShow=true
 				  break
 				}
-			}
+			},
+			handleScroll () {
+				console.log('11')
+//			    this.scrolled = window.scrollY > 0;
+			  }
 		},
 		computed:{
 			...mapGetters([
@@ -178,6 +193,9 @@ import {mapGetters} from 'vuex'
 			jurisdictionManage,
 			exam,
 			addApproval
+		},
+		mounted(){
+			window.addEventListener('scroll', this.handleScroll);
 		},
 		created(){
 		}
@@ -207,7 +225,7 @@ import {mapGetters} from 'vuex'
 			    					border: 1px solid #ddd;
 								    -webkit-border-radius: 2px;
 								    border-radius: 2px;
-								    margin-top: 10px;
+								    margin-top: 4px;
 								    .extend_ul{
 								    }
 								    .extend_item3_wrapper{

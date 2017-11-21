@@ -49,7 +49,7 @@
 							<div class="list" v-for="(group,inz) in item.type" :key="item.name">
 								<span class="title">
 									{{item.name}}-{{group.name}}
-									<i class="fa fa-plus-circle" @click="addPerson(inz,nowIn)"></i>
+									<i class="el-icon-circle-plus" @click="addPerson(inz,nowIn)"></i>
 									
 								</span>
 								<ul>
@@ -95,9 +95,11 @@
 </template>
 
 <script>
+	import {mapGetters} from 'vuex'
 	export default{
 		data() {
 	      return {
+	      	old_department:{},
 	      	department: {
 	          manager:{
 	          	name:'总经办',
@@ -202,26 +204,35 @@
 	          	],
 	          	type:[]
 	          }
-	       },
+	        },
 	        nowPerson:'',
 	        nowIn:'',
 	        active: 0,
+	        companyId:0,
 	        companyName:'',
 	        companyPhone:'',
 	        companyAdd:'',
-	        companyId:0,
 	        workerInfo:[],
 	        personShow:false,
 	        processOneShow:true,
 	        processTwoShow:false,
-	        processThreeShow:false
+	        processThreeShow:false,
+	        nperson:[]
 	      }
 	    },
 
 	    created(){
+			
 	   		this.getData()
 	    },
+	    computed:{
+	    	...mapGetters([
+	    		'user',
+	    		'comPersonList'
+	    	])
+	    },
 	    methods: {
+	    	
 		    wrapperClose(){
 		    	this.$emit('companyClose')
 		    },
@@ -229,20 +240,22 @@
 		    	this.personShow=true
 		    	this.nowPerson = inz
 		    	this.nowIn=nowIn
+		    	this.nperson=[]
 		    },
 		    closePersonList(){
 		    	this.personShow=false
+		    	
 		    },
 		    choosePerson(item,index){
 		    	this.department[this.nowIn].type.person=[]
-		    	let nperson=[]
-		    	nperson.push(item)
-		    	this.$set(this.department[this.nowIn].type[this.nowPerson],'person',nperson)
-		    	this.workerInfo.splice(index,1)
+		    	this.nperson.push(item)
+		    	console.log(this.nperson)
+		    	this.$set(this.department[this.nowIn].type[this.nowPerson],'person',this.nperson)
+		    	
+//		    	this.workerInfo.splice(index,1)
 		    },
 		    rePersonList(info,index,inz,nowIn){
 		    	this.nowIn = nowIn
-		    	this.workerInfo.push(info)
 		    	this.$set(this.department[nowIn].type[inz].person,index,{})
 		    },
 	    	addDepart(){
@@ -288,36 +301,18 @@
 		        });
       		},
       		getData(){	
-      			
-			    let rec=[]
-			    let param = new URLSearchParams();
-			    param.append("uid","10000163");
-			    this.$http.post("/index/Mobile/Find/nearby_worker",param)
-			    .then((res)=>{
-			    	 for (let x in res.data.data.nworker)  
-					  {  
-					    if(res.data.data.nworker[x].avatar.indexOf('jpg')!== -1){
-					   		res.data.data.nworker[x].avatar = 'http://img-bbsf.6655.la/FnF0MmO7g-WONz-QYU6BsWMTwNR_'
-					    }else{
-					   	 	res.data.data.nworker[x].avatar = 'http://img-bbsf.6655.la/' + res.data.data.nworker[x].avatar
-					    }
-					    if(res.data.data.nworker[x].type){
-					    	res.data.data.nworker[x].type = res.data.data.nworker[x].type[0]
-					    }
-					  }
-			     	this.workerInfo=res.data.data.nworker
-			    })
+			    this.workerInfo=this.comPersonList
+			    this.old_department = this.department
     		},
     		creatOver(){
       			let c_param = new URLSearchParams();
-			    c_param.append("uid","10000163");
+			    c_param.append("uid",this.user.uid);
 			    c_param.append("name",this.companyName);
 			    c_param.append("company_address",this.companyAdd);
 			    c_param.append("company_tel",this.companyPhone);
 			    this.$http.post("/index/Mobile/User/add_company",c_param)
 			    .then((res)=>{
-			    	this.companyId=res.data.data.company_id
-			    	
+			    	this.companyId=res.data.data.company_id	
 			    })
     			let ret = []
 	         	for(var i in this.department) {
@@ -342,15 +337,18 @@
 		         		}
 		         	}
 		      	}
-//	         	console.log(ret)
 	         	let newRet =JSON.stringify(ret);
 	        	let param = new URLSearchParams();
 			    param.append("big_json",newRet);
 			    param.append("company_id",this.companyId);
-			    param.append("uid","10000163");
+			    param.append("uid",this.user.uid);
 			    this.$http.post("/index/Mobile/company/entrance_company",param)
 			      .then((res)=>{
-			      	console.log(res)
+			      	if(res.data.code === '0'){
+			      		alert('创建成功')
+			      	}else{
+			      		alert('创建失败')
+			      	}
 			      })
     		},
 	     	next() {
@@ -380,6 +378,16 @@
 				document.getElementById('step').innerText = '完成'
 			}else if(this.active === 3){
 				this.creatOver()
+				this.$emit('companyClose')
+				this.processOneShow = true
+				this.processTwoShow = false
+				this.processThreeShow = false
+				this.companyName=''
+		        this.companyPhone=''
+		        this.companyAdd=''
+				this.active = 0
+				document.getElementById('step').innerText = '下一步'
+				this.department = this.old_department
 			}
 	    }
 	}
@@ -447,7 +455,7 @@
 				.process{
 					padding:10px;
 					.processThree{
-						width: 200px;
+						width: 300px;
 						margin: 20px;
 						position: relative;	
 						min-height: 200px;
@@ -534,9 +542,9 @@
 								ul{
 									li{
 										width: 100%;
-										height: 30px;
+										height: 40px;
 										text-indent: 10px;
-										line-height: 30px;
+										
 										background:transparent;
 										border-bottom: 1px solid #999999;
 										position: relative;
@@ -544,9 +552,9 @@
 										
 										.close{
 											position: absolute;
-											top: 2px;
-											right: 2px;
-											font-size: 14px;
+											top: 10px;
+											right: 1px;
+											font-size: 18px;
 											&:hover{
 												color: #FA5555;
 											}
@@ -555,7 +563,12 @@
 											display: inline-block;
 											float: left;
 											margin-top: 2px;
-											
+											img{
+												width: 30px;
+												height: 30px;
+												border-radius: 50%;
+												margin-top: 2px;
+											}
 										}
 										.content{
 											display: inline-block;
@@ -565,18 +578,13 @@
 											span{
 												display: block;
 												font-size: 12px;
-												height: 15px;
-												line-height: 15px;
+												line-height: 20px;
 												background: transparent;
 												color: #666666;
 												border-bottom: none;
 											}
 										}
-										img{
-											width: 26px;
-											height: 26px;
-											border-radius: 50%;
-										}
+										
 									}
 								}
 							}

@@ -2,7 +2,8 @@ const state = {
   user:{},
   nowCompanyId:-1,
   comPersonList:[],
-  comDepartList:[]
+  comDepartList:[],
+  comPartPersonList:[]
 }
 
 export default state

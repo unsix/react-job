@@ -20,22 +20,21 @@
 									<img :src="item.avatar" alt="" />
 								</div>
 								<div class="content">
-									<span class="name">{{item.username}}</span>
+									<span class="name">{{item.name}}</span>
 									<span class="phone">{{item.phone}}</span>
 								</div>
 								<i class="close el-icon-circle-close-outline"  @click="_deleteManager(item,index)"></i>
 							</div>
 						</li>
-						<li v-for="(item,index) in groupList">
+						<li v-for="(item,index) in comPartPersonList" v-show="item.person.length != 0">
 							<span>{{item.department_name}}</span>
-							<div v-for="(list,index) in item.infos" >
+							<div v-for="(list,index) in item.person" >
 								<div class="img">
 									<img :src="list.avatar" alt="" />
 								</div>
 								<div class="content">
-									<span class="name">{{list.username}}</span>
+									<span class="name">{{list.name}}</span>
 									<span class="phone">{{list.phone}}</span>
-									
 								</div>
 								<i class="close el-icon-circle-close-outline"></i>
 							</div>
@@ -60,8 +59,8 @@
 						<div class="sec">
 							<span class="title">职位</span>
 							<div class="position">  
-								<!--<el-radio v-for="(item,index) in radioArr" v-model="radio" :label="index">{{item.name}}</el-radio>-->
-  								<!--<el-radio v-model="radio" label="2">备选项</el-radio>-->
+								<!--<el-radioo v-for="(item,index) in radiooArr" v-model="radioo" :label="index">{{item.name}}</el-radioo>-->
+  								<!--<el-radioo v-model="radioo" label="2">备选项</el-radioo>-->
   								<!--<i class="addGroup el-icon-circle-plus" @click="addGroup"></i>-->
 							</div>
 						</div>
@@ -80,7 +79,7 @@
 							</div>
 							<div class="add el-icon-circle-plus" @click="addAdminPerson" ></div>
 							<ul>
-									<li v-for="(item,index) in adminArr">{{item.username}} 	
+									<li v-for="(item,index) in adminArr">{{item.name}} 	
 										<i class="close el-icon-error" @click="_deleteManager(item,index)"></i> 
 									</li>
 							</ul>
@@ -93,12 +92,12 @@
 				<div class="close el-icon-circle-close" @click="closePersonList" ></div>
 				<div class="personList" id="person">
 					<ul>
-						<li v-for="(item,index) in companyPersonList" @click="choosePerson(item,index)" :key="index">
+						<li v-for="(item,index) in comPersonList" @click="choosePerson(item,index)" :key="index">
 							<div class="avatar">
 								<img :src="item.avatar" alt="" />
 							</div>
 							<div class="content">
-								<span class="name">{{item.username}}</span>
+								<span class="name">{{item.name}}</span>
 								<span class="phone">{{item.phone}}</span>
 							</div>
 						</li>
@@ -126,25 +125,26 @@ import {mapGetters} from 'vuex'
 				addAdministratorShow:false,
 				typeInfo:'',
 				typeName:['添加部门','添加管理员','添加工程项目'],
-				radio: '2',
+				radioo: '2',
 				adminArr:[],
-				companyPersonList:[],
 				personShow:false,
 				numOne:0
 			}
 		},
-		created(){
-			
+		created(){	
 			this._getCompanyId()
+//			console.log(this.comPartPersonList)
 		},
 		computed:{
 			...mapGetters([
-				'nowCompanyId'
+				'user',
+				'nowCompanyId',
+				'comPartPersonList',
+				'comPersonList'
 			])
 		},
 		watch:{
 			nowCompanyId:function (){
-//				this.groupList=[]
 //				this.numOne=0
 //				this._getCompanyId()
 			}
@@ -166,19 +166,20 @@ import {mapGetters} from 'vuex'
 					newAdminArr.push(item.personnel_id)
 				})
 				let param = new URLSearchParams();
-			    param.append("uid","10000216");
+			    param.append("uid",this.user.uid);
 			    param.append("personnel_id",JSON.stringify(newAdminArr));
 			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/User/give_manage",param)
 			    .then((res)=>{
+			    	if(res.data.code === '0'){
+			    		alert('添加成功')
+			    	}
 			    })
 			},
 			_deleteManager(item,index){
-				
 				if(item.personnel_id==='11'){
 					alert('管理员不可删除自己')
 					return
-					
 				}
 				this.adminArr.splice(index,1)
 				let param = new URLSearchParams();
@@ -196,7 +197,7 @@ import {mapGetters} from 'vuex'
 //					this.listShow=false
 //					this.inviteColleaguesShow=true
 //					this.addAdministratorShow=false
-	    			this.$prompt('请输入新职位', '提示', {
+	    			this.$prompt('请输入新部门', '提示', {
 			          confirmButtonText: '确定',
 			          cancelButtonText: '取消',
 			        }).then(({ value }) => {
@@ -204,7 +205,7 @@ import {mapGetters} from 'vuex'
 			            type: 'success',
 						message: '添加'+value+'成功'
 			          });
-			          this.groupList.push({
+			          this.comPartPersonList.push({
 			          	department_name:value
 			          })
 			        }).catch(() => {
@@ -224,8 +225,8 @@ import {mapGetters} from 'vuex'
 		    },
 		    choosePerson(item,index){
 		    	for(let i = 0;i<this.adminArr.length;i++){
-		    		if(item.username===this.adminArr[i].username){
-		    			alert(item.username+'已经是管理员了！')
+		    		if(item.name===this.adminArr[i].name){
+		    			alert(item.name+'已经是管理员了！')
 		    			return
 		    		}	
 		    	}
@@ -248,53 +249,19 @@ import {mapGetters} from 'vuex'
 					mparam.append("company_id",this.nowCompanyId);
 					mparam.append("department_id",-1);  
 					this.$http.post("/index/Mobile/user/get_company_personnel",mparam)
-					.then((res)=>{
-						
+					.then((res)=>{	
 						if(res.data.data.length != 0){
 							res.data.data.forEach((list)=>{	
 						    		let mewObj={}
 						    		mewObj.personnel_id=list.personnel_id
 						    		mewObj.department_name=list.department_name
-						    		mewObj.username=list.name
+						    		mewObj.name=list.name
 						    		mewObj.phone=list.phone
 						    		mewObj.avatar=getAvatar(list.avatar)
 						    		this.adminArr.push(mewObj)  
 					   		})
 						}
-					})
-			    	for(let j = 0,len=resData.length; j < len; j++) {
-			    		if(this.numOne>=len){
-			    			return
-			    		}
-			    		let obj={}
-			    		
-			    		this.$set(obj,'department_name',resData[j].department_name)
-//			    		根据部门id获取列表				
-			    		let zparam = new URLSearchParams();
-					    zparam.append("company_id",this.nowCompanyId);
-					    zparam.append("department_id",resData[j].department_id);
-					    
-					    this.$http.post("/index/Mobile/user/get_company_personnel",zparam)
-					    .then((res)=>{	
-					    	if(res.data.code===0){
-					    		let narr=[]
-					    		res.data.data.forEach((list)=>{		
-						    		let newObj={}
-						    		newObj.personnel_id = list.personnel_id
-						    		newObj.department_name=list.department_name
-						    		newObj.username=list.name
-						    		newObj.phone=list.phone
-						    		newObj.avatar=getAvatar(list.avatar)
-						    		this.companyPersonList.push(newObj)
-						    		narr.push(newObj)   
-						    		this.$set(obj,'infos',narr)
-					    		})
-					    		
-					    	}
-					    }) 
-					     this.numOne++
-					     this.groupList.push(obj)
-			    	}		
+					})		
 			    })
 	   		}
 		}

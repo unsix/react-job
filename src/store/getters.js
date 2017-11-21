@@ -5,3 +5,5 @@ export const nowCompanyId = state => state.nowCompanyId
 export const comPersonList = state => state.comPersonList
 
 export const comDepartList = state => state.comDepartList
+
+export const comPartPersonList = state => state.comPartPersonList
