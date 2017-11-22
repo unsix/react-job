@@ -325,6 +325,69 @@
 						</div>
 					</div>
 				</div>
+				<div class="form" name="申请公章" v-if="gongzhang_show">
+					<div>
+						<span>用章部门：</span><span>{{form_Lista.department_name}}</span>
+					</div>
+					<div>
+						<span>申请人：</span><span>{{form_Lista.user_name}}</span>
+					</div>
+					<div>
+						<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+					</div>
+					<div v-for="item in form_Lista.info" class="qingdan">
+						<h4>申请清单</h4>
+						<p>印章类别:<span>{{item.seal_type}}</span></p>
+						<p>盖章事由:<span>{{item.reason}}</span></p>
+						<p>资料名称:<span>{{item.contract_name}}</span></p>
+						<p>公司名称:<span>{{item.name_company}}</span></p>
+						<p>数量:<span>{{item.num}}</span></p>
+						<p>备注:<span>{{item.remarks}}</span></p>
+					</div>
+					<div>
+						<span>附件列表：</span>
+					</div>
+					<div>
+						<span>图片附件：</span>
+						<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
+							<img :src="item" alt="" @click="ctrl_pic_show"/>
+						</a>
+					</div>
+					<div>
+						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
+					</div>
+					<div>
+						<span>审批人员：</span><span v-for="item in form_Listb.list" >{{item}}</span>
+					</div>
+					<div>
+						<span>审批：</span>
+						<div class="approval">
+							<div v-for="item in form_Listb.content">
+								<span>{{item.department_name}}</span>
+								<span>{{item.name}}</span>
+								<span style="color: #67C23A;">{{item.is_agree}}</span>
+							</div>
+							<div v-for="item in form_Listb.content">
+								<span>审批时间</span>
+								<span>{{item.add_time}}</span>
+							</div>
+						</div>
+					</div>
+					<div class="menu" v-show="handle_show">
+						<span @click="handle">处理</span>
+						<div class="button" v-show="menuShow">
+							<span @click="agree($event)">同意</span>
+							<span @click="refuse">拒绝</span>
+							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
+							<i class="el-icon-close" @click="closeMenu" ></i>
+							<br />
+							<input name="token" type="hidden" :value="input_value">
+							<input type="file" multiple="multiple" />
+
+							
+						</div>
+					</div>
+				</div>
 		</div>
 		<browsePic :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 	</div>
@@ -333,6 +396,7 @@
 
 <script>
 import browsePic from '@/base/browse_pic/browse_pic'
+import {create_gongzhang_list} from '@/common/js/approval/gongzhang'
 import {create_qingkuandan_list} from '@/common/js/approval/qingkuandan'
 import {create_cengpijian_list} from '@/common/js/approval/cengpijian'
 import {create_hetongpingshen_list} from '@/common/js/approval/hetongpingshen'
@@ -354,6 +418,7 @@ export default{
 			cengpijian_show:false,
 			qinggoudan_show:false,
 			pingshenbiao_show:false,
+			gongzhang_show:false,
 			form_Lista:[],
 			form_Listb:[],
 			menuShow:false,
@@ -368,7 +433,8 @@ export default{
 			file: '',
 			pic_hash:'',
 			cur_height:'',
-			img_arr:[]
+			img_arr:[],
+			fileList:[]
 		}
 	},
 	computed:{
@@ -383,7 +449,10 @@ export default{
 	components:{
 		browsePic
 	},
-	methods:{
+	methods:{  
+		handleUpload() {
+//    document.getElementById('excel-upload-input').click()
+    },
 		close_pic(){
 			this.pic_show = false
 		},
@@ -392,14 +461,12 @@ export default{
 				return
 			}
 			--this.pic_index
-			console.log(this.pic_index)
 		},
 		next_one(){
 			if(this.pic_index === this.img_arr.length-1){
 				return
 			}
 			++this.pic_index
-			console.log(this.pic_index)
 		},
 		ctrl_pic_show(){
 			this.pic_show=true
@@ -407,6 +474,15 @@ export default{
 		getFile(event) {
             this.file = event.target.files;
         },
+        handle(){
+			this.menuShow=true
+			let param = new URLSearchParams();
+			param.append("uid",this.user.uid);
+			this.$http.post("/index/Mobile/path/get_token",param)
+			.then((res)=>{
+				this.input_value = res.data.data
+			})
+		},
 		agree(){
 			let formData = new FormData();
             formData.append('file', this.file);
@@ -429,6 +505,7 @@ export default{
 				this.$http.post("/index/Mobile/find/approval_process",param)
 				.then((res)=>{
 					if(res.status===200){
+						this._getExamList()
 						this.listShow = true
 						this.formShow = false
 					}
@@ -462,15 +539,6 @@ export default{
 					
 			})
 		},
-		handle(){
-			this.menuShow=true
-			let param = new URLSearchParams();
-			param.append("uid",this.user.uid);
-			this.$http.post("/index/Mobile/path/get_token",param)
-			.then((res)=>{
-				this.input_value = res.data.data
-			})
-		},
 		return_list(){
 			this.formShow=false
 			this.listShow=true
@@ -479,6 +547,7 @@ export default{
 			this.qinggoudan_show=false
 			this.cengpijian_show=false
 			this.pingshenbiao_show=false
+			this.gongzhang_show=false
 			
 		},
 		listCli(item){
@@ -493,6 +562,8 @@ export default{
 				this.qinggoudan_show = true
 			}else if(item.type === '合同评审表'){
 				this.pingshenbiao_show =true
+			}else if(item.type === '申请公章'){
+				this.gongzhang_show=true
 			}
 			let param = new URLSearchParams();
 			param.append("uid",this.user.uid);
@@ -508,6 +579,8 @@ export default{
 				}else if(item.type === '请款单'){
 					this.form_Lista = create_qingkuandan_list(res.data.data)
 					this.get_img(this.form_Lista.img)
+				}else if(item.type === '申请公章'){	
+					this.form_Lista = create_gongzhang_list(res.data.data)
 				}
 			})
 			let nparam = new URLSearchParams();
@@ -554,7 +627,7 @@ export default{
 				this.handle_time_show=false
 				this.approval_process=true
 				this.ilaunched=false
-				this.handle_show=true
+				this.handle_show = false
 			}
 			this.currentIndex = index
 			this._getExamList()
@@ -575,7 +648,6 @@ export default{
 					arr.push(create_exam_list(item))
 				})
 				this.untreated=arr		
-				
 			})
 		}
 	},
@@ -588,6 +660,7 @@ export default{
 </script>
 
 <style lang="scss" scoped>
+
 .exam_wrapper{
 	width: 100%;
 	height: 100%;
@@ -613,6 +686,7 @@ export default{
 		}
 		.form{
 			padding: 10px;
+			color: #999999;
 			>div{
 				display: block;
 				border-bottom: 1px solid #DDDDDD;
@@ -621,7 +695,8 @@ export default{
 					font-size: 14px;
 					line-height: 24px;
 					&:nth-child(2){
-						color: #409EFF;
+						margin-left: 5px;
+						color: #444444;
 					}
 				}
 				.approval{
@@ -638,10 +713,28 @@ export default{
 					cursor: pointer;
 				}
 			}
+			.qingdan{
+				font-size: 14px;
+				padding: 4px 0;
+				h4{
+					color: #409EFF;
+					font-size: 15px;
+					margin: 2px 0px;
+				}
+				p{
+					height: 30px;
+					line-height: 30px;
+					span{
+						margin-left: 5px;
+						color: #444444;
+					}
+				}
+			}
 			.menu{
 				margin-top: 10px;
 				border-bottom: none;
 				span{
+					font-size: 14px;
 					display: inline-block;
 					padding: 2px 10px;
 					border: 1px solid #3487E2;
@@ -666,27 +759,31 @@ export default{
 						}
 						
 					}
-					input{
-						width: 100px;
+					input[type="text"]{
+						width:200px;
 						margin-left: 4px;
-						height: 22px;
+						height: 16px;
 						outline: none;
 						border: 1px solid #3487E2;
 						border-radius: 4px;
 						text-indent: 4px;
+						line-height: 16px;
+					}
+					input[type="file"]{
+						margin-left: 4px;
+						margin-top: 4px;
 					}
 					i{
-						font-size: 14px;
+						font-size: 16px;
 						padding: 4px;
 						cursor: pointer;
+						margin-left: 10px;
 					}
-					button{
-						margin-left: 4px;
-						border: none;
-					    background:#DDDDDD; 
-					    color:#000000; 
-					    padding: 2px 10px;
-					    border-radius: 4px;
+					>a{
+						font-size: 12px;
+						display: inline-block;
+						padding: 4px 10px;
+						border: 1px solid #5E8579;
 					}
 					
 				}

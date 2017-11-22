@@ -16,7 +16,7 @@
 		<div class="chooseApprovalPerson" id="chooseApprovalPerson" v-show="submitAddPersonShow">
 			<div class="depart">
 				<ul>
-					<li v-for="(group,index) in comPersonList" :key="group.department_name">
+					<li v-for="(group,index) in comPartPersonList" :key="group.department_name" v-show="group.person.length != 0">
 						<span id="icon"><i class="el-icon-menu"></i>{{group.department_name}}</span>
 						<div class="per" v-for="item in group.person" :key="item.personnel_id" @click="chooseContractApprovalPerson(item)">
 							<div class="perInfo">
@@ -95,7 +95,8 @@
 			...mapGetters([
 				'nowCompanyId',
 				'user',
-				'comPersonList'
+				'comPersonList',
+				'comPartPersonList'
 			])
 		},
 		methods:{
@@ -106,7 +107,6 @@
 				this.jurisdictionFormList.forEach((item,index)=>{
 					this.arr.push(createOrder(item,index))
 				})
-				
 				this.dialogVisible=false
 				let param = new URLSearchParams();
 				param.append("uid",this.user.uid);
@@ -115,7 +115,14 @@
 				param.append("sequence",JSON.stringify(this.arr));
 			    this.$http.post("/index/Mobile/approval/set_sequence",param)
 			    .then((res)=>{
-			    	
+			    	if(res.data.code === 0){
+			    		this.$message({
+				          message: '修改成功',
+				          type: 'success'
+				        });
+			    	}else{
+			    		this.$message.error('修改失败');
+			    	}
 			    })
 			},
 			addContractApprovalPerson(){
@@ -128,7 +135,7 @@
 			chooseContractApprovalPerson(item){
 				for(let i = 0;i<this.jurisdictionFormList.length;i++){
 		    		if(item.name===this.jurisdictionFormList[i].name){
-		    			alert(item.name+'已经在列表中！')
+		    			this.$message.error(item.name+'已经在列表中！');
 		    			return
 		    		}	
 		    	}

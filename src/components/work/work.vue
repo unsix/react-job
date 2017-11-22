@@ -50,7 +50,7 @@
 								<!--审批选项-->
 								<div class="extend">
 									<ul class="extend_ul" v-show="listShow">
-										<li v-for="(item,index) in examNav" v-bind:class="{'active': index == currentIndex}" @click="currentIndex=index">
+										<li v-for="(item,index) in examNav" v-bind:class="{'active': index == currentIndex}" @click="rc_or_sp(index)">
 											<a>{{item}}</a>
 										</li>
 									</ul>
@@ -141,6 +141,11 @@ import {mapGetters} from 'vuex'
 				this.jurisdictionManageShow = false
 			},
 			navCli(item,index){
+				this.listShow=false,
+		        this.compamyShow=false,
+		        this.manageCompanyShow=false,
+		        this.jurisdictionManageShow=false,
+		        this.examShow = false
 				this.addApprovalShow = false
 				this.shareShow = false
 				this.navIndex = index
@@ -155,6 +160,12 @@ import {mapGetters} from 'vuex'
 				this.$refs.icon1.style.transition = 'all 0.4s'
 				this.$refs.icon1.style[transform] = `translate3d(${x}px,0,0)`
 			},
+			rc_or_sp(index){
+				this.currentIndex = index
+				if(index === 1){
+					this.examShow=true
+				}
+			},
 			add_approval_showF(){
 				this.addApprovalShow=false
 			},
@@ -162,9 +173,13 @@ import {mapGetters} from 'vuex'
 				this.listShow=false,
 		        this.compamyShow=false,
 		        this.manageCompanyShow=false,
-		        this.jurisdictionManageShow=false
+		        this.jurisdictionManageShow=false,
+		        this.examShow = false
 				switch (index)
 				{
+				case 0:
+				  this.listShow = true
+				  break;
 				case 1:
 				  this.compamyShow = true
 				  break;

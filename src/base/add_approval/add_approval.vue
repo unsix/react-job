@@ -9,13 +9,32 @@
 				</ul>
 			</div>
 			<div class="form">
-				<div class="qingkuan" v-show="qingkuan_show">
-					<el-form :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
-						<el-form-item label="工程名称" prop="project_name">
-							<el-input v-model="qkd_ruleForm.project_name"></el-input>
-						</el-form-item>
-						<el-form-item label="合同名称" prop="contract_name">
+				<div class="qingkuan" v-show="qingkuan_big_show">
+					<div class="content" v-for="item in untreated" v-show="qingkuan_one_show">
+						<div class="creatTime">
+							<span>{{item.add_time}}</span>
+						</div>
+						<div class="type">
+							<span>类型：{{item.type}}</span>
+						</div>
+						<div class="title">
+							<span>标题：{{item.title}}</span>
+						</div>
+						<div class="process">
+							<span>审批进程：</span><span>{{item.approval_state}}</span>
+						</div>
+						<div class="button">
+							<span @click="user_qingkuan(item)">使用</span>
+							<span>查看</span>
+						</div>
+						
+					</div>
+					<el-form v-show="qingkuan_show"  :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
+						<el-form-item label="工程名称" prop="contract_name">
 							<el-input v-model="qkd_ruleForm.contract_name"></el-input>
+						</el-form-item>
+						<el-form-item label="合同名称" prop="contract_name_new">
+							<el-input v-model="qkd_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
 						<el-form-item label="请款人姓名" prop="user_name">
 							<el-input v-model="qkd_ruleForm.user_name" @focus="request_leader"></el-input>
@@ -32,23 +51,36 @@
 						<el-form-item label="工种" prop="work_type">
 							<el-input v-model="qkd_ruleForm.work_type"></el-input>
 						</el-form-item>
+						<el-form-item label="银行账户名称" prop="account_name">
+							<el-input v-model="qkd_ruleForm.account_name"></el-input>
+						</el-form-item>
 						<el-form-item label="开户行地址" prop="bank_address">
 							<el-input v-model="qkd_ruleForm.bank_address"></el-input>
+						</el-form-item>
+						<el-form-item label="银行卡号" prop="bank_card">
+							<el-input v-model="qkd_ruleForm.bank_card"></el-input>
 						</el-form-item>
 						<el-form-item label="合同金额" prop="subtotal">
 							<el-input v-model="qkd_ruleForm.subtotal"></el-input>
 						</el-form-item>
+						<el-form-item label="增减金额">
+							<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
+						</el-form-item>
+						<el-form-item label="已领工程款">
+							<el-input v-model="qkd_ruleForm.balance_subtotal"></el-input>
+						</el-form-item>
 						<el-form-item label="本次请款金额" prop="request_subtotal">
 							<el-input v-model="qkd_ruleForm.request_subtotal"></el-input>
-						</el-form-item>
-						<el-form-item label="收款人姓名" prop="draw_money_name">
-							<el-input v-model="qkd_ruleForm.draw_money_name"></el-input>
 						</el-form-item>
 						<el-form-item label="请款内容" prop="request_content">
 							<el-input type="textarea" v-model="qkd_ruleForm.request_content"></el-input>
 						</el-form-item>
+						<el-form-item label="收款人姓名" prop="draw_money_name">
+							<el-input v-model="qkd_ruleForm.draw_money_name"></el-input>
+						</el-form-item>
+						
 						<el-form-item>
-							<el-button type="primary" @click="submitForm('qkd_ruleForm')">立即创建</el-button>
+							<el-button type="primary" @click="submitForm_qkd('qkd_ruleForm')">立即创建</el-button>
 							<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
@@ -367,10 +399,18 @@
 				</div>
 			</div>
 		</div>
+		<div class="as_what" v-show="as_what_show">
+			<ul>
+				<h2>选择请款依据</h2>
+				<i class="el-icon-close" @click="as_what_show = !as_what_show"></i>
+				<li v-for="(item,index) in asType" @click="as_click(index)" >{{item}}</li>
+			</ul>
+		</div>
 	</div>
 </template>
 
 <script>
+	import {create_exam_list} from '@/common/js/approval/exam'
 	import { prefixStyle } from '@/common/js/dom'
 	import { mapGetters } from 'vuex'
 	const transform = prefixStyle('transform')
@@ -379,22 +419,31 @@
 		data() {
 			return {
 				nav: ['合同审核表', '请购单', '呈批件', '申请公章', '请款单'],
+				asType:['请购单','合同评审表','呈批件','其他'],
 				navIndex: 0,
 				radio: '1’',
+				as_what_show:false,
+				qingkuan_one_show:false,
 				personShow: false,
+				qingkuan_big_show:false,
 				qingkuan_show: false,
 				qinggou_show: false,
 				chengpijian_show: false,
 				pingshenbiao_show: true,
 				shenqinggongzhang_show: false,
+				untreated:[],
+				qingkuan_approval_id:'',
+				nowType:1,
 				insertType: 0,
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				qkd_ruleForm: {
+					contract_name_new:'',
 					contract_name: '',
-					project_name: '',
 					user_name: '',
 					phone: '',
 					bank_name: '',
+					account_name:'',
+					bank_card:'',
 					work_type: '',
 					bank_address: '',
 					subtotal: '',
@@ -467,6 +516,73 @@
 					project_manager: '',
 					department_id: '',
 					add: []
+				},
+				rules: {
+					account_name: [{
+						required: true,
+						message: '请填写	银行账户名称',
+						trigger: 'blur'
+					}],
+					contract_name_new: [{
+						required: true,
+						message: '请填写合同名称',
+						trigger: 'blur'
+					}],
+					contract_name: [{
+						required: true,
+						message: '请填写工程名称',
+						trigger: 'blur'
+					}],
+					user_name: [{
+						required: true,
+						message: '请填写请款人姓名',
+						trigger: 'chagne'
+					}],
+					phone: [{
+						required: true,
+						message: '请填写联系方式',
+						trigger: 'chagne'
+					}],
+					bank_card: [{
+						required: true,
+						message: '请填写银行卡号',
+						trigger: 'blur'
+					}],
+					bank_name: [{
+						required: true,
+						message: '请填写银行账户名称',
+						trigger: 'blur'
+					}],
+					work_type: [{
+						required: true,
+						message: '请填写工种',
+						trigger: 'blur'
+					}],
+					bank_address: [{
+						required: true,
+						message: '请填写开户行地址',
+						trigger: 'blur'
+					}],
+					subtotal: [{
+						required: true,
+						message: '请填写合同金额',
+						trigger: 'blur'
+					}],
+					request_subtotal: [{
+						required: true,
+						message: '请填写本次请款金额',
+						trigger: 'blur'
+					}],
+					request_content: [{
+						required: true,
+						message: '请填写请求内容',
+						trigger: 'blur'
+					}],
+					draw_money_name: [{
+						required: true,
+						message: '请填写收款人姓名',
+						trigger: 'blur'
+					}]
 				},
 				sqgz_rules: {
 					departmental: [{
@@ -658,64 +774,8 @@
 						message: '请填写收货地址',
 						trigger: 'blur'
 					}]
-				},
-				rules: {
-					contract_name: [{
-						required: true,
-						message: '请填写合同名称',
-						trigger: 'blur'
-					}],
-					project_name: [{
-						required: true,
-						message: '请填写项目名称',
-						trigger: 'blur'
-					}],
-					user_name: [{
-						required: true,
-						message: '请填写请款人姓名',
-						trigger: 'chagne'
-					}],
-					phone: [{
-						required: true,
-						message: '请填写联系方式',
-						trigger: 'chagne'
-					}],
-					bank_name: [{
-						required: true,
-						message: '请填写银行账户名称',
-						trigger: 'blur'
-					}],
-					work_type: [{
-						required: true,
-						message: '请填写工种',
-						trigger: 'blur'
-					}],
-					bank_address: [{
-						required: true,
-						message: '请填写开户行地址',
-						trigger: 'blur'
-					}],
-					subtotal: [{
-						required: true,
-						message: '请填写合同金额',
-						trigger: 'blur'
-					}],
-					request_subtotal: [{
-						required: true,
-						message: '请填写本次请款金额',
-						trigger: 'blur'
-					}],
-					request_content: [{
-						required: true,
-						message: '请填写请求内容',
-						trigger: 'blur'
-					}],
-					draw_money_name: [{
-						required: true,
-						message: '请填写收款人姓名',
-						trigger: 'blur'
-					}]
 				}
+				
 			}
 		},
 		computed: {
@@ -728,6 +788,13 @@
 			])
 		},
 		methods: {
+			
+			user_qingkuan(item){
+				console.log(item)
+				this.qingkuan_one_show = false
+				this.qingkuan_show = true
+				this.qingkuan_approval_id = item.approval_id
+			},
 			close_sqgz(item, index) {
 				this.sqgz_ruleForm.add.splice(index, 1)
 			},
@@ -794,14 +861,13 @@
 			},
 			change_nav(index) {
 				this.navIndex = index
-				this.qingkuan_show = false
+				this.qingkuan_big_show = false
 				this.qinggou_show = false
 				this.chengpijian_show = false
 				this.pingshenbiao_show = false
 				this.shenqinggongzhang_show = false
 				if(index === 0) {
 					this.pingshenbiao_show = true
-
 				} else if(index === 1) {
 					this.qinggou_show = true
 				} else if(index === 2) {
@@ -809,7 +875,8 @@
 				} else if(index === 3) {
 					this.shenqinggongzhang_show = true
 				} else if(index === 4) {
-					this.qingkuan_show = true
+					this.qingkuan_big_show = true
+					this.as_what_show = true
 				}
 			},
 			closePersonList() {
@@ -886,6 +953,16 @@
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						this.psb_submit()
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
+			},
+			submitForm_qkd(formName) {
+				this.$refs[formName].validate((valid) => {
+					if(valid) {
+						this.qkd_submit()
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -1007,11 +1084,11 @@
 						console.log(res)
 					})
 			},
-			submit() {
+			qkd_submit() {
+				console.log(this.qingkuan_approval_id)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("contract_name", this.qkd_ruleForm.contract_name);
-				param.append("project_name", this.qkd_ruleForm.project_name);
 				param.append("company_id", this.nowCompanyId);
 				param.append("request_name", this.qkd_ruleForm.request_name);
 				param.append("worker_type", this.qkd_ruleForm.worker_type);
@@ -1023,6 +1100,7 @@
 				param.append("request_subtotal", this.qkd_ruleForm.request_subtotal);
 				param.append("request_content", this.qkd_ruleForm.request_content);
 				param.append("type", '2');
+				param.append("form_approval_id", this.qingkuan_approval_id);
 				param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 				param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 				this.$http.post("/index/Mobile/approval/add_request_money", param)
@@ -1032,15 +1110,93 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
+			},
+			as_click(index){
+				this._getExamList(index)
+				this.as_what_show=false
+				if(index === 3){
+					this.qingkuan_show = true  
+					this.qingkuan_one_show = false  
+				}else{
+					this.qingkuan_show = false  
+					this.qingkuan_one_show = true  
+				}
+				
+			},
+			_getExamList(index){
+				let type
+				if(index===0){
+					type = 3
+				}else if(index === 1){
+					type = 1
+				}else if(index === 2){
+					type = 6
+				}else{
+					return
+				}
+				let param = new URLSearchParams();
+				param.append("uid",this.user.uid);
+				param.append("approval_type",type);
+				param.append("each",'20');
+				param.append("company_id",this.nowCompanyId);
+				this.$http.post("/index/Mobile/approval/request_monry_basis",param)
+				.then((res)=>{
+					let arr=[]
+					res.data.data.forEach((item)=>{				
+						arr.push(create_exam_list(item))
+					})
+					this.untreated=arr		
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+.as_what {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	height: 100%;
+	width: 100%;
+	margin: 0 auto;
+	background: rgba(0, 0, 0, 0.4);
+	z-index: 10;
+	ul {
+		width: 300px;
+		background: #FFFFFF;
+		margin: 300px auto;
+		padding: 10px;
+		h2 {
+			display: inline-block;
+			margin-bottom: 10px;
+			font-size: 20px;
+		}
+		i {
+			font-size: 20px;
+			float: right;
+			cursor: pointer;
+			&:hover {
+				color: #FA5555
+			}
+		}
+		li {
+			cursor: pointer;
+			display: block;
+			height: 30px;
+			line-height: 30px;
+			&:hover {
+				color: #5A5E66;
+			}
+		}
+	}
+}
 	.add_approval_wrapper {
 		width: 558px;
 		border: 1px solid #ddd;
+		
 		.add_approval {
 			/*padding: 8px 10px;*/
 			.nav {
@@ -1064,7 +1220,44 @@
 				background-color: #f9f9f9;
 				padding: 10px;
 				.qingkuan {
-					/*margin-top: 10px;*/
+					.content{
+						font-size: 14px;
+						border-bottom: 1px solid #666666;
+						position: relative;
+						>div{
+							
+							line-height: 20px;
+							display:block;
+								max-width:320px; 
+						}
+						.button{
+							position: absolute;
+							top: 30px;
+							right:50px;
+							span{
+								 
+								cursor: pointer;
+								color: #67C23A;
+								border: 1px solid #67C23A;
+								padding: 5px 10px;
+								
+								&:last-child{
+									color: #409EFF;
+									border: 1px solid #409EFF;
+								}
+							}
+						}
+						
+					}
+					.as_type{
+						ul{
+							li{
+								display: block;
+								height: 30px;
+								line-height: 30px;
+							}
+						}
+					}
 					table {
 						background: #FFFFFF;
 						td {
@@ -1154,6 +1347,8 @@
 											font-size: 12px;
 											height: 20px;
 											line-height: 20px;
+										
+											
 										}
 									}
 								}
