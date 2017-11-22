@@ -603,7 +603,10 @@ export default{
 				.then((res) => {
 					let arr=[]
 					res.data.data.picture.forEach((item)=>{
-						arr.push('http://img-bbsf.6655.la/'+item)
+						if(item != ''){
+							arr.push('http://img-bbsf.6655.la/'+item)
+						}
+						
 					})
 					this.img_arr = arr
 					this.$set(this.form_Lista,'img_list',arr)

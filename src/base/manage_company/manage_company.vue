@@ -26,7 +26,7 @@
 								<i class="close el-icon-circle-close-outline"  @click="_deleteManager(item,index)"></i>
 							</div>
 						</li>
-						<li v-for="(item,index) in comPartPersonList" v-show="item.person.length != 0">
+						<li v-for="(item,index) in comPartPersonList" >
 							<span>{{item.department_name}}</span>
 							<div v-for="(list,index) in item.person" >
 								<div class="img">
@@ -208,6 +208,7 @@ import {mapGetters} from 'vuex'
 			          this.comPartPersonList.push({
 			          	department_name:value
 			          })
+			          this._add_depart(value)
 			        }).catch(() => {
 			          this.$message({
 			            type: 'info',
@@ -219,6 +220,18 @@ import {mapGetters} from 'vuex'
 					this.inviteColleaguesShow=false
 					this.addAdministratorShow=true
 				}
+			},
+			_add_depart(value){
+				let param = new URLSearchParams();
+			    param.append("uid",this.user.uid);
+			    param.append("department_name",value);
+			    param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/User/add_department",param)
+			    .then((res)=>{
+			    	if(res.data.code === '0'){
+			    		
+			    	}
+			    })
 			},
       		closePersonList(){
 		    	this.personShow=false
@@ -240,10 +253,6 @@ import {mapGetters} from 'vuex'
 				this.addAdministratorShow=false
 			},
 			_getCompanyId(){			
-			    let param = new URLSearchParams();
-			    param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index/Mobile/user/get_department_lest",param)
-			    .then((res)=>{
 			    	let resData=res.data.data
 			    	let mparam = new URLSearchParams();
 					mparam.append("company_id",this.nowCompanyId);
@@ -262,7 +271,6 @@ import {mapGetters} from 'vuex'
 					   		})
 						}
 					})		
-			    })
 	   		}
 		}
 	}

@@ -48,8 +48,8 @@
 						<el-form-item label="银行账户名称" prop="bank_name">
 							<el-input v-model="qkd_ruleForm.bank_name"></el-input>
 						</el-form-item>
-						<el-form-item label="工种" prop="work_type">
-							<el-input v-model="qkd_ruleForm.work_type"></el-input>
+						<el-form-item label="工种" prop="worker_type">
+							<el-input v-model="qkd_ruleForm.worker_type"></el-input>
 						</el-form-item>
 						<el-form-item label="银行账户名称" prop="account_name">
 							<el-input v-model="qkd_ruleForm.account_name"></el-input>
@@ -422,6 +422,7 @@
 				asType:['请购单','合同评审表','呈批件','其他'],
 				navIndex: 0,
 				radio: '1’',
+				qkd_type:0,
 				as_what_show:false,
 				qingkuan_one_show:false,
 				personShow: false,
@@ -437,6 +438,8 @@
 				insertType: 0,
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				qkd_ruleForm: {
+					balance_subtotal:'',
+					gain_reduction_subtotal:'',
 					contract_name_new:'',
 					contract_name: '',
 					user_name: '',
@@ -444,7 +447,7 @@
 					bank_name: '',
 					account_name:'',
 					bank_card:'',
-					work_type: '',
+					worker_type: '',
 					bank_address: '',
 					subtotal: '',
 					request_subtotal: '',
@@ -553,7 +556,7 @@
 						message: '请填写银行账户名称',
 						trigger: 'blur'
 					}],
-					work_type: [{
+					worker_type: [{
 						required: true,
 						message: '请填写工种',
 						trigger: 'blur'
@@ -790,7 +793,7 @@
 		methods: {
 			
 			user_qingkuan(item){
-				console.log(item)
+				this.qkd_type = item.type
 				this.qingkuan_one_show = false
 				this.qingkuan_show = true
 				this.qingkuan_approval_id = item.approval_id
@@ -1085,7 +1088,7 @@
 					})
 			},
 			qkd_submit() {
-				console.log(this.qingkuan_approval_id)
+				console.log(this.qingkuan_approval_id, this.qkd_type)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("contract_name", this.qkd_ruleForm.contract_name);
@@ -1094,6 +1097,7 @@
 				param.append("worker_type", this.qkd_ruleForm.worker_type);
 				param.append("phone", this.qkd_ruleForm.phone);
 				param.append("account_name", this.qkd_ruleForm.account_name);
+				param.append("contract_name_new", this.qkd_ruleForm.contract_name_new);
 				param.append("bank_card", this.qkd_ruleForm.bank_card);
 				param.append("bank_address", this.qkd_ruleForm.bank_address);
 				param.append("subtotal", this.qkd_ruleForm.subtotal);
@@ -1101,7 +1105,10 @@
 				param.append("request_content", this.qkd_ruleForm.request_content);
 				param.append("type", '2');
 				param.append("form_approval_id", this.qingkuan_approval_id);
+				param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
+				param.append("request_money_basis_type", this.qkd_type);
 				param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
+				param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 				param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 				this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
@@ -1132,6 +1139,7 @@
 				}else if(index === 2){
 					type = 6
 				}else{
+					type = -1
 					return
 				}
 				let param = new URLSearchParams();
