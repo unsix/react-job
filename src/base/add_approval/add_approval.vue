@@ -10,6 +10,7 @@
 			</div>
 			<div class="form">
 				<div class="qingkuan" v-show="qingkuan_big_show">
+					<!--请款列表展示-->
 					<div class="content" v-for="item in untreated" v-show="qingkuan_one_show">
 						<div class="creatTime">
 							<span>{{item.add_time}}</span>
@@ -25,11 +26,195 @@
 						</div>
 						<div class="button">
 							<span @click="user_qingkuan(item)">使用</span>
-							<span>查看</span>
+							<span @click="view_qingkuan(item)">查看</span>
 						</div>
-						
 					</div>
-					<el-form v-show="qingkuan_show"  :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
+					<!--请款模板详情查看-->
+					<div class="template_view" v-show="template_view_show">
+						<!--呈批件展示-->
+						<div class="form" name="呈批件" v-if="chengpijian_if">
+							<div>
+								<span>呈批标题：</span><span>{{form_Lista.title}}</span>
+							</div>
+							<div>
+								<span>呈批部门：</span><span>{{form_Lista.department_name}}</span>
+							</div>
+							<div>
+								<span>文件编号：</span><span>{{form_Lista.chengpi_num}}</span>
+							</div>
+							<div>
+								<span>主题内容：</span><span>{{form_Lista.content}}</span>
+							</div>
+							<div>
+								<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+							</div>
+							<div>
+								<span>附件列表：</span>
+							</div>
+							<div>
+								<span>图片附件：</span>
+								<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
+									<img :src="item" alt="" @click="ctrl_pic_show" />
+								</a>
+							</div>
+							<div>
+								<span>发起人：</span><span>{{form_Listb.found_name}}</span>
+							</div>
+							<div>
+								<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #409EFF;">{{item}}</span>
+							</div>
+							<div>
+								<span>审批：</span>
+								<div class="approval">
+									<div v-for="item in form_Listb.content">
+										<span>{{item.department_name}}</span>
+										<span>{{item.name}}</span>
+										<span style="color: #67C23A;">{{item.is_agree}}</span>
+									</div>
+									<div v-for="item in form_Listb.content">
+										<span>审批时间</span>
+										<span>{{item.add_time}}</span>
+									</div>
+								</div>
+							</div>
+							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
+						</div>
+						<!--合同评审表展示-->
+						<div class="form" name="合同评审表" v-if="pingshenbiao_if">
+							<div>
+								<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
+							</div>
+							<div>
+								<span>合同名称：</span><span></span>
+							</div>
+							<div>
+								<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
+							</div>
+							<div>
+								<span>甲方：</span><span>{{form_Lista.a_name}}</span>
+							</div>
+
+							<div>
+								<span>乙方：</span><span>{{form_Lista.b_name}}</span>
+							</div>
+							<div>
+								<span>执行人：</span><span>{{form_Lista.executor}}</span>
+							</div>
+							<div>
+								<span>项目负责人(项目经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+							</div>
+							<div>
+								<span>单价：</span><span>{{form_Lista.prive}}</span>
+							</div>
+							<div>
+								<span>总价：</span><span>{{form_Lista.total_prive}}</span>
+							</div>
+							<div>
+								<span>与投标价格差异：</span><span>{{form_Lista.difference}}</span>
+							</div>
+							<div>
+								<span>付款方式：</span><span>{{form_Lista.pay_method}}</span>
+							</div>
+							<div>
+								<span>到货时间：</span><span>{{form_Lista.arrive_time}}</span>
+							</div>
+							<div>
+								<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
+							</div>
+							<div>
+								<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
+							</div>
+							<div>
+								<span>附件列表：</span><span>{{form_Lista.contract_name}}</span>
+							</div>
+							<div>
+								<span>图片附件：</span>
+								<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+									<img :src="item" alt="" @click="ctrl_pic_show(index)" />
+								</a>
+							</div>
+							<div>
+								<span>发起人：</span><span v-for="item in form_Listb.list">{{item}}</span>
+							</div>
+							<div>
+								<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}
+								</span>
+							</div>
+							<div>
+								<span>审批：</span>
+								<span v-for="item in form_Listb.content">
+								{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+								</span>
+							</div>
+							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
+						</div>
+						<!--请购单展示-->
+						<div class="form" name="请购单" v-if="qinggoudan_if">
+							<div>
+								<span>工程名称：</span><span>{{form_Lista.contract_name_new}}</span>
+							</div>
+							<div>
+								<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
+							</div>
+							<div>
+								<span>请购部门：</span><span>{{form_Lista.department_name}}</span>
+							</div>
+							<div>
+								<span>采购执行人：</span><span>{{form_Lista.buy_person}}</span>
+							</div>
+							<div>
+								<span>采购执行人联系方式</span><span>{{form_Lista.buy_person_phone}}</span>
+							</div>
+							<div>
+								<span>工程负责人：</span><span>{{form_Lista.contract_responsible}}</span>
+							</div>
+							<div>
+								<span>工程负责人联系方式：</span><span>{{form_Lista.responsible_tel}}</span>
+							</div>
+							<div>
+								<span>收货地址：</span><span>{{form_Lista.receive_address}}</span>
+							</div>
+							<div>
+								<span>要求到货时间：</span><span>{{form_Lista.arrival_time}}</span>
+							</div>
+							<div>
+								<span>收货人姓名：</span><span>{{form_Lista.consignee}}</span>
+							</div>
+							<div>
+								<span>收货人联系方式：</span><span>{{form_Lista.consignee_phone}}</span>
+							</div>
+							<div>
+								<span>项目负责人(部门经理)：</span><span>{{form_Lista.consignee_phone}}</span>
+							</div>
+							<div v-for="item in form_Lista.content" class="qingdan_qinggou">
+								<h4>请购清单</h4>
+								<p>请购名称：<span>{{item.name}}</span></p>
+								<p>规格：<span>{{item.spec}}</span></p>
+								<p>型号<span>{{item.model}}</span></p>
+								<p>单位：<span>{{item.unit}}</span></p>
+								<p>数量<span>{{item.num}}</span></p>
+								<p>预计单价￥<span>{{item.price}}</span></p>
+								<p>总额￥<span>{{item.subtotal}}</span></p>
+								<p>申报采购原因及用途<span>{{item.purpose}}</span></p>
+							</div>
+							<div>
+								<span>发起人：</span><span>{{form_Listb.found_name}}</span>
+							</div>
+							<div>
+								<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}</span>
+							</div>
+							<div>
+								<span>审批：</span>
+								<span v-for="item in form_Listb.content">
+								{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+								</span>
+							</div>
+							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
+							<div @click="return_qingkuan(form_Lista)" class="user">返回</div>
+
+						</div>
+					</div>
+					<el-form v-show="qingkuan_show" :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
 						<el-form-item label="工程名称" prop="contract_name">
 							<el-input v-model="qkd_ruleForm.contract_name"></el-input>
 						</el-form-item>
@@ -78,7 +263,7 @@
 						<el-form-item label="收款人姓名" prop="draw_money_name">
 							<el-input v-model="qkd_ruleForm.draw_money_name"></el-input>
 						</el-form-item>
-						
+
 						<el-form-item>
 							<el-button type="primary" @click="submitForm_qkd('qkd_ruleForm')">立即创建</el-button>
 							<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
@@ -257,7 +442,7 @@
 										<img :src="item.avatar" alt="" />
 									</div>
 									<div class="content">
-										<span class="name">{{item.username}}</span>
+										<span class="name">{{item.name}}</span>
 										<span class="phone">{{item.phone}}</span>
 									</div>
 								</li>
@@ -273,7 +458,7 @@
 						<el-form-item label="合同名称" prop="contract_name_new">
 							<el-input v-model="psb_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
-						
+
 						<el-form-item label="甲方" prop="a_name">
 							<el-input v-model="psb_ruleForm.a_name"></el-input>
 						</el-form-item>
@@ -324,7 +509,7 @@
 										<img :src="item.avatar" alt="" />
 									</div>
 									<div class="content">
-										<span class="name">{{item.username}}</span>
+										<span class="name">{{item.name}}</span>
 										<span class="phone">{{item.phone}}</span>
 									</div>
 								</li>
@@ -343,7 +528,7 @@
 							<el-input v-model="sqgz_ruleForm.user_name"></el-input>
 						</el-form-item>
 						<el-form-item label="项目负责人(部门经理)">
-							<el-input v-model="sqgz_ruleForm.project_manager"></el-input>
+							<el-input v-model="sqgz_ruleForm.project_manager_name" @focus="sqgz_leader"></el-input>
 						</el-form-item>
 						<div class="add_sqgz">添加清单条目 <i class="el-icon-circle-plus" @click="add_sqgz"></i></div>
 						<div>
@@ -403,14 +588,20 @@
 			<ul>
 				<h2>选择请款依据</h2>
 				<i class="el-icon-close" @click="as_what_show = !as_what_show"></i>
-				<li v-for="(item,index) in asType" @click="as_click(index)" >{{item}}</li>
+				<li v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
 			</ul>
 		</div>
+		<browsePic :img_arr="img_arr" :pic_index="pic_index" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 	</div>
 </template>
 
 <script>
-	import {create_exam_list} from '@/common/js/approval/exam'
+	import browsePic from '@/base/browse_pic/browse_pic'
+	import { create_approval_list } from '@/common/js/approval/approval_list'
+	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
+	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
+	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
+	import { create_exam_list } from '@/common/js/approval/exam'
 	import { prefixStyle } from '@/common/js/dom'
 	import { mapGetters } from 'vuex'
 	const transform = prefixStyle('transform')
@@ -419,34 +610,43 @@
 		data() {
 			return {
 				nav: ['合同审核表', '请购单', '呈批件', '申请公章', '请款单'],
-				asType:['请购单','合同评审表','呈批件','其他'],
+				asType: ['请购单', '合同评审表', '呈批件', '其他'],
 				navIndex: 0,
-				radio: '1’',
-				qkd_type:0,
-				as_what_show:false,
-				qingkuan_one_show:false,
+				radio: '1',
+				qkd_type: 0,
+				form_Lista: [],
+				form_Listb: [],
+				pic_show: false,
+				template_view_show: false,
+				chengpijian_if: false,
+				pingshenbiao_if: false,
+				qinggoudan_if: false,
+				as_what_show: false,
+				qingkuan_one_show: false,
 				personShow: false,
-				qingkuan_big_show:false,
+				qingkuan_big_show: false,
 				qingkuan_show: false,
 				qinggou_show: false,
 				chengpijian_show: false,
 				pingshenbiao_show: true,
 				shenqinggongzhang_show: false,
-				untreated:[],
-				qingkuan_approval_id:'',
-				nowType:1,
+				untreated: [],
+				img_arr: [],
+				pic_index: 0,
+				qingkuan_approval_id: '',
+				nowType: 1,
 				insertType: 0,
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				qkd_ruleForm: {
-					balance_subtotal:'',
-					gain_reduction_subtotal:'',
-					contract_name_new:'',
+					balance_subtotal: '',
+					gain_reduction_subtotal: '',
+					contract_name_new: '',
 					contract_name: '',
 					user_name: '',
 					phone: '',
 					bank_name: '',
-					account_name:'',
-					bank_card:'',
+					account_name: '',
+					bank_card: '',
 					worker_type: '',
 					bank_address: '',
 					subtotal: '',
@@ -476,16 +676,16 @@
 					receive_address: '',
 					project_manager_name: '',
 					project_manager: {},
-					add:[{
-							name: "",
-							spec: "",
-							unit: "",
-							model: "",
-							num: "",
-							price: "",
-							subtotal: "",
-							purpose: "",
-							remarks: ''
+					add: [{
+						name: "",
+						spec: "",
+						unit: "",
+						model: "",
+						num: "",
+						price: "",
+						subtotal: "",
+						purpose: "",
+						remarks: ''
 					}]
 				},
 				cpj_ruleForm: {
@@ -518,6 +718,8 @@
 					user_name: '',
 					project_manager: '',
 					department_id: '',
+					project_manager_name: '',
+					project_manager: {},
 					add: []
 				},
 				rules: {
@@ -778,7 +980,7 @@
 						trigger: 'blur'
 					}]
 				}
-				
+
 			}
 		},
 		computed: {
@@ -791,12 +993,93 @@
 			])
 		},
 		methods: {
-			
-			user_qingkuan(item){
+			close_pic() {
+				this.pic_show = false
+			},
+			last_one() {
+				if(this.pic_index === 0) {
+					return
+				}
+				--this.pic_index
+			},
+			next_one() {
+				if(this.pic_index === this.img_arr.length - 1) {
+					return
+				}
+				++this.pic_index
+			},
+			ctrl_pic_show(index) {
+				this.pic_index = index
+				this.pic_show = true
+			},
+			view_qingkuan(item) {
+				this.template_view_show = true
+				if(item.type === '呈批件') {
+					this.chengpijian_if = true
+				} else if(item.type === '合同评审表') {
+					this.pingshenbiao_if = true
+				} else if(item.type === '请购单') {
+					this.qinggoudan_if = true
+				}
+				this.qingkuan_one_show = false
+				this.listCli(item)
+			},
+			listCli(item) {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("approval_id", item.approval_id);
+				this.$http.post("/index/Mobile/approval/approval_process_show", param)
+					.then((res) => {
+						if(item.type === '呈批件') {
+							this.form_Lista = create_cengpijian_list(res.data.data)
+							this.get_img(this.form_Lista.img_list)
+						} else if(item.type === '合同评审表') {
+							this.form_Lista = create_hetongpingshen_list(res.data.data)
+							console.log(this.form_Lista)
+							this.get_img(this.form_Lista.enclosure_id)
+						} else if(item.type === '请购单') {
+							console.log(res.data.data)
+							this.form_Lista = res.data.data
+						}
+					})
+				let nparam = new URLSearchParams();
+				nparam.append("uid", this.user.uid);
+				nparam.append("approval_id", item.approval_id);
+				nparam.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/approval/approval_process_personnel", nparam)
+					.then((res) => {
+						this.form_Listb = create_approval_list(res.data.data)
+					})
+			},
+			get_img(enclosure_id) {
+				if(enclosure_id === '0') {
+					return
+				}
+				let param = new URLSearchParams();
+				param.append("enclosure_id", enclosure_id);
+				this.$http.post("/index/Mobile/approval/look_enclosure", param)
+					.then((res) => {
+						let arr = []
+						res.data.data.picture.forEach((item) => {
+							if(item != '') {
+								arr.push('http://img-bbsf.6655.la/' + item)
+							}
+
+						})
+						this.img_arr = arr
+						this.$set(this.form_Lista, 'img_list', arr)
+					})
+			},
+			user_qingkuan(item) {
+				this.template_view_show = false
 				this.qkd_type = item.type
 				this.qingkuan_one_show = false
 				this.qingkuan_show = true
 				this.qingkuan_approval_id = item.approval_id
+			},
+			return_qingkuan() {
+				this.qingkuan_one_show = true
+				this.template_view_show = false
 			},
 			close_sqgz(item, index) {
 				this.sqgz_ruleForm.add.splice(index, 1)
@@ -862,6 +1145,10 @@
 				this.personShow = true
 				this.insertType = 7
 			},
+			sqgz_leader(){
+				this.personShow = true
+				this.insertType = 8
+			},
 			change_nav(index) {
 				this.navIndex = index
 				this.qingkuan_big_show = false
@@ -913,6 +1200,9 @@
 				} else if(this.insertType === 7) {
 					this.psb_ruleForm.project_manager_name = item.name
 					this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
+				} else if(this.insertType === 8) {
+					this.sqgz_ruleForm.project_manager_name = item.name
+					this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
 				}
 				this.personShow = false
 
@@ -987,18 +1277,18 @@
 					}
 				});
 			},
-			return_show(){
+			return_show() {
 				this.$emit('add_approval_showF')
 			},
-			created() {
-				//		    	console.log(this.comPersonList)
-			},
+			created() {},
 			sqgz_submit() {
+				console.log(this.sqgz_ruleForm.project_manager)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
 				param.append("departmental", this.sqgz_ruleForm.department_id);
 				param.append("user_name", this.sqgz_ruleForm.user_name);
+				param.append("project_manager",  JSON.stringify(this.sqgz_ruleForm.project_manager));
 				param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 				this.$http.post("/index/Mobile/approval/add_request_seal", param)
 					.then((res) => {
@@ -1020,7 +1310,7 @@
 				param.append("arrive_time", this.psb_ruleForm.arrive_time);
 				param.append("end_time", this.psb_ruleForm.end_time);
 				param.append("executor", this.psb_ruleForm.executor);
-				param.append("contract_id", parseInt(this.psb_ruleForm.contract_id));
+				param.append("contract_id", this.psb_ruleForm.contract_id);
 				param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 				this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
@@ -1088,7 +1378,6 @@
 					})
 			},
 			qkd_submit() {
-				console.log(this.qingkuan_approval_id, this.qkd_type)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("contract_name", this.qkd_ruleForm.contract_name);
@@ -1118,93 +1407,96 @@
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
 			},
-			as_click(index){
+			as_click(index) {
 				this._getExamList(index)
-				this.as_what_show=false
-				if(index === 3){
-					this.qingkuan_show = true  
-					this.qingkuan_one_show = false  
-				}else{
-					this.qingkuan_show = false  
-					this.qingkuan_one_show = true  
+				this.as_what_show = false
+				if(index === 3) {
+					this.qingkuan_show = true
+					this.qingkuan_one_show = false
+				} else {
+					this.qingkuan_show = false
+					this.qingkuan_one_show = true
 				}
-				
+
 			},
-			_getExamList(index){
+			_getExamList(index) {
 				let type
-				if(index===0){
+				if(index === 0) {
 					type = 3
-				}else if(index === 1){
+				} else if(index === 1) {
 					type = 1
-				}else if(index === 2){
+				} else if(index === 2) {
 					type = 6
-				}else{
+				} else {
 					type = -1
 					return
 				}
 				let param = new URLSearchParams();
-				param.append("uid",this.user.uid);
-				param.append("approval_type",type);
-				param.append("each",'20');
-				param.append("company_id",this.nowCompanyId);
-				this.$http.post("/index/Mobile/approval/request_monry_basis",param)
-				.then((res)=>{
-					let arr=[]
-					res.data.data.forEach((item)=>{				
-						arr.push(create_exam_list(item))
+				param.append("uid", this.user.uid);
+				param.append("approval_type", type);
+				param.append("each", '20');
+				param.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/approval/request_monry_basis", param)
+					.then((res) => {
+						let arr = []
+						res.data.data.forEach((item) => {
+							arr.push(create_exam_list(item))
+						})
+						this.untreated = arr
 					})
-					this.untreated=arr		
-				})
 			}
+		},
+		components: {
+			browsePic
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-.as_what {
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	height: 100%;
-	width: 100%;
-	margin: 0 auto;
-	background: rgba(0, 0, 0, 0.4);
-	z-index: 10;
-	ul {
-		width: 300px;
-		background: #FFFFFF;
-		margin: 300px auto;
-		padding: 10px;
-		h2 {
-			display: inline-block;
-			margin-bottom: 10px;
-			font-size: 20px;
-		}
-		i {
-			font-size: 20px;
-			float: right;
-			cursor: pointer;
-			&:hover {
-				color: #FA5555
+	.as_what {
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		height: 100%;
+		width: 100%;
+		margin: 0 auto;
+		background: rgba(0, 0, 0, 0.4);
+		z-index: 10;
+		ul {
+			width: 300px;
+			background: #FFFFFF;
+			margin: 300px auto;
+			padding: 10px;
+			h2 {
+				display: inline-block;
+				margin-bottom: 10px;
+				font-size: 20px;
 			}
-		}
-		li {
-			cursor: pointer;
-			display: block;
-			height: 30px;
-			line-height: 30px;
-			&:hover {
-				color: #5A5E66;
+			i {
+				font-size: 20px;
+				float: right;
+				cursor: pointer;
+				&:hover {
+					color: #FA5555
+				}
+			}
+			li {
+				cursor: pointer;
+				display: block;
+				height: 30px;
+				line-height: 30px;
+				&:hover {
+					color: #5A5E66;
+				}
 			}
 		}
 	}
-}
+	
 	.add_approval_wrapper {
 		width: 558px;
 		border: 1px solid #ddd;
-		
 		.add_approval {
 			/*padding: 8px 10px;*/
 			.nav {
@@ -1228,38 +1520,119 @@
 				background-color: #f9f9f9;
 				padding: 10px;
 				.qingkuan {
-					.content{
+					.content {
 						font-size: 14px;
 						border-bottom: 1px solid #666666;
 						position: relative;
-						>div{
-							
+						>div {
 							line-height: 20px;
-							display:block;
-								max-width:320px; 
+							display: block;
+							max-width: 320px;
 						}
-						.button{
+						.button {
 							position: absolute;
 							top: 30px;
-							right:50px;
-							span{
-								 
+							right: 50px;
+							span {
 								cursor: pointer;
 								color: #67C23A;
 								border: 1px solid #67C23A;
 								padding: 5px 10px;
-								
-								&:last-child{
+								&:last-child {
 									color: #409EFF;
 									border: 1px solid #409EFF;
 								}
 							}
 						}
-						
 					}
-					.as_type{
-						ul{
-							li{
+					.template_view {
+						.form {
+							padding: 10px;
+							color: #999999;
+							>div {
+								display: block;
+								border-bottom: 1px solid #DDDDDD;
+								>span {
+									vertical-align: top;
+									font-size: 14px;
+									line-height: 24px;
+									&:nth-child(2) {
+										margin-left: 5px;
+										color: #444444;
+									}
+								}
+								.approval {
+									display: inline-block;
+									span {
+										font-size: 14px;
+										line-height: 24px;
+									}
+								}
+								img {
+									display: inline-block;
+									height: 50px;
+									width: 80px;
+									cursor: pointer;
+								}
+							}
+							.user {
+								&:last-child {
+									color: #409EFF;
+									border: 1px solid #409EFF;
+									margin-left: 10px;
+								}
+								margin-top: 10px;
+								display: inline-block;
+								width: 50px;
+								border-bottom: none;
+								cursor: pointer;
+								color: #67C23A;
+								border: 1px solid #67C23A;
+								text-align: center;
+								height: 26px;
+								line-height: 26px;
+							}
+							.qingdan {
+								font-size: 14px;
+								padding: 4px 0;
+								h4 {
+									color: #409EFF;
+									font-size: 15px;
+									margin: 2px 0px;
+								}
+								p {
+									height: 30px;
+									line-height: 30px;
+									span {
+										margin-left: 5px;
+										color: #444444;
+									}
+								}
+							}
+							.qingdan_qinggou {
+								font-size: 14px;
+								padding: 4px 0;
+								h4 {
+									color: #409EFF;
+									font-size: 15px;
+									margin: 2px 0px;
+								}
+								p {
+									display: inline-block;
+									width: 200px;
+									height: 30px;
+									line-height: 30px;
+									span {
+										margin-left: 5px;
+										color: #444444;
+									}
+								}
+							}
+						}
+					}
+					.as_type {
+						ul {
+							li {
 								display: block;
 								height: 30px;
 								line-height: 30px;
@@ -1355,8 +1728,6 @@
 											font-size: 12px;
 											height: 20px;
 											line-height: 20px;
-										
-											
 										}
 									}
 								}
@@ -1376,10 +1747,9 @@
 								float: right;
 								cursor: pointer;
 								&:hover {
-								color: #FA5555;
+									color: #FA5555;
+								}
 							}
-							}
-							
 						}
 					}
 					.add_qgd {
@@ -1507,6 +1877,7 @@
 										}
 									}
 									.content {
+										margin-top: 10px;
 										display: inline-block;
 										float: left;
 										margin-left: 4px;
@@ -1651,6 +2022,7 @@
 										}
 									}
 									.content {
+										margin-top: 10px;
 										display: inline-block;
 										float: left;
 										margin-left: 4px;

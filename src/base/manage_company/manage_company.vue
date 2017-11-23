@@ -253,7 +253,6 @@ import {mapGetters} from 'vuex'
 				this.addAdministratorShow=false
 			},
 			_getCompanyId(){			
-			    	let resData=res.data.data
 			    	let mparam = new URLSearchParams();
 					mparam.append("company_id",this.nowCompanyId);
 					mparam.append("department_id",-1);  

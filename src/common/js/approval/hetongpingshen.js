@@ -29,6 +29,6 @@ export function create_hetongpingshen_list(item) {
 	    pay_method:item.pay_method,
 	    arrive_time:item.arrive_time,
 	    remarks:item.remarks,
-	    enclosure_id:item.enclosure_id
+//	    enclosure_id:item.many_enclosure[0].contract_id
 	})
 }

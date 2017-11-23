@@ -54,7 +54,6 @@ export function create_qingkuandan_list(item) {
 }
 
 function img_id(item){
-	console.log(item.contract_id)
 	if( item.contract_id === null||item.contract_id.length === 0 ){
 		return '0'
 	}

@@ -14,7 +14,7 @@ export function create_cengpijian_list(item) {
 	    department_name: item.department_name,
 	    chengpi_num: item.chengpi_num,
 	    content:item.content,
-	    project_manager_name:item. project_manager_name.name,
+	    project_manager_name:get_project_manager_name(item),
 	    img_list:img_id(item)
 	})
 }
@@ -22,5 +22,12 @@ export function create_cengpijian_list(item) {
 function img_id(item){
 	if(item.contract_id.type === 3){
 		return item.contract_id.contract_id
+	}
+}
+function 	get_project_manager_name(item){
+	if(item.project_manager_name){
+		return  item.project_manager_name.name
+	}else{
+		return '暂无'
 	}
 }

@@ -25,5 +25,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: "微软雅黑";
+  min-width: 1200px;
 }
 </style>

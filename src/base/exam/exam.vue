@@ -16,7 +16,7 @@
 						</div>
 						<div class="edit">
 							<span @click="listCli(item,index)">查看</span>
-						</div>	
+						</div>
 						<div class="content">
 							<div class="name"  v-if="ilaunched">
 								<span>名称：{{item.name}}</span>
@@ -49,6 +49,7 @@
 					<i class="el-icon-d-arrow-left" @click="return_list"></i>
 					<span class="title">{{now_type_name}}</span>
 				</div>
+         <!--呈批件展示-->
 				<div class="form" name="呈批件" v-if="cengpijian_show">
 					<div>
 						<span>呈批标题：</span><span>{{form_Lista.title}}</span>
@@ -107,53 +108,68 @@
 						</div>
 					</div>
 				</div>
+        <!--请购单展示-->
 				<div class="form" name="请购单" v-if="qinggoudan_show">
 					<div>
-						<span>工程名称：</span><span></span>
+						<span>工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
 					</div>
 					<div>
-						<span>合同名称：</span><span></span>
+						<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 					</div>
 					<div>
-						<span>请购部门：</span><span></span>
+						<span>请购部门：</span><span>{{form_Lista.department_name}}</span>
 					</div>
 					<div>
-						<span>采购执行人：</span><span></span>
+						<span>采购执行人：</span><span>{{form_Lista.buy_person}}</span>
 					</div>
 					<div>
-						<span>采购执行人联系方式</span>
+						<span>采购执行人联系方式：</span><span>{{form_Lista.buy_person_phone}}</span>
 					</div>
 					<div>
-						<span>工程负责人：</span>
+						<span>工程负责人：</span><span>{{form_Lista.contract_responsible}}</span>
 					</div>
 					<div>
-						<span>工程负责人联系方式：</span>
+						<span>工程负责人联系方式：</span><span>{{form_Lista.responsible_tel}}</span>
 					</div>
 					<div>
-						<span>收货地址：</span><span></span>
+						<span>收货地址：</span><span>{{form_Lista.receive_address}}</span>
 					</div>
 					<div>
-						<span>要求到货时间：</span>
+						<span>要求到货时间：</span><span>{{form_Lista.arrival_time}}</span>
 					</div>
 					<div>
-						<span>收货人姓名：</span>
+						<span>收货人姓名：</span><span>{{form_Lista.consignee}}</span>
 					</div>
 					<div>
-						<span>收货人联系方式：</span>
+						<span>收货人联系方式：</span><span>{{form_Lista.consignee_phone}}</span>
 					</div>
 					<div>
-						<span>项目负责人(部门经理)：</span>
+						<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager}}</span>
+					</div>
+					<div v-for="item in form_Lista.content" class="qingdan_qinggou">
+						<h4>请购清单</h4>
+						<p>请购名称：<span>{{item.name}}</span></p>
+						<p>规格：<span>{{item.spec}}</span></p>
+						<p>型号<span>{{item.model}}</span></p>
+						<p>单位：<span>{{item.unit}}</span></p>
+						<p>数量<span>{{item.num}}</span></p>
+						<p>预计单价￥<span>{{item.price}}</span></p>
+						<p>总额￥<span>{{item.subtotal}}</span></p>
+						<p>申报采购原因及用途<span>{{item.purpose}}</span></p>
 					</div>
 					<div>
-						<span>发起人：</span>
+						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 					</div>
 					<div>
-						<span>审批人员：</span>
+						<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}</span>
 					</div>
 					<div>
 						<span>审批：</span>
+						<span v-for="item in form_Listb.content">
+						{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+						</span>
 					</div>
-					<div class="menu">
+					<div class="menu" v-show="handle_show">
 						<span @click="handle">处理</span>
 						<div class="button" v-show="menuShow">
 							<span @click="agree($event)">同意</span>
@@ -165,7 +181,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="form" name="请款单" v-if="qingkuandan_show">
+        <!--请款单展示-->
+    		    <div class="form" name="请款单" v-if="qingkuandan_show">
 					<div>
 						<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 					</div>
@@ -202,7 +219,7 @@
 					<div>
 						<span>已领工程款￥：</span><span>{{form_Lista.balance_subtotal}}</span>
 					</div>
-					<div>	
+					<div>
 						<span>本次请款￥：</span><span>{{form_Lista.request_subtotal}}</span>
 					</div>
 					<div>
@@ -247,6 +264,7 @@
 						</div>
 					</div>
 				</div>
+      <!--合同评审表展示-->
 				<div class="form" name="合同评审表" v-if="pingshenbiao_show">
 					<div>
 						<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
@@ -260,7 +278,7 @@
 					<div>
 						<span>甲方：</span><span>{{form_Lista.a_name}}</span>
 					</div>
-					
+
 					<div>
 						<span>乙方：</span><span>{{form_Lista.b_name}}</span>
 					</div>
@@ -325,7 +343,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="form" name="申请公章" v-if="gongzhang_show">
+			  <!--申请公章展示	-->
+     			<div class="form" name="申请公章" v-if="gongzhang_show">
 					<div>
 						<span>用章部门：</span><span>{{form_Lista.department_name}}</span>
 					</div>
@@ -384,18 +403,19 @@
 							<input name="token" type="hidden" :value="input_value">
 							<input type="file" multiple="multiple" />
 
-							
+
 						</div>
 					</div>
 				</div>
 		</div>
-		<browsePic :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 	</div>
-	
+
 </template>
 
 <script>
 import browsePic from '@/base/browse_pic/browse_pic'
+import {create_qinggoudan_list} from '@/common/js/approval/qinggoudan'
 import {create_gongzhang_list} from '@/common/js/approval/gongzhang'
 import {create_qingkuandan_list} from '@/common/js/approval/qingkuandan'
 import {create_cengpijian_list} from '@/common/js/approval/cengpijian'
@@ -449,7 +469,7 @@ export default{
 	components:{
 		browsePic
 	},
-	methods:{  
+	methods:{
 		handleUpload() {
 //    document.getElementById('excel-upload-input').click()
     },
@@ -536,7 +556,7 @@ export default{
 					this.listShow = true
 					this.formShow = false
 				}
-					
+
 			})
 		},
 		return_list(){
@@ -548,12 +568,13 @@ export default{
 			this.cengpijian_show=false
 			this.pingshenbiao_show=false
 			this.gongzhang_show=false
-			
+
 		},
 		listCli(item){
 			this.listShow = false
 			this.formShow = true
 			this.now_type_name=item.type
+			console.log(item.type)
 			if(item.type === '呈批件'){
 				this.cengpijian_show = true
 			}else if(item.type === '请款单'){
@@ -575,12 +596,14 @@ export default{
 				    this.get_img(this.form_Lista.img_list)
 				}else if(item.type === '合同评审表'){
 					this.form_Lista = create_hetongpingshen_list(res.data.data)
-					  this.get_img(this.form_Lista.enclosure_id)
+					this.get_img(this.form_Lista.enclosure_id)
 				}else if(item.type === '请款单'){
 					this.form_Lista = create_qingkuandan_list(res.data.data)
 					this.get_img(this.form_Lista.img)
-				}else if(item.type === '申请公章'){	
+				}else if(item.type === '申请公章'){
 					this.form_Lista = create_gongzhang_list(res.data.data)
+				}else if(item.type === '请购单'){
+					this.form_Lista = create_qinggoudan_list(res.data.data)
 				}
 			})
 			let nparam = new URLSearchParams();
@@ -588,14 +611,14 @@ export default{
 			nparam.append("approval_id",item.approval_id);
 			nparam.append("company_id",this.nowCompanyId);
 			this.$http.post("/index/Mobile/approval/approval_process_personnel",nparam)
-			.then((res)=>{	
+			.then((res)=>{
 				this.form_Listb=create_approval_list(res.data.data)
 			})
 		},
 //		获取图片
 		get_img(enclosure_id) {
 			if(enclosure_id === '0'){
-				return 
+				return
 			}
 			let param = new URLSearchParams();
 			param.append("enclosure_id", enclosure_id);
@@ -606,17 +629,17 @@ export default{
 						if(item != ''){
 							arr.push('http://img-bbsf.6655.la/'+item)
 						}
-						
+
 					})
 					this.img_arr = arr
 					this.$set(this.form_Lista,'img_list',arr)
 				})
-		},		
+		},
 		navCli(index){
 			this.nowType = index+1
 			if(index===0) {
-				this.handle_time_show=false 
-				this.approval_process=false 
+				this.handle_time_show=false
+				this.approval_process=false
 				this.ilaunched=true
 				this.handle_show=true
 			}
@@ -647,10 +670,10 @@ export default{
 			this.$http.post("/index/Mobile/approval/see_approval_list",param)
 			.then((res)=>{
 				let arr=[]
-				res.data.data.forEach((item)=>{				
+				res.data.data.forEach((item)=>{
 					arr.push(create_exam_list(item))
 				})
-				this.untreated=arr		
+				this.untreated=arr
 			})
 		}
 	},
@@ -733,6 +756,25 @@ export default{
 					}
 				}
 			}
+			.qingdan_qinggou{
+				font-size: 14px;
+				padding: 4px 0;
+				h4{
+					color: #409EFF;
+					font-size: 15px;
+					margin: 2px 0px;
+				}
+				p{
+					display: inline-block;
+					width:200px;
+					height: 30px;
+					line-height: 30px;
+					span{
+						margin-left: 5px;
+						color: #444444;
+					}
+				}
+			}
 			.menu{
 				margin-top: 10px;
 				border-bottom: none;
@@ -747,7 +789,7 @@ export default{
 				.button{
 					margin-left: 20px;
 					display: inline-block;
-					font-size: 0; 
+					font-size: 0;
 					z-index: 2;
 					　　width: 300px;
 					　　height: 40px;
@@ -755,12 +797,12 @@ export default{
 					span{
 						color: #FA5555;
 						border: 1px solid #FA5555;
-						margin-left:4px; 
+						margin-left:4px;
 						&:first-child{
 							color:#67C23A;
 							border: 1px solid #67C23A;
 						}
-						
+
 					}
 					input[type="text"]{
 						width:200px;
@@ -788,7 +830,7 @@ export default{
 						padding: 4px 10px;
 						border: 1px solid #5E8579;
 					}
-					
+
 				}
 			}
 		}
@@ -803,7 +845,7 @@ export default{
 				li{
 					color: #2D2F33;
 					font-size: 14px;
-					
+
 					border-bottom: 1px solid #3487E2;
 					span{
 						line-height: 18px;
@@ -856,7 +898,7 @@ export default{
 					span{
 						font-size: 12px;
 					}
-				}	
+				}
 			}
 		}
 
