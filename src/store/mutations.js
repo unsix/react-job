@@ -15,6 +15,9 @@ const mutations = {
   },
   [types.SET_COM_PART_PERSON_LIST](state,comPartPersonList) {
   	state.comPartPersonList = comPartPersonList
+  },
+  [types.SET_TOKEN](state,token) {
+  	state.token = token
   }
 }
 

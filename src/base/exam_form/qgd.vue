@@ -180,6 +180,7 @@
 								nparam.append("picture",JSON.stringify(this.pic_hash_arr));
 								this.$http.post("/index/Mobile/approval/upload_enclosure_new",nparam)
 								.then((res)=>{
+									console.log(res)
 									let param = new URLSearchParams();
 						            param.append("uid",this.user.uid);
 									param.append("approval_id",this.psb_approval_id);
@@ -206,7 +207,55 @@
 			},
 			
 			refuse(){
-				
+				for(let i=0;i<this.file.length; i++){
+					let formData = new FormData();
+		            formData.append('file', this.file[i]);
+		            formData.append('token', this.input_value);
+		            let config = {
+		              headers: {
+		                'Content-Type': 'multipart/form-data'
+		              }
+		            }
+		            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
+		            	this.pic_hash_arr.push(res.data.hash)
+			        }) 
+				}
+
+						let mparam = new URLSearchParams();
+						mparam.append("uid",this.user.uid);
+						mparam.append("company_id",this.nowCompanyId);
+						this.$http.post("/index/Mobile/User/return_company_new",mparam)
+						.then((res)=>{
+							this.now_personnel_id = res.data.data.personnel_id
+							if(this.now_personnel_id === res.data.data.personnel_id){
+								let nparam = new URLSearchParams();
+								nparam.append("uid",this.user.uid);
+								nparam.append("picture",JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new",nparam)
+								.then((res)=>{
+									let param = new URLSearchParams();
+						            param.append("uid",this.user.uid);
+									param.append("approval_id",this.psb_approval_id);
+									param.append("personnel_id",this.now_personnel_id);
+									param.append("company_id",this.nowCompanyId);
+									param.append("finance_state",2);
+									param.append("receipt_content",'111');
+									param.append("receipt_pic",res.data.data.enclosure_id);
+									this.$http.post("/index/Mobile/find/finance_receipt",param)
+									.then((res)=>{
+										if(res.data.code === 0){
+											 this.$message({
+									          message: '恭喜你，操作成功',
+									          type: 'success'
+									        });
+									        this.return_()
+										}else{
+											this.$message.error('操作失败');
+										}
+									})
+								})
+							}
+						})	 
 			}
 		},
 		components:{

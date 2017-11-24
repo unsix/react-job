@@ -8,3 +8,5 @@ export const SET_COM_DEPART_LIST = 'SET_COM_DEPART_LIST'
 
 export const SET_COM_PART_PERSON_LIST = 'SET_COM_PART_PERSON_LIST'
 
+export const SET_TOKEN = 'SET_TOKEN'
+

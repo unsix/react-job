@@ -16,12 +16,13 @@ export default class hetongpingshen_list {
   }
 }
 export function create_hetongpingshen_list(item) {
+	
 	return new hetongpingshen_list({
 	    contract_name: item.contract_name,
 	    contract_num: item.contract_num,
 	    a_name: item.a_name,
 	    b_name:item.b_name,
-	    project_manager_name:item. project_manager_name,
+	    project_manager_name:get_manager_name(item),
 	    executor:item.executor,
 	    prive:item.prive,
 	    total_prive:item.total_prive,
@@ -31,4 +32,9 @@ export function create_hetongpingshen_list(item) {
 	    remarks:item.remarks,
 //	    enclosure_id:item.many_enclosure[0].contract_id
 	})
+}
+function get_manager_name(item){
+	if(item.project_manager_name.name){
+		return item.project_manager_name.name
+	}
 }

@@ -386,6 +386,15 @@
 
 							</el-form>
 						</div>
+						<el-form-item label="添加图片">
+							<input name="token" type="hidden" :value="token">
+							<input type="file" name="" id=""  @change="getPic($event)" multiple="multiple" accept="image/jpg, image/jpeg, image/png" />
+						</el-form-item>
+						<el-form-item label="添加文件">
+							<input name="token" type="hidden" :value="token">
+							<input type="file" name="" id=""  @change="getFile($event)" multiple="multiple" 
+								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
+						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即创建</el-button>
 							<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>
@@ -427,6 +436,15 @@
 						</el-form-item>
 						<el-form-item label="项目负责人">
 							<el-input v-model="cpj_ruleForm.project_manager_name" @focus="cpj_leader"></el-input>
+						</el-form-item>
+						<el-form-item label="添加图片">
+							<input name="token" type="hidden" :value="token">
+							<input type="file" name="" id=""  @change="getPic($event)" multiple="multiple" accept="image/jpg, image/jpeg, image/png" />
+						</el-form-item>
+						<el-form-item label="添加文件">
+							<input name="token" type="hidden" :value="token">
+							<input type="file" name="" id=""  @change="getFile($event)" multiple="multiple" 
+								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即创建</el-button>
@@ -494,6 +512,15 @@
 						</el-form-item>
 						<el-form-item label="项目负责人(部门经理)">
 							<el-input v-model="psb_ruleForm.project_manager_name" @focus="psb_leader"></el-input>
+						</el-form-item>
+						<el-form-item label="添加图片">
+							<input name="token" type="hidden" :value="token">
+							<input type="file" name="" id=""  @change="getPic($event)" multiple="multiple" accept="image/jpg, image/jpeg, image/png" />
+						</el-form-item>
+						<el-form-item label="添加文件">
+							<input name="token" type="hidden" :value="token">
+							<input type="file" name="" id=""  @change="getFile($event)" multiple="multiple" 
+								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="submitForm_psb('psb_ruleForm')">立即创建</el-button>
@@ -592,10 +619,12 @@
 			</ul>
 		</div>
 		<browsePic :img_arr="img_arr" :pic_index="pic_index" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+		<loading v-show="loading_show"></loading>
 	</div>
 </template>
 
 <script>
+	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
@@ -630,13 +659,23 @@
 				chengpijian_show: false,
 				pingshenbiao_show: true,
 				shenqinggongzhang_show: false,
+				loading_show:false,
 				untreated: [],
 				img_arr: [],
+				document_type:["png","jpg","jpeg","txt","doc","docx","xls","xlsx","ppt","pptx","pdf"],
+				pic_hash_arr:[],
+				file_hash_arr:[],
+				afile_hash_arr:[],
 				pic_index: 0,
 				qingkuan_approval_id: '',
 				nowType: 1,
 				insertType: 0,
+				afile_hash_obj:{},
+				pic_enclosure_id:'',
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
+				begin_time:'',
+				pic_time:'',
+				file_time:'',
 				qkd_ruleForm: {
 					balance_subtotal: '',
 					gain_reduction_subtotal: '',
@@ -988,11 +1027,18 @@
 				'comPersonList',
 				'user',
 				'nowCompanyId',
-				'comDepartList'
+				'comDepartList',
+				'token'
 
 			])
 		},
 		methods: {
+			getPic(event) {
+	            this.pic = event.target.files;   
+	        },
+	        getFile(event) {
+	            this.file = event.target.files;   
+	        },
 			close_pic() {
 				this.pic_show = false
 			},
@@ -1218,6 +1264,13 @@
 				});
 			},
 			submitForm_qgd(formName) {
+				this.qgd_ruleForm.add.forEach((item)=>{
+					if(!item.model === '' || !item.name === '' || !item.num === '' || !item.price === ''
+						|| !item.purpose === '' || !item.remarks === '' || !item.spec === '' || !item.subtotal === '' || !item.unit === ''){
+						alert()
+					}
+				})
+				
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						this.qgd_submit()
@@ -1243,9 +1296,10 @@
 				});
 			},
 			submitForm_psb(formName) {
+				this.loading_show =true
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-						this.psb_submit()
+						this.psb_submit()	
 					} else {
 						console.log('error submit!!');
 						return false;
@@ -1282,7 +1336,6 @@
 			},
 			created() {},
 			sqgz_submit() {
-				console.log(this.sqgz_ruleForm.project_manager)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
@@ -1291,91 +1344,436 @@
 				param.append("project_manager",  JSON.stringify(this.sqgz_ruleForm.project_manager));
 				param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 				this.$http.post("/index/Mobile/approval/add_request_seal", param)
-					.then((res) => {
-						console.log(res)
-					})
+				.then((res) => {
+					console.log(res)
+				})
 			},
 			psb_submit() {
-				let param = new URLSearchParams();
-				param.append("uid", this.user.uid);
-				param.append("company_id", this.nowCompanyId);
-				param.append("a_name", this.psb_ruleForm.a_name);
-				param.append("b_name", this.psb_ruleForm.b_name);
-				param.append("prive", this.psb_ruleForm.prive);
-				param.append("total_prive", this.psb_ruleForm.total_prive);
-				param.append("difference", this.psb_ruleForm.difference);
-				param.append("pay_method", this.psb_ruleForm.pay_method);
-				param.append("contract_name", this.psb_ruleForm.contract_name);
-				param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
-				param.append("arrive_time", this.psb_ruleForm.arrive_time);
-				param.append("end_time", this.psb_ruleForm.end_time);
-				param.append("executor", this.psb_ruleForm.executor);
-				param.append("contract_id", this.psb_ruleForm.contract_id);
-				param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
-				this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
+				let myDate = Date.parse(new Date())
+				this.begin_time = myDate
+				this.pic_hash_arr = []
+				this.afile_hash_arr = []
+				this.file_hash_arr = []
+				if(!this.pic &&!this.pic){
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("a_name", this.psb_ruleForm.a_name);
+					param.append("b_name", this.psb_ruleForm.b_name);
+					param.append("prive", this.psb_ruleForm.prive);
+					param.append("total_prive", this.psb_ruleForm.total_prive);
+					param.append("difference", this.psb_ruleForm.difference);
+					param.append("pay_method", this.psb_ruleForm.pay_method);
+					param.append("contract_name", this.psb_ruleForm.contract_name);
+					param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					param.append("arrive_time", this.psb_ruleForm.arrive_time);
+					param.append("end_time", this.psb_ruleForm.end_time);
+					param.append("executor", this.psb_ruleForm.executor);
+					param.append("contract_num", this.psb_ruleForm.contract_id);
+					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
+					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
-						console.log(res)
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						
 					})
+				}
+				if(this.pic && this.file) {
+					for(let i = 0; i < this.pic.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.pic[i]);
+						formData.append('token', this.token);
+						let config = {headers: {'Content-Type': 'multipart/form-data'}}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.pic.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.pic_enclosure_id = res.data.data.enclosure_id
+										this.afile_hash_arr.push({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id,
+											"name": this.pic[i].name
+										})
+										let aDate = Date.parse(new Date())
+										this.pic_time = aDate
+										console.log(this.pic_time)
+									})
+							}
+						})
+		
+					}
+					for(let i = 0; i < this.file.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.file[i]);
+							formData.append('token', this.token);
+							let config = {headers: {'Content-Type': 'multipart/form-data'}}
+							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							let index = this.file[i].name.indexOf('.')
+							let attribute =this.file[i].name.slice(index)
+							let file_name =this.file[i].name.slice(0,index)
+							let param = new URLSearchParams();
+							param.append("uid", this.user.uid);
+							param.append("attribute", attribute);
+							param.append("attachments", res.data.hash);
+							param.append("file_name", file_name);
+							this.$http.post("/index/Mobile/approval/add_attachments", param)
+							.then((res)=>{
+								this.file_hash_arr.push({
+									"type":4,
+									"contract_id":res.data.data.attachments_id,
+									"name":this.file[i].name})
+								if(this.file_hash_arr.length === this.file.length){
+										let bDate = Date.parse(new Date())
+										this.file_time = bDate
+										console.log(this.file_time)
+									}
+								})
+							})
+						}
+				}			
+				if(this.pic && !this.file){
+					for(let i = 0; i < this.pic.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.pic[i]);
+						formData.append('token', this.token);
+						let config = {headers: {'Content-Type': 'multipart/form-data'}}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.pic.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.pic_enclosure_id = res.data.data.enclosure_id
+										if(this.pic_enclosure_id === res.data.data.enclosure_id){
+											let param = new URLSearchParams();
+												param.append("uid", this.user.uid);
+												param.append("company_id", this.nowCompanyId);
+												param.append("a_name", this.psb_ruleForm.a_name);
+												param.append("b_name", this.psb_ruleForm.b_name);
+												param.append("prive", this.psb_ruleForm.prive);
+												param.append("total_prive", this.psb_ruleForm.total_prive);
+												param.append("difference", this.psb_ruleForm.difference);
+												param.append("pay_method", this.psb_ruleForm.pay_method);
+												param.append("contract_name", this.psb_ruleForm.contract_name);
+												param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+												param.append("arrive_time", this.psb_ruleForm.arrive_time);
+												param.append("end_time", this.psb_ruleForm.end_time);
+												param.append("executor", this.psb_ruleForm.executor);
+												param.append("enclosure_id", this.pic_enclosure_id);
+												param.append("contract_num", this.psb_ruleForm.contract_id);
+												param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
+												this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
+												.then((res) => {
+													console.log(res)
+												})
+										}
+									})
+							}
+						})
+		
+					}
+				}
 			},
 			cpj_submit() {
-				let param = new URLSearchParams();
-				param.append("uid", this.user.uid);
-				param.append("company_id", this.nowCompanyId);
-				param.append("department_id", this.cpj_ruleForm.department_id);
-				param.append("content", this.cpj_ruleForm.content);
-				param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
-				param.append("title", this.cpj_ruleForm.title);
-				param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
-				this.$http.post("/index/Mobile/approval/add_chengpi", param)
+				this.pic_hash_arr = []
+				this.afile_hash_arr = []
+				this.file_hash_arr = []
+				if(!this.pic &&!this.file){
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("department_id", this.cpj_ruleForm.department_id);
+					param.append("content", this.cpj_ruleForm.content);
+					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+					param.append("title", this.cpj_ruleForm.title);
+					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
+					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
 						console.log(res)
 					})
+				}
+				if(this.pic && this.file) {	
+					for(let i = 0; i < this.pic.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.pic[i]);
+						formData.append('token', this.token);
+						let config = {headers: {'Content-Type': 'multipart/form-data'}}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.pic.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.afile_hash_arr.push({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id,
+											"name": this.pic[i].name
+										})
+										let aDate = Date.parse(new Date())
+										this.pic_time = aDate
+										console.log(this.pic_time)
+									})
+							}
+						})
+		
+					}
+					for(let i = 0; i < this.file.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.file[i]);
+							formData.append('token', this.token);
+							let config = {headers: {'Content-Type': 'multipart/form-data'}}
+							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							let index = this.file[i].name.indexOf('.')
+							let attribute =this.file[i].name.slice(index)
+							let file_name =this.file[i].name.slice(0,index)
+							let param = new URLSearchParams();
+							param.append("uid", this.user.uid);
+							param.append("attribute", attribute);
+							param.append("attachments", res.data.hash);
+							param.append("file_name", file_name);
+							this.$http.post("/index/Mobile/approval/add_attachments", param)
+							.then((res)=>{
+								this.file_hash_arr.push({
+									"type":4,
+									"contract_id":res.data.data.attachments_id,
+									"name":this.file[i].name})
+								if(this.file_hash_arr.length === this.file.length){
+										let bDate = Date.parse(new Date())
+										this.file_time = bDate
+										console.log(this.file_time)
+									}
+								})
+							})
+						}
+				}		
+				if(this.pic && !this.file){
+					for(let i = 0; i < this.pic.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.pic[i]);
+						formData.append('token', this.token);
+						let config = {headers: {'Content-Type': 'multipart/form-data'}}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.pic.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.afile_hash_arr.push({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id,
+											"name": this.pic[i].name
+										})
+										let param = new URLSearchParams();
+										param.append("uid", this.user.uid);
+										param.append("company_id", this.nowCompanyId);
+										param.append("department_id", this.cpj_ruleForm.department_id);
+										param.append("content", this.cpj_ruleForm.content);
+										param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+										param.append("title", this.cpj_ruleForm.title);
+										param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
+										param.append("many_enclosure", JSON.stringify(this.afile_hash_arr));
+										this.$http.post("/index/Mobile/approval/add_chengpi", param)
+										.then((res) => {
+											if(res.data.code === 0){
+												this.loading_show = false
+											}
+										})
+									})
+							}
+						})
+		
+					}
+				}
 			},
 			qgd_submit() {
-				let buy_depart_id
-				this.comDepartList.forEach((item) => {
-					if(item.department_name === this.qgd_ruleForm.request_buy_department) {
-						buy_depart_id = item.department_id
-					}
-				})
-				let consignee_uid
-				this.comPersonList.forEach((item) => {
-					if(item.name === this.qgd_ruleForm.consignee) {
-						consignee_uid = item.uid
-					}
-				})
-				let buy_person_uid
-				this.comPersonList.forEach((item) => {
-					if(item.name === this.qgd_ruleForm.buy_person) {
-						buy_person_uid = item.uid
-					}
-				})
-				let param = new URLSearchParams();
-				param.append("uid", this.user.uid);
-				param.append("company_id", this.nowCompanyId);
-				param.append("request_buy_department", buy_depart_id);
-				param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
-				param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
-				param.append("is_urgent", this.qgd_ruleForm.is_urgent);
-				param.append("content", JSON.stringify(this.qgd_ruleForm.add));
-				param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
-				param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
-				param.append("arrival_time", this.qgd_ruleForm.arrival_time);
-				param.append("consignee", this.qgd_ruleForm.consignee);
-				param.append("consignee_phone", this.qgd_ruleForm.consignee_phone);
-				param.append("total", this.qgd_ruleForm.total);
-				param.append("receive_address", this.qgd_ruleForm.receive_address);
-				param.append("buy_person", this.qgd_ruleForm.buy_person);
-				param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
-				param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
-				param.append("consignee_uid", consignee_uid);
-				param.append("buy_person_uid", buy_person_uid);
-				param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
-				param.append("type", 2);
-				this.$http.post("/index/Mobile/approval/add_request_buy", param)
-					.then((res) => {
-						console.log(res)
+				let myDate = Date.parse(new Date())
+				this.begin_time = myDate
+				this.pic_hash_arr = []
+				this.afile_hash_arr = []
+				this.file_hash_arr = []
+				if(!this.pic &&!this.file){
+					let buy_depart_id
+					this.comDepartList.forEach((item) => {
+						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
+							buy_depart_id = item.department_id
+						}
 					})
+					let consignee_uid
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.consignee) {
+							consignee_uid = item.uid
+						}
+					})
+					let buy_person_uid
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.buy_person) {
+							buy_person_uid = item.uid
+						}
+					})
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("company_id", this.nowCompanyId);
+						param.append("request_buy_department", buy_depart_id);
+						param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
+						param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
+						param.append("is_urgent", this.qgd_ruleForm.is_urgent);
+						param.append("content", JSON.stringify(this.qgd_ruleForm.add));
+						param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
+						param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
+						param.append("arrival_time", this.qgd_ruleForm.arrival_time);
+						param.append("consignee", this.qgd_ruleForm.consignee);
+						param.append("consignee_phone", this.qgd_ruleForm.consignee_phone);
+						param.append("type", 2);
+						param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
+						param.append("total", this.qgd_ruleForm.total);
+						param.append("receive_address", this.qgd_ruleForm.receive_address);
+						param.append("buy_person", this.qgd_ruleForm.buy_person);
+						param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
+						param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
+						param.append("consignee_uid", consignee_uid);
+						param.append("buy_person_uid", buy_person_uid);
+						this.$http.post("/index/Mobile/approval/add_request_buy", param)
+						.then((res) => {
+							console.log(res)
+						})
+				}
+				if(this.pic && this.file) {
+					
+					for(let i = 0; i < this.pic.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.pic[i]);
+						formData.append('token', this.token);
+						let config = {headers: {'Content-Type': 'multipart/form-data'}}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.pic.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.afile_hash_arr.push({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id,
+											"name": this.pic[i].name
+										})
+										let aDate = Date.parse(new Date())
+										this.pic_time = aDate
+									})
+							}
+						})
+		
+					}
+					for(let i = 0; i < this.file.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.file[i]);
+							formData.append('token', this.token);
+							let config = {headers: {'Content-Type': 'multipart/form-data'}}
+							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							let index = this.file[i].name.indexOf('.')
+							let attribute =this.file[i].name.slice(index)
+							let file_name =this.file[i].name.slice(0,index)
+							let param = new URLSearchParams();
+							param.append("uid", this.user.uid);
+							param.append("attribute", attribute);
+							param.append("attachments", res.data.hash);
+							param.append("file_name", file_name);
+							this.$http.post("/index/Mobile/approval/add_attachments", param)
+							.then((res)=>{
+								this.file_hash_arr.push({
+									"type":4,
+									"contract_id":res.data.data.attachments_id,
+									"name":this.file[i].name})
+								if(this.file_hash_arr.length === this.file.length){
+										let bDate = Date.parse(new Date())
+										this.file_time = bDate
+										console.log(this.file_time)
+									}
+								})
+							})
+						}
+				}			
+				if(this.pic && !this.file){
+					for(let i = 0; i < this.pic.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.pic[i]);
+						formData.append('token', this.token);
+						let config = {headers: {'Content-Type': 'multipart/form-data'}}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.pic.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										let pic_obj=({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id
+										})	
+										let buy_depart_id
+										this.comDepartList.forEach((item) => {
+											if(item.department_name === this.qgd_ruleForm.request_buy_department) {
+												buy_depart_id = item.department_id
+												}
+											})
+										let consignee_uid
+										this.comPersonList.forEach((item) => {
+											if(item.name === this.qgd_ruleForm.consignee) {
+												consignee_uid = item.uid
+											}
+										})
+										let buy_person_uid
+										this.comPersonList.forEach((item) => {
+											if(item.name === this.qgd_ruleForm.buy_person) {
+												buy_person_uid = item.uid
+											}
+										})
+												let param = new URLSearchParams();
+												param.append("uid", this.user.uid);
+												param.append("company_id", this.nowCompanyId);
+												param.append("request_buy_department", buy_depart_id);
+												param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
+												param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
+												param.append("is_urgent", this.qgd_ruleForm.is_urgent);
+												param.append("content", JSON.stringify(this.qgd_ruleForm.add));
+												param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
+												param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
+												param.append("arrival_time", this.qgd_ruleForm.arrival_time);
+												param.append("consignee", this.qgd_ruleForm.consignee);
+												param.append("consignee_phone", this.qgd_ruleForm.consignee_phone);
+												param.append("total", this.qgd_ruleForm.total);
+												param.append("receive_address", this.qgd_ruleForm.receive_address);
+												param.append("buy_person", this.qgd_ruleForm.buy_person);
+												param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
+												param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
+												param.append("consignee_uid", consignee_uid);
+												param.append("buy_person_uid", buy_person_uid);
+												param.append("enclosure_id", JSON.stringify(pic_obj));
+												param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
+												param.append("type", 2);
+												this.$http.post("/index/Mobile/approval/add_request_buy", param)
+												.then((res) => {
+													console.log(res)
+												})
+									})	
+							}
+						})
+		
+					}
+				}
+			
 			},
 			qkd_submit() {
 				let param = new URLSearchParams();
@@ -1417,7 +1815,6 @@
 					this.qingkuan_show = false
 					this.qingkuan_one_show = true
 				}
-
 			},
 			_getExamList(index) {
 				let type
@@ -1437,18 +1834,225 @@
 				param.append("each", '20');
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/approval/request_monry_basis", param)
+.then((res) => {
+	let arr = []
+	res.data.data.forEach((item) => {
+		arr.push(create_exam_list(item))
+	})
+	this.untreated = arr
+})
+}
+	},
+	components: {
+		browsePic,
+		loading
+	},
+	watch: {
+		file_time() {
+			if(this.file_time!=0 && this.pic_time !=0){
+				if(this.navIndex === 0){
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("a_name", this.psb_ruleForm.a_name);
+					param.append("b_name", this.psb_ruleForm.b_name);
+					param.append("prive", this.psb_ruleForm.prive);
+					param.append("total_prive", this.psb_ruleForm.total_prive);
+					param.append("difference", this.psb_ruleForm.difference);
+					param.append("pay_method", this.psb_ruleForm.pay_method);
+					param.append("contract_name", this.psb_ruleForm.contract_name);
+					param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					param.append("arrive_time", this.psb_ruleForm.arrive_time);
+					param.append("end_time", this.psb_ruleForm.end_time);
+					param.append("executor", this.psb_ruleForm.executor);
+	//				param.append("enclosure_id", this.pic_enclosure_id);
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+					param.append("contract_num", this.psb_ruleForm.contract_id);
+					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
+					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
-						let arr = []
-						res.data.data.forEach((item) => {
-							arr.push(create_exam_list(item))
-						})
-						this.untreated = arr
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						this.file_time = 0
+						this.pic_time = 0
 					})
+				}
+				if(this.navIndex === 1){
+					let buy_depart_id
+					this.comDepartList.forEach((item) => {
+						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
+							buy_depart_id = item.department_id
+							}
+						})
+					let consignee_uid
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.consignee) {
+							consignee_uid = item.uid
+						}
+					})
+					let buy_person_uid
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.buy_person) {
+							buy_person_uid = item.uid
+						}
+					})
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("request_buy_department", buy_depart_id);
+					param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
+					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
+					param.append("is_urgent", this.qgd_ruleForm.is_urgent);
+					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
+					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
+					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
+					param.append("arrival_time", this.qgd_ruleForm.arrival_time);
+					param.append("consignee", this.qgd_ruleForm.consignee);
+					param.append("consignee_phone", this.qgd_ruleForm.consignee_phone);
+					param.append("total", this.qgd_ruleForm.total);
+					param.append("receive_address", this.qgd_ruleForm.receive_address);
+					param.append("buy_person", this.qgd_ruleForm.buy_person);
+					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
+					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
+					param.append("consignee_uid", consignee_uid);
+					param.append("buy_person_uid", buy_person_uid);
+					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
+					param.append("many_enclosure",JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+					param.append("type", 2);
+					this.$http.post("/index/Mobile/approval/add_request_buy", param)
+					.then((res) => {
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						this.file_time = 0
+						this.pic_time = 0
+					})
+				}
+				if(this.navIndex === 2){
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("department_id", this.cpj_ruleForm.department_id);
+					param.append("content", this.cpj_ruleForm.content);
+					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+					param.append("title", this.cpj_ruleForm.title);
+					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+					this.$http.post("/index/Mobile/approval/add_chengpi", param)
+					.then((res) => {
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						this.file_time = 0
+						this.pic_time = 0
+					})
+				}
 			}
-		},
-		components: {
-			browsePic
+	},
+		pic_time() {
+			if(this.file_time!=0 && this.pic_time !=0){
+				if(this.navIndex === 0){
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("a_name", this.psb_ruleForm.a_name);
+					param.append("b_name", this.psb_ruleForm.b_name);
+					param.append("prive", this.psb_ruleForm.prive);
+					param.append("total_prive", this.psb_ruleForm.total_prive);
+					param.append("difference", this.psb_ruleForm.difference);
+					param.append("pay_method", this.psb_ruleForm.pay_method);
+					param.append("contract_name", this.psb_ruleForm.contract_name);
+					param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					param.append("arrive_time", this.psb_ruleForm.arrive_time);
+					param.append("end_time", this.psb_ruleForm.end_time);
+					param.append("executor", this.psb_ruleForm.executor);
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+					param.append("contract_num", this.psb_ruleForm.contract_id);
+					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
+					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
+					.then((res) => {
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						this.file_time = 0
+						this.pic_time = 0
+					})
+				}
+				if(this.navIndex === 1){
+					let buy_depart_id
+					this.comDepartList.forEach((item) => {
+						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
+							buy_depart_id = item.department_id
+							}
+						})
+					let consignee_uid
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.consignee) {
+							consignee_uid = item.uid
+						}
+					})
+					let buy_person_uid
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.buy_person) {
+							buy_person_uid = item.uid
+						}
+					})
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("request_buy_department", buy_depart_id);
+					param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
+					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
+					param.append("is_urgent", this.qgd_ruleForm.is_urgent);
+					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
+					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
+					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
+					param.append("arrival_time", this.qgd_ruleForm.arrival_time);
+					param.append("consignee", this.qgd_ruleForm.consignee);
+					param.append("consignee_phone", this.qgd_ruleForm.consignee_phone);
+					param.append("total", this.qgd_ruleForm.total);
+					param.append("receive_address", this.qgd_ruleForm.receive_address);
+					param.append("buy_person", this.qgd_ruleForm.buy_person);
+					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
+					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
+					param.append("consignee_uid", consignee_uid);
+					param.append("buy_person_uid", buy_person_uid);
+					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
+//					param.append("enclosure_id", this.pic_enclosure_id);
+					param.append("many_enclosure",JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+					param.append("type", 2);
+					this.$http.post("/index/Mobile/approval/add_request_buy", param)
+					.then((res) => {
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						this.file_time = 0
+						this.pic_time = 0
+					})
+				}
+				if(this.navIndex === 2){
+					let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("company_id", this.nowCompanyId);
+					param.append("department_id", this.cpj_ruleForm.department_id);
+					param.append("content", this.cpj_ruleForm.content);
+					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+					param.append("title", this.cpj_ruleForm.title);
+					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+					this.$http.post("/index/Mobile/approval/add_chengpi", param)
+					.then((res) => {
+						if(res.data.code === 0){
+							this.loading_show = false
+						}
+						this.file_time = 0
+						this.pic_time = 0
+					})
+				}
+			}
 		}
+	}
 	}
 </script>
 

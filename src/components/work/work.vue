@@ -84,6 +84,7 @@
 	</div>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 import formReceipt from '@/base/form_receipt/form_receipt'
 import addressBook from '@/base/address_book/address_book'
 import exam from '@/base/exam/exam'
@@ -208,7 +209,18 @@ export default {
 					this.address_bookShow = true
 					break
 			}
-		}
+		},
+		_getToken(uid){
+				 let nparam = new URLSearchParams();
+					nparam.append("uid",this.user.uid);
+					this.$http.post("/index/Mobile/path/get_token",nparam)
+					.then((res)=>{
+						this.set_token(res.data.data)
+					})
+		},
+		...mapMutations({
+				set_token: 'SET_TOKEN'
+			})
 	},
 	computed: {
 		...mapGetters([
@@ -227,7 +239,9 @@ export default {
 	},
 	mounted() {
 	},
-	created() {}
+	created() {
+		this._getToken()
+	}
 }
 </script>
 

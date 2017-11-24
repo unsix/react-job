@@ -104,12 +104,12 @@
 							this._getComDepart()
 							this._getComPersonList()
 							this._getComPartPersonList()
-						},300)
+						},500)
 						this.loadingShow=true
 						setTimeout(()=>{
 							this.$router.push('/index/work');
 							this.loadingShow=false
-						},1000)
+						},1200)
 					}else{
   						this.errorShow = true;
 					}
@@ -182,6 +182,7 @@
 				    this.setNowCompanyId(res.data.data[0].company_id)
 				})
 			},
+			
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',

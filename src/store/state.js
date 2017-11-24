@@ -3,7 +3,8 @@ const state = {
   nowCompanyId:-1,
   comPersonList:[],
   comDepartList:[],
-  comPartPersonList:[]
+  comPartPersonList:[],
+  token:''
 }
 
 export default state

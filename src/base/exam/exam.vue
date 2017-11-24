@@ -150,12 +150,12 @@
 						<h4>请购清单</h4>
 						<p>请购名称：<span>{{item.name}}</span></p>
 						<p>规格：<span>{{item.spec}}</span></p>
-						<p>型号<span>{{item.model}}</span></p>
+						<p>型号:<span>{{item.model}}</span></p>
 						<p>单位：<span>{{item.unit}}</span></p>
-						<p>数量<span>{{item.num}}</span></p>
-						<p>预计单价￥<span>{{item.price}}</span></p>
-						<p>总额￥<span>{{item.subtotal}}</span></p>
-						<p>申报采购原因及用途<span>{{item.purpose}}</span></p>
+						<p>数量:<span>{{item.num}}</span></p>
+						<p>预计单价￥:<span>{{item.price}}</span></p>
+						<p>总额￥:<span>{{item.subtotal}}</span></p>
+						<p>申报采购原因及用途:<span>{{item.purpose}}</span></p>
 					</div>
 					<div>
 						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
@@ -343,7 +343,7 @@
 						</div>
 					</div>
 				</div>
-			  <!--申请公章展示	-->
+			  <!--申请公章展示-->
      			<div class="form" name="申请公章" v-if="gongzhang_show">
 					<div>
 						<span>用章部门：</span><span>{{form_Lista.department_name}}</span>
@@ -766,7 +766,7 @@ export default{
 				}
 				p{
 					display: inline-block;
-					width:200px;
+					min-width:180px;
 					height: 30px;
 					line-height: 30px;
 					span{

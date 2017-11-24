@@ -7,3 +7,5 @@ export const comPersonList = state => state.comPersonList
 export const comDepartList = state => state.comDepartList
 
 export const comPartPersonList = state => state.comPartPersonList
+
+export const token = state => state.token
