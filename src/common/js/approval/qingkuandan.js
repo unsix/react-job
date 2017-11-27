@@ -15,7 +15,8 @@ export default class qingkuandan_list {
   	request_content,
   	project_manager_name,
   	worker_contract_id,
-  	img}) {
+  	balance_subtotal,
+  	many_enclosure}) {
     this.contract_name = contract_name
     this.contract_name_new = contract_name_new
     this.request_name = request_name
@@ -29,18 +30,21 @@ export default class qingkuandan_list {
     this.request_subtotal = request_subtotal
     this.contract_state = contract_state
     this.worker_contract_id = worker_contract_id
-    this.img = img
+    this.many_enclosure = many_enclosure
+    this.worker_type = worker_type
+    this.phone = phone
+    this.request_content = request_content
+    this.balance_subtotal = balance_subtotal
   
   }
 }
 export function create_qingkuandan_list(item) {
 	return new qingkuandan_list({
-		img:img_id(item),
 	    contract_name:item.contract_name,
 	    contract_name_new: item.contract_name_new,
 	    request_name: item.request_name,
 	    account_name:item.account_name,
-	    project_manager_name:'项目经理',
+	    project_manager_name:get_manager_name(item),
 	    executor:item.executor,
 	    bank_card:item.bank_card,
 	    request_num:item.request_num,
@@ -48,16 +52,21 @@ export function create_qingkuandan_list(item) {
 	    gain_reduction_subtotal:item.gain_reduction_subtotal,
 	    request_subtotal:item.request_subtotal,
 	    contract_state:item.contract_state,
-	    worker_contract_id:item.worker_contract_id
+	    worker_contract_id:item.worker_contract_id,
+	    bank_address:item.bank_address,
+	    many_enclosure:item.many_enclosure,
+	    request_content:item.request_content,
+	    worker_type:item.worker_type,
+	    phone:item.phone,
+	    balance_subtotal:item.balance_subtotal
 	   
 	})
 }
-
-function img_id(item){
-	if( item.contract_id === null||item.contract_id.length === 0 ){
-		return '0'
+function get_manager_name(item){
+	if(!item.project_manager_name){
+		return '  '
 	}
-	if(item.contract_id[0].type === 3){
-		return item.contract_id[0].contract_id
+	if(item.project_manager_name.name){
+		return item.project_manager_name.name
 	}
 }

@@ -23,7 +23,6 @@
 					</div>
 					<div class="submit">
 						<a @click="login">登录<i class="el-icon-loading" v-show="loadingShow"></i></a>
-						
 					</div>
 				</div>
 				<div class="forget">
@@ -99,6 +98,7 @@
 							'name':res.data.data.name,
 							'avatar':getAvatar(res.data.data.avatar)
 						})
+						
 						this._getUserCompanyList(res.data.data.uid)
 						setTimeout(()=>{
 							this._getComDepart()
@@ -127,13 +127,11 @@
 			    		}
 			    		let obj={}
    						this.$set(obj,'department_name',resData[j].department_name)
-   						/**/
 						let newparam = new URLSearchParams();
 					    newparam.append("company_id",this.nowCompanyId); 
 					    newparam.append("department_id",resData[j].department_id);
 					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
 					    .then((res)=>{
-					    	
 					    	let reaDa=[]
 					    	res.data.data.forEach((item)=>{
 					    		reaDa.push(createPersonInfo(item))
@@ -143,7 +141,6 @@
 					    })	
 					    this.numOne++				   
 					}   	
-					
 					this.setComPartPersonList(this.ComPartPersonList)
 			    })
 			},
@@ -179,10 +176,11 @@
 				param.append("uid",user_id);
 				this.$http.post("/index/Mobile/user/companies_list",param)
 				.then((res)=>{
-				    this.setNowCompanyId(res.data.data[0].company_id)
+					localStorage.nowCompanyList = JSON.stringify(res.data.data);
+				    localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
+				    localStorage.nowCompanyName = JSON.stringify(res.data.data[0].company_name);
 				})
 			},
-			
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',

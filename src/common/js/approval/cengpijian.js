@@ -1,11 +1,12 @@
 export default class cengpijian_list {
-  constructor({title, department_name,chengpi_num,content,project_manager_name,img_list}) {
+  constructor({title, department_name,chengpi_num,content,project_manager_name,many_enclosure,contract_id}) {
     this.title = title
     this.department_name = department_name
     this.chengpi_num = chengpi_num
     this.content = content
     this.project_manager_name = project_manager_name
-    this.img_list = img_list
+    this.many_enclosure = many_enclosure
+    this.contract_id = contract_id
   }
 }
 export function create_cengpijian_list(item) {
@@ -15,19 +16,21 @@ export function create_cengpijian_list(item) {
 	    chengpi_num: item.chengpi_num,
 	    content:item.content,
 	    project_manager_name:get_project_manager_name(item),
-	    img_list:img_id(item)
+	    many_enclosure:item.many_enclosure,
+	    contract_id:get_file(item) 
 	})
 }
 
-function img_id(item){
-	if(item.contract_id.type === 3){
-		return item.contract_id.contract_id
-	}
-}
 function 	get_project_manager_name(item){
 	if(item.project_manager_name){
 		return  item.project_manager_name.name
 	}else{
-		return '暂无'
+		return ' '
+	}
+}
+
+function get_file(list){
+	if(!list.contract_id){
+		return
 	}
 }

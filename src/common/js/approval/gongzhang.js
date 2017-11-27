@@ -1,9 +1,10 @@
 export default class gongzhang_list {
-  constructor({department_name,user_name,info,project_manager_name}) {
+  constructor({department_name,user_name,info,project_manager_name,many_enclosure}) {
     this.department_name = department_name
     this.user_name = user_name
     this.info = info
     this.project_manager_name = project_manager_name
+    this.many_enclosure = many_enclosure
   }
 }
 export function create_gongzhang_list(item) {
@@ -11,7 +12,8 @@ export function create_gongzhang_list(item) {
 	    department_name: item.department_name,
 	    user_name: item.user_name,
 	    info: get_info(item.info),
-	    project_manager_name:item. project_manager_name
+	    project_manager_name:get_manager_name(item),
+	    many_enclosure:item. many_enclosure
 	})
 }
 
@@ -39,4 +41,12 @@ function get_info(info){
 		}
 	})
 	return info
+}
+function get_manager_name(item){
+	if(!item.project_manager_name){
+		return '  '
+	}
+	if(item.project_manager_name.name){
+		return item.project_manager_name.name
+	}
 }

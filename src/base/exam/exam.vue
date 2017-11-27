@@ -41,6 +41,11 @@
 							</div>
 						</div>
 					</li>
+					<div class="page">
+						<span @click="first_page" >首页</span>
+						<span @click="last_page" v-show="pageIndex > 1">上一页</span>
+						<span @click="next_page" v-show="nextPageShow">下一页</span>
+					</div>
 				</ul>
 			</div>
 		</div>
@@ -68,6 +73,7 @@
 					</div>
 					<div>
 						<span>附件列表：</span>
+						<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
 					</div>
 					<div>
 						<span >图片附件：</span>
@@ -79,22 +85,15 @@
 						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 					</div>
 					<div>
-						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #409EFF;">{{item}}
+						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
 						</span>
 					</div>
 					<div>
 						<span>审批：</span>
-						<div class="approval">
-							<div v-for="item in form_Listb.content">
-								<span>{{item.department_name}}</span>
-								<span>{{item.name}}</span>
-								<span style="color: #67C23A;">{{item.is_agree}}</span>
-							</div>
-							<div v-for="item in form_Listb.content">
-								<span>审批时间</span>
-								<span>{{item.add_time}}</span>
-						</div>
-						</div>
+						<span v-for="item in form_Listb.content">
+						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
+						</span>
 					</div>
 					<div class="menu" v-show="handle_show">
 						<span @click="handle">处理</span>
@@ -103,7 +102,7 @@
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" name="" id="" value="" />
+							<input type="file"  @change="getPic($event)"  multiple="multiple" />
 							<i class="el-icon-close" @click="closeMenu" ></i>
 						</div>
 					</div>
@@ -158,15 +157,27 @@
 						<p>申报采购原因及用途:<span>{{item.purpose}}</span></p>
 					</div>
 					<div>
+						<span>附件列表：</span>
+						<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+					</div>
+					<div>
+						<span >图片附件：</span>
+						<a  v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
+							<img :src="item" alt="" @click="ctrl_pic_show"/>
+						</a>
+					</div>
+					<div>
 						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 					</div>
 					<div>
-						<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}</span>
+						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
+						</span>
 					</div>
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
 					<div class="menu" v-show="handle_show">
@@ -176,7 +187,7 @@
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" name="" id="" value="" />
+							<input type="file"  multiple="multiple"/>
 							<i class="el-icon-close" @click="closeMenu" ></i>
 						</div>
 					</div>
@@ -222,14 +233,15 @@
 					<div>
 						<span>本次请款￥：</span><span>{{form_Lista.request_subtotal}}</span>
 					</div>
-					<div>
+					<!--<div>
 						<span>合同执行进度：</span><span>{{form_Lista.contract_state}}</span>
-					</div>
+					</div>-->
 					<div>
 						<span>请款内容：</span><span>{{form_Lista.request_content}}</span>
 					</div>
 					<div>
 						<span>附件列表：</span>
+						<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
 					</div>
 					<div>
 						<span >图片附件：</span>
@@ -238,18 +250,16 @@
 						</a>
 					</div>
 					<div>
-						<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
-					</div>
-					<div>
 						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 					</div>
 					<div>
-						<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}</span>
+						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
 					</div>
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
 					<div class="menu" v-show="handle_show">
@@ -258,19 +268,21 @@
 							<span @click="agree($event)">同意</span>
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
-							<input name="token" type="hidden" :value="input_value">
-							<input type="file" name="" id="" value="" />
 							<i class="el-icon-close" @click="closeMenu" ></i>
+							<input name="token" type="hidden" :value="input_value">
+							<br />
+							<a>上传图片</a>
+							<input type="file" @change="getPic($event)" multiple="multiple"/>
 						</div>
 					</div>
 				</div>
-      <!--合同评审表展示-->
+        <!--合同评审表展示-->
 				<div class="form" name="合同评审表" v-if="pingshenbiao_show">
 					<div>
 						<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 					</div>
 					<div>
-						<span>合同名称：</span><span></span>
+						<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 					</div>
 					<div>
 						<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
@@ -307,10 +319,11 @@
 						<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
 					</div>
 					<div>
-						<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
+						<span>备注：</span><span>{{form_Lista.remarks}}</span>
 					</div>
 					<div>
-						<span>附件列表：</span><span>{{form_Lista.contract_name}}</span>
+						<span>附件列表：</span>
+						<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
 					</div>
 					<div>
 						<span >图片附件：</span>
@@ -319,16 +332,16 @@
 						</a>
 					</div>
 					<div>
-						<span>发起人：</span><span v-for="item in form_Listb.list">{{item}}</span>
+						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 					</div>
 					<div>
-						<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}
-						</span>
+						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
 					</div>
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
 					<div class="menu" v-show="handle_show">
@@ -338,12 +351,12 @@
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" name="" id="" value="" />
-							<i class="el-icon-close" @click="closeMenu" ></i>
+							<input type="file" name="" id="" value="" multiple="multiple" />
+							<i class="el-icon-close" @click="closeMenu"  @change="getPic($event)"  ></i>
 						</div>
 					</div>
 				</div>
-			  <!--申请公章展示-->
+		<!--申请公章展示-->
      			<div class="form" name="申请公章" v-if="gongzhang_show">
 					<div>
 						<span>用章部门：</span><span>{{form_Lista.department_name}}</span>
@@ -365,10 +378,11 @@
 					</div>
 					<div>
 						<span>附件列表：</span>
+						<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
 					</div>
 					<div>
-						<span>图片附件：</span>
-						<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
+						<span >图片附件：</span>
+						<a  v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
 							<img :src="item" alt="" @click="ctrl_pic_show"/>
 						</a>
 					</div>
@@ -376,21 +390,15 @@
 						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 					</div>
 					<div>
-						<span>审批人员：</span><span v-for="item in form_Listb.list" >{{item}}</span>
+						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
+						</span>
 					</div>
 					<div>
 						<span>审批：</span>
-						<div class="approval">
-							<div v-for="item in form_Listb.content">
-								<span>{{item.department_name}}</span>
-								<span>{{item.name}}</span>
-								<span style="color: #67C23A;">{{item.is_agree}}</span>
-							</div>
-							<div v-for="item in form_Listb.content">
-								<span>审批时间</span>
-								<span>{{item.add_time}}</span>
-							</div>
-						</div>
+						<span v-for="item in form_Listb.content">
+						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
+						</span>
 					</div>
 					<div class="menu" v-show="handle_show">
 						<span @click="handle">处理</span>
@@ -401,19 +409,19 @@
 							<i class="el-icon-close" @click="closeMenu" ></i>
 							<br />
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" multiple="multiple" />
-
-
+							<input type="file" multiple="multiple"  @change="getPic($event)" />
 						</div>
 					</div>
 				</div>
 		</div>
 		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+		<loading v-show="loading_show"></loading>
 	</div>
 
 </template>
 
 <script>
+import loading from '@/base/loading/loading'
 import browsePic from '@/base/browse_pic/browse_pic'
 import {create_qinggoudan_list} from '@/common/js/approval/qinggoudan'
 import {create_gongzhang_list} from '@/common/js/approval/gongzhang'
@@ -439,6 +447,7 @@ export default{
 			qinggoudan_show:false,
 			pingshenbiao_show:false,
 			gongzhang_show:false,
+			loadingShow:false,
 			form_Lista:[],
 			form_Listb:[],
 			menuShow:false,
@@ -447,6 +456,8 @@ export default{
 			approval_process:false,
 			handle_show:true,
 			pic_show:false,
+			loading_show:false,
+			nextPageShow:true,
 			pic_index:0,
 			handle_txt:'',
 			input_value:'',
@@ -454,7 +465,10 @@ export default{
 			pic_hash:'',
 			cur_height:'',
 			img_arr:[],
-			fileList:[]
+			fileList:[],
+			file_arr:[],
+			pic_hash_arr:[],
+			pageIndex:1
 		}
 	},
 	computed:{
@@ -467,12 +481,31 @@ export default{
 		this._getExamList()
 	},
 	components:{
-		browsePic
+		browsePic,
+		loading
 	},
 	methods:{
+		first_page(){
+			this.nextPageShow = true
+			this.pageIndex = 1
+		},
+		last_page(){
+			this.nextPageShow = true
+			--this.pageIndex
+		},
+		next_page(){
+			++this.pageIndex
+		},
+		cl_pic(item,index){
+			this.img_arr = item.picture
+			this.pic_index = index
+			this.pic_show=true
+		},
+		getPic(event) {
+	        this.pic = event.target.files;   
+	    },
 		handleUpload() {
-//    document.getElementById('excel-upload-input').click()
-    },
+	    },
 		close_pic(){
 			this.pic_show = false
 		},
@@ -504,32 +537,44 @@ export default{
 			})
 		},
 		agree(){
-			let formData = new FormData();
-            formData.append('file', this.file);
-            formData.append('token', this.input_value);
-            let config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
-            	this.pic_hash=res.data.hash
-	        })
-            let param = new URLSearchParams();
-				param.append("uid",this.user.uid);
-				param.append("approval_id",this.untreated.approval_id);
-				param.append("participation_id",this.form_Listb.participation_id);
-				param.append("is_agree",'1');
-				param.append("picture",this.pic_hash);
-				param.append("company_id",this.nowCompanyId);
-				this.$http.post("/index/Mobile/find/approval_process",param)
-				.then((res)=>{
-					if(res.status===200){
-						this._getExamList()
-						this.listShow = true
-						this.formShow = false
+			this.loading_show = true
+			if(this.pic){
+				for(let i = 0; i < this.pic.length; i++) {
+				let formData = new FormData();
+				formData.append('file', this.pic[i]);
+				formData.append('token', JSON.parse(localStorage.token));
+				let config = {headers: {'Content-Type': 'multipart/form-data'}}
+				this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+					this.pic_hash_arr.push(res.data.hash)
+					if(this.pic_hash_arr.length === this.pic.length) {
+						let nparam = new URLSearchParams();
+						nparam.append("uid", this.user.uid);
+						nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+						this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+						.then((res) => {
+							let param = new URLSearchParams();
+							param.append("uid",this.user.uid);
+							param.append("approval_id",this.untreated.approval_id);
+							param.append("participation_id",this.form_Listb.participation_id);
+							param.append("is_agree",'1');
+							param.append("picture",res.data.data.enclosure_id);
+							param.append("company_id",this.nowCompanyId);
+							this.$http.post("/index/Mobile/find/approval_process",param)
+							.then((res)=>{
+								if(res.status===200){
+									this.loading_show = false
+									this._getExamList()
+									this.listShow = true
+									this.formShow = false
+								}
+							})
+						})
 					}
 				})
+			}
+			}
+            
+           		
 		},
 		refuse(){
 			let formData = new FormData();
@@ -556,7 +601,6 @@ export default{
 					this.listShow = true
 					this.formShow = false
 				}
-
 			})
 		},
 		return_list(){
@@ -574,7 +618,6 @@ export default{
 			this.listShow = false
 			this.formShow = true
 			this.now_type_name=item.type
-			console.log(item.type)
 			if(item.type === '呈批件'){
 				this.cengpijian_show = true
 			}else if(item.type === '请款单'){
@@ -593,17 +636,26 @@ export default{
 			.then((res)=>{
 				if(item.type === '呈批件'){
 					this.form_Lista = create_cengpijian_list(res.data.data)
-				    this.get_img(this.form_Lista.img_list)
+				    this.get_img(this.form_Lista.many_enclosure)
+					this.get_file(this.form_Lista.many_enclosure)
 				}else if(item.type === '合同评审表'){
 					this.form_Lista = create_hetongpingshen_list(res.data.data)
-					this.get_img(this.form_Lista.enclosure_id)
+					this.get_img(this.form_Lista.many_enclosure)
+					this.get_file(this.form_Lista.many_enclosure)
 				}else if(item.type === '请款单'){
+					
 					this.form_Lista = create_qingkuandan_list(res.data.data)
-					this.get_img(this.form_Lista.img)
+					this.get_img(this.form_Lista.many_enclosure)
+					this.get_file(this.form_Lista.many_enclosure)
 				}else if(item.type === '申请公章'){
 					this.form_Lista = create_gongzhang_list(res.data.data)
+					this.get_img(this.form_Lista.many_enclosure)
+					this.get_file(this.form_Lista.many_enclosure)
+					
 				}else if(item.type === '请购单'){
 					this.form_Lista = create_qinggoudan_list(res.data.data)
+					this.get_img(this.form_Lista.many_enclosure)
+					this.get_file(this.form_Lista.many_enclosure)
 				}
 			})
 			let nparam = new URLSearchParams();
@@ -613,29 +665,73 @@ export default{
 			this.$http.post("/index/Mobile/approval/approval_process_personnel",nparam)
 			.then((res)=>{
 				this.form_Listb=create_approval_list(res.data.data)
+				res.data.data.content.forEach((item)=>{
+					if(item.picture){
+						let zparam = new URLSearchParams();
+						zparam.append("enclosure_id",item.picture);
+						this.$http.post("/index/Mobile/approval/look_enclosure",zparam)
+						.then((res)=>{
+							let arr = []
+							res.data.data.picture.forEach((item)=>{
+								if(item != ''){
+									arr.push('http://img-bbsf.6655.la/'+item)
+								}
+							})
+							item.picture = arr
+						})
+					}
+				})
+				
 			})
 		},
 //		获取图片
-		get_img(enclosure_id) {
-			if(enclosure_id === '0'){
+		get_img(many_enclosure) {
+			if(!many_enclosure){
 				return
 			}
-			let param = new URLSearchParams();
-			param.append("enclosure_id", enclosure_id);
-			this.$http.post("/index/Mobile/approval/look_enclosure", param)
+			many_enclosure.forEach((item)=>{
+				if(item.type === 3){
+				let param = new URLSearchParams();
+				param.append("enclosure_id", item.contract_id);
+				this.$http.post("/index/Mobile/approval/look_enclosure", param)
 				.then((res) => {
 					let arr=[]
 					res.data.data.picture.forEach((item)=>{
 						if(item != ''){
 							arr.push('http://img-bbsf.6655.la/'+item)
 						}
-
 					})
 					this.img_arr = arr
 					this.$set(this.form_Lista,'img_list',arr)
 				})
+				}
+			})
+		},
+		get_file(many_enclosure){
+			this.file_arr = []
+			if(!many_enclosure){
+				return
+			}
+			many_enclosure.forEach((item)=>{
+				
+				if(item.type === 4){
+				let param = new URLSearchParams();
+				param.append("attachments_id", item.contract_id);
+				this.$http.post("/index/Mobile/approval/look_attachments", param)
+				.then((res) => {
+					let obj={}
+					let file_data = res.data.data
+					let file_add = 'http://img-bbsf.6655.la/'+file_data.attachments+'?attname='+file_data.file_name+file_data.attribute
+					obj.name = file_data.file_name
+					obj.address = file_add
+					this.file_arr.push(obj)
+				})
+				}
+			})
+
 		},
 		navCli(index){
+			this.pageIndex = 1
 			this.nowType = index+1
 			if(index===0) {
 				this.handle_time_show=false
@@ -665,7 +761,8 @@ export default{
 			let param = new URLSearchParams();
 			param.append("uid",this.user.uid);
 			param.append("type",this.nowType);
-			param.append("each",'20');
+			param.append("each",'10');
+			param.append("p",this.pageIndex);
 			param.append("company_id",this.nowCompanyId);
 			this.$http.post("/index/Mobile/approval/see_approval_list",param)
 			.then((res)=>{
@@ -674,11 +771,17 @@ export default{
 					arr.push(create_exam_list(item))
 				})
 				this.untreated=arr
+				if(arr.length<10){
+					this.nextPageShow = false
+				}
 			})
 		}
 	},
 	watch:{
 		nowCompanyId(){
+			this._getExamList()
+		},
+		pageIndex(){
 			this._getExamList()
 		}
 	}
@@ -733,11 +836,24 @@ export default{
 					}
 				}
 				img{
+					margin-right: 10px;
 					display: inline-block;
-					height: 50px;
 					width: 80px;
 					cursor: pointer;
 				}
+			}
+			.file{
+				font-size: 14px;
+				margin: 4px auto;
+				display: block;
+				height: 24px;
+				width: 80%;
+				line-height: 24px;
+				color:#5A5E66;
+				border: 1px solid #F9F9F9;
+				border-radius: 4px;
+				background: #DDDDDD;
+				text-align: center;
 			}
 			.qingdan{
 				font-size: 14px;
@@ -825,10 +941,9 @@ export default{
 						margin-left: 10px;
 					}
 					>a{
-						font-size: 12px;
+						font-size: 14px;
 						display: inline-block;
-						padding: 4px 10px;
-						border: 1px solid #5E8579;
+						color: #000000;
 					}
 
 				}
@@ -842,6 +957,18 @@ export default{
 			width: 100%;
 			ul{
 				padding: 4px;
+				.page{
+					width: 100%;
+					padding: 4px;
+					text-align: center;
+					span{
+						cursor: pointer;
+						font-size: 12px;
+						&:hover{
+							color: #409EFF;
+						}
+					}	
+				}
 				li{
 					color: #2D2F33;
 					font-size: 14px;

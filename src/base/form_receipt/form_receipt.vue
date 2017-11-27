@@ -30,6 +30,11 @@
 						</div>
 					</div>
 				</li>
+				<div class="page">
+					<span @click="first_page" >首页</span>
+					<span @click="last_page" v-show="pageIndex > 1">上一页</span>
+					<span @click="next_page" v-show="nextPageShow">下一页</span>
+				</div>
 			</ul>
 		</div>
 		<psb 
@@ -75,8 +80,10 @@
 				psb_if:false,
 				qgd_if:false,
 				listShow:true,
+				nextPageShow:true,
 				handle_show:true,
 				img_arr:[],
+				pageIndex:1,
 				psb_approval_id:''
 			}
 		},
@@ -90,7 +97,23 @@
 			this._get_data()
 		},
 		methods:{
+			first_page(){
+				this.nextPageShow = true
+				this.pageIndex = 1
+			},
+			last_page(){
+				this.nextPageShow = true
+				--this.pageIndex
+			},
+			next_page(){
+				++this.pageIndex
+			},
 			nav_cli(index){
+				if(index === 0){
+					this.handle_show = true
+				}else{
+					this.handle_show = false
+				}
 				this.navIndex = index
 				this.finance_type = index + 1
 				this._get_data()
@@ -100,6 +123,8 @@
 				param.append("uid",this.user.uid);
 				param.append("type",this.finance_type);
 				param.append("company_id",this.nowCompanyId);
+				param.append("p",this.pageIndex);
+				param.append("each",'10');
 				this.$http.post("/index/Mobile/find/finance_list_formal",param)
 				.then((res)=>{
 					
@@ -109,7 +134,9 @@
 						arr.push(create_exam_list(item))
 					})
 					this.untreated = arr
-					console.log(this.untreated)
+					if(arr.length<10){
+						this.nextPageShow = false
+					}
 				})
 			},
 			return_psb(){
@@ -117,7 +144,6 @@
 				this.listShow = true
 			},
 			listCli(item){
-				
 				this.listShow=false
 				this.psb_approval_id = item.approval_id
 				let param = new URLSearchParams();
@@ -131,7 +157,8 @@
 					}else if(item.type === '合同评审表'){
 						this.psb_if=true
 						this.form_Lista = create_hetongpingshen_list(res.data.data)
-						this.get_img(this.form_Lista.enclosure_id)
+						console.log(this.form_Lista)
+						this.get_img(this.form_Lista.many_enclosure)
 					}else if(item.type === '请款单'){
 						this.form_Lista = create_qingkuandan_list(res.data.data)
 						this.get_img(this.form_Lista.img)
@@ -139,7 +166,6 @@
 						this.form_Lista = create_gongzhang_list(res.data.data)
 					}else if(item.type === '请购单'){
 						this.qgd_if=true
-						console.log(res.data.data)
 						this.form_Lista = res.data.data
 					}
 				})
@@ -153,24 +179,32 @@
 				})
 			},
 	//		获取图片
-			get_img(enclosure_id) {
-				if(enclosure_id === '0'){
+			get_img(many_enclosure) {
+				if(!many_enclosure){
 					return
 				}
-				let param = new URLSearchParams();
-				param.append("enclosure_id", enclosure_id);
-				this.$http.post("/index/Mobile/approval/look_enclosure", param)
+				many_enclosure.forEach((item)=>{
+					if(item.type === 3){
+					let param = new URLSearchParams();
+					param.append("enclosure_id", item.contract_id);
+					this.$http.post("/index/Mobile/approval/look_enclosure", param)
 					.then((res) => {
 						let arr=[]
 						res.data.data.picture.forEach((item)=>{
 							if(item != ''){
 								arr.push('http://img-bbsf.6655.la/'+item)
 							}
-	
 						})
 						this.img_arr = arr
 						this.$set(this.form_Lista,'img_list',arr)
 					})
+					}
+				})
+			}
+		},
+		watch:{
+			pageIndex(){
+				this._get_data()
 			}
 		},
 		components:{
@@ -205,6 +239,18 @@
 		width: 100%;
 		ul {
 			padding: 4px;
+			>.page{
+					width: 100%;
+					padding: 4px;
+					text-align: center;
+					span{
+						cursor: pointer;
+						font-size: 12px;
+						&:hover{
+							color: #409EFF;
+						}
+					}	
+				}
 			li {
 				color: #2D2F33;
 				font-size: 14px;

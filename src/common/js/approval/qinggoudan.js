@@ -12,7 +12,7 @@ export default class qinggoudan_list {
   	consignee_phone,
   	content,
   	project_manager_name,
-  	img}) {
+  	many_enclosure}) {
     this.request_contract_address = request_contract_address
     this.contract_name_new = contract_name_new
     this.department_name = department_name
@@ -26,19 +26,18 @@ export default class qinggoudan_list {
     this.consignee = consignee
     this.consignee_phone = consignee_phone
     this.content = content
-    this.img = img
+    this.many_enclosure = many_enclosure
   
   }
 }
 export function create_qinggoudan_list(item) {
-	console.log(item)
 	return new qinggoudan_list({
-		img:img_id(item),
+			many_enclosure:item.many_enclosure,
 	    request_contract_address:item.request_contract_address,
 	    contract_name_new: item.contract_name_new,
 	    department_name: item.department_name,
 	    buy_person:item.buy_person,
-	    project_manager_name:'项目经理',
+	    project_manager_name:get_manager_name(item),
 	    executor:item.executor,
 	    contract_responsible:item.contract_responsible,
 	    responsible_tel:item.responsible_tel,
@@ -50,12 +49,11 @@ export function create_qinggoudan_list(item) {
 	   
 	})
 }
-
-function img_id(item){
-	if( !item.contract_id || item.contract_id === null){
-		return '0'
+function get_manager_name(item){
+	if(!item.project_manager_name){
+		return '  '
 	}
-	if(item.contract_id[0].type === 3){
-		return item.contract_id[0].contract_id
+	if(item.project_manager_name.name){
+		return item.project_manager_name.name
 	}
 }

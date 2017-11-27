@@ -10,7 +10,7 @@
 			<div class="work_wrapper">
 				<ul>
 					<li class="work_item" v-for="(item,index) in workList" @click="doList(item,index)">
-						<router-link to="">
+						<router-link to=""  :class="{'active' : index === workIndex}">
 							<span class="content">{{item}}</span>
 							<span class="num_icon"></span>
 						</router-link>
@@ -57,14 +57,18 @@
 									</li>
 								</ul>
 								<keep-alive>
+									<exam v-if="examShow"></exam>
+								</keep-alive>
+								<keep-alive>
+									<everyday v-if="everydayShow"></everyday>
+								</keep-alive>
+								<keep-alive>
 									<manageCompany v-if="manageCompanyShow" @close="manageCompanyClose"></manageCompany>
 								</keep-alive>
 								<keep-alive>
 									<jurisdictionManage v-if="jurisdictionManageShow" @close="jurisdictionManageClose"></jurisdictionManage>
 								</keep-alive>
-								<keep-alive>
-									<exam v-if="examShow"></exam>
-								</keep-alive>
+								
 								<keep-alive>
 									<addressBook v-if="address_bookShow"></addressBook>
 								</keep-alive>
@@ -85,6 +89,7 @@
 </template>
 <script>
 import {mapMutations} from 'vuex'
+import everyday from '@/base/everyday/everyday'
 import formReceipt from '@/base/form_receipt/form_receipt'
 import addressBook from '@/base/address_book/address_book'
 import exam from '@/base/exam/exam'
@@ -106,6 +111,7 @@ export default {
 			pStr: '',
 			currentIndex: 0,
 			navIndex: -1,
+			workIndex:-1,
 			pickerOptions0: {
 				disabledDate(time) {
 					return time.getTime() > Date.now();
@@ -134,10 +140,11 @@ export default {
 				}]
 			},
 			value1: '',
-			form_receiptShow:true,
+			form_receiptShow:false,
 			address_bookShow:false,
 			listShow: true,
 			compamyShow: false,
+			everydayShow:true,
 			manageCompanyShow: false,
 			jurisdictionManageShow: false,
 			examShow: false,
@@ -157,6 +164,7 @@ export default {
 		},
 		navCli(item, index) {
 			this.listShow = true
+			this.form_receiptShow = false
 			this.compamyShow = false
 			this.manageCompanyShow = false
 			this.jurisdictionManageShow = false
@@ -177,26 +185,38 @@ export default {
 		},
 		rc_or_sp(index) {
 			this.currentIndex = index
-			if(index === 1) {
+			if(index === 0){
+				this.everydayShow = true
+				this.examShow = false
+			}else if(index === 1) {
 				this.examShow = true
+				this.everydayShow = false
 			}
 		},
 		add_approval_showF() {
 			this.addApprovalShow = false
 		},
 		doList(item, index) {
-			this.addApprovalShow = false
 			this.listShow = false
-			this.compamyShow = false
+			this.everydayShow = false
 			this.manageCompanyShow = false
 			this.jurisdictionManageShow = false
 			this.examShow = false
 			this.address_bookShow = false
+			this.form_receiptShow = false
+			this.workIndex = index
+			if(index === 1){
+				this.workIndex = -1
+			}
+			
+			
 			switch(index) {
 				case 0:
 					this.listShow = true
+					this.currentIndex = 0
 					break;
 				case 1:
+					this.listShow = true
 					this.compamyShow = true
 					break;
 				case 2:
@@ -205,9 +225,12 @@ export default {
 				case 3:
 					this.jurisdictionManageShow = true
 					break
+				case 4:
+					this.form_receiptShow = true
+					break;
 				case 5:
 					this.address_bookShow = true
-					break
+					break;
 			}
 		},
 		_getToken(uid){
@@ -215,6 +238,7 @@ export default {
 					nparam.append("uid",this.user.uid);
 					this.$http.post("/index/Mobile/path/get_token",nparam)
 					.then((res)=>{
+						localStorage.token = JSON.stringify(res.data.data);
 						this.set_token(res.data.data)
 					})
 		},
@@ -224,7 +248,9 @@ export default {
 	},
 	computed: {
 		...mapGetters([
-			'user'
+			'user',
+			'token',
+			'nowCompanyId'
 		])
 	},
 	components: {
@@ -235,12 +261,32 @@ export default {
 		exam,
 		addApproval,
 		addressBook,
-		formReceipt
+		formReceipt,
+		everyday
 	},
 	mounted() {
 	},
 	created() {
-		this._getToken()
+		if(this.token){
+			return
+		}else{
+			this._getToken()
+		}
+		
+	},
+	watch:{
+		nowCompanyId(){
+			this.form_receiptShow = false
+			this.address_bookShow = false
+			this.compamyShow = false
+			this.everydayShow = true
+			this.manageCompanyShow = false
+			this.jurisdictionManageShow = false
+			this.examShow = false
+			this.addApprovalShow = false
+			this.listShow = true
+			this.shareShow = true
+		}
 	}
 }
 </script>
@@ -267,7 +313,7 @@ export default {
 								border: 1px solid #ddd;
 								-webkit-border-radius: 2px;
 								border-radius: 2px;
-								margin-top: 4px;
+								margin-top:4px; 
 								.extend_ul {}
 								.extend_item3_wrapper {
 									display: none;
@@ -462,11 +508,15 @@ export default {
 					white-space: nowrap;
 					text-overflow: ellipsis;
 					overflow: hidden;
+					
 					a {
 						color: #4D6595;
 						width: 100%;
 						display: inline-block;
 						&:hover {
+							color: #FC923F;
+						}
+						&.active{
 							color: #FC923F;
 						}
 					}
@@ -524,7 +574,7 @@ export default {
 			}
 		}
 		.side_right {
-			background: lightsalmon;
+			background: #DDDDDD;
 			height: 600px;
 			float: right;
 			width: 310px;

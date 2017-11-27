@@ -2,7 +2,7 @@
 	<div class="index">
 		<div class="top">
 			<div class="title">
-				<span>{{nowCompany_name}}</span>
+				<span>{{nowCompanyName}}</span>
 				<span class="changeCompany">更换公司
 					<ul @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" v-show="userOperationLeftShow">
 						<li v-for="(item,index) in userCompanyInfo" @click="changeCompany(item,index)">{{item.company_name}}</li>
@@ -17,7 +17,7 @@
 				</div>
 			</div>
 			<div class="search">
-				<input type="text" placeholder="搜索工人，同事等" />
+				<input type="text" placeholder="暂不能使用" />
 				<img src="../../assets/find.svg" alt="" />
 			</div>
 			<div class="personInfo">
@@ -50,10 +50,9 @@ import {mapGetters,mapMutations} from 'vuex'
 					{'title':'应用','url':'/apply'}
 				],
 				userCompanyInfo:[],
-				nowCompany_name:'',
+				nowCompanyName:'',
 				userOperationShow:false,
-				userOperationLeftShow:false,
-			
+				userOperationLeftShow:false
 			}
 		},
 		methods:{
@@ -85,25 +84,35 @@ import {mapGetters,mapMutations} from 'vuex'
 				this.userOperationLeftShow=false
 			},
 			changeCompany(item,index){
+				this.nowCompanyName = item.company_name
 				this.userOperationLeftShow=false
-				this.nowCompany_name=item.company_name
 				this.setNowCompanyId(item.company_id)
-			},
-			_getUserCompanyList(){
-				let param = new URLSearchParams();
-				param.append("uid",this.user.uid);
-				this.$http.post("/index/Mobile/user/companies_list",param)
-				.then((res)=>{
-				    this.userCompanyInfo=res.data.data
-				    this.nowCompany_name=res.data.data[0].company_name
-				})
+				localStorage.nowCompanyId = JSON.stringify(item.company_id);
+				localStorage.nowCompanyName = JSON.stringify(item.company_name);
+				this._getComPersonList()
 			},
 			handleScroll () {
-				console.log('11')
-//			    this.scrolled = window.scrollY > 0;
 			 },
+			_getComPersonList(){
+				let newparam = new URLSearchParams();
+				newparam.append("company_id",this.nowCompanyId); 
+				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+					    		reaDa.push(item)
+					    	})
+					    	this.setComPersonList(reaDa)
+					    	
+					    })
+			},
 			...mapMutations({
-				setNowCompanyId:'SET_NOWCOMPANY_ID' 
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST'
 			})
 		},
 		mounted(){
@@ -111,11 +120,24 @@ import {mapGetters,mapMutations} from 'vuex'
 		},
 		computed:{
 			...mapGetters([
-		        'user'
+		        'user',
+		        'nowCompanyId'
+		        
 		      ])
 		},
 		created(){
-			this._getUserCompanyList()
+			this.userCompanyInfo = JSON.parse(localStorage.nowCompanyList)
+			this.nowCompanyName=JSON.parse(localStorage.nowCompanyName)
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
+			let text = JSON.parse(localStorage.text)
+			this.setUser({
+				'uid':text.uid,
+				'name':text.name
+			})
+			this._getComPersonList()
+			
+		},
+		watch:{
 		}
 	}
 </script>

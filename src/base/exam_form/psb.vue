@@ -5,7 +5,7 @@
 			<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 		</div>
 		<div>
-			<span>合同名称：</span><span></span>
+			<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 		</div>
 		<div>
 			<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
@@ -60,8 +60,10 @@
 		</div>
 		<div>
 			<span>审批：</span>
-			<span v-for="item in form_Listb.content">
-			{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+			<span>
+			<p>回执人员：{{form_Listb.finance.name}} </p>
+			<p>回执消息：{{form_Listb.finance.receipt_content}} </p>
+			<p>回执时间：{{form_Listb.finance.save_time}} </p>
 			</span>
 		</div>
 		<div class="menu" v-show="handle_show">
@@ -170,8 +172,6 @@
 		            	this.pic_hash_arr.push(res.data.hash)
 			        }) 
 				}
-//				console.log(this.pic_hash_arr)
-//				console.log(this.pic_hash_arr.length)
 //				if(this.pic_hash_arr.length === this.file.length){
 						let mparam = new URLSearchParams();
 						mparam.append("uid",this.user.uid);
@@ -260,8 +260,8 @@
 				}
 				img{
 					display: inline-block;
-					height: 50px;
 					width: 80px;
+					margin-right: 10px;
 					cursor: pointer;
 				}
 			}
