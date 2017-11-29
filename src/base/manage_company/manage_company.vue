@@ -1,117 +1,68 @@
 <template>
 	<div class="manageCompany_wrapper">
 		<div class="manageCompany">
-			<!--<div class="title">
-				<span>公司管理</span><span v-show="typeInfo"> - </span><span class="typeInfo">{{typeInfo}}</span>
-				<i class=" close el-icon-close" @click="close"></i>
-			</div>-->
 			<div class="nav">
-				<ul>
-					<li v-for="(item,index) in typeName" :class="{'active': index == navIndex}"  @click="chooseNav(item,index)">{{item}}</li>
-				</ul>
+				<el-tabs  v-model="activeName" @tab-click="handleClick">
+					<el-tab-pane label="人员列表" ></el-tab-pane>
+				    <el-tab-pane label="添加部门" ></el-tab-pane>
+			        <el-tab-pane label="添加工程项目" ></el-tab-pane>
+				</el-tabs>
+
 			</div>
 			<div class="type">
 				<div class="list" v-show="listShow">
-					<ul>
-						<li>
-							<span>管理员</span>
-							<div v-for="(item,index) in adminArr">
-								<div class="img">
-									<img :src="item.avatar" alt="" />
-								</div>
-								<div class="content">
-									<span class="name">{{item.name}}</span>
-									<span class="phone">{{item.phone}}</span>
-								</div>
-								<i class="close el-icon-circle-close-outline"  @click="_deleteManager(item,index)"></i>
-							</div>
-						</li>
-						<li v-for="(item,index) in comPartPersonList" >
-							<span>{{item.department_name}}</span>
-							<div v-for="(list,index) in item.person" >
-								<div class="img">
-									<img :src="list.avatar" alt="" />
-								</div>
-								<div class="content">
-									<span class="name">{{list.name}}</span>
-									<span class="phone">{{list.phone}}</span>
-								</div>
-								<i class="close el-icon-circle-close-outline"></i>
-							</div>
-						</li>
-					</ul>
-				</div>
-				<div class="inviteColleagues" v-show="inviteColleaguesShow">
-					<div class="inviteCo">
-						<div class="close el-icon-circle-close" @click="closeInvite"></div>
-						<div class="sec">
-							<span class="title">姓名</span>
-							<input type="text" class="inputInfo" />
-						</div>
-						<div class="sec">
-							<span class="title">电话</span>
-							<input type="text" class="inputInfo" />
-						</div>
-						<div class="sec">
-							<span class="title">指定部门</span>
-							<input type="text" class="inputInfo" />
-						</div>
-						<div class="sec">
-							<span class="title">职位</span>
-							<div class="position">  
-								<!--<el-radioo v-for="(item,index) in radiooArr" v-model="radioo" :label="index">{{item.name}}</el-radioo>-->
-  								<!--<el-radioo v-model="radioo" label="2">备选项</el-radioo>-->
-  								<!--<i class="addGroup el-icon-circle-plus" @click="addGroup"></i>-->
-							</div>
-						</div>
-						<div class="submit">
-							<span>确认邀请</span>
-						</div>
-					</div>
-				</div>
-				<div class="addAdministrator" v-show="addAdministratorShow">
-					<div class="addAdmin">
-						<div class="submit" @click="submitAddManager">确认添加</div>
-						<div class="close el-icon-circle-close" @click="closeInvite"></div>
-						<div class="list">
-							<div class="title">
-								<span>管理员列表</span>
-							</div>
-							<div class="add el-icon-circle-plus" @click="addAdminPerson" ></div>
-							<ul>
-									<li v-for="(item,index) in adminArr">{{item.name}} 	
-										<i class="close el-icon-error" @click="_deleteManager(item,index)"></i> 
-									</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-			<transition name="slide">
-			<div class="person" v-show="personShow" ref="person">
-				<div class="close el-icon-circle-close" @click="closePersonList" ></div>
-				<div class="personList" id="person">
-					<ul>
-						<li v-for="(item,index) in comPersonList" @click="choosePerson(item,index)" :key="index">
-							<div class="avatar">
-								<img :src="item.avatar" alt="" />
+					<el-collapse v-model="activeName1">
+					  <el-collapse-item title="管理员"  name="1">
+					    <div v-for="(list,index) in adminArr" class="list_item">
+					    	<div class="avatar">
+								<img :src="list.avatar" alt="" />
 							</div>
 							<div class="content">
-								<span class="name">{{item.name}}</span>
-								<span class="phone">{{item.phone}}</span>
+								<span class="name">{{list.name}}</span>
+								<span class="phone">{{list.phone}}</span>
 							</div>
-						</li>
-					</ul>
+							<div class="button">
+ 								<el-button type="warning" round @click="cancelAdministrator(list)">取消管理</el-button>
+							</div>
+					    </div>
+					  </el-collapse-item>
+					</el-collapse>
+					<el-collapse v-model="activeName2" accordion>
+					  <el-collapse-item :title="item.department_name" :name="i" v-for="(item,i) in comPartPersonList">
+					    <div v-for="(list,index) in item.person" class="list_item">
+					    	<div class="avatar">
+								<img :src="list.avatar" alt="" />
+							</div>
+							<div class="content">
+								<span class="name">{{list.name}}</span>
+								<span class="phone">{{list.phone}}</span>
+							</div>
+							<div class="button">
+								<el-button type="success" round @click="setAdministrator(list)">设为管理</el-button>
+ 								<el-button type="warning" round @click="deleteMember(list)">删除</el-button>
+							</div>
+					    </div>
+					  </el-collapse-item>
+					</el-collapse>
+				</div>
+				
+
+				<div class="addDepartment" v-show="addDepartmentShow">
+					<div class="operation">
+						<el-input v-model="newDepartmentName" placeholder="请输入部门名称"></el-input>
+						 <el-button type="primary" round @click="addDepartment">确认添加</el-button>
+					</div>		
 				</div>
 			</div>
-		</transition>
+
 		</div>
 	</div>
 </template>
 
 <script>
+import {createPersonInfo} from 'common/js/person_info'
 import {getAvatar} from '@/common/js/avatar.js'
-import {mapGetters} from 'vuex'
+import {mapGetters,mapMutations} from 'vuex'
 	export default{
 		data(){
 			return{
@@ -121,18 +72,24 @@ import {mapGetters} from 'vuex'
 				smObj:{},
 				navIndex:-1,
 				listShow:true,
-				inviteColleaguesShow:false,
+				addDepartmentShow:false,
 				addAdministratorShow:false,
 				typeInfo:'',
-				typeName:['添加部门','添加管理员','添加工程项目'],
+				typeName:['添加部门','添加工程项目'],
 				radioo: '2',
 				adminArr:[],
+				ComPartPersonList:[],
 				personShow:false,
-				numOne:0
+				numOne:0,
+				activeName:'',
+				activeName1:['1'],
+				newDepartmentName:'',
+				activeName2:'1',
+				returnOne:false
 			}
 		},
 		created(){	
-			this._getCompanyId()
+			this._getAdmin()
 //			console.log(this.comPartPersonList)
 		},
 		computed:{
@@ -146,113 +103,195 @@ import {mapGetters} from 'vuex'
 		watch:{
 			nowCompanyId:function (){
 //				this.numOne=0
-//				this._getCompanyId()
+//				this._getAdmin()
 			}
 		},
 		methods:{
-			handleChange(){
-				
+			addDepartment(){
+				this.$confirm('确认添加新部门吗?', '提示', {
+		          confirmButtonText: '确定',
+		          cancelButtonText: '取消',
+		          type: 'warning'
+		       }).then(() => {
+		            let param = new URLSearchParams();
+				    param.append("uid",this.user.uid);
+				    param.append("department_name",this.newDepartmentName);
+				    param.append("company_id",this.nowCompanyId);
+				    this.$http.post("/index/Mobile/User/add_department",param)
+				    .then((res)=>{
+				    	if(res.data.code === 0){
+				    		this.$message({
+							    message: '添加部门成功',
+							    type: 'success'
+							});
+							this.listShow = true
+							this.addDepartmentShow = false
+							this._getComPartPersonList()
+				    	}else{
+				    		this.$message.error('添加部门失败');
+				    	}
+				    })
+		        }).catch(() => {
+		          this.$message({
+		            type: 'info',
+		            message: '已取消添加'
+		          });          
+		        });
 			},
-			submitAddManager(){
-				
-			},
-
-			addAdminPerson(){
-				this.personShow=true
-			},
-			submitAddManager(){
-				let newAdminArr=[]
-				this.adminArr.forEach((item)=>{
-					newAdminArr.push(item.personnel_id)
+			handleClick(tab) {
+				this.listShow=false
+				this.addDepartmentShow = false
+				this.addAdministratorShow=false
+		        if(tab.index === '0'){
+		        	this.listShow = true
+		        }else if(tab.index === '1'){
+					this.addDepartmentShow=true
+		        }else if(tab.index === '2'){
+					this.addAdministratorShow=true
+		        }
+		    },
+			handleChange(){},
+			setAdministrator(item){
+				this.adminArr.forEach((list)=>{
+					if(list.personnel_id === item.personnel_id){
+						this.$message({
+				          message: item.name + '已是管理员',
+				          type: 'warning'
+				       });
+				       this.returnOne = true
+					}
 				})
+				if(this.returnOne){
+					this.returnOne =false
+					return
+				}
+				let arr=[]
+				arr.push(item.person[0].personnel_id)
 				let param = new URLSearchParams();
 			    param.append("uid",this.user.uid);
-			    param.append("personnel_id",JSON.stringify(newAdminArr));
+			    param.append("personnel_id",JSON.stringify(arr));
 			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/User/give_manage",param)
 			    .then((res)=>{
-			    	if(res.data.code === '0'){
-			    		alert('添加成功')
+			    	this.activeName1 = ['1']
+			    	this.activeName2 = '0'
+			    	if(res.data.code === 0){
+			    		this._getAdmin()
+			    		this.$message({
+							message: '添加成功',
+							type: 'success'
+						});
+			    	}else{
+			    		this.$message.error('添加失败')
 			    	}
 			    })
 			},
-			_deleteManager(item,index){
-				if(item.personnel_id==='11'){
-					alert('管理员不可删除自己')
+
+			cancelAdministrator(item){
+				this.$confirm('确定删除'+item.name+'吗', '提示', {
+			        confirmButtonText: '确定',
+			        cancelButtonText: '取消'
+		       	}).then(() => {
+          		if(item.personnel_id===JSON.parse(localStorage.nowCompanyId)){
+					this.$message.error('管理员不可删除自己')
 					return
 				}
-				this.adminArr.splice(index,1)
 				let param = new URLSearchParams();
-			    param.append("uid","10000216");
-			    param.append("my_personnel_id",'11');
-			    param.append("personnel_id",item.personnel_id);
-			    param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index/Mobile/User/del_manage",param)
-			    .then((res)=>{
-			    })
+				param.append("uid",this.user.uid);
+				param.append("my_personnel_id",JSON.parse(localStorage.nowPersonelId));
+				param.append("personnel_id",item.personnel_id);
+				param.append("company_id",this.nowCompanyId);
+				this.$http.post("/index/Mobile/User/del_manage",param)
+				.then((res)=>{
+					console.log(res)
+					if(res.data.code === 1){
+					    this.$message.error(res.data.message);
+					}else if(res.data.code === 0){
+						this._getComPartPersonList()
+						this._getAdmin()
+					    this.$message({
+							message: '删除成功',
+							type: 'success'
+							});
+						}
+					})
+		        }).catch(() => {
+		          this.$message({
+		            type: 'info',
+		            message: '已取消删除'
+		          });          
+		        });
 			},
-			chooseNav(item,index){
-				this.navIndex=index
-				if(index===0){
-//					this.listShow=false
-//					this.inviteColleaguesShow=true
-//					this.addAdministratorShow=false
-	    			this.$prompt('请输入新部门', '提示', {
-			          confirmButtonText: '确定',
-			          cancelButtonText: '取消',
-			        }).then(({ value }) => {
-			          this.$message({
-			            type: 'success',
-						message: '添加'+value+'成功'
-			          });
-			          this.comPartPersonList.push({
-			          	department_name:value
-			          })
-			          this._add_depart(value)
-			        }).catch(() => {
-			          this.$message({
-			            type: 'info',
-			            message: '取消输入'
-			          });       
-			        });
-				}else if(index===1){
-					this.listShow=false
-					this.inviteColleaguesShow=false
-					this.addAdministratorShow=true
-				}
+			deleteMember(item,index,i){
+				this.$confirm('确定删除'+item.name+'吗', '提示', {
+		        confirmButtonText: '确定',
+		        cancelButtonText: '取消'
+		       	}).then(() => {
+          			let param = new URLSearchParams();
+					param.append("uid",this.user.uid);
+					param.append("personnel_id",item.personnel_id);
+					param.append("company_id",this.nowCompanyId);
+					this.$http.post("/index/Mobile/user/del_company_personnel",param)
+					.then((res)=>{
+					    if(res.data.code === 1){
+					    	this.$message.error(res.data.message);
+					    }else if(res.data.code === 0){
+					    	this._getComPartPersonList()
+					    	this._getAdmin()
+					    	this.$message({
+							    message: '删除成功',
+							    type: 'success'
+						    });
+					    }
+					})
+		        }).catch(() => {
+		          this.$message({
+		            type: 'info',
+		            message: '已取消删除'
+		          });          
+		        });
 			},
-			_add_depart(value){
-				let param = new URLSearchParams();
-			    param.append("uid",this.user.uid);
-			    param.append("department_name",value);
-			    param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index/Mobile/User/add_department",param)
-			    .then((res)=>{
-			    	if(res.data.code === '0'){
-			    		
-			    	}
-			    })
-			},
+
       		closePersonList(){
 		    	this.personShow=false
 		    },
-		    choosePerson(item,index){
-		    	for(let i = 0;i<this.adminArr.length;i++){
-		    		if(item.name===this.adminArr[i].name){
-		    			alert(item.name+'已经是管理员了！')
-		    			return
-		    		}	
-		    	}
 
-		    	this.adminArr.push(item)
-		    },
 			closeInvite(){
 				this.navIndex=-1
 				this.listShow=true
-				this.inviteColleaguesShow=false
 				this.addAdministratorShow=false
 			},
-			_getCompanyId(){			
+			_getComPartPersonList(){
+				let param = new URLSearchParams();
+				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+			    	let resData=res.data.data
+			    	for(let j = 0,len=resData.length; j < len; j++) {
+			    		if(this.numOne>=len){
+			    			return
+			    		}
+			    		let obj={}
+   						this.$set(obj,'department_name',resData[j].department_name)
+						let newparam = new URLSearchParams();
+					    newparam.append("company_id",JSON.parse(localStorage.nowCompanyId)); 
+					    newparam.append("department_id",resData[j].department_id);
+					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		reaDa.push(createPersonInfo(item))
+					    	})
+					    	this.$set(obj,'person',reaDa)					    	
+					    	this.ComPartPersonList.push(obj)
+					    })	
+					    this.numOne++				   
+					}   	
+					this.setComPartPersonList(this.ComPartPersonList)
+			    })
+			},
+			_getAdmin(){		
+				this.adminArr = []
 			    	let mparam = new URLSearchParams();
 					mparam.append("company_id",this.nowCompanyId);
 					mparam.append("department_id",-1);  
@@ -270,24 +309,16 @@ import {mapGetters} from 'vuex'
 					   		})
 						}
 					})		
-	   		}
+	   	},
+	   	...mapMutations({
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST'
+			})
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-.slide-enter-active, .slide-leave-active{
-  	transition: all .6s
-}
-.slide-enter, .slide-leave-to{
-  	transform: translate3d(0, -400px, 0)
-}
-.slideLi-enter-active, .slideLi-leave-active{
-  	transition: all .5s
-}
-.slideLi-enter, .slideLi-leave-to{
-  	transform: translate3d(240px, 0, 0)
-}
+
 .manageCompany_wrapper{
 	z-index: 20;
 	.manageCompany{
@@ -335,52 +366,52 @@ import {mapGetters} from 'vuex'
 				}
 			}
 		}
-		.type{
+		>.type{
 			width: 100%;
 			height: 100%;
 			.list{
-				ul{
-					li{
-						margin-bottom:4px;
+				.list_item{
+					margin-top: 5px;
+					height: 50px;
+					font-size: 0;
+					>.avatar{
+						display:inline-block;
+						vertical-align: top;
+						margin-left: 40px;
+						img{
+							margin-top: 4px;
+							width: 40px;
+							height: 40px;
+							border-radius: 50%;
+						}
+					}
+					>.content{
+						display: inline-block;	
+						margin-left: 10px;
 						>span{
-							display: block;
-							height: 24px;
-							line-height: 24px;
-							color: #3487E2;
 							font-size: 14px;
-							text-indent: 6px;
-							
+							display: block;
 						}
-						>div{
-							cursor: default;
-							border-top: 1px solid #DDDDDD;
-							.img{
-								margin-top: 2px;
-								display: inline-block;
-								img{
-									display: block;
-									width: 30px;
-									height: 30px;
-									border-radius: 50%;
-								}
-							}
-							.content{
-								display: inline-block;
-								span{
-									display: block;
-									font-size: 12px;
-									line-height: 17px;
-								}
-							}
-							i{
-								margin-top: 2px;
-								margin-right: 2px;
-								float: right;
-								&:hover{
-									color: #FA5555;
-								}
-							}
+					}
+					.button{
+						display: inline-block;
+						float: right;
+						margin-right: 10px;
+						button{
+							margin-left: 10px;
 						}
+					}
+				}
+			}
+			.addDepartment{
+				width: 100%;
+				min-height: 200px;
+				.operation{
+					width: 200px;
+					margin: 100px auto;
+					button{
+						margin-left: 40px;
+						margin-top: 20px;
 						
 					}
 				}
@@ -459,75 +490,7 @@ import {mapGetters} from 'vuex'
 					}
 				}
 			}
-			.inviteColleagues{
-				width: 100%;
-				height: 100%;
-				background: #f1f1f1;
-				.inviteCo{
-					padding: 10px;
-					position: relative;
-					.close{
-						position: absolute;
-						top: 5px;
-						right: 5px;
-						color: #878D99; 
-						z-index:20; 
-						&:hover{
-							color: #FA5555;
-						}
-					}
-					.submit{
-						width: 100%;
-						margin-top: 10px;
-						cursor: pointer;
-						span{
-							width: 100%;
-							padding: 10px 0;
-							text-align: center;
-							background: #9DB5FB;
-							display: block;
-							color: #FFFFFF;
-							-webkit-border-radius: 4px;
-							-moz-border-radius: 4px;
-							border-radius: 4px;
-						}
-					}
-					.sec{
-						margin-bottom: 10px;
-						position: relative;
-						.title{
-							width: 100px;
-							display: inline-block;
-							margin-right:30px;
-							display: block;
-							width: 100px;
-							height: 30px;
-							line-height: 30px;
-							text-align: right;
-							float: left;
-						}
-						.inputInfo{
-							display: inline-block;		
-							height: 26px;
-							width: 400px;
-							outline: none;
-						}
-						.position{
-							line-height: 30px;
-							.addGroup{
-								margin-left: 10px;
-								color: #878D99;
-								font-size: 20px;
-								position: relative;
-								top: 2px;
-								&:hover{
-									color: #409EFF;
-								}
-							}
-						}
-					}
-				}
-			}
+
 		}
 	}
 	.person {

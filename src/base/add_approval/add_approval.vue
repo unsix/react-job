@@ -77,6 +77,7 @@
 									</div>
 								</div>
 							</div>
+							<div @click="return_qingkuan(form_Lista)" class="user">返回</div>
 							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
 						</div>
 						<!--合同评审表展示-->
@@ -146,6 +147,7 @@
 								{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
 								</span>
 							</div>
+							<div @click="return_qingkuan(form_Lista)" class="user">返回</div>
 							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
 						</div>
 						<!--请购单展示-->
@@ -209,9 +211,8 @@
 								{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
 								</span>
 							</div>
-							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
 							<div @click="return_qingkuan(form_Lista)" class="user">返回</div>
-
+							<div @click="user_qingkuan(form_Lista)" class="user">使用</div>
 						</div>
 					</div>
 					<el-form v-show="qingkuan_show" :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
@@ -273,7 +274,7 @@
 								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" @click="submitForm_qkd('qkd_ruleForm')">立即创建</el-button>
+							<el-button type="primary" @click="submitForm_qkd('qkd_ruleForm')">立即添加</el-button>
 							<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
@@ -404,7 +405,7 @@
 								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即创建</el-button>
+							<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即添加</el-button>
 							<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
@@ -455,7 +456,7 @@
 								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即创建</el-button>
+							<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即添加</el-button>
 							<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
@@ -484,7 +485,6 @@
 						<el-form-item label="合同名称" prop="contract_name_new">
 							<el-input v-model="psb_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
-
 						<el-form-item label="甲方" prop="a_name">
 							<el-input v-model="psb_ruleForm.a_name"></el-input>
 						</el-form-item>
@@ -507,10 +507,10 @@
 							<el-input v-model="psb_ruleForm.pay_method"></el-input>
 						</el-form-item>
 						<el-form-item label="到货时间" prop="arrive_time">
-							<el-date-picker type="date" v-model="psb_ruleForm.arrive_time" style="width: 100%;"></el-date-picker>
+							<el-date-picker type="date"  v-model="psb_ruleForm.arrive_time" style="width: 100%;"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="完工时间" prop="end_time">
-							<el-date-picker type="date" v-model="psb_ruleForm.end_time" style="width: 100%;"></el-date-picker>
+							<el-date-picker type="date"  v-model="psb_ruleForm.end_time" style="width: 100%;"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="合同编号">
 							<el-input v-model="psb_ruleForm.contract_id"></el-input>
@@ -531,7 +531,7 @@
 								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" @click="submitForm_psb('psb_ruleForm')">立即创建</el-button>
+							<el-button type="primary"  @click="submitForm_psb('psb_ruleForm')">立即添加</el-button>
 							<el-button @click="resetForm('psb_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
@@ -605,7 +605,7 @@
 								accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint"/>
 						</el-form-item>
 						<el-form-item>
-							<el-button type="primary" @click="submitForm_sqgz('sqgz_ruleForm')">立即创建</el-button>
+							<el-button type="primary" @click="submitForm_sqgz('sqgz_ruleForm')">立即添加</el-button>
 							<el-button @click="resetForm('sqgz_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
@@ -1085,6 +1085,9 @@
 				this.pic_show = true
 			},
 			view_qingkuan(item) {
+				this.chengpijian_if = false
+				this.pingshenbiao_if = false
+				this.qinggoudan_if = false
 				this.template_view_show = true
 				if(item.type === '呈批件') {
 					this.chengpijian_if = true
@@ -1326,7 +1329,6 @@
 				});
 			},
 			submitForm_psb(formName) {
-				this.loading_show =true
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						this.psb_submit()	
@@ -1338,7 +1340,6 @@
 				});
 			},
 			submitForm_qkd(formName) {
-				
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						this.qkd_submit()
@@ -1355,20 +1356,36 @@
 						this.sqgz_ruleForm.department_id = item.department_id
 					}
 				})
-				this.sqgz_submit()
-//				this.$refs[formName].validate((valid) => {
-//					if(valid) {
-//						this.sqgz_submit()
-//					} else {
-//						console.log('error submit!!');
-//						return false;
-//					}
-//				});
+				this.$refs[formName].validate((valid) => {
+					if(valid) {
+						this.sqgz_submit()
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
 			},
 			return_show() {
-				this.$emit('add_approval_showF')
+				this.$emit('return_exam')
 			},
 			created() {},
+			add_ok(){
+				this.$message({
+					showClose: true,
+					message: '添加成功',
+					type: 'success'
+		        });
+			},
+			add_fail(){
+				this.$message({
+		          showClose: true,
+		          message: '添加失败',
+		          type: 'error'
+		        });
+			},
+			return_exam(){
+				this.$emit('return_exam')
+			},
 			sqgz_submit() {
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
@@ -1385,7 +1402,13 @@
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 					.then((res) => {
-						console.log(res)
+						if(res.data.code === 0){
+							this.add_ok()
+							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
+						}
 					})
 				}else{
 					if(this.pic){
@@ -1453,6 +1476,8 @@
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
+			  	this.psb_ruleForm.arrive_time = JSON.stringify(	this.psb_ruleForm.arrive_time).slice(1,11)
+			  	this.psb_ruleForm.end_time = JSON.stringify(	this.psb_ruleForm.arrive_time).slice(1,11)
 				if( !this.pic &&!this.file ){
 					let param = new URLSearchParams();
 					param.append("uid", this.user.uid);
@@ -1474,9 +1499,12 @@
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
-						
 					})
 				}else{
 					if(this.pic){
@@ -1554,7 +1582,14 @@
 					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
-						console.log(res)
+						if(res.data.code === 0){
+							this.return_exam()
+							this.add_ok()
+							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
+						}
 					})
 				}else{	
 					if(this.pic){
@@ -1622,6 +1657,7 @@
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
+				this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1,11)
 				if( (!this.pic || this.pic.length === 0)&&(!this.file || this.file.length === 0)){
 					let buy_depart_id
 					this.comDepartList.forEach((item) => {
@@ -1665,7 +1701,13 @@
 						param.append("buy_person_uid", buy_person_uid);
 						this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
-							console.log(res)
+							if(res.data.code === 0){
+								this.add_ok()
+								this.loading_show = false
+								this.$emit('return_exam')
+							}else{
+								this.add_fail()
+							}
 						})
 				}else{
 					if(this.pic){
@@ -1760,7 +1802,13 @@
 					param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
-						console.log(res)
+						if(res.data.code === 0){
+							this.add_ok()
+							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
+						}
 					})
 				}else{
 					if(this.pic){
@@ -1785,7 +1833,6 @@
 										})
 										let aDate = Date.parse(new Date())
 										this.pic_time = aDate
-										console.log(this.pic_time)
 									})
 							}
 						})
@@ -1815,7 +1862,6 @@
 								if(this.file_hash_arr.length === this.file.length){
 										let bDate = Date.parse(new Date())
 										this.file_time = bDate
-										console.log(this.file_time)
 									}
 								})
 							})
@@ -1856,14 +1902,14 @@
 				param.append("each", '20');
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/approval/request_monry_basis", param)
-.then((res) => {
-	let arr = []
-	res.data.data.forEach((item) => {
-		arr.push(create_exam_list(item))
-	})
-	this.untreated = arr
-})
-}
+				.then((res) => {
+					let arr = []
+					res.data.data.forEach((item) => {
+						arr.push(create_exam_list(item))
+					})
+					this.untreated = arr
+				})
+			}
 	},
 	components: {
 		browsePic,
@@ -1899,7 +1945,11 @@
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -1948,7 +1998,11 @@
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -1965,7 +2019,11 @@
 					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -1981,7 +2039,11 @@
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -2013,9 +2075,12 @@
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
-						
 					})
 				}
 			}
@@ -2049,7 +2114,11 @@
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -2098,7 +2167,11 @@
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -2115,7 +2188,11 @@
 					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -2131,7 +2208,11 @@
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -2163,7 +2244,11 @@
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
 						if(res.data.code === 0){
+							this.add_ok()
 							this.loading_show = false
+							this.$emit('return_exam')
+						}else{
+							this.add_fail()
 						}
 					})
 				}
@@ -2557,7 +2642,7 @@
 					.person {
 						position: absolute;
 						left: 350px;
-						top: 400px;
+						top: 200px;
 						z-index: 10;
 						.close {
 							position: absolute;

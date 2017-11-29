@@ -4,7 +4,9 @@
 			<div>
 				<i class="el-icon-arrow-left" @click="left"></i>
 			</div>
-			<img :src="img_arr[pic_index]" alt=""/>
+			<transition name="slide">
+				<img :src="img_arr[pic_index]" alt="" />
+			</transition>
 			<div>
 				<i class="el-icon-arrow-right" @click="right"></i>
 			</div>
@@ -15,7 +17,8 @@
 	</div>
 </template>
 
-<script>export default {
+<script>
+export default {
 	props: {
 		img_arr: {
 			type: Array
@@ -53,6 +56,12 @@
 }</script>
 
 <style lang="scss" scoped>
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
 .pic {
 	position: fixed;
 	top: 0;
@@ -83,6 +92,8 @@
 			
 		}
 		img{
+			width: 100%;
+			max-width: 1000px;
 			flex: 1;
 		}
 	}

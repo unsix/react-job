@@ -17,7 +17,6 @@ export default class hetongpingshen_list {
   }
 }
 export function create_hetongpingshen_list(item) {
-	console.log(item)
 	return new hetongpingshen_list({
 	    contract_name: item.contract_name,
 	    contract_num: item.contract_num,

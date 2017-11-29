@@ -3,8 +3,9 @@
 		<div class="side_left">
 			<div class="info_wrapper">
 				<a class="info">
-					<img alt="" />
+					<img :src="user.avatar"/>
 					<span>{{user.name}}</span>
+					
 				</a>
 			</div>
 			<div class="work_wrapper">
@@ -25,7 +26,8 @@
 		<div class="info_main">
 			<div class="publish">
 				<!--导航-->
-				<div class="nav">
+				
+				<div class="nav" v-show="shareShow">
 					<ul>
 						<li v-for="(item,index) in wkNav" ref="wk_nav">
 							<a @click="navCli(item,index)" v-bind:class="{'active': index == navIndex}">{{item}}</a>
@@ -38,24 +40,22 @@
 					<div class="panel_exam">
 						<form action="" class="panel_exam_form">
 							<!--分享，日志-->
-							<div class="input_wrapper" v-show="shareShow">
-								<textarea class="input" placeholder="请输入" name="" rows="" cols=""></textarea>
-							</div>
-							<div class="input_btns" v-show="shareShow">
-								<i title="添加提到">@</i>
-								<i class="el-icon-picture" title="添加图片(多张)"></i>
-								<i class="el-icon-upload2" title="添加附件(多个)"></i>
+							<div v-show="shareShow">
+								<div class="input_wrapper" >
+									<textarea class="input" placeholder="请输入" name="" rows="" cols=""></textarea>
+								</div>
+								<div class="input_btns">
+									<i title="添加提到">@</i>
+									<i class="el-icon-picture" title="添加图片(多张)"></i>
+									<i class="el-icon-upload2" title="添加附件(多个)"></i>
+								</div>
 							</div>
 							<keep-alive>
-								<addApproval v-if="addApprovalShow" @add_approval_showF="add_approval_showF"></addApproval>
+								<addApproval v-if="addApprovalShow"  @return_exam="return_exam"></addApproval>
 							</keep-alive>
 							<!--审批选项-->
 							<div class="extend">
-								<ul class="extend_ul" v-show="listShow">
-									<li v-for="(item,index) in examNav" v-bind:class="{'active': index == currentIndex}" @click="rc_or_sp(index)">
-										<a>{{item}}</a>
-									</li>
-								</ul>
+								<!--<p v-if="examShow || everydayShow ||manageCompanyShow ||jurisdictionManageShow||address_bookShow||form_receiptShow">{{now_type_name}}</p>-->
 								<keep-alive>
 									<exam v-if="examShow"></exam>
 								</keep-alive>
@@ -75,6 +75,9 @@
 								<keep-alive>
 									<formReceipt v-if="form_receiptShow"></formReceipt>
 								</keep-alive>
+								<keep-alive>
+									<inviteCol v-if="inviteColShow" @close="inviteColClose"></inviteCol>
+								</keep-alive>
 							</div>
 						</form>
 					</div>
@@ -83,12 +86,13 @@
 		</div>
 		<div class="side_right"></div>
 		<keep-alive>
-			<createCompany v-show="compamyShow" @companyClose="companyClose()"></createCompany>
+			<createCompany v-if="compamyShow" @companyClose="companyClose()"></createCompany>
 		</keep-alive>	
 	</div>
 </template>
 <script>
 import {mapMutations} from 'vuex'
+import inviteCol from '@/base/invite_colleague/invite_colleague'
 import everyday from '@/base/everyday/everyday'
 import formReceipt from '@/base/form_receipt/form_receipt'
 import addressBook from '@/base/address_book/address_book'
@@ -105,13 +109,13 @@ import { mapGetters } from 'vuex'
 export default {
 	data() {
 		return {
-			workList: ['全部', '创建公司', '公司管理', '权限管理', '表单回执','通讯录'],
+			workList: ['日常','审批', '公司管理', '权限管理', '表单回执','邀请同事','通讯录','创建公司'],
 			wkNav: ['分享', '日志', '发起审批'],
 			examNav: ['日常', '审批'],
 			pStr: '',
 			currentIndex: 0,
-			navIndex: -1,
-			workIndex:-1,
+			navIndex: 0,
+			now_type_name:'日常',
 			pickerOptions0: {
 				disabledDate(time) {
 					return time.getTime() > Date.now();
@@ -149,12 +153,31 @@ export default {
 			jurisdictionManageShow: false,
 			examShow: false,
 			addApprovalShow: false,
-			shareShow: true
+			shareShow: true,
+			inviteColShow:false
+		}
+	},
+	props:{
+		workIndex:{
+			type:Number,
+			default:0
 		}
 	},
 	methods: {
+		return_exam(){
+			this.navIndex = 0
+			this.addApprovalShow = false
+			this.examShow = true
+			this.everydayShow  = false
+		},
 		companyClose() {
 			this.compamyShow = false
+		},
+		inviteColClose(){
+			this.inviteColShow = false
+			this.everydayShow = true
+			this.shareShow = true
+			this.$emit('changeWorkIndex',0)
 		},
 		manageCompanyClose() {
 			this.manageCompanyShow = false
@@ -163,6 +186,8 @@ export default {
 			this.jurisdictionManageShow = false
 		},
 		navCli(item, index) {
+			this.inviteCol = false
+			this.everydayShow = false
 			this.listShow = true
 			this.form_receiptShow = false
 			this.compamyShow = false
@@ -183,55 +208,54 @@ export default {
 			this.$refs.icon1.style.transition = 'all 0.4s'
 			this.$refs.icon1.style[transform] = `translate3d(${x}px,0,0)`
 		},
-		rc_or_sp(index) {
-			this.currentIndex = index
-			if(index === 0){
-				this.everydayShow = true
-				this.examShow = false
-			}else if(index === 1) {
-				this.examShow = true
-				this.everydayShow = false
-			}
-		},
-		add_approval_showF() {
-			this.addApprovalShow = false
-		},
 		doList(item, index) {
+			if(item === '创建公司'){
+				this.compamyShow = true
+				return
+			}
+			this.now_type_name = item
+			this.$emit('changeWorkIndex',index)
+			this.shareShow = false
 			this.listShow = false
 			this.everydayShow = false
 			this.manageCompanyShow = false
+			this.inviteCol = false
 			this.jurisdictionManageShow = false
 			this.examShow = false
 			this.address_bookShow = false
 			this.form_receiptShow = false
-			this.workIndex = index
-			if(index === 1){
-				this.workIndex = -1
-			}
-			
-			
-			switch(index) {
-				case 0:
+			switch(item) {
+				case '全部':
 					this.listShow = true
 					this.currentIndex = 0
 					break;
-				case 1:
-					this.listShow = true
-					this.compamyShow = true
-					break;
-				case 2:
+				case '公司管理':
 					this.manageCompanyShow = true
 					break;
-				case 3:
+				case '权限管理':
 					this.jurisdictionManageShow = true
 					break
-				case 4:
+				case '表单回执':
 					this.form_receiptShow = true
 					break;
-				case 5:
+				case '通讯录':
 					this.address_bookShow = true
 					break;
+				case '日常':
+					this.everydayShow = true
+					this.shareShow = true
+					break;
+				case '邀请同事':
+					this.inviteColShow = true
+					break;
+				case '审批':
+					this.examShow = true
+					this.shareShow = true
+					break;
 			}
+			
+			
+			
 		},
 		_getToken(uid){
 				 let nparam = new URLSearchParams();
@@ -262,16 +286,13 @@ export default {
 		addApproval,
 		addressBook,
 		formReceipt,
-		everyday
+		everyday,
+		inviteCol
 	},
 	mounted() {
 	},
 	created() {
-		if(this.token){
-			return
-		}else{
-			this._getToken()
-		}
+		
 		
 	},
 	watch:{
@@ -314,7 +335,14 @@ export default {
 								-webkit-border-radius: 2px;
 								border-radius: 2px;
 								margin-top:4px; 
-								.extend_ul {}
+								>p{
+									cursor: default;
+									display: block;
+									height: 24px;
+									line-height: 24px;
+									text-align: center;
+									font-size: 14px;
+								}
 								.extend_item3_wrapper {
 									display: none;
 									padding: 10px;
@@ -382,29 +410,6 @@ export default {
 										}
 									}
 								}
-								.extend_ul {
-									font-size: 13px;
-									li {
-										width: 50%;
-										display: inline-block;
-										font-size: 12px;
-										cursor: pointer;
-										color: #0082CB;
-										box-sizing: border-box;
-										text-align: center;
-										border-bottom: 2px solid transparent;
-										&.active {
-											border-bottom: 2px solid #FC923F;
-											/*background: #f9f9f9;
-    											font-weight: 700;
-    											color: #333333;*/
-										}
-										a {
-											height: 35px;
-											line-height: 35px;
-										}
-									}
-								}
 							}
 							.input_btns {
 								text-align: left;
@@ -458,7 +463,7 @@ export default {
 					margin-bottom: 4px;
 					z-index: 10;
 					font-size: 13px;
-					color: #0082CB;
+					color: #4D6595;
 					.icon1 {
 						position: absolute;
 						left: 13px;
@@ -478,7 +483,7 @@ export default {
 								height: 35px;
 								line-height: 35px;
 								&.active {
-									color: #333333;
+									color: #199475;
 									font-weight: 700;
 								}
 							}
@@ -514,10 +519,10 @@ export default {
 						width: 100%;
 						display: inline-block;
 						&:hover {
-							color: #FC923F;
+							color: #199475;
 						}
 						&.active{
-							color: #FC923F;
+							color: #199475;
 						}
 					}
 				}

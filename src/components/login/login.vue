@@ -16,7 +16,7 @@
 						<input type="text" name="phone" placeholder="请输入账号"  v-model.trim="account_num"/>
 					</div>
 					<div class="password">
-						<input type="password" placeholder="请输入密码" v-model.trim="password_num"/>
+						<input type="password" placeholder="请输入密码" v-model.trim="password_num"  @keyup.enter="login"/>
 					</div>		
 					<div class="error" v-show="errorShow">
 						<span>账号或密码错误</span>
@@ -53,12 +53,13 @@
 				loadingShow:false,
 				ComPartPersonList:[],
 				companyPersonList:[],
-				numOne:0
+				numOne:0,
 			}
 		},
 		computed:{
 			...mapGetters([
-				'nowCompanyId'
+				'nowCompanyId',
+				'user'
 			]),
 			phone_num(){
 				if(this.account_num.length !== 11){
@@ -80,25 +81,19 @@
 			login(){
 				let password_num = md5(this.password_num)
 				let param = new URLSearchParams();
-			    param.append("phone",this.account_num);
+			    param.append("phone",this.account_num );
 			    param.append("password",password_num);
-			    param.append("phone","13625718871");
-			    param.append("password","e10adc3949ba59abbe56e057f20f883e");
 			    this.$http.post("/index/Mobile/skey/login",param)
-			    .then((res)=>{
+			    .then((res)=>{	    	
 					if(res.data.code === 0){
-						let avatar = res.data.data.avatar
-//						this.uncreatedCompanyShow=true
-//						setTimeout(()=>{
-//							this.$router.push('/worker_list');
-//							this.uncreatedCompanyShow=false
-//						},3000)
+						let avatar = getAvatar(res.data.data.avatar)
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,
-							'avatar':getAvatar(res.data.data.avatar)
+							'avatar':avatar
 						})
-						
+						localStorage.text = JSON.stringify(this.user);
+						console.log(res.data.data.uid)
 						this._getUserCompanyList(res.data.data.uid)
 						setTimeout(()=>{
 							this._getComDepart()
@@ -111,7 +106,12 @@
 							this.loadingShow=false
 						},1200)
 					}else{
-  						this.errorShow = true;
+						this.errorShow = true;
+//						this.uncreatedCompanyShow=true
+//						setTimeout(()=>{
+//							this.$router.push('/worker_list');
+//							this.uncreatedCompanyShow=false
+//						},3000)
 					}
 			    })
 			},
@@ -149,7 +149,6 @@
 				param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/user/get_department_lest",param)
 			    .then((res)=>{
-			    	
 			    	let arr=[]
 			    	res.data.data.forEach((item)=>{
 			    		arr.push(create_depart_list(item))
@@ -171,14 +170,15 @@
 					    	
 					    })
 			},
-			_getUserCompanyList(user_id){
+			_getUserCompanyList(uid){
 				let param = new URLSearchParams();
-				param.append("uid",user_id);
+				param.append("uid",uid);
 				this.$http.post("/index/Mobile/user/companies_list",param)
 				.then((res)=>{
-					localStorage.nowCompanyList = JSON.stringify(res.data.data);
+					this.setNowCompanyId(res.data.data[0].company_id)
 				    localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
 				    localStorage.nowCompanyName = JSON.stringify(res.data.data[0].company_name);
+				    localStorage.nowCompanyList = JSON.stringify(res.data.data);
 				})
 			},
 			...mapMutations({

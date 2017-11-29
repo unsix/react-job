@@ -32,12 +32,13 @@
 				</div>
 			</div>
 		</div>
-		<router-view></router-view>		
+		<router-view :workIndex="workIndex" @changeWorkIndex="changeWorkIndex"></router-view>		
 	</div>
 </template>
 
 <script>
-
+import {create_depart_list} from 'common/js/initial/depart.js'
+import {createPersonInfo} from 'common/js/person_info'
 import {prefixStyle} from '@/common/js/dom'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
@@ -52,10 +53,17 @@ import {mapGetters,mapMutations} from 'vuex'
 				userCompanyInfo:[],
 				nowCompanyName:'',
 				userOperationShow:false,
-				userOperationLeftShow:false
+				userOperationLeftShow:false,
+				ComPartPersonList:[],
+				companyPersonList:[],
+				numOne:0,
+				workIndex:0
 			}
 		},
 		methods:{
+			changeWorkIndex(index){
+				this.workIndex = index
+			},
 			changeType(item,index){
 				if(index === 0){
 					this.$router.push('/index/work');
@@ -84,18 +92,35 @@ import {mapGetters,mapMutations} from 'vuex'
 				this.userOperationLeftShow=false
 			},
 			changeCompany(item,index){
+				this.workIndex = 0
 				this.nowCompanyName = item.company_name
 				this.userOperationLeftShow=false
 				this.setNowCompanyId(item.company_id)
 				localStorage.nowCompanyId = JSON.stringify(item.company_id);
 				localStorage.nowCompanyName = JSON.stringify(item.company_name);
+				this._getComDepart()
 				this._getComPersonList()
+				this._getComPartPersonList()
+				this._getPersonnelId()
 			},
 			handleScroll () {
-			 },
+			
+			},
+			_getComDepart(){
+				let param = new URLSearchParams();
+				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+			    	let arr=[]
+			    	res.data.data.forEach((item)=>{
+			    		arr.push(create_depart_list(item))
+			    	})
+			    	this.setComDepartList(arr)
+			    })
+			},
 			_getComPersonList(){
 				let newparam = new URLSearchParams();
-				newparam.append("company_id",this.nowCompanyId); 
+				newparam.append("company_id",JSON.parse(localStorage.nowCompanyId)); 
 				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
 					    .then((res)=>{
 					    	let reaDa=[]
@@ -107,12 +132,61 @@ import {mapGetters,mapMutations} from 'vuex'
 					    	
 					    })
 			},
+			_getComPartPersonList(){
+				let param = new URLSearchParams();
+				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+			    	let resData=res.data.data
+			    	for(let j = 0,len=resData.length; j < len; j++) {
+			    		if(this.numOne>=len){
+			    			return
+			    		}
+			    		let obj={}
+   						this.$set(obj,'department_name',resData[j].department_name)
+						let newparam = new URLSearchParams();
+					    newparam.append("company_id",JSON.parse(localStorage.nowCompanyId)); 
+					    newparam.append("department_id",resData[j].department_id);
+					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		reaDa.push(createPersonInfo(item))
+					    	})
+					    	this.$set(obj,'person',reaDa)					    	
+					    	this.ComPartPersonList.push(obj)
+					    })	
+					    this.numOne++				   
+					}   	
+					this.setComPartPersonList(this.ComPartPersonList)
+			    })
+			},
+			_getPersonnelId(){
+
+				let param = new URLSearchParams();
+				param.append("uid",JSON.parse(localStorage.text).uid);
+				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
+				this.$http.post("/index/Mobile/User/return_company_new",param)
+				.then((res)=>{
+					localStorage.nowPersonelId = JSON.stringify(res.data.data.personnel_id);
+				})
+			},
+			_getToken(){
+				let nparam = new URLSearchParams();
+				nparam.append("uid",this.user.uid);
+				this.$http.post("/index/Mobile/path/get_token",nparam)
+				.then((res)=>{
+					localStorage.token = JSON.stringify(res.data.data);
+					this.setToken(res.data.data)
+				})
+			},
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
 				setComPersonList: 'SET_COM_PERSON_LIST',
 				setComDepartList: 'SET_COM_DEPART_LIST',
-				setComPartPersonList: 'SET_COM_PART_PERSON_LIST'
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+				setToken:'SET_TOKEN'
 			})
 		},
 		mounted(){
@@ -120,22 +194,26 @@ import {mapGetters,mapMutations} from 'vuex'
 		},
 		computed:{
 			...mapGetters([
-		        'user',
-		        'nowCompanyId'
-		        
+		        'user',	    
+		        'token'
 		      ])
 		},
 		created(){
 			this.userCompanyInfo = JSON.parse(localStorage.nowCompanyList)
-			this.nowCompanyName=JSON.parse(localStorage.nowCompanyName)
+			this.nowCompanyName = JSON.parse(localStorage.nowCompanyName)
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			let text = JSON.parse(localStorage.text)
 			this.setUser({
 				'uid':text.uid,
 				'name':text.name
 			})
+			this._getComPartPersonList()
 			this._getComPersonList()
-			
+			this._getComDepart()
+			this._getPersonnelId()
+			this._getToken()
+
+				
 		},
 		watch:{
 		}

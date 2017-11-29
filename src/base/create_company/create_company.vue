@@ -15,18 +15,14 @@
 						<div class="sec">
 							<span class="title">公司名称</span>
 							<input type="text" v-model="companyName" />
-							<span class="exam" v-show="!companyName" >请输入公司名称</span>
 						</div>
-						
 						<div class="sec">
 							<span class="title">公司电话</span>
 							<input type="text" v-model="companyPhone" />
-							<span class="exam" v-show="!companyPhone">请输入公司电话</span>
 						</div>
 						<div class="sec">
 							<span class="title">公司地址</span>
 							<input type="text" v-model="companyAdd" />
-							<span class="exam" v-show="!companyAdd">请输入公司地址</span>
 						</div>
 					</div>
 					<div class="processTwo" v-show="processTwoShow">
@@ -35,7 +31,7 @@
 							    <el-checkbox-group v-model="item.type" >
 							      <el-checkbox v-for="(group,index) in item.groups" :label="group" :value="group" name="type" :key="index" >{{group.name}}</el-checkbox>
 							      <div class="addGroup_wrapper" @click="addGroup(index)" >
-							      	<div class="addGroup fa fa-plus-circle" ></div>
+							      	<div class="addGroup el-icon-circle-plus" ></div>
 							      </div>
 							    </el-checkbox-group>
 							 </el-form-item>
@@ -50,7 +46,6 @@
 								<span class="title">
 									{{item.name}}-{{group.name}}
 									<i class="el-icon-circle-plus" @click="addPerson(inz,nowIn)"></i>
-									
 								</span>
 								<ul>
 										<li v-for="(info,index) in group.person"  v-show="info.name"  >
@@ -232,14 +227,19 @@
 	    	])
 	    },
 	    methods: {
-	    	
 		    wrapperClose(){
 		    	this.$emit('companyClose')
+		    	this.companyName = false
+	       		this.companyPhone = false
+	        	this.companyAdd = false
+	        	this.processOneShow = true
+	       		this.processTwoShow = false
+	        	this.processThreeShow = false
 		    },
 		    addPerson(inz,nowIn){
-		    	this.personShow=true
+		    	this.personShow = true
 		    	this.nowPerson = inz
-		    	this.nowIn=nowIn
+		    	this.nowIn = nowIn
 		    	this.nperson=[]
 		    },
 		    closePersonList(){
@@ -247,12 +247,18 @@
 		    	
 		    },
 		    choosePerson(item,index){
+		    	for(let i = 0; i<this.nperson.length;i++){
+		    		if(this.nperson[i].personnel_id=== item.personnel_id){
+		    			this.$message({
+				          message: item.name+'已经存在',
+				          type: 'warning'
+				        });
+		    			return
+		    		}
+		    	}
 		    	this.department[this.nowIn].type.person=[]
 		    	this.nperson.push(item)
-		    	console.log(this.nperson)
 		    	this.$set(this.department[this.nowIn].type[this.nowPerson],'person',this.nperson)
-		    	
-//		    	this.workerInfo.splice(index,1)
 		    },
 		    rePersonList(info,index,inz,nowIn){
 		    	this.nowIn = nowIn
@@ -280,7 +286,7 @@
 		        });
 	    	},
 	    	addGroup(index) {
-		        this.$prompt('请输入', '提示', {
+		        this.$prompt('请输入职位', '提示', {
 		          confirmButtonText: '确定',
 		          cancelButtonText: '取消',
 		        }).then(({ value }) => {
@@ -312,44 +318,55 @@
 			    c_param.append("company_tel",this.companyPhone);
 			    this.$http.post("/index/Mobile/User/add_company",c_param)
 			    .then((res)=>{
-			    	this.companyId=res.data.data.company_id	
+			    	console.log(res)
+			    	if(res.data.code === '0'){
+			    		this.companyId=res.data.data.company_id	
+			    		let ret = []
+			         	for(var i in this.department) {
+						let str={}
+			         	for(var j in this.department[i].type){
+			         		if(this.department[i].type[j]){
+			         			let newStr={}
+			         			newStr.name=this.department[i].type[j].name
+			         			for(var z in this.department[i].type[j].person){
+			         				if(this.department[i].type[j].person){
+			         					let newStrPerObj={}
+				         				newStr.person=[]    				
+			         					newStrPerObj.name=this.department[i].type[j].person[z].name
+			         					newStrPerObj.uid=this.department[i].type[j].person[z].uid	
+			         					newStr.person.push(newStrPerObj)
+			         					str.positions=[]
+			         					str.positions.push(newStr)
+			         					str.name=this.department[i].name
+			         					ret.push(str)
+			         				}	
+				         			}
+				         		}
+				         	}
+				      	}
+			         	let newRet =JSON.stringify(ret);
+			        	let param = new URLSearchParams();
+					    param.append("big_json",newRet);
+					    param.append("company_id",this.companyId);
+					    param.append("uid",this.user.uid);
+					    this.$http.post("/index/Mobile/company/entrance_company",param)
+					      .then((res)=>{
+					      	if(res.data.code === 0){
+					      			this.$message({
+						        	message: '创建公司成功',
+						        	type: 'success'
+						        });
+					      	}else{
+					      		this.$message.error('创建公司失败');
+					      	}
+					      })
+			    	}else{
+			    		this.$message.error(res.data.data.m);
+			    		 this.$message.error('创建公司失败');
+			    		 return
+			    	}
 			    })
-    			let ret = []
-	         	for(var i in this.department) {
-				let str={}
-	         	for(var j in this.department[i].type){
-	         		if(this.department[i].type[j]){
-	         			let newStr={}
-	         			newStr.name=this.department[i].type[j].name
-	         			for(var z in this.department[i].type[j].person){
-	         				if(this.department[i].type[j].person){
-	         					let newStrPerObj={}
-		         				newStr.person=[]    				
-	         					newStrPerObj.name=this.department[i].type[j].person[z].name
-	         					newStrPerObj.uid=this.department[i].type[j].person[z].uid	
-	         					newStr.person.push(newStrPerObj)
-	         					str.positions=[]
-	         					str.positions.push(newStr)
-	         					str.name=this.department[i].name
-	         					ret.push(str)
-	         				}	
-		         			}
-		         		}
-		         	}
-		      	}
-	         	let newRet =JSON.stringify(ret);
-	        	let param = new URLSearchParams();
-			    param.append("big_json",newRet);
-			    param.append("company_id",this.companyId);
-			    param.append("uid",this.user.uid);
-			    this.$http.post("/index/Mobile/company/entrance_company",param)
-			      .then((res)=>{
-			      	if(res.data.code === '0'){
-			      		alert('创建成功')
-			      	}else{
-			      		alert('创建失败')
-			      	}
-			      })
+    			
     		},
 	     	next() {
 	        if (this.active++ > 2) this.active = 0;
@@ -362,6 +379,10 @@
 	        
 			}else if(this.active === 1){
 				if(!this.companyName||!this.companyPhone||!this.companyAdd){
+					 this.$message({
+			          message: '请填写完整信息',
+			          type: 'warning'
+			        });
 					 this.active = 0
 					return
 				}else{

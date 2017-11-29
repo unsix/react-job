@@ -8,9 +8,7 @@
 				<div class="name">
 					<span>名字</span>
 				</div>
-				<div class="depart">
-					<span>部门</span>
-				</div>
+
 				<div class="tel">
 					<span>联系方式</span>
 				</div>
@@ -24,9 +22,6 @@
 				</div>
 				<div class="name">
 					<span>{{item.name}}</span>
-				</div>
-				<div class="depart">
-					<span>{{item.department_name}}</span>
 				</div>
 				<div class="tel">
 					<span>{{item.phone}}</span>
@@ -68,48 +63,58 @@
 	>ul{
 		padding: 10px;
 		li{
+			cursor: default;
 			display: block;
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 14px;
+			transition:.3s; 
 			&:first-child{
 				border-bottom: 1px solid transparent;
+				&:hover{
+					background: none;
+				}
+			}
+			&:nth-child(even)
+			{
+				background:rgb(245,247,250);
+			}
+			&:hover{
+				background: #EEEEEE;
 			}
 			>div{
 				margin-top: 10px;
-				height: 50px;
-				line-height: 50px;
+				height: 40px;
+				line-height: 40px;
 				display: inline-block;
 			}
 			.avatar{
 				vertical-align: top;
-				width: 50px;
+				width: 90px;
 				margin-right: 20px;
+				margin-left: 4px;
 				img{
-					width: 50px;
-					height: 50px;
+					width: 40px;
+					height: 40px;
 					border-radius: 50%;
 				
 				}
 			}
 			.name{
-				width: 100px;
-			}
-			.depart{
-				width: 160px;
+				width: 130px;
 			}
 			.tel{
-				width: 120px;
+				width: 190px;
 			}
 			.operation{
-				width: 50px;
+				width: 80px;
 				a{
 					display: block;
 					width: 40px;
 					text-align: center;
 					height: 26px;
 					line-height: 26px;
-					color: #67C23A;
-					border: 1px solid #67C23A;
+					color: #409EFF;
+					border: 1px solid #409EFF;
 					cursor: pointer;
 				}
 			}

@@ -12,6 +12,7 @@ export default class qinggoudan_list {
   	consignee_phone,
   	content,
   	project_manager_name,
+  	enclosure_id,
   	many_enclosure}) {
     this.request_contract_address = request_contract_address
     this.contract_name_new = contract_name_new
@@ -27,6 +28,7 @@ export default class qinggoudan_list {
     this.consignee_phone = consignee_phone
     this.content = content
     this.many_enclosure = many_enclosure
+    this.enclosure_id = enclosure_id
   
   }
 }
@@ -45,7 +47,8 @@ export function create_qinggoudan_list(item) {
 	    arrival_time:item.arrival_time,
 	    consignee:item.consignee,
 	    consignee_phone:item.consignee_phone,
-	    content:item.content
+	    content:item.content,
+	    enclosure_id:get_enclosure_id(item)
 	   
 	})
 }
@@ -56,4 +59,13 @@ function get_manager_name(item){
 	if(item.project_manager_name.name){
 		return item.project_manager_name.name
 	}
+}
+function get_enclosure_id(item){
+	if(!item.enclosure_id){
+		return
+	}else{
+		return item.enclosure_id
+	}
+	
+	
 }

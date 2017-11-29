@@ -37,7 +37,7 @@
 								<span>发起公司：{{item.company_name}}</span>
 							</div>
 							<div class="process" v-if="approval_process">
-								<span>审批进程：</span><span>{{item.approval_state}}</span>
+								<span>审批进程：</span><span  v-html="item.approval_state"></span>
 							</div>
 						</div>
 					</li>
@@ -91,7 +91,7 @@
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
 						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
@@ -102,7 +102,7 @@
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file"  @change="getPic($event)"  multiple="multiple" />
+							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg" />
 							<i class="el-icon-close" @click="closeMenu" ></i>
 						</div>
 					</div>
@@ -187,7 +187,7 @@
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file"  multiple="multiple"/>
+							<input type="file"  multiple="multiple" accept="image/png,image/jpeg" />
 							<i class="el-icon-close" @click="closeMenu" ></i>
 						</div>
 					</div>
@@ -258,7 +258,7 @@
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
 						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
@@ -268,11 +268,9 @@
 							<span @click="agree($event)">同意</span>
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
-							<i class="el-icon-close" @click="closeMenu" ></i>
 							<input name="token" type="hidden" :value="input_value">
-							<br />
-							<a>上传图片</a>
-							<input type="file" @change="getPic($event)" multiple="multiple"/>
+							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg"/>
+							<i class="el-icon-close" @click="closeMenu" ></i>
 						</div>
 					</div>
 				</div>
@@ -340,7 +338,7 @@
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
 						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
@@ -351,8 +349,8 @@
 							<span @click="refuse">拒绝</span>
 							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" name="" id="" value="" multiple="multiple" />
-							<i class="el-icon-close" @click="closeMenu"  @change="getPic($event)"  ></i>
+							<input type="file" name="" id="" value="" multiple="multiple" accept="image/png,image/jpeg"  @change="getPic($event)"/>
+							<i class="el-icon-close" @click="closeMenu"   ></i>
 						</div>
 					</div>
 				</div>
@@ -396,7 +394,7 @@
 					<div>
 						<span>审批：</span>
 						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
+						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
 						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
@@ -409,7 +407,7 @@
 							<i class="el-icon-close" @click="closeMenu" ></i>
 							<br />
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" multiple="multiple"  @change="getPic($event)" />
+							<input type="file" multiple="multiple"  @change="getPic($event)" accept="image/png,image/jpeg"/>
 						</div>
 					</div>
 				</div>
@@ -459,7 +457,6 @@ export default{
 			loading_show:false,
 			nextPageShow:true,
 			pic_index:0,
-			handle_txt:'',
 			input_value:'',
 			file: '',
 			pic_hash:'',
@@ -502,7 +499,7 @@ export default{
 			this.pic_show=true
 		},
 		getPic(event) {
-	        this.pic = event.target.files;   
+	        this.pic = event.target.files;
 	    },
 		handleUpload() {
 	    },
@@ -524,9 +521,6 @@ export default{
 		ctrl_pic_show(){
 			this.pic_show=true
 		},
-		getFile(event) {
-            this.file = event.target.files;
-        },
         handle(){
 			this.menuShow=true
 			let param = new URLSearchParams();
@@ -537,8 +531,20 @@ export default{
 			})
 		},
 		agree(){
-			this.loading_show = true
+			if(this.handle_txt === ''){
+				this.$message.error('请填写审批意见');
+				return
+			}
+			if(!this.pic){
+				this.$message.error('处理审批必须上传图片');
+				return 
+			}	
 			if(this.pic){
+				if(this.pic.length === 0){
+					this.$message.error('处理审批必须上传图片');
+					return 
+				}
+				this.loading_show = true
 				for(let i = 0; i < this.pic.length; i++) {
 				let formData = new FormData();
 				formData.append('file', this.pic[i]);
@@ -559,11 +565,16 @@ export default{
 							param.append("is_agree",'1');
 							param.append("picture",res.data.data.enclosure_id);
 							param.append("company_id",this.nowCompanyId);
+							if(this.handle_txt && this.handle_txt != ''){
+								param.append("handle_txt",this.handle_txt);
+							}
+							param.append("opinion",this.handle_txt);
 							this.$http.post("/index/Mobile/find/approval_process",param)
 							.then((res)=>{
-								if(res.status===200){
+								if(res.data.code=== 0){
 									this.loading_show = false
 									this._getExamList()
+									this.handle_txt = ''
 									this.listShow = true
 									this.formShow = false
 								}
@@ -572,36 +583,57 @@ export default{
 					}
 				})
 			}
-			}
-            
-           		
+			}	
 		},
 		refuse(){
-			let formData = new FormData();
-            formData.append('file', this.file);
-            formData.append('token', this.input_value);
-            let config = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
-            	this.pic_hash=res.data.hash
-	        })
-            let param = new URLSearchParams();
-			param.append("uid",this.user.uid);
-			param.append("approval_id",this.untreated.approval_id);
-			param.append("participation_id",this.form_Listb.participation_id);
-			param.append("is_agree",'2');
-			param.append("picture",this.pic_hash);
-			param.append("company_id",this.nowCompanyId);
-			this.$http.post("/index/Mobile/find/approval_process",param)
-			.then((res)=>{
-				if(res.status==='200'){
-					this.listShow = true
-					this.formShow = false
+			if(this.handle_txt === ''){
+				this.$message.error('请填写审批意见');
+				return
+			}
+			if(!this.pic){
+				this.$message.error('处理审批必须上传图片');
+				return 
+			}	
+			if(this.pic){
+				if(this.pic.length === 0){
+					this.$message.error('处理审批必须上传图片');
+					return 
 				}
-			})
+				this.loading_show = true
+				let formData = new FormData();
+	            formData.append('file', this.file);
+	            formData.append('token', this.input_value);
+	            let config = {
+	              headers: {
+	                'Content-Type': 'multipart/form-data'
+	              }
+	            }
+	            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
+	            	this.pic_hash=res.data.hash
+		        })
+	            let param = new URLSearchParams();
+				param.append("uid",this.user.uid);
+				param.append("approval_id",this.untreated.approval_id);
+				param.append("participation_id",this.form_Listb.participation_id);
+				param.append("is_agree",'2');
+				param.append("picture",this.pic_hash);
+				param.append("company_id",this.nowCompanyId);
+				if(this.handle_txt && this.handle_txt != ''){
+					param.append("handle_txt",this.handle_txt);
+				}
+				param.append("opinion",this.handle_txt);
+				this.$http.post("/index/Mobile/find/approval_process",param)
+				.then((res)=>{
+					console.log(res)
+					if(res.data.code=== '0'){
+						this.handle_txt = ''
+						this.loading_show = false
+						this._getExamList()
+						this.listShow = true
+						this.formShow = false
+					}
+				})
+			}
 		},
 		return_list(){
 			this.formShow=false
@@ -894,7 +926,7 @@ export default{
 			.menu{
 				margin-top: 10px;
 				border-bottom: none;
-				span{
+				>span{
 					font-size: 14px;
 					display: inline-block;
 					padding: 2px 10px;
@@ -907,12 +939,14 @@ export default{
 					display: inline-block;
 					font-size: 0;
 					z-index: 2;
-					　　width: 300px;
-					　　height: 40px;
-					　　line-height: 40px;
-					span{
+					width: 300px;
+					>span{
+						font-size: 14px;
+						display: inline-block;
+						padding: 2px 6px;
 						color: #FA5555;
 						border: 1px solid #FA5555;
+						border-radius: 4px;
 						margin-left:4px;
 						&:first-child{
 							color:#67C23A;

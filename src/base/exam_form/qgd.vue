@@ -1,66 +1,87 @@
 <template>
 	<div class="form" name="合同评审表">
 		<i class="el-icon-d-arrow-left" @click="return_"></i>
-		<div>
-			<span>工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
+		<div v-if="form_Lista.request_contract_address">
+			<span >工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
 		</div>
-		<div>
-			<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
+		<div v-if="form_Lista.contract_name_new">
+			<span >合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 		</div>
-		<div>
-			<span>请购部门：</span><span>{{form_Lista.department_name}}</span>
+		<div v-if="form_Lista.department_name">
+			<span >请购部门：</span><span>{{form_Lista.department_name}}</span>
 		</div>
-		<div>
-			<span>采购执行人：</span><span>{{form_Lista.buy_person}}</span>
+		<div v-if="form_Lista.buy_person">
+			<span >采购执行人：</span><span>{{form_Lista.buy_person}}</span>
 		</div>
-		<div>
-			<span>采购执行人联系方式：</span><span>{{form_Lista.buy_person_phone}}</span>
+		<div v-if="form_Lista.buy_person_phone">
+			<span >采购执行人联系方式：</span><span>{{form_Lista.buy_person_phone}}</span>
 		</div>
-		<div>
-			<span>工程负责人：</span><span>{{form_Lista.contract_responsible}}</span>
+		<div v-if="form_Lista.contract_responsible">
+			<span >工程负责人：</span><span>{{form_Lista.contract_responsible}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.responsible_tel">
 			<span>工程负责人联系方式：</span><span>{{form_Lista.responsible_tel}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.receive_address">
 			<span>收货地址：</span><span>{{form_Lista.receive_address}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.arrival_time">
 			<span>要求到货时间：</span><span>{{form_Lista.arrival_time}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.consignee">
 			<span>收货人姓名：</span><span>{{form_Lista.consignee}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.consignee_phone">
 			<span>收货人联系方式：</span><span>{{form_Lista.consignee_phone}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.project_manager_name">
 			<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 		</div>
-		<div>
-			<span>请购清单：</span><span>{{form_Lista.content}}</span>
+		<div v-if="form_Lista.content.length != 0" v-for="item in form_Lista.content" class="qingdan_qinggou">
+			<h4>请购清单</h4>
+			<p>请购名称：<span>{{item.name}}</span></p>
+			<p>规格：<span>{{item.spec}}</span></p>
+			<p>型号:<span>{{item.model}}</span></p>
+			<p>单位：<span>{{item.unit}}</span></p>
+			<p>数量:<span>{{item.num}}</span></p>
+			<p>预计单价￥:<span>{{item.price}}</span></p>
+			<p>总额￥:<span>{{item.subtotal}}</span></p>
+			<p>申报采购原因及用途:<span>{{item.purpose}}</span></p>
 		</div>
 		<div>
 			<span>附件列表：</span>
 		</div>
 		<div>
 			<span>图片附件：</span>
-			<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-				<img :src="item" alt="" @click="ctrl_pic_show" />
+			<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+				<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 			</a>
 		</div>
-		<div>
-			<span>发起人：</span><span v-for="item in form_Listb.list">{{item}}</span>
-		</div>
-		<div>
-			<span>审批人员：</span><span v-for="item in form_Listb.list">{{item}}</span>
-		</div>
-		<div>
+		<div v-if="form_Listb.found_name">
+						<span>发起人：</span><span>{{form_Listb.found_name}}</span>
+					</div>
+					<div v-if="form_Listb.list">
+						<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
+					</div>
+		<div v-if="form_Listb.content">
 			<span>审批：</span>
-			<span v-for="item in form_Listb.content">
-			{{item.department_name}}	{{item.name}} 	<a>{{item.is_agree}}</a>
+			<br />
+			<span v-for="item in form_Listb.content" style="color: #444444;">
+			{{item.department_name}}	{{item.name}} 	{{item.is_agree}} {{item.add_time}}
+			<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 			</span>
 		</div>
+		<div v-if="form_Listb.finance">
+						<span>表单回执：</span>
+						<br />
+						<span style="color: #444444;">
+						<span v-html="form_Listb.finance.finance_state"></span> 
+						{{form_Listb.finance.name}}
+						{{form_Listb.finance.receipt_content}}
+						{{form_Listb.finance.save_time}}
+						<div><img :src="list" alt=""  v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)"/></div>
+						</span>
+					</div>
 		<div class="menu" v-show="handle_show">
 			<span @click="handle">处理</span>
 			<div class="button" v-show="menuShow">
@@ -73,10 +94,12 @@
 			</div>
 		</div>
 		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+		<loading v-show="loading_show"></loading>
 	</div>
 </template>
 
 <script>
+	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import {mapGetters} from 'vuex'
 	export default {
@@ -86,10 +109,13 @@
 				handle_txt:'',
 				pic_index:0,
 				pic_show:false,
+				loading_show :false,
 				input_value:'',
+				handle_txt :'',
 				pic_hash:'',
 				now_personnel_id:0,
-				pic_hash_arr:[]
+				pic_hash_arr:[],
+				img_arr:[]
 			}
 		},
 		props:{
@@ -101,9 +127,6 @@
 			},
 			handle_show:{
 				type:Boolean
-			},
-			img_arr:{
-				type:Array
 			},
 			psb_approval_id:{
 				type:String
@@ -118,6 +141,7 @@
 		methods:{
 			return_(){
 				this.$emit('return_psb')
+				this.handle_txt === ''
 			},
 			close_pic(){
 				this.pic_show = false
@@ -134,7 +158,19 @@
 				}
 				++this.pic_index
 			},
-			ctrl_pic_show(){
+			rec_pic(item,index){
+				this.img_arr = item
+				this.pic_index = index
+				this.pic_show=true
+			},
+			cl_pic(item,index){
+				this.img_arr = item.picture
+				this.pic_index = index
+				this.pic_show=true
+			},
+			ctrl_pic_show(item,index){
+				this.img_arr = item
+				this.pic_index = index
 				this.pic_show=true
 			},
 			handle(){
@@ -151,23 +187,35 @@
 			},
 			getFile(event) {
 	            this.file = event.target.files;
-	            
 	        },
 			agree(){
-				for(let i=0;i<this.file.length; i++){
-					let formData = new FormData();
-		            formData.append('file', this.file[i]);
-		            formData.append('token', this.input_value);
-		            let config = {
-		              headers: {
-		                'Content-Type': 'multipart/form-data'
-		              }
-		            }
-		            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
-		            	this.pic_hash_arr.push(res.data.hash)
-			        }) 
+				if(this.handle_txt === ''){
+					this.$message.error('请填写回执内容');
+					return
 				}
-
+				if(!this.file){
+					this.$message.error('确认回执必须上传图片');
+					return 
+				}
+				if(this.file){
+					if(this.file.length === 0){
+						this.$message.error('确认回执必须上传图片');
+						return 
+					}
+					for(let i=0;i<this.file.length; i++){
+						this.loading_show =true
+						let formData = new FormData();
+			            formData.append('file', this.file[i]);
+			            formData.append('token', this.input_value);
+			            let config = {
+			              headers: {
+			                'Content-Type': 'multipart/form-data'
+			              }
+			            }
+			            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
+			            	this.pic_hash_arr.push(res.data.hash)
+				        }) 
+					}
 						let mparam = new URLSearchParams();
 						mparam.append("uid",this.user.uid);
 						mparam.append("company_id",this.nowCompanyId);
@@ -180,7 +228,6 @@
 								nparam.append("picture",JSON.stringify(this.pic_hash_arr));
 								this.$http.post("/index/Mobile/approval/upload_enclosure_new",nparam)
 								.then((res)=>{
-									console.log(res)
 									let param = new URLSearchParams();
 						            param.append("uid",this.user.uid);
 									param.append("approval_id",this.psb_approval_id);
@@ -191,19 +238,22 @@
 									param.append("receipt_pic",res.data.data.enclosure_id);
 									this.$http.post("/index/Mobile/find/finance_receipt",param)
 									.then((res)=>{
+										this.loading_show = false
 										if(res.data.code === 0){
 											 this.$message({
 									          message: '恭喜你，操作成功',
 									          type: 'success'
 									        });
 									        this.return_()
+									        
 										}else{
 											this.$message.error('操作失败');
 										}
 									})
 								})
 							}
-						})	          
+						})	
+				}
 			},
 			
 			refuse(){
@@ -259,7 +309,8 @@
 			}
 		},
 		components:{
-			browsePic
+			browsePic,
+			loading
 		}
 	}
 </script>
@@ -297,8 +348,8 @@
 				}
 				img{
 					display: inline-block;
-					height: 50px;
 					width: 80px;
+					margin-right: 10px;
 					cursor: pointer;
 				}
 			}
@@ -311,6 +362,25 @@
 					margin: 2px 0px;
 				}
 				p{
+					height: 30px;
+					line-height: 30px;
+					span{
+						margin-left: 5px;
+						color: #444444;
+					}
+				}
+			}
+			.qingdan_qinggou{
+				font-size: 14px;
+				padding: 4px 0;
+				h4{
+					color: #409EFF;
+					font-size: 15px;
+					margin: 2px 0px;
+				}
+				p{
+					display: inline-block;
+					min-width:180px;
 					height: 30px;
 					line-height: 30px;
 					span{

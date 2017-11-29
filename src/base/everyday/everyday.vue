@@ -15,8 +15,10 @@
 .everyday_wrapper{
 	width: 100%;
 	height: 100%;
+	font-size: 14px;
 	.everyday{
 		padding: 10px;
+		height: 400px;
 	}
 }
 </style>

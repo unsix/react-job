@@ -5,28 +5,24 @@
 				<i class="el-icon-d-arrow-left" @click="returnList"></i>
 			</div>-->
 			<div class="addPerson">
-				<el-button type="primary" round style="margin-right: 10px;" v-show="submitAddPersonShow" @click="addContractApprovalPerson">收起</el-button>
-				<el-button type="primary" round @click="addContractApprovalPerson">添加</el-button>
-
-			</div>
-			<div class="submitAddPerson">
-				<el-button type="primary" round @click="dialogVisible = true" v-show="submitAddPersonShow">保存修改</el-button>
+				<el-button type="primary" round style="margin-right: 10px;" v-show="submitAddPersonShow" @click="save">保存修改</el-button>
+				<el-button type="primary" round @click="redact">编辑</el-button>
 			</div>
 		</div>
-		<div class="chooseApprovalPerson" id="chooseApprovalPerson" v-show="submitAddPersonShow">
-			<div class="depart">
-				<ul>
-					<li v-for="(group,index) in comPartPersonList" :key="group.department_name" v-show="group.person.length != 0">
-						<span id="icon"><i class="el-icon-menu"></i>{{group.department_name}}</span>
-						<div class="per" v-for="item in group.person" :key="item.personnel_id" @click="chooseContractApprovalPerson(item)">
-							<div class="perInfo">
+		<div class="chooseApprovalPerson" id="chooseApprovalPerson">
+				<el-collapse  v-model="activeNames">
+					 <el-collapse-item title="人员列表" name="1">
+						<div class="info" v-for="(item,index) in comPersonList" @click="chooseContractApprovalPerson(item,index)">
+							<div class="avatar">
 								<img :src="item.avatar" alt="" />
-								<span>{{item.name}}</span>
+									</div>
+									<div class="content">
+									<span class="name">{{item.department_name}}</span>
+									<span class="name">{{item.name}}</span>	
+								</div>
 							</div>
-						</div>
-					</li>
-				</ul>
-			</div>
+					</el-collapse-item>
+				</el-collapse>
 		</div>
 		<div class="jurisdictionFormList">
 			<ul>
@@ -34,9 +30,11 @@
 					<div class="info">
 						<img :src="item.avatar" alt="" />
 						<span>{{item.name}}</span>
-						<i class="delete el-icon-error" @click="deletejurisdictionFormList(item,index)"></i>
-						<i class="up el-icon-caret-top" @click="upjurisdictionFormList(item,index)" v-show="index!=0"></i>
-						<i class="down el-icon-caret-bottom" @click="downjurisdictionFormList(item,index)" v-show="index != jurisdictionFormList.length-1"></i>
+						<span v-show="submitAddPersonShow">
+							<i class="delete el-icon-error" @click="deletejurisdictionFormList(item,index)"></i>
+							<i class="up el-icon-caret-top" @click="upjurisdictionFormList(item,index)" v-show="index!=0"></i>
+							<i class="down el-icon-caret-bottom" @click="downjurisdictionFormList(item,index)" v-show="index != jurisdictionFormList.length-1"></i>
+						</span>
 					</div>
 				</li>
 			</ul>
@@ -73,9 +71,11 @@
 				contractApprovalShow:false,
 				originalJurisdictionFormList:[],
 				dialogVisible: false,
+				submitAddPersonShow:false,
 				numOne:0,
 				perIndex:-1,
-				arr:[]
+				arr:[],
+				activeNames:['0']
 			}
 		},
 		props:{
@@ -85,10 +85,6 @@
 			},
 			formType:{
 				type:Number
-			},
-			submitAddPersonShow:{
-				type:Boolean,
-				default:false
 			}
 		},
 		computed:{
@@ -100,13 +96,20 @@
 			])
 		},
 		methods:{
+			save(){
+				this.dialogVisible = true
+				this.activeNames = ['0']
+			},
 		    cancel(){
 		    	this.dialogVisible=false
 		    },
+		    
 			submit(){
+				this.arr = []
 				this.jurisdictionFormList.forEach((item,index)=>{
 					this.arr.push(createOrder(item,index))
 				})
+				
 				this.dialogVisible=false
 				let param = new URLSearchParams();
 				param.append("uid",this.user.uid);
@@ -115,6 +118,8 @@
 				param.append("sequence",JSON.stringify(this.arr));
 			    this.$http.post("/index/Mobile/approval/set_sequence",param)
 			    .then((res)=>{
+			    	this.submitAddPersonShow = false
+			    	this.$emit('reload')
 			    	if(res.data.code === 0){
 			    		this.$message({
 				          message: '修改成功',
@@ -125,11 +130,10 @@
 			    	}
 			    })
 			},
-			addContractApprovalPerson(){
+			redact(){
+				this.submitAddPersonShow = true
+				this.activeNames = ['1']
 				this.originalJurisdictionFormList = this.jurisdictionFormList
-				document.getElementById('chooseApprovalPerson').style.height="300px"
-				document.getElementById('chooseApprovalPerson').style.border="1px solid #DFE4ED"
-				this.$emit('return')
 			},
 //			选择合同评审表人员
 			chooseContractApprovalPerson(item){
@@ -142,13 +146,13 @@
 				this.jurisdictionFormList.push(item)
 			},
 //			删除合同评审表人员
-			deletejurisdictionFormList(index){
+			deletejurisdictionFormList(item,index){
+
 				this.jurisdictionFormList.splice(index,1)
 			},
 			upjurisdictionFormList(item,index){
 				if(index === 0){
 					return
-					
 				}
 				let nowItem = this.jurisdictionFormList[index]
 				let upItem = this.jurisdictionFormList[index-1]
@@ -317,72 +321,28 @@
 			top: 50px;
 			width: 200px;
 			height: 300px;
-			background: #FFFFFF;
-			.depart {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 200px;
-				height: 100%;
-				overflow-y: scroll;
-				ul {
-					li {
-						width: 100%;
-						>span {
-							cursor: pointer;
-							display: block;
-							text-align: left;
-							height: 24px;
-							line-height: 24px;
-							font-size: 14px;
-							cursor: default;
-							background: #DDDDDD;	
-							i{
-								/*position: relative;
-								left: 10px;*/
-								display:inline-block;
-								margin-left: 10px;
-								margin-right: 10px;
+			.info{
+						cursor: default;
+						font-size:0;
+						margin-bottom:4px;
+						>.avatar{
+							vertical-align: top;
+							display: inline-block;
+							img{
+								width: 40px;
+								height: 40px;
+								border-radius: 50%;
+							}	
+						}	
+						>.content{
+							display: inline-block;
+							margin-left: 10px;
+							>span{
+								display: block;
 								font-size: 12px;
 							}
 						}
-						>i {
-							margin-top: 10px;
-							font-size: 14px;
-							margin-right: 10px;
-							float: right;
-							color: #c3d1e4;
-						}
-						.per {
-							
-							height: 24px;
-							cursor: pointer;
-							margin-bottom: 2px;
-							.perInfo {
-								height: 24px;
-								font-size: 0;
-								img {
-									display: inline-block;
-									width: 20px;
-									height: 20px;
-									-webkit-border-radius: 50%;
-									-moz-border-radius: 50%;
-									border-radius: 50%;
-									vertical-align: top;
-									margin: 2px 2px 0 6px;
-								}
-								span {
-									display: inline-block;
-									font-size: 14px;
-									line-height: 24px;
-									padding: 0;
-									margin-left: 6px;
-								}
-							}
-						}
 					}
-				}
-			}
 		}
 	}
 .el-button.is-round{

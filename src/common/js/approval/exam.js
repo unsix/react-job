@@ -31,22 +31,25 @@ export function create_exam_list(item) {
     approval_state:get_state(item.approval_state)
   })
 }
+
 function get_state(state){
 	if(state === '0'){
-		return '审批中'
+		return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
 	}else if(state === '1'){
-		return '已通过'
+		return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
 	}else if(state === '2'){
-		return '未通过'
+		return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
 	}
 }
 function get_type(type){
 	if(type === '0'){
 		return '请款单'
+	}else if(type === '1'){
+		return '合同评审表'
 	}else if(type === '2'){
-		return '家装'
+		return '合同评审表'
 	}else if(type === '3'){
-		return '家装请购单'
+		return '请购单'
 	}else if(type === '5'){
 		return '申请公章'
 	}else if(type === '6'){
@@ -56,9 +59,12 @@ function get_type(type){
 	}else if(type === '8'){
 		return '请款单'
 	}else if(type === '9'){
-		return '其他请款'
+		return '请款单'
 	}else if(type === '111'){
 		return '合同评审表'
+	}
+	else if(type === '10'){
+		return '请购单'
 	}
 
 }

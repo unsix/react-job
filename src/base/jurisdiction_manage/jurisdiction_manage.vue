@@ -2,9 +2,14 @@
 	<div class="jurisdictionManage_wrapper">
 		<div class="jurisdictionManage">
 			<div class="nav">
-				<ul>
-					<li v-for="(item,index) in typeList" :class="{'active': index == navIndex}"  @click="chooseNav(item,index)">{{item}}</li>
-				</ul>
+				<el-tabs  v-model="activeName" @tab-click="handleClick">
+					<el-tab-pane label="表单回执" ></el-tab-pane>
+				    <el-tab-pane label="合同评审" ></el-tab-pane>
+				    <el-tab-pane label="请购单" ></el-tab-pane>
+			        <el-tab-pane label="请款单" ></el-tab-pane>
+			        <el-tab-pane label="印章申请" ></el-tab-pane>
+			        <el-tab-pane label="呈批件" ></el-tab-pane>
+				</el-tabs>
 			</div>
 			<div class="wrapper">
 					<div class="setFormRePer" v-show="setFormRePerShow">
@@ -12,7 +17,7 @@
 							<div class="sec" v-for="(item,index) in setFormRe">
 								<div class="secHead">
 									<span class="headerName">{{item.name}}</span>
-									 <el-button type="primary" round @click="perShow(index)">编辑</el-button>
+									 <el-button type="primary" round @click="perShow(index)" :disabled="redactState">编辑</el-button>
 								</div>
 								<ul class="secUl">
 									<li v-for="(group,gindex) in item.groups">
@@ -28,18 +33,14 @@
 									</li>
 								</ul>
 							</div>
-							<div class="person" v-show="personShow" ref="person">
+							
+							<div class="person"  ref="person">
 								<div class="submit">
-									<span @click="submit">确认修改</span>
+									  <el-button type="primary" round @click="submit">保存更改</el-button>
 								</div>	
-								<div class="close" >
-									<i class="el-icon-error" @click="closePersonList"></i>
-								</div>
-								<div class="personList" id="person">
-									<ul>
-										<div class="content">
-											<li v-for="(item,index) in comPersonList" @click="choosePerson(item,index)">
-					
+								<el-collapse  v-model="activeNames" >
+								   <el-collapse-item title="人员列表" name="1">
+									   <div class="info" v-for="(item,index) in comPersonList" @click="choosePerson(item,index)">
 												<div class="avatar">
 													<img :src="item.avatar" alt="" />
 												</div>
@@ -47,10 +48,9 @@
 													<span class="name">{{item.department_name}}</span>
 													<span class="name">{{item.name}}</span>	
 												</div>
-											</li>
 										</div>
-									</ul>
-								</div>	
+									</el-collapse-item>
+								</el-collapse>
 							</div>
 						</div>
 					</div>
@@ -58,7 +58,7 @@
 						<jurisdictionItem 
 							v-show="jurisdictionItemShow"
 							:formType="formType"
-							@return="returnJur"
+							@reload="reload"
 							:submitAddPersonShow="submitAddPersonShow"
 							:jurisdictionFormList="jurisdictionFormList">
 						</jurisdictionItem>
@@ -78,7 +78,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 		data(){
 			return{
 				typeInfo:'',
-				typeList:['设置表单回执人员','合同评审表','请购单','请款单','印章申请','呈批件'],
 				setFormRe:{
 					pingshen:{
 						name:'合同评审表',
@@ -97,6 +96,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					},
 				},	
 			    value6: '',
+			    redactState:false,
 				setFormRePerShow:false,
 				listShow:true,
 				personShow:false,
@@ -108,9 +108,10 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				huizhiPersonList:[],
 				deleteIndex:'',
 				formType:-1,
-				navIndex:-1,
 				closeShow:false,
-				num:0
+				num:0,
+				activeName:'',
+				activeNames: ['0']
 				
 			}
 		},
@@ -124,58 +125,11 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			])
 		},
 		methods:{
-			handleClose(){
+			handleChange(){
 				
 			},
-			close(){
-				this.$emit('close')
-			},
-			submit(){
-				let zz=0
-				if(this.formRePersonIndex==='pingshen'){
-					zz=1
-				}else if(this.formRePersonIndex === 'qinggou'){
-					zz=3
-				}else if(this.formRePersonIndex === 'qingkuan'){
-					zz=7
-				}
-				let narr=[]
-				this.setFormRe[this.formRePersonIndex].groups.forEach((item)=>{
-					narr.push(item.uid)
-				})
-				console.log(zz,JSON.stringify(narr))
-				let param = new URLSearchParams();
-			    param.append("company_id",this.nowCompanyId);
-			    param.append("type",zz);
-			    param.append("personnel",JSON.stringify(narr));
-			    param.append("uid",this.user.uid);
-			    this.$http.post("/index/Mobile/user/give_finance_new",param)
-			    .then((res)=>{
-			    	if(res.data.code === 0){
-			    		this.$message({
-				          message: '修改成功',
-				          type: 'success'
-				        });
-			    	}else{
-			    		this.$message.error('修改失败');
-			    	}
-			    	this.personShow = false
-			    })
-			},
-			deleted(gindex,index){
-				this.setFormRe[index].groups.splice(gindex,1)
-			},
-			returnList(){
-				this.setFormRePerShow = false
-				this.listShow = true
-				this.personShow = false
-			},
-			returnJur(){
-				this.submitAddPersonShow =! this.submitAddPersonShow
-			},
-			chooseNav(item,index){
-				
-				this.navIndex=index
+			handleClick(tab){
+				let index = JSON.parse(tab.index)
 				switch(index)
 				{
 				case 1:
@@ -205,19 +159,75 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					this._getApproval()
 				}
 			},
+			handleClose(){
+				
+			},
+			close(){
+				this.$emit('close')
+			},
+			reload(){
+				
+				this._getApproval()
+			},
+			submit(){
+				this.redactState = false
+				this.activeNames = ['0']
+				let zz=0
+				if(this.formRePersonIndex==='pingshen'){
+					zz=1
+				}else if(this.formRePersonIndex === 'qinggou'){
+					zz=3
+				}else if(this.formRePersonIndex === 'qingkuan'){
+					zz=7
+				}
+				let narr=[]
+				this.setFormRe[this.formRePersonIndex].groups.forEach((item)=>{
+					narr.push(item.uid)
+				})
+				let param = new URLSearchParams();
+			    param.append("company_id",this.nowCompanyId);
+			    param.append("type",zz);
+			    param.append("personnel",JSON.stringify(narr));
+			    param.append("uid",this.user.uid);
+			    this.$http.post("/index/Mobile/user/give_finance_new",param)
+			    .then((res)=>{
+			    	if(res.data.code === 0){
+			    		this._getHuizhi()
+			    		this.formRePersonIndex = -1
+			    		this.$message({
+				          message: '修改成功',
+				          type: 'success'
+				        });
+			    	}else{
+			    		this.$message.error('修改失败');
+			    	}
+			    })
+			},
+			deleted(gindex,index){
+				this.setFormRe[index].groups.splice(gindex,1)
+			},
+			returnList(){
+				this.setFormRePerShow = false
+				this.listShow = true	
+			},
 			choosePerson(item,index){
 				if(this.setFormRe[this.formRePersonIndex].groups.indexOf(item) != -1){
-					alert('列表中已存在')
+					this.$message({
+			          message: '列表中已存在' + item.name,
+			          type: 'warning'
+			        });
 					return
 				}
 				this.setFormRe[this.formRePersonIndex].groups.push(item)
 			},
 			perShow(index){
 				this.formRePersonIndex = index
-				this.personShow=true
+				this.redactState = true
+				this.activeNames = ['1']
 			},
 			closePersonList(){
-				this.personShow=false
+				this.formRePersonIndex = -1
+				this.personShow = false
 			},
 			
 			_getHuizhi(){
@@ -250,14 +260,13 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				})
 			},
 			_getApproval(){
-				this.submitAddPersonShow=false
-				this.jurisdictionFormList=[]
+				this.jurisdictionFormList = []
 				let param = new URLSearchParams();
 			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/approval/approval_list",param)
 			    .then((res)=>{
+			    	console.log(res)
 					res.data.data.approval.forEach((item)=>{
-						
 						if(item.type===this.formType){
 							if(item.list.length!=0){
 								item.list.forEach((list)=>{
@@ -283,37 +292,16 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 	}
 </script>
 
-<style lang="scss" scoped>
-.sildeThree-enter-active, .sildeThree-leave-active{
-  	transition: all .6s
-}
-.sildeThree-enter, .sildeThree-leave-to{
-  	transform: translate3d(600px, 0px, 0)
-}
+<style lang="scss">
 .jurisdictionManage_wrapper{
-	.jurisdictionManage{
-		width: 560px;
+	>.jurisdictionManage{
+		width: 558px;
 		overflow: hidden;
-		.nav{
+		>.nav{
 			width: 100%;
 			margin: 4px 0;
-			ul{
-				display:flex;
-				li{
-					flex: 1;
-					font-size: 12px;
-					height: 35px;
-					line-height: 35px;
-					text-align: center;
-					cursor:pointer; 
-					&:first-child{
-						flex: 0 100px;
-					}
-					&.active{
-						background: #f9f9f9;
-					    color: #333333;
-					}
-				}
+			.el-tabs__nav{
+				margin-left: 30px;
 			}
 		}
 		.wrapper{
@@ -357,90 +345,45 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			.type{
 				position: relative;
 				margin-top: 10px;
-				
 				>.person {
-					>.submit{
-						display: block;
-						>span{
-							background: #878D99;
-							color: #FFFFFF;
-							cursor: pointer;
-							position: absolute;
-							top: -30px;
-							right: 10px;
-							padding: 7px 20px;
-							border-radius: 4px;
-							font-size: 12px;
-							&:hover{
-								background: #9aa0ac;
-							}
-						}
-					}
 					position: absolute;
-					top: 30px;
+					top: 0px;
 					right: 10px;
 					z-index: 10;
 					width: 150px;
-					height: 230px;
-					background: #F2F2F2;
-					border: 1px solid #999999;
-					.close {
-						cursor: pointer;
-						display: block;
-						color: #999999;
-						i{
-							float: right;
-							margin-top: 2px;
-						}
-						&:hover {
-							color: #FA5555;
-						}
+					height: 300px;
+					.el-collapse-item__content{
+						padding-bottom: 0;
 					}
-					.personList {
-						width: 150px;
-						height: 210px;
-						background: #F2F2F2;
-						overflow-y: scroll;
-						-webkit-border-radius: 4px;
-						-moz-border-radius: 4px;
-						border-radius: 4px;
-						ul {
-							padding: 4px;
-							li {
-								width: 100%;
-								height: 30px;
-								cursor: default;
-								border-bottom: 1px solid #999999;
-								.avatar {
-									display: inline-block;
-									float: left;
-									margin-top: 2px;
-									>img{
-										width: 24px;
-										height: 24px;
-										border-radius: 50%;
-									}	
-								}
-								.content {
-									display: inline-block;
-									float: left;
-									margin-left: 8px;
-									>span {
-										display: block;
-										font-size: 12px;
-										height: 14px;
-										line-height: 14px;
-										&:first-child{
-											color: #5e8579;
-											font-size: 12px;
-										}
-									}
-								}
-								
+					>.submit{
+						margin-bottom: 10px;
+						margin-left: 30px;
+					}
+					.info{
+						cursor: default;
+						font-size:0;
+						margin-bottom:4px;
+						
+						>.avatar{
+							vertical-align: top;
+							display: inline-block;
+							img{
+								width: 40px;
+								height: 40px;
+								border-radius: 50%;
+							}	
+						}	
+						>.content{
+							display: inline-block;
+							margin-left: 10px;
+							>span{
+								display: block;
+								font-size: 12px;
 							}
 						}
 					}
 				}
+				
 				.sec{
 					margin-bottom: 4px;
 					.secHead{
@@ -490,7 +433,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 									height: 28px;
 									line-height: 28px;
 									&:last-child{
-										color: #5e8579;
+										color: #444444;
 									}
 								}
 							}

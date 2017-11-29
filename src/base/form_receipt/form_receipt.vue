@@ -1,7 +1,10 @@
 <template>
 	<div class="form_receipt">
 		<div class="nav">
-			<span v-for="(item,index) in nav" :class="{'active': index == navIndex}" @click="nav_cli(index)">{{item}}</span>
+			<el-tabs  v-model="activeName" @tab-click="handleClick">
+					<el-tab-pane label="未处理" ></el-tab-pane>
+				    <el-tab-pane label="已处理" ></el-tab-pane>
+				</el-tabs>
 		</div>
 		<div class="list" v-show="listShow">
 			<ul>
@@ -42,7 +45,6 @@
 			:form_Lista="form_Lista" 
 			:form_Listb="form_Listb" 
 			:handle_show="handle_show" 
-			:img_arr="img_arr"
 			:psb_approval_id="psb_approval_id"
 			@return_psb="return_psb">
 		</psb>
@@ -51,18 +53,27 @@
 			:form_Lista="form_Lista" 
 			:form_Listb="form_Listb" 
 			:handle_show="handle_show" 
-			:img_arr="img_arr"
 			:psb_approval_id="psb_approval_id"
 			@return_psb="return_psb">
 		</qgd>
+		<qkd 
+			v-if="qkd_if" 
+			:form_Lista="form_Lista" 
+			:form_Listb="form_Listb" 
+			:handle_show="handle_show" 
+			:psb_approval_id="psb_approval_id"
+			@return_psb="return_psb">
+		</qkd>
 	</div>
 </template>
 
 <script>
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
+	import qkd from '@/base/exam_form/qkd'
 	import {create_exam_list} from '@/common/js/approval/exam'
 	import {create_gongzhang_list} from '@/common/js/approval/gongzhang'
+	import {create_qinggoudan_list} from '@/common/js/approval/qinggoudan'
 	import {create_qingkuandan_list} from '@/common/js/approval/qingkuandan'
 	import {create_cengpijian_list} from '@/common/js/approval/cengpijian'
 	import {create_hetongpingshen_list} from '@/common/js/approval/hetongpingshen'
@@ -71,7 +82,6 @@
 	export default{
 		data(){
 			return{
-				nav:['未处理','已处理'],
 				navIndex:0,
 				untreated:[],
 				form_Lista:{},
@@ -82,9 +92,10 @@
 				listShow:true,
 				nextPageShow:true,
 				handle_show:true,
-				img_arr:[],
+				qkd_if:false,
 				pageIndex:1,
-				psb_approval_id:''
+				psb_approval_id:'',
+				activeName:''
 			}
 		},
 		computed:{
@@ -97,6 +108,17 @@
 			this._get_data()
 		},
 		methods:{
+			handleClick(tab){
+				let index = tab.index 
+				if(index === 0){
+					this.handle_show = true
+				}else{
+					this.handle_show = false
+				}
+				this.navIndex = index
+				this.finance_type = index + 1
+				this._get_data()
+			},
 			first_page(){
 				this.nextPageShow = true
 				this.pageIndex = 1
@@ -109,14 +131,7 @@
 				++this.pageIndex
 			},
 			nav_cli(index){
-				if(index === 0){
-					this.handle_show = true
-				}else{
-					this.handle_show = false
-				}
-				this.navIndex = index
-				this.finance_type = index + 1
-				this._get_data()
+				
 			},
 			_get_data(){
 				let param = new URLSearchParams();
@@ -127,7 +142,6 @@
 				param.append("each",'10');
 				this.$http.post("/index/Mobile/find/finance_list_formal",param)
 				.then((res)=>{
-					
 					let arr = []
 					this.untreated = res.data.data
 					res.data.data.forEach((item)=>{
@@ -141,6 +155,8 @@
 			},
 			return_psb(){
 				this.psb_if = false
+				this.qgd_if = false
+				this.qkd_if = false
 				this.listShow = true
 			},
 			listCli(item){
@@ -156,17 +172,31 @@
 					    this.get_img(this.form_Lista.img_list)
 					}else if(item.type === '合同评审表'){
 						this.psb_if=true
-						this.form_Lista = create_hetongpingshen_list(res.data.data)
-						console.log(this.form_Lista)
-						this.get_img(this.form_Lista.many_enclosure)
+						this.form_Lista = create_hetongpingshen_list(res.data.data)	
+						if(res.data.data.enclosure_id){
+							this.get_img(res.data.data.enclosure_id)
+						}
+						if(res.data.data.many_enclosure){
+							this.get_moreimg(res.data.data.many_enclosure)
+						}
 					}else if(item.type === '请款单'){
+						this.qkd_if=true
 						this.form_Lista = create_qingkuandan_list(res.data.data)
-						this.get_img(this.form_Lista.img)
+						if(res.data.data.contract_id){
+							this.get_img(res.data.data.contract_id[0].contract_id)
+						}
+						if(res.data.data.many_enclosure){
+							this.get_moreimg(res.data.data.many_enclosure)
+						}
 					}else if(item.type === '申请公章'){
 						this.form_Lista = create_gongzhang_list(res.data.data)
 					}else if(item.type === '请购单'){
 						this.qgd_if=true
-						this.form_Lista = res.data.data
+						this.form_Lista = create_qinggoudan_list(res.data.data)
+						if(!this.form_Lista.enclosure_id){
+							return
+						}
+						this.get_img(this.form_Lista.enclosure_id.contract_id)
 					}
 				})
 				let nparam = new URLSearchParams();
@@ -174,30 +204,92 @@
 				nparam.append("approval_id",item.approval_id);
 				nparam.append("company_id",this.nowCompanyId);
 				this.$http.post("/index/Mobile/approval/approval_process_personnel",nparam)
-				.then((res)=>{
+				.then((res)=>{				
 					this.form_Listb=create_approval_list(res.data.data)
+					if(res.data.data.content){
+						res.data.data.content.forEach((item)=>{	
+						if(item.picture){
+							let zparam = new URLSearchParams();
+							zparam.append("enclosure_id",item.picture);
+							this.$http.post("/index/Mobile/approval/look_enclosure",zparam)
+							.then((res)=>{
+								let arr = []
+								res.data.data.picture.forEach((item)=>{
+									if(item != ''){
+										arr.push('http://img-bbsf.6655.la/'+item)
+									}
+								})
+								item.picture = arr
+							})
+							}			
+						})
+					}
+					if(res.data.data.finance){
+						if(res.data.data.finance.finance_state === '1'){
+							res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+						}else{
+							res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+						}
+						let zparam = new URLSearchParams();
+						zparam.append("enclosure_id",res.data.data.finance.receipt_pic);
+						this.$http.post("/index/Mobile/approval/look_enclosure",zparam)
+						.then((res)=>{
+							
+							let arr = []
+							res.data.data.picture.forEach((item)=>{
+								if(item != ''){
+									arr.push('http://img-bbsf.6655.la/'+item)
+								}
+							})
+							this.$set(this.form_Listb, 're_pic', arr)
+							})
+					}
+					
 				})
+				
+				
 			},
 	//		获取图片
-			get_img(many_enclosure) {
-				if(!many_enclosure){
+			get_img(contract_id) {
+				if(!contract_id){
 					return
 				}
-				many_enclosure.forEach((item)=>{
-					if(item.type === 3){
-					let param = new URLSearchParams();
-					param.append("enclosure_id", item.contract_id);
-					this.$http.post("/index/Mobile/approval/look_enclosure", param)
-					.then((res) => {
-						let arr=[]
-						res.data.data.picture.forEach((item)=>{
-							if(item != ''){
+				let param = new URLSearchParams();
+				param.append("enclosure_id", contract_id);
+				this.$http.post("/index/Mobile/approval/look_enclosure", param)
+				.then((res) => {
+					let arr=[]
+					res.data.data.picture.forEach((item)=>{
+						if(item != ''){
+							if(item.indexOf('jpg')>0 ||item.indexOf('png')>0||item.indexOf('Enclos')>0){
+								arr.push ('http://img-bbsf.6655.la/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
+							}else{
 								arr.push('http://img-bbsf.6655.la/'+item)
-							}
-						})
-						this.img_arr = arr
-						this.$set(this.form_Lista,'img_list',arr)
+							}	
+						}
 					})
+					this.$set(this.form_Lista,'img_list',arr)
+				})
+			},
+			get_moreimg(many){
+				many.forEach((item)=>{
+					if(item.type === 3){
+						let param = new URLSearchParams();
+						param.append("enclosure_id", item.contract_id);
+						this.$http.post("/index/Mobile/approval/look_enclosure", param)
+						.then((res) => {
+							let arr=[]
+							res.data.data.picture.forEach((item)=>{
+								if(item != ''){
+									if(item.indexOf('jpg')>0 ||item.indexOf('png')>0||item.indexOf('Enclos')>0){
+										arr.push ('http://img-bbsf.6655.la/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
+									}else{
+										arr.push('http://img-bbsf.6655.la/'+item)
+									}	
+								}
+							})
+							this.$set(this.form_Lista,'img_list',arr)
+						})
 					}
 				})
 			}
@@ -209,30 +301,28 @@
 		},
 		components:{
 			psb,
-			qgd
+			qgd,
+			qkd
 		}
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
+
 .form_receipt {
 	width: 100%;
 	background: #FFFFFF;
-	.nav {
+	>.nav {
 		width: 100%;
-		span {
-			color: #0082CB;
-			cursor: pointer;
-			font-size: 12px;
-			display: inline-block;
+		.el-tabs__nav{
+		width: 100% !important;
+		}
+		.el-tabs__active-bar{
+			width: 50%!important;
+		}
+		.el-tabs__item{
 			width: 50%;
-			height: 30px;
 			text-align: center;
-			line-height: 30px;
-			border-bottom: 2px solid transparent;
-			&.active {
-				border-bottom: 2px solid #FC923F;
-			}
 		}
 	}
 	.list {
