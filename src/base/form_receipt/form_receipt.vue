@@ -82,7 +82,6 @@
 	export default{
 		data(){
 			return{
-				navIndex:0,
 				untreated:[],
 				form_Lista:{},
 				form_Listb:{},
@@ -110,14 +109,16 @@
 		methods:{
 			handleClick(tab){
 				let index = tab.index 
-				if(index === 0){
+				if(index === '0'){
 					this.handle_show = true
-				}else{
+					this.finance_type = 1
+					this._get_data()
+				}else if(index === '1'){
 					this.handle_show = false
+					this.finance_type = 2
+					this._get_data()
 				}
-				this.navIndex = index
-				this.finance_type = index + 1
-				this._get_data()
+				
 			},
 			first_page(){
 				this.nextPageShow = true
@@ -139,11 +140,11 @@
 				param.append("type",this.finance_type);
 				param.append("company_id",this.nowCompanyId);
 				param.append("p",this.pageIndex);
-				param.append("each",'10');
+				param.append("each",10);
 				this.$http.post("/index/Mobile/find/finance_list_formal",param)
 				.then((res)=>{
+					console.log(res)
 					let arr = []
-					this.untreated = res.data.data
 					res.data.data.forEach((item)=>{
 						arr.push(create_exam_list(item))
 					})
@@ -292,6 +293,15 @@
 						})
 					}
 				})
+		},
+			_getToken(){
+				let nparam = new URLSearchParams();
+				nparam.append("uid",this.user.uid);
+				this.$http.post("/index/Mobile/path/get_token",nparam)
+				.then((res)=>{
+					localStorage.token = JSON.stringify(res.data.data);
+					this.setToken(res.data.data)
+				})
 			}
 		},
 		watch:{
@@ -321,6 +331,8 @@
 			width: 50%!important;
 		}
 		.el-tabs__item{
+			font-weight: 700;
+			font-size: 15px;
 			width: 50%;
 			text-align: center;
 		}

@@ -1,6 +1,9 @@
 <template>
-	<div class="form" name="合同评审表">
-		<i class="el-icon-d-arrow-left" @click="return_"></i>
+	<div class="form" name="请购单">
+		<div class="top">
+			<el-button type="info" plain @click="return_">返回列表</el-button>
+			<span class="title">请购单</span>
+		</div>
 		<div v-if="form_Lista.request_contract_address">
 			<span >工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
 		</div>
@@ -83,14 +86,13 @@
 						</span>
 					</div>
 		<div class="menu" v-show="handle_show">
-			<span @click="handle">处理</span>
+			<el-button type="primary" plain @click="handle">处理</el-button>
 			<div class="button" v-show="menuShow">
-				<span @click="agree">同意</span>
-				<span @click="refuse">拒绝</span>
-				<input type="text" v-model="handle_txt" placeholder="请输入回复内容" />
+				<el-input type="textarea"  :rows="2"  placeholder="请输入回复内容"  v-model="handle_txt"></el-input>
 				<input name="token" type="hidden" :value="input_value">
-				<input type="file" name="" id=""  @change="getFile($event)" multiple="multiple" />
-				<i class="el-icon-close" @click="closeMenu"></i>
+				<input type="file"  @change="getFile($event)"  multiple="multiple" accept="image/png,image/jpeg" />
+				<el-button type="primary" round @click="agree($event)">同意</el-button>
+				<el-button type="danger" round @click="refuse">拒绝</el-button>
 			</div>
 		</div>
 		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
@@ -257,20 +259,48 @@
 			},
 			
 			refuse(){
-				for(let i=0;i<this.file.length; i++){
-					let formData = new FormData();
-		            formData.append('file', this.file[i]);
-		            formData.append('token', this.input_value);
-		            let config = {
-		              headers: {
-		                'Content-Type': 'multipart/form-data'
-		              }
-		            }
-		            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
-		            	this.pic_hash_arr.push(res.data.hash)
-			        }) 
+				if(this.handle_txt === ''){
+					this.$message.error('请填写回执内容');
+					return
 				}
-
+				if(!this.file){
+					let param = new URLSearchParams();
+					param.append("uid",this.user.uid);
+					param.append("approval_id",this.psb_approval_id);
+					param.append("personnel_id",this.now_personnel_id);
+					param.append("company_id",this.nowCompanyId);
+					param.append("finance_state",1);
+					param.append("receipt_content",this.handle_txt);
+					this.$http.post("/index/Mobile/find/finance_receipt",param)
+					.then((res)=>{
+						this.loading_show = false
+						if(res.data.code === 0){
+							this.$message({
+								message: '恭喜你，操作成功',
+								type: 'success'
+							});
+						this.return_()
+						}else{
+							this.$message.error('操作失败');
+						}
+					})
+				}
+				if(this.file){
+					for(let i=0;i<this.file.length; i++){
+						let formData = new FormData();
+			            formData.append('file', this.file[i]);
+			            formData.append('token', this.input_value);
+			            let config = {
+			              headers: {
+			                'Content-Type': 'multipart/form-data'
+			              }
+			            }
+			            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
+			            	this.pic_hash_arr.push(res.data.hash)
+				        }) 
+					}
+					if(this.pic_hash_arr.length === this.file.length){
+						this.loading_show = true
 						let mparam = new URLSearchParams();
 						mparam.append("uid",this.user.uid);
 						mparam.append("company_id",this.nowCompanyId);
@@ -288,11 +318,12 @@
 									param.append("approval_id",this.psb_approval_id);
 									param.append("personnel_id",this.now_personnel_id);
 									param.append("company_id",this.nowCompanyId);
-									param.append("finance_state",2);
+									param.append("finance_state",1);
 									param.append("receipt_content",'111');
 									param.append("receipt_pic",res.data.data.enclosure_id);
 									this.$http.post("/index/Mobile/find/finance_receipt",param)
 									.then((res)=>{
+										this.loading_show = false
 										if(res.data.code === 0){
 											 this.$message({
 									          message: '恭喜你，操作成功',
@@ -305,7 +336,9 @@
 									})
 								})
 							}
-						})	 
+						})	
+					}
+				}  
 			}
 		},
 		components:{
@@ -319,12 +352,21 @@
 	.form{
 			padding: 10px;
 			color: #999999;
-			>i{
-				font-size: 20px;
-				padding: 4px;
-				cursor: pointer;
-				&:hover{
-					color: #000000;
+			>.top{
+				width: 100%;
+				display: block;
+				button{
+					margin-left: 10px;
+					margin-top: 10px;
+					display: inline-block;
+				}
+				.title{
+					font-size: 16px;
+					width: 100%;
+					display: inline-block;
+					text-align: center;
+					height: 30px;
+					line-height: 30px;
 				}
 			}
 			>div{
@@ -392,59 +434,22 @@
 			.menu{
 				margin-top: 10px;
 				border-bottom: none;
-				span{
-					font-size: 14px;
-					display: inline-block;
-					padding: 2px 10px;
-					border: 1px solid #3487E2;
-					border-radius: 4px;
-					cursor: pointer;
+				>button{
+					display: block;
 				}
 				.button{
-					margin-left: 20px;
-					display: inline-block;
+					margin-top: 10px;
+					margin-left: 120px;
+					display: block;
 					font-size: 0;
 					z-index: 2;
-					　　width: 300px;
-					　　height: 40px;
-					　　line-height: 40px;
-					span{
-						color: #FA5555;
-						border: 1px solid #FA5555;
-						margin-left:4px;
-						&:first-child{
-							color:#67C23A;
-							border: 1px solid #67C23A;
-						}
-
-					}
-					input[type="text"]{
-						width:200px;
-						margin-left: 4px;
-						height: 16px;
-						outline: none;
-						border: 1px solid #3487E2;
-						border-radius: 4px;
-						text-indent: 4px;
-						line-height: 16px;
-					}
+					width: 300px;
 					input[type="file"]{
-						margin-left: 4px;
-						margin-top: 4px;
+						margin: 10px 0 10px 0px;
 					}
-					i{
-						font-size: 16px;
-						padding: 4px;
-						cursor: pointer;
-						margin-left: 10px;
+					>button{
+						margin-left: 50px;
 					}
-					>a{
-						font-size: 12px;
-						display: inline-block;
-						padding: 4px 10px;
-						border: 1px solid #5E8579;
-					}
-
 				}
 			}
 		}

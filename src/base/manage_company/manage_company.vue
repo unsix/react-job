@@ -7,13 +7,12 @@
 				    <el-tab-pane label="添加部门" ></el-tab-pane>
 			        <el-tab-pane label="添加工程项目" ></el-tab-pane>
 				</el-tabs>
-
 			</div>
 			<div class="type">
 				<div class="list" v-show="listShow">
 					<el-collapse v-model="activeName1">
 					  <el-collapse-item title="管理员"  name="1">
-					    <div v-for="(list,index) in adminArr" class="list_item">
+					    <div v-for="(list,index) in adminArr" class="list_item" :key="index">
 					    	<div class="avatar">
 								<img :src="list.avatar" alt="" />
 							</div>
@@ -28,8 +27,8 @@
 					  </el-collapse-item>
 					</el-collapse>
 					<el-collapse v-model="activeName2" accordion>
-					  <el-collapse-item :title="item.department_name" :name="i" v-for="(item,i) in comPartPersonList">
-					    <div v-for="(list,index) in item.person" class="list_item">
+					  <el-collapse-item :title="item.department_name" :name="i" v-for="(item,i) in comPartPersonList" :key="i">
+					    <div v-for="(list,index) in item.person" class="list_item" >
 					    	<div class="avatar">
 								<img :src="list.avatar" alt="" />
 							</div>
@@ -38,7 +37,7 @@
 								<span class="phone">{{list.phone}}</span>
 							</div>
 							<div class="button">
-								<el-button type="success" round @click="setAdministrator(list)">设为管理</el-button>
+								<el-button type="success" round @click="setAdministrator(list)" v-if="list.is_manage !=1">设为管理</el-button>
  								<el-button type="warning" round @click="deleteMember(list)">删除</el-button>
 							</div>
 					    </div>
@@ -78,7 +77,6 @@ import {mapGetters,mapMutations} from 'vuex'
 				typeName:['添加部门','添加工程项目'],
 				radioo: '2',
 				adminArr:[],
-				ComPartPersonList:[],
 				personShow:false,
 				numOne:0,
 				activeName:'',
@@ -90,7 +88,6 @@ import {mapGetters,mapMutations} from 'vuex'
 		},
 		created(){	
 			this._getAdmin()
-//			console.log(this.comPartPersonList)
 		},
 		computed:{
 			...mapGetters([
@@ -203,7 +200,6 @@ import {mapGetters,mapMutations} from 'vuex'
 				param.append("company_id",this.nowCompanyId);
 				this.$http.post("/index/Mobile/User/del_manage",param)
 				.then((res)=>{
-					console.log(res)
 					if(res.data.code === 1){
 					    this.$message.error(res.data.message);
 					}else if(res.data.code === 0){
@@ -317,7 +313,7 @@ import {mapGetters,mapMutations} from 'vuex'
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 
 .manageCompany_wrapper{
 	z-index: 20;
@@ -330,46 +326,39 @@ import {mapGetters,mapMutations} from 'vuex'
 		border-radius: 6px;
 		-moz-border-radius: 6px;
 		-webkit-border-radius: 6px;
-		.title{
-			width: 100%;
-			span{
-				color: #5A5E66;
-				height: 30px;
-				line-height: 30px;
-			}
-			.close{
-				display: inline-block;
-				line-height:30px;
-				float: right;
-				font-size: 16px;
-				&:hover{
-					color: #409EFF;
-				}
-			}
-		}
-		.nav{
+		>.nav{
 			width: 100%;
 			margin: 4px 0;
-			ul{
-				display:flex;
-				li{
-					cursor: pointer;
-					flex: 1;
-					font-size: 12px;
-					height: 35px;
-					line-height: 35px;
-					text-align: center;
-					&.active{
-						background: #f9f9f9;
-					    color: #333333;
-					}
-				}
+			.el-tabs__active-bar{
+				width: 190px;
+			}
+			.el-tabs__nav{
+				width: 100%;
+			}
+			.el-tabs__item{
+				font-size: 15px;
+				font-weight: 700;
+				width: 190px;
+				text-align: center;
 			}
 		}
 		>.type{
 			width: 100%;
 			height: 100%;
-			.list{
+			>.list{
+				.el-collapse-item__header{
+					margin-left: 0;
+					text-indent: 10px;
+				}
+				.el-collapse-item:last-child{
+					margin-bottom: -2px;
+				}
+				.el-collapse-item__content{
+					padding-bottom: 0;
+				}
+				.el-collapse-item.is-active .el-collapse-item__header{
+					background: #EEEEEE;
+				}
 				.list_item{
 					margin-top: 5px;
 					height: 50px;
@@ -553,51 +542,5 @@ import {mapGetters,mapMutations} from 'vuex'
 		}
 	}
 }
-.el-collapse-item__header{
-	padding: 0 20px;
-}
-.el-button+.el-button{
-	margin-left: 0;
-	float: right;
-}
-.el-collapse-item__content{
-	padding-bottom: 0;
-	height: 24px;
-	line-height: 24px;
-	text-indent: 10px;
-	background: #6298d4;
-	color: #FFFFFF;
-	cursor: default;
-}
-  .box {
-    width: 400px;
 
-    .top {
-      text-align: center;
-    }
-
-    .left {
-      float: left;
-      width: 60px;
-    }
-
-    .right {
-      float: right;
-      width: 60px;
-    }
-
-    .bottom {
-      clear: both;
-      text-align: center;
-    }
-
-    .item {
-      margin: 4px;
-    }
-
-    .left .el-tooltip__popper,
-    .right .el-tooltip__popper {
-      padding: 8px 10px;
-    }
-  }
 </style>

@@ -15,7 +15,6 @@
 			  </el-form-item>
 			  <el-form-item style="margin-top: 30px;">
 			    <el-button type="primary" @click="onSubmit">立即创建</el-button>
-			    <el-button>取消</el-button>
 			  </el-form-item>
 			</el-form>
 		</div>
@@ -25,7 +24,7 @@
 
 <script>
 import loading from '@/base/loading/loading'
-import {mapGetters} from 'vuex'
+import {mapGetters,mapMutations} from 'vuex'
 	export default{
 		data(){
 			return{
@@ -45,6 +44,14 @@ import {mapGetters} from 'vuex'
 		},
 		methods:{
 			 onSubmit() {
+			 	let reg = /^1[0-9]{10}$/;
+				if(!reg.test(this.form.phone)){
+					 this.$message({
+			          message: '请填写正确手机号码',
+			          type: 'warning'
+			        });
+			        return
+				}
 			 	this.loadingShow = true
 			 	let departId
 			 	this.comDepartList.forEach((item) => {
@@ -52,23 +59,43 @@ import {mapGetters} from 'vuex'
 							departId = item.department_id
 						}
 					})
+			 	
 		        let param = new URLSearchParams();
 			    param.append("name",this.form.name);
 			    param.append("phone",this.form.phone);
 			    param.append("company_id",this.nowCompanyId);
 			    param.append("department_id",departId);
+			    
 			    this.$http.post("/index/Mobile/User/add_personnel",param)
 			    .then((res)=>{
+			    	console.log(res)
 			    	this.loadingShow = false
 			    	this.$emit('close')
 			    	if(res.data.code === 0){
-			    		this.$message('添加成功');
+			    		this.$message.success('添加成功');
+			    		this._getComPersonList()
 			    	}else{
 			    		 this.$message.error('添加失败');
 			    	}
 			    	
 			    })
-		     }
+		     },
+		     _getComPersonList(){
+				let newparam = new URLSearchParams();
+				newparam.append("company_id",JSON.parse(localStorage.nowCompanyId)); 
+				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+				.then((res)=>{
+				   	let reaDa=[]
+				    res.data.data.forEach((item)=>{
+				    	item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+				    	reaDa.push(item)
+				    })	
+				   	this.setComPersonList(reaDa)
+				})
+			},
+			...mapMutations({
+				setComPersonList: 'SET_COM_PERSON_LIST',
+			})
 		},
 		components:{
 			loading

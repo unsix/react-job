@@ -1,15 +1,12 @@
 <template>
 	<div class="contractApproval" v-show="contractApprovalShow">
 		<div style="height: 30px;">
-			<!--<div class="return">
-				<i class="el-icon-d-arrow-left" @click="returnList"></i>
-			</div>-->
 			<div class="addPerson">
 				<el-button type="primary" round style="margin-right: 10px;" v-show="submitAddPersonShow" @click="save">保存修改</el-button>
 				<el-button type="primary" round @click="redact">编辑</el-button>
 			</div>
 		</div>
-		<div class="chooseApprovalPerson" id="chooseApprovalPerson">
+		<div class="chooseApprovalPerson" >
 				<el-collapse  v-model="activeNames">
 					 <el-collapse-item title="人员列表" name="1">
 						<div class="info" v-for="(item,index) in comPersonList" @click="chooseContractApprovalPerson(item,index)">
@@ -102,8 +99,8 @@
 			},
 		    cancel(){
 		    	this.dialogVisible=false
+		    	this.submitAddPersonShow = false
 		    },
-		    
 			submit(){
 				this.arr = []
 				this.jurisdictionFormList.forEach((item,index)=>{
@@ -172,6 +169,12 @@
 			...mapMutations({
 				setComPersonList : 'SET_COM_PERSON_LIST'
 			})
+		},
+		watch:{
+			jurisdictionFormList(){
+				this.submitAddPersonShow = false
+				this.activeNames = ['0']
+			}
 		}
 	}
 </script>

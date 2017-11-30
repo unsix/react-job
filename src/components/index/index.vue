@@ -27,16 +27,19 @@
 					<div class="userOperation" v-show="userOperationShow" @mouseover ="userIconOver" @mouseout="userIconOut" >
 						<router-link to="">升级说明</router-link>
 						<router-link to="">个人设置</router-link>
-						<router-link to="">退出登录</router-link>
+						<a @click="compamyShow = true">创建公司</a>
+						<router-link to="">退出登录</router-link>		
 					</div>
 				</div>
 			</div>
 		</div>
 		<router-view :workIndex="workIndex" @changeWorkIndex="changeWorkIndex"></router-view>		
+		<createCompany v-if="compamyShow" @companyClose="companyClose()"></createCompany>
 	</div>
 </template>
 
 <script>
+import createCompany from '@/base/create_company/create_company'
 import {create_depart_list} from 'common/js/initial/depart.js'
 import {createPersonInfo} from 'common/js/person_info'
 import {prefixStyle} from '@/common/js/dom'
@@ -57,7 +60,8 @@ import {mapGetters,mapMutations} from 'vuex'
 				ComPartPersonList:[],
 				companyPersonList:[],
 				numOne:0,
-				workIndex:0
+				workIndex:0,
+				compamyShow:false
 			}
 		},
 		methods:{
@@ -105,6 +109,9 @@ import {mapGetters,mapMutations} from 'vuex'
 			},
 			handleScroll () {
 			
+			},
+			companyClose() {
+				this.compamyShow = false
 			},
 			_getComDepart(){
 				let param = new URLSearchParams();
@@ -162,7 +169,6 @@ import {mapGetters,mapMutations} from 'vuex'
 			    })
 			},
 			_getPersonnelId(){
-
 				let param = new URLSearchParams();
 				param.append("uid",JSON.parse(localStorage.text).uid);
 				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
@@ -212,8 +218,9 @@ import {mapGetters,mapMutations} from 'vuex'
 			this._getComDepart()
 			this._getPersonnelId()
 			this._getToken()
-
-				
+		},
+		components:{
+			createCompany
 		},
 		watch:{
 		}

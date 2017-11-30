@@ -2,11 +2,13 @@
 	<div class="add_approval_wrapper">
 		<div class="add_approval">
 			<div class="nav">
-				<ul>
-					<li v-for="(item,index) in nav" :class="{'active': index == navIndex}" @click="change_nav(index)">
-						{{item}}
-					</li>
-				</ul>
+				<el-tabs  v-model="activeName" @tab-click="handleClick">
+					<el-tab-pane label="合同审核表" ></el-tab-pane>
+				    <el-tab-pane label="请购单" ></el-tab-pane>
+			        <el-tab-pane label="呈批件" ></el-tab-pane>
+			        <el-tab-pane label="申请公章" ></el-tab-pane>
+			        <el-tab-pane label="请款单" ></el-tab-pane>
+				</el-tabs>
 			</div>
 			<div class="form">
 				<div class="qingkuan" v-show="qingkuan_big_show">
@@ -22,7 +24,7 @@
 							<span>标题：{{item.title}}</span>
 						</div>
 						<div class="process">
-							<span>审批进程：</span><span>{{item.approval_state}}</span>
+							<span>审批进程：</span><span v-html="item.approval_state"></span>
 						</div>
 						<div class="button">
 							<span @click="user_qingkuan(item)">使用</span>
@@ -231,23 +233,23 @@
 						<el-form-item label="项目负责人(部门经理)">
 							<el-input v-model="qkd_ruleForm.project_manager_name" @focus="qkd_leader"></el-input>
 						</el-form-item>
+						<el-form-item label="开户行地址" prop="bank_address">
+							<el-input v-model="qkd_ruleForm.bank_address"></el-input>
+						</el-form-item>
 						<el-form-item label="银行账户名称" prop="account_name">
 							<el-input v-model="qkd_ruleForm.account_name"></el-input>
+						</el-form-item>
+						<el-form-item label="银行卡号" prop="bank_card">
+							<el-input v-model.number="qkd_ruleForm.bank_card"></el-input>
 						</el-form-item>
 						<el-form-item label="工种" prop="worker_type">
 							<el-input v-model="qkd_ruleForm.worker_type"></el-input>
 						</el-form-item>
-						<el-form-item label="开户行地址" prop="bank_address">
-							<el-input v-model="qkd_ruleForm.bank_address"></el-input>
-						</el-form-item>
-						<el-form-item label="银行卡号" prop="bank_card">
-							<el-input v-model="qkd_ruleForm.bank_card"></el-input>
-						</el-form-item>
 						<el-form-item label="合同金额" prop="subtotal">
-							<el-input v-model="qkd_ruleForm.subtotal"></el-input>
+							<el-input v-model.number="qkd_ruleForm.subtotal"></el-input>
 						</el-form-item>
 						<el-form-item label="本次请款金额" prop="request_subtotal">
-							<el-input v-model="qkd_ruleForm.request_subtotal"></el-input>
+							<el-input v-model.number="qkd_ruleForm.request_subtotal"></el-input>
 						</el-form-item>
 						<el-form-item label="请款内容" prop="request_content">
 							<el-input type="textarea" v-model="qkd_ruleForm.request_content"></el-input>
@@ -256,13 +258,13 @@
 							<el-input v-model="qkd_ruleForm.draw_money_name"></el-input>
 						</el-form-item>
 						<el-form-item label="增减金额">
-							<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
+							<el-input v-model.number="qkd_ruleForm.gain_reduction_subtotal"></el-input>
 						</el-form-item>
 						<el-form-item label="请款次数">
-							<el-input v-model="qkd_ruleForm.request_num"></el-input>
+							<el-input v-model.number="qkd_ruleForm.request_num"></el-input>
 						</el-form-item>
 						<el-form-item label="已领工程款">
-							<el-input v-model="qkd_ruleForm.balance_subtotal"></el-input>
+							<el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
 						</el-form-item>
 						<el-form-item label="添加图片">
 							<input name="token" type="hidden" :value="token">
@@ -345,7 +347,7 @@
 							<el-input v-model="qgd_ruleForm.contract_id"></el-input>
 						</el-form-item>
 						<el-form-item label="合计" prop="total">
-							<el-input v-model="qgd_ruleForm.total"></el-input>
+							<el-input v-model.number="qgd_ruleForm.total"></el-input>
 						</el-form-item>
 						<el-form-item label="请购工程地址" prop="request_contract_address">
 							<el-input v-model="qgd_ruleForm.request_contract_address"></el-input>
@@ -377,7 +379,7 @@
 							</el-form>
 							<el-form :inline="true" class="demo-form-inline">
 								<el-form-item label="数量">
-									<el-input v-model="item.num"></el-input>
+									<el-input v-model.number="item.num"></el-input>
 								</el-form-item>
 								<el-form-item label="单位">
 									<el-select v-model="item.unit">
@@ -387,10 +389,10 @@
 							</el-form>
 							<el-form :inline="true" class="demo-form-inline">
 								<el-form-item label="单价">
-									<el-input v-model="item.subtotal"></el-input>
+									<el-input v-model.number="item.subtotal"></el-input>
 								</el-form-item>
 								<el-form-item label="总额">
-									<el-input v-model="item.price"></el-input>
+									<el-input v-model.number="item.price"></el-input>
 								</el-form-item>
 
 							</el-form>
@@ -438,7 +440,7 @@
 							<el-input v-model="cpj_ruleForm.content"></el-input>
 						</el-form-item>
 						<el-form-item label="文件编号" prop="chengpi_num">
-							<el-input v-model="cpj_ruleForm.chengpi_num"></el-input>
+							<el-input v-model.number="cpj_ruleForm.chengpi_num"></el-input>
 						</el-form-item>
 						<el-form-item label="主题内容" prop="title">
 							<el-input v-model="cpj_ruleForm.title"></el-input>
@@ -495,13 +497,13 @@
 							<el-input v-model="psb_ruleForm.executor"></el-input>
 						</el-form-item>
 						<el-form-item label="单价" prop="prive">
-							<el-input v-model="psb_ruleForm.prive"></el-input>
+							<el-input v-model.number="psb_ruleForm.prive"></el-input>
 						</el-form-item>
 						<el-form-item label="总价" prop="total_prive">
-							<el-input v-model="psb_ruleForm.total_prive"></el-input>
+							<el-input v-model.number="psb_ruleForm.total_prive"></el-input>
 						</el-form-item>
 						<el-form-item label="与投标价差异" prop="difference">
-							<el-input v-model="psb_ruleForm.difference"></el-input>
+							<el-input v-model.number="psb_ruleForm.difference"></el-input>
 						</el-form-item>
 						<el-form-item label="付款方式" prop="pay_method">
 							<el-input v-model="psb_ruleForm.pay_method"></el-input>
@@ -513,7 +515,7 @@
 							<el-date-picker type="date"  v-model="psb_ruleForm.end_time" style="width: 100%;"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="合同编号">
-							<el-input v-model="psb_ruleForm.contract_id"></el-input>
+							<el-input v-model.number="psb_ruleForm.contract_id"></el-input>
 						</el-form-item>
 						<el-form-item label="备注">
 							<el-input v-model="psb_ruleForm.remarks"></el-input>
@@ -585,7 +587,7 @@
 									<el-input v-model="item.contract_name"></el-input>
 								</el-form-item>
 								<el-form-item label="数量">
-									<el-input v-model="item.num"></el-input>
+									<el-input v-model.number="item.num"></el-input>
 								</el-form-item>
 								<el-form-item label="公司名称">
 									<el-input v-model="item.name_company"></el-input>
@@ -618,7 +620,7 @@
 										<img :src="item.avatar" alt="" />
 									</div>
 									<div class="content">
-										<span class="name">{{item.username}}</span>
+										<span class="name">{{item.name}}</span>
 										<span class="phone">{{item.phone}}</span>
 									</div>
 								</li>
@@ -649,19 +651,19 @@
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { prefixStyle } from '@/common/js/dom'
-	import { mapGetters } from 'vuex'
+	import { mapGetters , mapMutations} from 'vuex'
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
 	export default {
 		data() {
 			return {
-				nav: ['合同审核表', '请购单', '呈批件', '申请公章', '请款单'],
+				navIndex:0,
 				asType: ['请购单', '合同评审表', '呈批件', '其他'],
-				navIndex: 0,
 				radio: '1',
 				qkd_type: 0,
 				form_Lista: [],
 				form_Listb: [],
+				activeName:'',
 				pic_show: false,
 				template_view_show: false,
 				chengpijian_if: false,
@@ -677,6 +679,7 @@
 				pingshenbiao_show: true,
 				shenqinggongzhang_show: false,
 				loading_show:false,
+				returnOk:false,
 				untreated: [],
 				img_arr: [],
 				document_type:["png","jpg","jpeg","txt","doc","docx","xls","xlsx","ppt","pptx","pdf"],
@@ -768,12 +771,12 @@
 					executor: '',
 					contract_name_new: '',
 					remarks: '',
-					project_manager: {}
+					project_manager_name: '',
+					project_manager:{}
 				},
 				sqgz_ruleForm: {
 					departmental: '',
 					user_name: '',
-					project_manager: '',
 					department_id: '',
 					project_manager_name: '',
 					project_manager: {},
@@ -813,11 +816,10 @@
 						message: '请填写联系方式',
 						trigger: 'chagne'
 					}],
-					bank_card: [{
-						required: true,
-						message: '请填写银行卡号',
-						trigger: 'blur'
-					}],
+					bank_card: [
+						{ required: true, message: '请填写银行卡号'},
+		     			{ type: 'number', message: '银行卡号必须为数字值'}
+		     		],
 					bank_name: [{
 						required: true,
 						message: '请填写银行账户名称',
@@ -833,16 +835,14 @@
 						message: '请填写开户行地址',
 						trigger: 'blur'
 					}],
-					subtotal: [{
-						required: true,
-						message: '请填写合同金额',
-						trigger: 'blur'
-					}],
-					request_subtotal: [{
-						required: true,
-						message: '请填写本次请款金额',
-						trigger: 'blur'
-					}],
+					subtotal: [
+						{ required: true, message: '请填写合同金额'},
+		     			{ type: 'number', message: '合同金额必须为数字值'}
+		     		],
+					request_subtotal: [
+						{ required: true, message: '请填写请款金额'},
+	     				{ type: 'number', message: '请款金额必须为数字值'}
+	     			],
 					request_content: [{
 						required: true,
 						message: '请填写请求内容',
@@ -875,11 +875,10 @@
 						message: '请填写呈资料名称',
 						trigger: 'change'
 					}],
-					num: [{
-						required: true,
-						message: '请填写数量',
-						trigger: 'change'
-					}],
+					num: [
+						{ required: true, message: '请填写数量'},
+	     				{ type: 'number', message: '数量必须为数字值'}
+					],
 					name_company: [{
 						required: true,
 						message: '请填写公司名称',
@@ -907,21 +906,18 @@
 						message: '请填写乙方姓名',
 						trigger: 'blur'
 					}],
-					prive: [{
-						required: true,
-						message: '请填写单价',
-						trigger: 'blur'
-					}],
-					total_prive: [{
-						required: true,
-						message: '请填写总价',
-						trigger: 'blur'
-					}],
-					difference: [{
-						required: true,
-						message: '请填写与投标价格差异',
-						trigger: 'blur'
-					}],
+					prive: [
+						 { required: true, message: '请填写单价'},
+     					 { type: 'number', message: '单价必须为数字值'}
+					],
+					total_prive: [
+						{ required: true, message: '请填写总价'},
+     					{ type: 'number', message: '总价必须为数字值'}
+     				],
+					difference: [
+						{ required: true, message: '请填写与投标价格差异'},
+     					{ type: 'number', message: '投标价格差异必须为数字值'}
+     				],
 					pay_method: [{
 						required: true,
 						message: '请填写	付款方式',
@@ -961,11 +957,10 @@
 						message: '请填写主题内容',
 						trigger: 'blur'
 					}],
-					chengpi_num: [{
-						required: true,
-						message: '请填写文件编号',
-						trigger: 'blur'
-					}],
+					chengpi_num: [
+						{ required: true, message: '请填写文件编号'},
+     					{ type: 'number', message: '文件编号必须为数字值'}
+     				],
 					title: [{
 						required: true,
 						message: '请填写呈批标题',
@@ -1019,16 +1014,13 @@
 						message: '请填写收货人联系方式',
 						trigger: 'change'
 					}],
-					contract_id: [{
-						required: true,
-						message: '请填写本次请款金额',
-						trigger: 'blur'
-					}],
-					total: [{
-						required: true,
-						message: '请填写合计',
-						trigger: 'blur'
-					}],
+					contract_id: [
+						{ required: true, message: '请填写合同ID'}
+	     			],
+					total: [
+						{ required: true, message: '请填写合计金额'},
+	     				{ type: 'number', message: '合计金额必须为数字值'}
+	     			],
 					buy_person: [{
 						required: true,
 						message: '请填写采购负责人',
@@ -1059,6 +1051,27 @@
 			])
 		},
 		methods: {
+			handleClick(tab) {
+			
+				this.navIndex = JSON.parse(tab.index)
+				this.qingkuan_big_show = false
+				this.qinggou_show = false
+				this.chengpijian_show = false
+				this.pingshenbiao_show = false
+				this.shenqinggongzhang_show = false
+				if(this.navIndex === 0) {
+					this.pingshenbiao_show = true
+				} else if(this.navIndex === 1) {
+					this.qinggou_show = true
+				} else if(this.navIndex === 2) {
+					this.chengpijian_show = true
+				} else if(this.navIndex === 3) {
+					this.shenqinggongzhang_show = true
+				} else if(this.navIndex === 4) {
+					this.qingkuan_big_show = true
+					this.as_what_show = true
+				}
+		    },
 			getPic(event) {
 	            this.pic = event.target.files;   
 	        },
@@ -1224,26 +1237,6 @@
 				this.personShow = true
 				this.insertType = 8
 			},
-			change_nav(index) {
-				this.navIndex = index
-				this.qingkuan_big_show = false
-				this.qinggou_show = false
-				this.chengpijian_show = false
-				this.pingshenbiao_show = false
-				this.shenqinggongzhang_show = false
-				if(index === 0) {
-					this.pingshenbiao_show = true
-				} else if(index === 1) {
-					this.qinggou_show = true
-				} else if(index === 2) {
-					this.chengpijian_show = true
-				} else if(index === 3) {
-					this.shenqinggongzhang_show = true
-				} else if(index === 4) {
-					this.qingkuan_big_show = true
-					this.as_what_show = true
-				}
-			},
 			closePersonList() {
 				this.personShow = false
 			},
@@ -1293,14 +1286,17 @@
 				});
 			},
 			submitForm_qgd(formName) {
-				
+				this.returnOk = false
 				this.qgd_ruleForm.add.forEach((item)=>{
-					if(!item.model === '' || !item.name === '' || !item.num === '' || !item.price === ''
-						|| !item.purpose === '' || !item.remarks === '' || !item.spec === '' || !item.subtotal === '' || !item.unit === ''){
-						alert()
+					if(item.model === '' || item.name === '' || item.num === '' || item.price === ''
+						|| item.purpose === ''  || item.spec === '' || item.subtotal === '' || item.unit === ''){
+						 this.$message.error('请将清单条目填写完整');
+						 this.returnOk = true
 					}
 				})
-				
+				if(this.returnOk === true){
+					return
+				}
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						this.qgd_submit()
@@ -1351,6 +1347,17 @@
 				});
 			},
 			submitForm_sqgz(formName) {
+				this.returnOk = false
+				this.sqgz_ruleForm.add.forEach((item)=>{
+					if(item.reason === '' || item.contract_name === '' || item.num === '' || item.remarks === ''
+						|| item.company_type === ''  || item.name_company === ''){
+						 this.$message.error('请将清单条目填写完整');
+						 this.returnOk = true
+					}
+				})
+				if(this.returnOk === true){
+					return
+				}
 				this.comDepartList.forEach((item) => {
 					if(item.department_name === this.sqgz_ruleForm.departmental) {
 						this.sqgz_ruleForm.department_id = item.department_id
@@ -1368,7 +1375,9 @@
 			return_show() {
 				this.$emit('return_exam')
 			},
-			created() {},
+			created() {
+				this._getToken()
+			},
 			add_ok(){
 				this.$message({
 					showClose: true,
@@ -1479,7 +1488,11 @@
 			  	this.psb_ruleForm.arrive_time = JSON.stringify(	this.psb_ruleForm.arrive_time).slice(1,11)
 			  	this.psb_ruleForm.end_time = JSON.stringify(	this.psb_ruleForm.arrive_time).slice(1,11)
 				if( !this.pic &&!this.file ){
+					
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("a_name", this.psb_ruleForm.a_name);
@@ -1489,7 +1502,6 @@
 					param.append("difference", this.psb_ruleForm.difference);
 					param.append("pay_method", this.psb_ruleForm.pay_method);
 					param.append("contract_name", this.psb_ruleForm.contract_name);
-					param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
 					param.append("arrive_time", this.psb_ruleForm.arrive_time);
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
@@ -1658,7 +1670,7 @@
 				this.file_time = 0
 				this.pic_time = 0
 				this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1,11)
-				if( (!this.pic || this.pic.length === 0)&&(!this.file || this.file.length === 0)){
+				if(!this.pic &&!this.file){
 					let buy_depart_id
 					this.comDepartList.forEach((item) => {
 						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
@@ -1678,6 +1690,9 @@
 						}
 					})
 						let param = new URLSearchParams();
+						if(this.psb_ruleForm.project_manager.uid){
+							param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+						}
 						param.append("uid", this.user.uid);
 						param.append("company_id", this.nowCompanyId);
 						param.append("request_buy_department", buy_depart_id);
@@ -1691,7 +1706,6 @@
 						param.append("consignee", this.qgd_ruleForm.consignee);
 						param.append("consignee_phone", this.qgd_ruleForm.consignee_phone);
 						param.append("type", 2);
-						param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 						param.append("total", this.qgd_ruleForm.total);
 						param.append("receive_address", this.qgd_ruleForm.receive_address);
 						param.append("buy_person", this.qgd_ruleForm.buy_person);
@@ -1771,6 +1785,8 @@
 			
 			},
 			qkd_submit() {
+				console.log(this.pic)
+				console.log(this.file)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []	
@@ -1909,7 +1925,19 @@
 					})
 					this.untreated = arr
 				})
-			}
+			},
+			_getToken(){
+				let nparam = new URLSearchParams();
+				nparam.append("uid",this.user.uid);
+				this.$http.post("/index/Mobile/path/get_token",nparam)
+				.then((res)=>{
+					localStorage.token = JSON.stringify(res.data.data);
+					this.setToken(res.data.data)
+				})
+			},
+			...mapMutations({
+				setToken:'SET_TOKEN'
+			})
 	},
 	components: {
 		browsePic,
@@ -1925,6 +1953,9 @@
 			if(this.file_time!=0 || this.pic_time !=0){
 				if(this.navIndex === 0){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("a_name", this.psb_ruleForm.a_name);
@@ -1934,7 +1965,6 @@
 					param.append("difference", this.psb_ruleForm.difference);
 					param.append("pay_method", this.psb_ruleForm.pay_method);
 					param.append("contract_name", this.psb_ruleForm.contract_name);
-					param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
 					param.append("arrive_time", this.psb_ruleForm.arrive_time);
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
@@ -1944,9 +1974,11 @@
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
+						console.log(res)
+						this.loading_show = false
 						if(res.data.code === 0){
 							this.add_ok()
-							this.loading_show = false
+							
 							this.$emit('return_exam')
 						}else{
 							this.add_fail()
@@ -1973,6 +2005,9 @@
 						}
 					})
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
@@ -1992,7 +2027,6 @@
 					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
 					param.append("consignee_uid", consignee_uid);
 					param.append("buy_person_uid", buy_person_uid);
-					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					param.append("many_enclosure",JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("type", 2);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
@@ -2008,13 +2042,15 @@
 				}
 				if(this.navIndex === 2){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("department_id", this.cpj_ruleForm.department_id);
 					param.append("content", this.cpj_ruleForm.content);
 					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
 					param.append("title", this.cpj_ruleForm.title);
-					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
@@ -2029,11 +2065,13 @@
 				}
 				if(this.navIndex === 3){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("departmental", this.sqgz_ruleForm.department_id);
 					param.append("user_name", this.sqgz_ruleForm.user_name);
-					param.append("project_manager",  JSON.stringify(this.sqgz_ruleForm.project_manager));
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
@@ -2049,6 +2087,9 @@
 				}
 				if(this.navIndex === 4){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("contract_name", this.qkd_ruleForm.contract_name);
 					param.append("company_id", this.nowCompanyId);
@@ -2070,7 +2111,6 @@
 					param.append("request_money_basis_type", this.qkd_type);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
-					param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
@@ -2094,6 +2134,9 @@
 			if(this.file_time!=0 || this.pic_time !=0){
 				if(this.navIndex === 0){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("a_name", this.psb_ruleForm.a_name);
@@ -2103,7 +2146,6 @@
 					param.append("difference", this.psb_ruleForm.difference);
 					param.append("pay_method", this.psb_ruleForm.pay_method);
 					param.append("contract_name", this.psb_ruleForm.contract_name);
-					param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
 					param.append("arrive_time", this.psb_ruleForm.arrive_time);
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
@@ -2113,9 +2155,9 @@
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 					.then((res) => {
+						this.loading_show = false
 						if(res.data.code === 0){
 							this.add_ok()
-							this.loading_show = false
 							this.$emit('return_exam')
 						}else{
 							this.add_fail()
@@ -2142,6 +2184,9 @@
 						}
 					})
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
@@ -2158,7 +2203,6 @@
 					param.append("receive_address", this.qgd_ruleForm.receive_address);
 					param.append("buy_person", this.qgd_ruleForm.buy_person);
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
-					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
 					param.append("consignee_uid", consignee_uid);
 					param.append("buy_person_uid", buy_person_uid);
 					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
@@ -2177,13 +2221,15 @@
 				}
 				if(this.navIndex === 2){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("department_id", this.cpj_ruleForm.department_id);
 					param.append("content", this.cpj_ruleForm.content);
 					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
 					param.append("title", this.cpj_ruleForm.title);
-					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
@@ -2198,11 +2244,13 @@
 				}
 				if(this.navIndex === 3){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("departmental", this.sqgz_ruleForm.department_id);
 					param.append("user_name", this.sqgz_ruleForm.user_name);
-					param.append("project_manager",  JSON.stringify(this.sqgz_ruleForm.project_manager));
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
@@ -2218,6 +2266,9 @@
 				}
 				if(this.navIndex === 4){
 					let param = new URLSearchParams();
+					if(this.psb_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("contract_name", this.qkd_ruleForm.contract_name);
 					param.append("company_id", this.nowCompanyId);
@@ -2239,7 +2290,6 @@
 					param.append("request_money_basis_type", this.qkd_type);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
-					param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
@@ -2258,7 +2308,7 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 	.as_what {
 		position: fixed;
 		top: 0;
@@ -2302,28 +2352,21 @@
 	
 	.add_approval_wrapper {
 		width: 558px;
-		border: 1px solid #ddd;
 		.add_approval {
-			/*padding: 8px 10px;*/
-			.nav {
-				ul {
-					li {
-						display: inline-block;
-						cursor: pointer;
-						height: 35px;
-						line-height: 35px;
-						color: #0082CB;
-						font-size: 12px;
-						padding: 0 10px;
-						&.active {
-							background: #f9f9f9;
-							color: #333333;
-						}
-					}
+			padding: 0px 10px;
+			>.nav {
+				.el-tabs__nav{
+					width: 100%;
+				}
+				.el-tabs__item{
+					font-size: 15px;
+					font-weight: 700;
+					width: 110px;
+					text-align: center;
 				}
 			}
 			.form {
-				background-color: #f9f9f9;
+				background-color: #FFFFFF;
 				padding: 10px;
 				.qingkuan {
 					.content {
@@ -2768,6 +2811,7 @@
 										}
 									}
 									.content {
+										margin-top: 10px;
 										display: inline-block;
 										float: left;
 										margin-left: 4px;

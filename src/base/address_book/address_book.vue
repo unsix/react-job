@@ -2,17 +2,17 @@
 	<div class="address_book">
 		<ul>
 			<li>
-				<div class="avatar">
+				<div class="avatar lzz" >
 					<span style="margin-left: 5px;">头像</span>
 				</div>
-				<div class="name">
+				<div class="name lzz">
 					<span>名字</span>
 				</div>
 
-				<div class="tel">
+				<div class="tel lzz">
 					<span>联系方式</span>
 				</div>
-				<div class="operation">
+				<div class="operation lzz">
 					<span>操作</span>
 				</div>
 			</li>
@@ -27,7 +27,7 @@
 					<span>{{item.phone}}</span>
 				</div>
 				<div class="operation">
-					<a @click="view_info">查看</a>
+					 <el-button type="primary" round>查看</el-button>
 				</div>
 			</li>
 		</ul>
@@ -62,12 +62,17 @@
 .address_book{
 	>ul{
 		padding: 10px;
-		li{
+		>li{
 			cursor: default;
 			display: block;
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 14px;
 			transition:.3s; 
+			>.lzz{
+				font-weight: 700;
+				font-size: 15px;
+				text-indent: 2px;
+			}
 			&:first-child{
 				border-bottom: 1px solid transparent;
 				&:hover{
@@ -107,15 +112,8 @@
 			}
 			.operation{
 				width: 80px;
-				a{
+				button{
 					display: block;
-					width: 40px;
-					text-align: center;
-					height: 26px;
-					line-height: 26px;
-					color: #409EFF;
-					border: 1px solid #409EFF;
-					cursor: pointer;
 				}
 			}
 			

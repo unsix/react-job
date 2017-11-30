@@ -378,6 +378,7 @@
 				
 	        
 			}else if(this.active === 1){
+				
 				if(!this.companyName||!this.companyPhone||!this.companyAdd){
 					 this.$message({
 			          message: '请填写完整信息',
@@ -385,6 +386,14 @@
 			        });
 					 this.active = 0
 					return
+				}
+				let reg = /^1[0-9]{10}$/;
+				if(!reg.test(this.companyPhone)){
+					 this.$message({
+			          message: '请填写正确手机号码',
+			          type: 'warning'
+			        });
+			        return
 				}else{
 					this.processOneShow = false
 					this.processTwoShow = true
@@ -440,7 +449,7 @@
 		.createCompany{
 			position: relative;
 			width: 600px;
-			background: #EEEEEE;
+			background: #FFFFFF;
 			margin: 75px auto;
 			overflow: hidden;
 			border-radius: 6px;

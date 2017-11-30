@@ -3,11 +3,11 @@
 		<div class="jurisdictionManage">
 			<div class="nav">
 				<el-tabs  v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="表单回执" ></el-tab-pane>
+					<el-tab-pane label="表单回执"></el-tab-pane>
 				    <el-tab-pane label="合同评审" ></el-tab-pane>
 				    <el-tab-pane label="请购单" ></el-tab-pane>
 			        <el-tab-pane label="请款单" ></el-tab-pane>
-			        <el-tab-pane label="印章申请" ></el-tab-pane>
+			        <el-tab-pane label="申请公章" ></el-tab-pane>
 			        <el-tab-pane label="呈批件" ></el-tab-pane>
 				</el-tabs>
 			</div>
@@ -54,7 +54,7 @@
 							</div>
 						</div>
 					</div>
-					<keep-alive>
+
 						<jurisdictionItem 
 							v-show="jurisdictionItemShow"
 							:formType="formType"
@@ -62,7 +62,7 @@
 							:submitAddPersonShow="submitAddPersonShow"
 							:jurisdictionFormList="jurisdictionFormList">
 						</jurisdictionItem>
-					</keep-alive>
+					
 			</div>
 		</div>
 	</div>
@@ -97,7 +97,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				},	
 			    value6: '',
 			    redactState:false,
-				setFormRePerShow:false,
+				setFormRePerShow:true,
 				listShow:true,
 				personShow:false,
 				formRePersonIndex:'',
@@ -114,8 +114,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				activeNames: ['0']
 				
 			}
-		},
-		created(){
 		},
 		computed:{
 			...mapGetters([
@@ -136,15 +134,15 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				  this.formType=1
 				  break;
 				case 2:
-				  this.formType=3
+				  this.formType=7
 				  break;
 				case 3:
-				  this.formType=7
+				  this.formType=8
 				  break;
 				case 4:
 				  this.formType=5
 				  break;
-				case 4:
+				case 5:
 				  this.formType=6
 				  break;
 				}
@@ -166,7 +164,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				this.$emit('close')
 			},
 			reload(){
-				
 				this._getApproval()
 			},
 			submit(){
@@ -265,7 +262,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			    param.append("company_id",this.nowCompanyId);
 			    this.$http.post("/index/Mobile/approval/approval_list",param)
 			    .then((res)=>{
-			    	console.log(res)
 					res.data.data.approval.forEach((item)=>{
 						if(item.type===this.formType){
 							if(item.list.length!=0){
@@ -282,6 +278,9 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 		components:{
 			personList,
 			jurisdictionItem
+		},
+		created(){
+			this._getHuizhi()
 		},
 		watch:{
 			nowCompanyId(){
@@ -301,7 +300,11 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			width: 100%;
 			margin: 4px 0;
 			.el-tabs__nav{
-				margin-left: 30px;
+				margin-left: 25px;
+			}
+			.el-tabs__item{
+				font-size: 15px;
+				font-weight: 700;
 			}
 		}
 		.wrapper{

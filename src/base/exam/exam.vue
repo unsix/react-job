@@ -2,11 +2,11 @@
 	<div class="exam_wrapper">
 		<div class="exam" v-show="listShow">
 			<div class="nav">
-				<ul>
-					<li v-for="(item,index) in navList" @click="navCli(index)"  :class="{'active': index === currentIndex}">
-						<span>{{item}}</span>
-					</li>
-				</ul>
+				<el-tabs  v-model="activeName" @tab-click="handleClick" >
+					<el-tab-pane label="未处理" ></el-tab-pane>
+				    <el-tab-pane label="已处理" ></el-tab-pane>
+			        <el-tab-pane label="我发起的" ></el-tab-pane>
+				</el-tabs>
 			</div>
 			<div class="list" >
 				<ul>
@@ -15,7 +15,7 @@
 							<img :src="item.avatar" alt="" />
 						</div>
 						<div class="edit">
-							<span @click="listCli(item,index)">查看</span>
+							<el-button type="primary" round @click="listCli(item,index)">查看</el-button>
 						</div>
 						<div class="content">
 							<div class="name"  v-if="ilaunched">
@@ -51,10 +51,10 @@
 		</div>
 		<div class="form_wrapper" v-show="formShow">
 				<div class="top">
-					<i class="el-icon-d-arrow-left" @click="return_list"></i>
+					<el-button type="info" plain @click="return_list">返回列表</el-button>
 					<span class="title">{{now_type_name}}</span>
 				</div>
-         <!--呈批件展示-->
+        <!--呈批件展示-->
 				<div class="form" name="呈批件" v-if="cengpijian_show">
 					<div>
 						<span>呈批标题：</span><span>{{form_Lista.title}}</span>
@@ -90,20 +90,48 @@
 					</div>
 					<div>
 						<span>审批：</span>
-						<span v-for="item in form_Listb.content">
-						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
-						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
-						</span>
+						<div v-for="item in form_Listb.content">
+							<div class="exam_info">
+								<div class="avatar lzz" >
+									<span style="margin-left: 5px;">状态</span>
+								</div>
+								<div class="tel lzz">
+									<span>姓名</span>
+								</div>
+								<div class="name lzz">
+									<span>部门</span>
+								</div>
+								<div class="operation lzz">
+									<span>时间</span>
+								</div>
+							</div>
+							<div class="exam_info">
+								<div class="avatar" >
+									<span>{{item.is_agree}}</span>
+								</div>
+								<div class="name">
+									<span>{{item.department_name}}</span>
+								</div>
+								<div class="tel">
+									<span>{{item.opinion}}</span>
+								</div>
+								<div class="operation">
+									<span>{{item.add_time}}</span>
+								</div>
+							</div>
+							<div>
+								<img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/>
+							</div>		
+						</div>
 					</div>
 					<div class="menu" v-show="handle_show">
-						<span @click="handle">处理</span>
+						<el-button type="primary" plain @click="handle">处理</el-button>
 						<div class="button" v-show="menuShow">
-							<span @click="agree($event)">同意</span>
-							<span @click="refuse">拒绝</span>
-							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
+							<el-input type="textarea"  :rows="2"  placeholder="请输入回复内容"  v-model="handle_txt"></el-input>
 							<input name="token" type="hidden" :value="input_value">
 							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg" />
-							<i class="el-icon-close" @click="closeMenu" ></i>
+							<el-button type="primary" round @click="agree($event)">同意</el-button>
+							<el-button type="danger" round @click="refuse">拒绝</el-button>
 						</div>
 					</div>
 				</div>
@@ -175,20 +203,48 @@
 					</div>
 					<div>
 						<span>审批：</span>
-						<span v-for="item in form_Listb.content">
-						{{item.department_name}}	{{item.name}} 	{{item.is_agree}}
-						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
-						</span>
+						<div v-for="item in form_Listb.content">
+							<div class="exam_info">
+								<div class="avatar lzz" >
+									<span style="margin-left: 5px;">状态</span>
+								</div>
+								<div class="tel lzz">
+									<span>姓名</span>
+								</div>
+								<div class="name lzz">
+									<span>部门</span>
+								</div>
+								<div class="operation lzz">
+									<span>时间</span>
+								</div>
+							</div>
+							<div class="exam_info">
+								<div class="avatar" >
+									<span>{{item.is_agree}}</span>
+								</div>
+								<div class="name">
+									<span>{{item.department_name}}</span>
+								</div>
+								<div class="tel">
+									<span>{{item.opinion}}</span>
+								</div>
+								<div class="operation">
+									<span>{{item.add_time}}</span>
+								</div>
+							</div>
+							<div>
+								<img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/>
+							</div>		
+						</div>
 					</div>
 					<div class="menu" v-show="handle_show">
-						<span @click="handle">处理</span>
+						<el-button type="primary" plain @click="handle">处理</el-button>
 						<div class="button" v-show="menuShow">
-							<span @click="agree($event)">同意</span>
-							<span @click="refuse">拒绝</span>
-							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
+							<el-input type="textarea"  :rows="2"  placeholder="请输入回复内容"  v-model="handle_txt"></el-input>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file"  multiple="multiple" accept="image/png,image/jpeg" />
-							<i class="el-icon-close" @click="closeMenu" ></i>
+							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg" />
+							<el-button type="primary" round @click="agree($event)">同意</el-button>
+							<el-button type="danger" round @click="refuse">拒绝</el-button>
 						</div>
 					</div>
 				</div>
@@ -257,20 +313,20 @@
 					</div>
 					<div>
 						<span>审批：</span>
-						<span v-for="item in form_Listb.content">
+						<br />
+						<span v-for="item in form_Listb.content" style="color: #444444;">
 						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
 						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
 						</span>
 					</div>
 					<div class="menu" v-show="handle_show">
-						<span @click="handle">处理</span>
+						<el-button type="primary" plain @click="handle">处理</el-button>
 						<div class="button" v-show="menuShow">
-							<span @click="agree($event)">同意</span>
-							<span @click="refuse">拒绝</span>
-							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
+							<el-input type="textarea"  :rows="2"  placeholder="请输入回复内容"  v-model="handle_txt"></el-input>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg"/>
-							<i class="el-icon-close" @click="closeMenu" ></i>
+							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg" />
+							<el-button type="primary" round @click="agree($event)">同意</el-button>
+							<el-button type="danger" round @click="refuse">拒绝</el-button>
 						</div>
 					</div>
 				</div>
@@ -337,20 +393,48 @@
 					</div>
 					<div>
 						<span>审批：</span>
-						<span v-for="item in form_Listb.content">
-						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
-						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
-						</span>
+						<div v-for="item in form_Listb.content">
+							<div class="exam_info">
+								<div class="avatar lzz" >
+									<span style="margin-left: 5px;">状态</span>
+								</div>
+								<div class="tel lzz">
+									<span>姓名</span>
+								</div>
+								<div class="name lzz">
+									<span>部门</span>
+								</div>
+								<div class="operation lzz">
+									<span>时间</span>
+								</div>
+							</div>
+							<div class="exam_info">
+								<div class="avatar" >
+									<span>{{item.is_agree}}</span>
+								</div>
+								<div class="name">
+									<span>{{item.department_name}}</span>
+								</div>
+								<div class="tel">
+									<span>{{item.opinion}}</span>
+								</div>
+								<div class="operation">
+									<span>{{item.add_time}}</span>
+								</div>
+							</div>
+							<div>
+								<img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/>
+							</div>		
+						</div>
 					</div>
 					<div class="menu" v-show="handle_show">
-						<span @click="handle">处理</span>
+						<el-button type="primary" plain @click="handle">处理</el-button>
 						<div class="button" v-show="menuShow">
-							<span @click="agree($event)">同意</span>
-							<span @click="refuse">拒绝</span>
-							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
+							<el-input type="textarea"  :rows="2"  placeholder="请输入回复内容"  v-model="handle_txt"></el-input>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" name="" id="" value="" multiple="multiple" accept="image/png,image/jpeg"  @change="getPic($event)"/>
-							<i class="el-icon-close" @click="closeMenu"   ></i>
+							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg" />
+							<el-button type="primary" round @click="agree($event)">同意</el-button>
+							<el-button type="danger" round @click="refuse">拒绝</el-button>
 						</div>
 					</div>
 				</div>
@@ -393,21 +477,48 @@
 					</div>
 					<div>
 						<span>审批：</span>
-						<span v-for="item in form_Listb.content">
-						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
-						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
-						</span>
+						<div v-for="item in form_Listb.content">
+							<div class="exam_info">
+								<div class="avatar lzz" >
+									<span style="margin-left: 5px;">状态</span>
+								</div>
+								<div class="tel lzz">
+									<span>姓名</span>
+								</div>
+								<div class="name lzz">
+									<span>部门</span>
+								</div>
+								<div class="operation lzz">
+									<span>时间</span>
+								</div>
+							</div>
+							<div class="exam_info">
+								<div class="avatar" >
+									<span>{{item.is_agree}}</span>
+								</div>
+								<div class="name">
+									<span>{{item.department_name}}</span>
+								</div>
+								<div class="tel">
+									<span>{{item.opinion}}</span>
+								</div>
+								<div class="operation">
+									<span>{{item.add_time}}</span>
+								</div>
+							</div>
+							<div>
+								<img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/>
+							</div>		
+						</div>
 					</div>
 					<div class="menu" v-show="handle_show">
-						<span @click="handle">处理</span>
+						<el-button type="primary" plain @click="handle">处理</el-button>
 						<div class="button" v-show="menuShow">
-							<span @click="agree($event)">同意</span>
-							<span @click="refuse">拒绝</span>
-							<input type="text" v-model="handle_txt" placeholder="请输入回复内容"/>
-							<i class="el-icon-close" @click="closeMenu" ></i>
-							<br />
+							<el-input type="textarea"  :rows="2"  placeholder="请输入回复内容"  v-model="handle_txt"></el-input>
 							<input name="token" type="hidden" :value="input_value">
-							<input type="file" multiple="multiple"  @change="getPic($event)" accept="image/png,image/jpeg"/>
+							<input type="file"  @change="getPic($event)"  multiple="multiple" accept="image/png,image/jpeg" />
+							<el-button type="primary" round @click="agree($event)">同意</el-button>
+							<el-button type="danger" round @click="refuse">拒绝</el-button>
 						</div>
 					</div>
 				</div>
@@ -432,8 +543,6 @@ import {mapGetters} from 'vuex'
 export default{
 	data(){
 		return{
-			currentIndex:0,
-			navList:['未处理','已处理','我发起的'],
 			untreated:[],
 			now_type_name:'',
 			handle_txt:'',
@@ -445,7 +554,6 @@ export default{
 			qinggoudan_show:false,
 			pingshenbiao_show:false,
 			gongzhang_show:false,
-			loadingShow:false,
 			form_Lista:[],
 			form_Listb:[],
 			menuShow:false,
@@ -460,7 +568,7 @@ export default{
 			input_value:'',
 			file: '',
 			pic_hash:'',
-			cur_height:'',
+			activeName:'',
 			img_arr:[],
 			fileList:[],
 			file_arr:[],
@@ -476,6 +584,7 @@ export default{
 	},
 	created(){
 		this._getExamList()
+		this._getToken()
 	},
 	components:{
 		browsePic,
@@ -531,26 +640,46 @@ export default{
 			})
 		},
 		agree(){
+			this.pic_hash_arr = []
 			if(this.handle_txt === ''){
 				this.$message.error('请填写审批意见');
 				return
 			}
 			if(!this.pic){
-				this.$message.error('处理审批必须上传图片');
-				return 
-			}	
+				this.loading_show = true
+				let param = new URLSearchParams();
+				param.append("uid",this.user.uid);
+				param.append("approval_id",this.untreated.approval_id);
+				param.append("participation_id",this.form_Listb.participation_id);
+				param.append("is_agree",'1');
+				param.append("company_id",this.nowCompanyId);
+				param.append("handle_txt",this.handle_txt);
+				param.append("opinion",this.handle_txt);
+				this.$http.post("/index/Mobile/find/approval_process",param)
+				.then((res)=>{
+					this.loading_show = false
+					this.handle_txt = ''
+					this.listShow = true
+					this.formShow = false
+					this._getExamList()
+					if(res.data.code=== 0){
+						this.$message({
+							message: '操作成功',
+							type: 'success'
+						});
+					}else{
+						this.$message.error('操作失败');
+					}
+				})
+			}
 			if(this.pic){
-				if(this.pic.length === 0){
-					this.$message.error('处理审批必须上传图片');
-					return 
-				}
 				this.loading_show = true
 				for(let i = 0; i < this.pic.length; i++) {
-				let formData = new FormData();
-				formData.append('file', this.pic[i]);
-				formData.append('token', JSON.parse(localStorage.token));
-				let config = {headers: {'Content-Type': 'multipart/form-data'}}
-				this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+					let formData = new FormData();
+					formData.append('file', this.pic[i]);
+					formData.append('token', JSON.parse(localStorage.token));
+					let config = {headers: {'Content-Type': 'multipart/form-data'}}
+					this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
 					this.pic_hash_arr.push(res.data.hash)
 					if(this.pic_hash_arr.length === this.pic.length) {
 						let nparam = new URLSearchParams();
@@ -565,18 +694,22 @@ export default{
 							param.append("is_agree",'1');
 							param.append("picture",res.data.data.enclosure_id);
 							param.append("company_id",this.nowCompanyId);
-							if(this.handle_txt && this.handle_txt != ''){
-								param.append("handle_txt",this.handle_txt);
-							}
+							param.append("handle_txt",this.handle_txt);
 							param.append("opinion",this.handle_txt);
 							this.$http.post("/index/Mobile/find/approval_process",param)
 							.then((res)=>{
+								this.loading_show = false
+								this.handle_txt = ''
+								this.listShow = true
+								this.formShow = false
+								this._getExamList()
 								if(res.data.code=== 0){
-									this.loading_show = false
-									this._getExamList()
-									this.handle_txt = ''
-									this.listShow = true
-									this.formShow = false
+									this.$message({
+								        message: '操作成功',
+								        type: 'success'
+								  });
+								}else{
+									 this.$message.error('操作失败');
 								}
 							})
 						})
@@ -586,54 +719,84 @@ export default{
 			}	
 		},
 		refuse(){
+			this.pic_hash_arr = []
 			if(this.handle_txt === ''){
 				this.$message.error('请填写审批意见');
 				return
 			}
 			if(!this.pic){
-				this.$message.error('处理审批必须上传图片');
-				return 
-			}	
-			if(this.pic){
-				if(this.pic.length === 0){
-					this.$message.error('处理审批必须上传图片');
-					return 
-				}
 				this.loading_show = true
-				let formData = new FormData();
-	            formData.append('file', this.file);
-	            formData.append('token', this.input_value);
-	            let config = {
-	              headers: {
-	                'Content-Type': 'multipart/form-data'
-	              }
-	            }
-	            this.$http.post('http://up.qiniu.com', formData, config).then((res)=>{
-	            	this.pic_hash=res.data.hash
-		        })
-	            let param = new URLSearchParams();
+				let param = new URLSearchParams();
 				param.append("uid",this.user.uid);
 				param.append("approval_id",this.untreated.approval_id);
 				param.append("participation_id",this.form_Listb.participation_id);
 				param.append("is_agree",'2');
-				param.append("picture",this.pic_hash);
 				param.append("company_id",this.nowCompanyId);
-				if(this.handle_txt && this.handle_txt != ''){
-					param.append("handle_txt",this.handle_txt);
-				}
+				param.append("handle_txt",this.handle_txt);
 				param.append("opinion",this.handle_txt);
 				this.$http.post("/index/Mobile/find/approval_process",param)
 				.then((res)=>{
-					console.log(res)
-					if(res.data.code=== '0'){
-						this.handle_txt = ''
-						this.loading_show = false
-						this._getExamList()
-						this.listShow = true
-						this.formShow = false
+					this.loading_show = false
+					this.handle_txt = ''
+					this.listShow = true
+					this.formShow = false
+					this._getExamList()
+					if(res.data.code=== 0){
+						this.$message({
+							message: '操作成功',
+							type: 'success'
+						});
+					}else{
+						this.$message.error('操作失败');
 					}
 				})
 			}
+			if(this.pic){
+				this.loading_show = true
+				for(let i = 0; i < this.pic.length; i++) {
+					let formData = new FormData();
+					formData.append('file', this.pic[i]);
+					formData.append('token', JSON.parse(localStorage.token));
+					let config = {headers: {'Content-Type': 'multipart/form-data'}}
+					this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+						console.log(res)
+					this.pic_hash_arr.push(res.data.hash)
+					if(this.pic_hash_arr.length === this.pic.length) {
+						let nparam = new URLSearchParams();
+						nparam.append("uid", this.user.uid);
+						nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+						this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+						.then((res) => {
+							let param = new URLSearchParams();
+							param.append("uid",this.user.uid);
+							param.append("approval_id",this.untreated.approval_id);
+							param.append("participation_id",this.form_Listb.participation_id);
+							param.append("is_agree",'2');
+							param.append("picture",res.data.data.enclosure_id);
+							param.append("company_id",this.nowCompanyId);
+							param.append("handle_txt",this.handle_txt);
+							param.append("opinion",this.handle_txt);
+							this.$http.post("/index/Mobile/find/approval_process",param)
+							.then((res)=>{
+								this.loading_show = false
+								this.handle_txt = ''
+								this.listShow = true
+								this.formShow = false
+								this._getExamList()
+								if(res.data.code=== 0){
+									this.$message({
+								        message: '操作成功',
+								        type: 'success'
+								  });
+								}else{
+									 this.$message.error('操作失败');
+								}
+							})
+						})
+					}
+				})
+			}
+			}	
 		},
 		return_list(){
 			this.formShow=false
@@ -649,6 +812,11 @@ export default{
 		listCli(item){
 			this.listShow = false
 			this.formShow = true
+			this.qingkuandan_show = false,
+			this.cengpijian_show = false,
+			this.qinggoudan_show = false,
+			this.pingshenbiao_show = false,
+			this.gongzhang_show = false,
 			this.now_type_name=item.type
 			if(item.type === '呈批件'){
 				this.cengpijian_show = true
@@ -696,23 +864,24 @@ export default{
 			nparam.append("company_id",this.nowCompanyId);
 			this.$http.post("/index/Mobile/approval/approval_process_personnel",nparam)
 			.then((res)=>{
-				this.form_Listb=create_approval_list(res.data.data)
-				res.data.data.content.forEach((item)=>{
+				res.data.data.content.forEach((item,index)=>{
 					if(item.picture){
+						let arr = []
 						let zparam = new URLSearchParams();
 						zparam.append("enclosure_id",item.picture);
 						this.$http.post("/index/Mobile/approval/look_enclosure",zparam)
 						.then((res)=>{
-							let arr = []
 							res.data.data.picture.forEach((item)=>{
 								if(item != ''){
 									arr.push('http://img-bbsf.6655.la/'+item)
 								}
 							})
-							item.picture = arr
 						})
+						res.data.data.content[index].picture = arr
 					}
 				})
+				this.form_Listb=create_approval_list(res.data.data)
+				
 				
 			})
 		},
@@ -762,8 +931,9 @@ export default{
 			})
 
 		},
-		navCli(index){
+		handleClick(tab){
 			this.pageIndex = 1
+			let index = parseInt(tab.index)
 			this.nowType = index+1
 			if(index===0) {
 				this.handle_time_show=false
@@ -783,7 +953,6 @@ export default{
 				this.ilaunched=false
 				this.handle_show = false
 			}
-			this.currentIndex = index
 			this._getExamList()
 		},
 		closeMenu(){
@@ -807,6 +976,14 @@ export default{
 					this.nextPageShow = false
 				}
 			})
+		},
+		_getToken(){
+			let nparam = new URLSearchParams();
+			nparam.append("uid",this.user.uid);
+			this.$http.post("/index/Mobile/path/get_token",nparam)
+			.then((res)=>{
+				localStorage.token = JSON.stringify(res.data.data);
+			})
 		}
 	},
 	watch:{
@@ -820,26 +997,95 @@ export default{
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 
 .exam_wrapper{
 	width: 100%;
 	height: 100%;
+	>.exam{
+		width: 558px;
+		overflow: hidden;
+		>.nav{
+			font-weight: 700;
+			.el-tabs__nav{
+				width: 100%;
+			}
+			.el-tabs__active-bar{
+				width: 180px;
+			}
+			.el-tabs__item{
+				font-weight: 700;
+				font-weight: 700;
+				width: 193px;
+				text-align: center;
+			}
+		}
+		>.list{
+			width: 100%;
+			>ul{
+				padding: 4px;
+				>.page{
+					width: 100%;
+					padding: 4px;
+					text-align: center;
+					span{
+						cursor: pointer;
+						font-size: 12px;
+						&:hover{
+							color: #409EFF;
+						}
+					}	
+				}
+				>li{
+					color: #2D2F33;
+					font-size: 14px;
+					border-bottom: 1px solid #3487E2;
+					>.avatar{
+						display: inline-block;
+						vertical-align: top;
+						margin-top: 4px;
+						img{
+							width: 30px;
+							height: 30px;
+							border-radius: 50%;
+							display: block;
+						}
+					}
+					>.edit{
+						display: inline-block;
+						float: right;
+						margin-right: 20px;
+						margin-top:20px;
+						cursor: pointer;
+						.el-button.is-round{
+							padding: 4px 12px;
+						}
+					}
+					.content{
+						padding: 4px 0;
+						display: inline-block;
+						>div{
+							line-height: 18px;
+						}
+					}
+				}
+			}
+		}
+	}
 	.form_wrapper{
 		width: 556px;
 		overflow: hidden;
 		.top{
 			width: 100%;
 			display: block;
-			position: relative;
-			>i{
-				position: absolute;
-				top: 10px;
-				left: 10px;
-				cursor: pointer;
+			button{
+				margin-left: 10px;
+				margin-top: 10px;
+				display: inline-block;
 			}
 			.title{
-				display: block;
+				width: 100%;
+				display: inline-block;
 				text-align: center;
 				height: 30px;
 				line-height: 30px;
@@ -848,6 +1094,53 @@ export default{
 		.form{
 			padding: 10px;
 			color: #999999;
+			.exam_info{
+				cursor: default;
+				display: block;
+				border-bottom: 1px solid #DDDDDD;
+				font-size: 14px;
+				transition:.3s; 
+				margin-bottom:4px;
+				>.lzz{
+					font-weight: 700;
+					font-size: 15px;
+					text-indent: 2px;
+				}
+				&:first-child{
+					border-bottom: 1px solid transparent;
+					&:hover{
+						background: none;
+					}
+				}
+				&:nth-child(even)
+				{
+					background:rgb(245,247,250);
+				}
+				&:hover{
+					background: #EEEEEE;
+				}
+				>div{
+					height: 40px;
+					line-height: 40px;
+					display: inline-block;
+				}
+				.avatar{
+					vertical-align: top;
+					width: 70px;
+				}
+				.name{
+					width: 100px;
+				}
+				.tel{
+					width: 100px;
+				}
+				.operation{
+					width: 200px;
+					button{
+						display: block;
+					}
+				}
+			}
 			>div{
 				display: block;
 				border-bottom: 1px solid #DDDDDD;
@@ -926,144 +1219,27 @@ export default{
 			.menu{
 				margin-top: 10px;
 				border-bottom: none;
-				>span{
-					font-size: 14px;
-					display: inline-block;
-					padding: 2px 10px;
-					border: 1px solid #3487E2;
-					border-radius: 4px;
-					cursor: pointer;
+				>button{
+					display: block;
 				}
 				.button{
-					margin-left: 20px;
-					display: inline-block;
+					margin-top: 10px;
+					margin-left: 120px;
+					display: block;
 					font-size: 0;
 					z-index: 2;
 					width: 300px;
-					>span{
-						font-size: 14px;
-						display: inline-block;
-						padding: 2px 6px;
-						color: #FA5555;
-						border: 1px solid #FA5555;
-						border-radius: 4px;
-						margin-left:4px;
-						&:first-child{
-							color:#67C23A;
-							border: 1px solid #67C23A;
-						}
-
-					}
-					input[type="text"]{
-						width:200px;
-						margin-left: 4px;
-						height: 16px;
-						outline: none;
-						border: 1px solid #3487E2;
-						border-radius: 4px;
-						text-indent: 4px;
-						line-height: 16px;
-					}
 					input[type="file"]{
-						margin-left: 4px;
-						margin-top: 4px;
+						margin: 10px 0 10px 0px;
 					}
-					i{
-						font-size: 16px;
-						padding: 4px;
-						cursor: pointer;
-						margin-left: 10px;
+					>button{
+						margin-left: 50px;
 					}
-					>a{
-						font-size: 14px;
-						display: inline-block;
-						color: #000000;
-					}
-
 				}
 			}
 		}
 	}
-	.exam{
-		width: 560px;
-		overflow: hidden;
-		.list{
-			width: 100%;
-			ul{
-				padding: 4px;
-				.page{
-					width: 100%;
-					padding: 4px;
-					text-align: center;
-					span{
-						cursor: pointer;
-						font-size: 12px;
-						&:hover{
-							color: #409EFF;
-						}
-					}	
-				}
-				li{
-					color: #2D2F33;
-					font-size: 14px;
 
-					border-bottom: 1px solid #3487E2;
-					span{
-						line-height: 18px;
-					}
-					.avatar{
-						display: inline-block;
-						vertical-align: top;
-						margin-top: 4px;
-						img{
-							width: 30px;
-							height: 30px;
-							border-radius: 50%;
-							display: block;
-						}
-					}
-
-					.edit{
-						display: inline-block;
-						float: right;
-						margin-right: 20px;
-						margin-top:30px;
-						cursor: pointer;
-						span{
-							font-size: 14px;
-							border: 1px solid #3487E2;
-							padding: 4px 10px;
-						}
-					}
-					.content{
-						padding: 4px 0;
-						display: inline-block;
-						/*margin-left: 38px;*/
-					}
-				}
-			}
-		}
-		.nav{
-			width: 100%;
-			height: 30px;
-			ul{
-				display:flex;
-				li{
-					line-height: 30px;
-					flex: 1;
-					text-align: center;
-					cursor: pointer;
-					&.active{
-						background: #DDDDDD;
-					}
-					span{
-						font-size: 12px;
-					}
-				}
-			}
-		}
-
-	}
 }
 
 </style>
