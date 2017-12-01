@@ -83,6 +83,7 @@
 				let param = new URLSearchParams();
 			    param.append("phone",this.account_num );
 			    param.append("password",password_num);
+			    param.append("is_web",1);
 			    this.$http.post("/index/Mobile/skey/login",param)
 			    .then((res)=>{	    	
 					if(res.data.code === 0){
@@ -92,56 +93,31 @@
 							'name':res.data.data.name,
 							'avatar':avatar
 						})
-						localStorage.text = JSON.stringify(this.user);
-						console.log(res.data.data.uid)
+						localStorage.user = JSON.stringify(this.user);
 						this._getUserCompanyList(res.data.data.uid)
-						setTimeout(()=>{
-							this._getComDepart()
-							this._getComPersonList()
-							this._getComPartPersonList()
-						},500)
+						this._getComDepart()
 						this.loadingShow=true
 						setTimeout(()=>{
 							this.$router.push('/index/work');
 							this.loadingShow=false
-						},1200)
+						},500)
 					}else{
 						this.errorShow = true;
-//						this.uncreatedCompanyShow=true
-//						setTimeout(()=>{
-//							this.$router.push('/worker_list');
-//							this.uncreatedCompanyShow=false
-//						},3000)
 					}
 			    })
 			},
-			_getComPartPersonList(){
+			_getUserState(){
 				let param = new URLSearchParams();
 				param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+				param.append("uid",this.user.uid);
+			    this.$http.post("/index/Mobile/User/return_company_new",param)
 			    .then((res)=>{
-			    	let resData=res.data.data
-			    	for(let j = 0,len=resData.length; j < len; j++) {
-			    		if(this.numOne>=len){
-			    			return
-			    		}
-			    		let obj={}
-   						this.$set(obj,'department_name',resData[j].department_name)
-						let newparam = new URLSearchParams();
-					    newparam.append("company_id",this.nowCompanyId); 
-					    newparam.append("department_id",resData[j].department_id);
-					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
-					    .then((res)=>{
-					    	let reaDa=[]
-					    	res.data.data.forEach((item)=>{
-					    		reaDa.push(createPersonInfo(item))
-					    	})
-					    	this.$set(obj,'person',reaDa)					    	
-					    	this.ComPartPersonList.push(obj)
-					    })	
-					    this.numOne++				   
-					}   	
-					this.setComPartPersonList(this.ComPartPersonList)
+			    	let is_manage = parseInt(res.data.data.is_manage)
+			    	let is_finance = parseInt(res.data.data.is_finance)
+			    	this.setUserState({
+						'manage':is_manage,
+						'finance':is_finance,
+					})
 			    })
 			},
 			_getComDepart(){
@@ -153,40 +129,27 @@
 			    	res.data.data.forEach((item)=>{
 			    		arr.push(create_depart_list(item))
 			    	})
-			    	this.setComDepartList(arr)
 			    })
 			},
-			_getComPersonList(){
-				let newparam = new URLSearchParams();
-				newparam.append("company_id",this.nowCompanyId); 
-				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
-					    .then((res)=>{
-					    	let reaDa=[]
-					    	res.data.data.forEach((item)=>{
-					    		item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
-					    		reaDa.push(item)
-					    	})
-					    	this.setComPersonList(reaDa)
-					    	
-					    })
-			},
+
 			_getUserCompanyList(uid){
 				let param = new URLSearchParams();
 				param.append("uid",uid);
 				this.$http.post("/index/Mobile/user/companies_list",param)
 				.then((res)=>{
+					this.setCompanyList(res.data.data)
 					this.setNowCompanyId(res.data.data[0].company_id)
-				    localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
-				    localStorage.nowCompanyName = JSON.stringify(res.data.data[0].company_name);
-				    localStorage.nowCompanyList = JSON.stringify(res.data.data);
+					this.setNowCompanyName(res.data.data[0].company_name)
+					this._getUserState()
 				})
 			},
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
-				setComPersonList: 'SET_COM_PERSON_LIST',
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
 				setComDepartList: 'SET_COM_DEPART_LIST',
-				setComPartPersonList: 'SET_COM_PART_PERSON_LIST'
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST'
 			})
 		},
 		components:{

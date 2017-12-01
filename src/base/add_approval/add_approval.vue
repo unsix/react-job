@@ -225,13 +225,10 @@
 							<el-input v-model="qkd_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
 						<el-form-item label="请款人姓名" prop="request_name">
-							<el-input v-model="qkd_ruleForm.request_name" @focus="request_leader"></el-input>
+							<el-input v-model="qkd_ruleForm.request_name" ></el-input>
 						</el-form-item>
 						<el-form-item label="联系方式" prop="phone">
 							<el-input v-model="qkd_ruleForm.phone"></el-input>
-						</el-form-item>
-						<el-form-item label="项目负责人(部门经理)">
-							<el-input v-model="qkd_ruleForm.project_manager_name" @focus="qkd_leader"></el-input>
 						</el-form-item>
 						<el-form-item label="开户行地址" prop="bank_address">
 							<el-input v-model="qkd_ruleForm.bank_address"></el-input>
@@ -266,6 +263,18 @@
 						<el-form-item label="已领工程款">
 							<el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
 						</el-form-item>
+						<el-form-item label="项目负责人(部门经理)">
+							<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
+						</el-form-item>
 						<el-form-item label="添加图片">
 							<input name="token" type="hidden" :value="token">
 							<input type="file" name="" id=""  @change="getPic($event)" multiple="multiple" accept="image/jpg, image/jpeg, image/png" />
@@ -280,22 +289,6 @@
 							<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
-					<div class="person" v-if="personShow" ref="person">
-						<div class="close el-icon-circle-close" @click="closePersonList"></div>
-						<div class="personList" id="person">
-							<ul>
-								<li v-for="(item,index) in comPersonList" @click="choosePerson(item,index)" :key="index">
-									<div class="avatar">
-										<img :src="item.avatar" alt="" />
-									</div>
-									<div class="content">
-										<span class="name">{{item.name}}</span>
-										<span class="phone">{{item.phone}}</span>
-									</div>
-								</li>
-							</ul>
-						</div>
-					</div>
 				</div>
 				<div class="qinggou" v-show="qinggou_show">
 					<el-form :model="qgd_ruleForm" :rules="qgd_rules" ref="qgd_ruleForm" label-width="150px" class="demo-qgd_ruleForm">
@@ -320,25 +313,61 @@
 							<el-input v-model="qgd_ruleForm.contract_name_new"></el-input>
 						</el-form-item>
 						<el-form-item label="工程负责人" prop="contract_responsible">
-							<el-input v-model="qgd_ruleForm.contract_responsible" @focus="pro_leader()"></el-input>
+							<el-select v-model="qgd_ruleForm.contract_responsible" placeholder="请选择" @change="qgdPro">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<el-form-item label="负责人联系方式" prop="responsible_tel">
 							<el-input v-model="qgd_ruleForm.responsible_tel"></el-input>
 						</el-form-item>
 						<el-form-item label="收货人姓名" prop="consignee">
-							<el-input v-model="qgd_ruleForm.consignee" @focus="rec_leader()"></el-input>
+							<el-select v-model="qgd_ruleForm.consignee" placeholder="请选择" @change="qgdShouhuo">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<el-form-item label="收货人联系方式" prop="consignee_phone">
 							<el-input v-model="qgd_ruleForm.consignee_phone"></el-input>
 						</el-form-item>
-						<el-form-item label="采购负责人" prop="buy_person">
-							<el-input v-model="qgd_ruleForm.buy_person" @focus="buy_leader"></el-input>
+						<el-form-item label="采购负责人">
+							<el-select v-model="qgd_ruleForm.buy_person" placeholder="请选择" @change="qgdCaigou">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<el-form-item label="采购负责人联系方式" prop="buy_person_phone">
 							<el-input v-model="qgd_ruleForm.buy_person_phone"></el-input>
 						</el-form-item>
 						<el-form-item label="项目负责人(部门经理)">
-							<el-input v-model="qgd_ruleForm.project_manager_name" @focus="qgd_leader"></el-input>
+							<el-select v-model="qgd_ruleForm.project_manager_name" placeholder="请选择" @change="qgdLeader">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<el-form-item label="到货时间" prop="arrival_time">
 							<el-date-picker type="date" v-model="qgd_ruleForm.arrival_time" style="width: 100%;"></el-date-picker>
@@ -394,7 +423,6 @@
 								<el-form-item label="总额">
 									<el-input v-model.number="item.price"></el-input>
 								</el-form-item>
-
 							</el-form>
 						</div>
 						<el-form-item label="添加图片">
@@ -411,23 +439,6 @@
 							<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>
 						</el-form-item>
 					</el-form>
-					<div class="person" v-if="personShow" ref="person" id="person">
-						<div class="close el-icon-circle-close" @click="closePersonList"></div>
-						<div class="personList">
-							<ul>
-								<li v-for="(item,index) in comPersonList" @click="choosePerson(item,index)" :key="index">
-									<div class="avatar">
-										<img :src="item.avatar" alt="" />
-									</div>
-									<div class="content">
-										<span class="name">{{item.name}}</span>
-										<span class="phone">{{item.phone}}</span>
-										<span class="depart">{{item.department_name}}</span>
-									</div>
-								</li>
-							</ul>
-						</div>
-					</div>
 				</div>
 				<div class="chengpijian" v-show="chengpijian_show">
 					<el-form :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
@@ -445,8 +456,17 @@
 						<el-form-item label="主题内容" prop="title">
 							<el-input v-model="cpj_ruleForm.title"></el-input>
 						</el-form-item>
-						<el-form-item label="项目负责人">
-							<el-input v-model="cpj_ruleForm.project_manager_name" @focus="cpj_leader"></el-input>
+						<el-form-item label="项目负责人(部门经理)">
+							<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<el-form-item label="添加图片">
 							<input name="token" type="hidden" :value="token">
@@ -497,13 +517,13 @@
 							<el-input v-model="psb_ruleForm.executor"></el-input>
 						</el-form-item>
 						<el-form-item label="单价" prop="prive">
-							<el-input v-model.number="psb_ruleForm.prive"></el-input>
+							<el-input v-model="psb_ruleForm.prive"></el-input>
 						</el-form-item>
 						<el-form-item label="总价" prop="total_prive">
-							<el-input v-model.number="psb_ruleForm.total_prive"></el-input>
+							<el-input v-model="psb_ruleForm.total_prive"></el-input>
 						</el-form-item>
 						<el-form-item label="与投标价差异" prop="difference">
-							<el-input v-model.number="psb_ruleForm.difference"></el-input>
+							<el-input v-model="psb_ruleForm.difference"></el-input>
 						</el-form-item>
 						<el-form-item label="付款方式" prop="pay_method">
 							<el-input v-model="psb_ruleForm.pay_method"></el-input>
@@ -515,13 +535,22 @@
 							<el-date-picker type="date"  v-model="psb_ruleForm.end_time" style="width: 100%;"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="合同编号">
-							<el-input v-model.number="psb_ruleForm.contract_id"></el-input>
+							<el-input v-model="psb_ruleForm.contract_id"></el-input>
 						</el-form-item>
 						<el-form-item label="备注">
 							<el-input v-model="psb_ruleForm.remarks"></el-input>
-						</el-form-item>
+						</el-form-item>		  
 						<el-form-item label="项目负责人(部门经理)">
-							<el-input v-model="psb_ruleForm.project_manager_name" @focus="psb_leader"></el-input>
+							<el-select v-model="psb_ruleForm.project_manager_name" placeholder="请选择" @change="psbSelectOk">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<el-form-item label="添加图片">
 							<input name="token" type="hidden" :value="token">
@@ -565,7 +594,16 @@
 							<el-input v-model="sqgz_ruleForm.user_name"></el-input>
 						</el-form-item>
 						<el-form-item label="项目负责人(部门经理)">
-							<el-input v-model="sqgz_ruleForm.project_manager_name" @focus="sqgz_leader"></el-input>
+							<el-select v-model="sqgz_ruleForm.project_manager_name" placeholder="请选择" @change="sqgzSelectOk">
+							    <el-option
+							      v-for="item in comPersonList"
+							      :key="item.personnel_id"
+							      :value="item.name">
+							      <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;"/>
+							      <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+							      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+							    </el-option>
+						 	</el-select>
 						</el-form-item>
 						<div class="add_sqgz">添加清单条目 <i class="el-icon-circle-plus" @click="add_sqgz"></i></div>
 						<div>
@@ -728,11 +766,12 @@
 					arrival_time: '',
 					consignee: '',
 					consignee_phone: '',
+					consignee_uid: '',
 					contract_id: '',
 					total: '',
 					buy_person: '',
 					buy_person_phone: '',
-					consignee_uid: '',
+					buy_person_uid: '',
 					receive_address: '',
 					project_manager_name: '',
 					project_manager: {},
@@ -906,18 +945,21 @@
 						message: '请填写乙方姓名',
 						trigger: 'blur'
 					}],
-					prive: [
-						 { required: true, message: '请填写单价'},
-     					 { type: 'number', message: '单价必须为数字值'}
-					],
-					total_prive: [
-						{ required: true, message: '请填写总价'},
-     					{ type: 'number', message: '总价必须为数字值'}
-     				],
-					difference: [
-						{ required: true, message: '请填写与投标价格差异'},
-     					{ type: 'number', message: '投标价格差异必须为数字值'}
-     				],
+					prive:[{
+						required: true,
+						message: '请填写单价',
+						trigger: 'chagne'
+					}],
+					total_prive: [{
+						required: true,
+						message: '请填写总价',
+						trigger: 'chagne'
+					}],
+					difference:  [{
+						required: true,
+						message: '请填写与投标价格差异',
+						trigger: 'chagne'
+					}],
 					pay_method: [{
 						required: true,
 						message: '请填写	付款方式',
@@ -1051,8 +1093,73 @@
 			])
 		},
 		methods: {
+			qgdPro(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.qgd_ruleForm.contract_responsible = item.name
+						this.qgd_ruleForm.responsible_tel = item.phone
+						return
+					}
+				})
+
+			},
+			qgdShouhuo(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.qgd_ruleForm.consignee = item.name
+						this.qgd_ruleForm.consignee_phone = item.phone
+						this.qgd_ruleForm.consignee_uid = item.uid
+						return
+					}
+				})
+			},
+			qgdCaigou(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.qgd_ruleForm.buy_person = item.name
+						this.qgd_ruleForm.buy_person_phone = item.phone
+						this.qgd_ruleForm.buy_person_uid = item.uid
+						return
+					}
+					
+				})
+			},
+			psbSelectOk(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
+					}
+				})
+			},
+			qkdSelectOk(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
+					}
+				})
+			},
+			cpjSelectOk(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
+					}
+				})
+			},
+			sqgzSelectOk(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
+					}
+				})
+			},
+			qgdLeader(tab){
+				this.comPersonList.forEach((item)=>{
+					if(item.name === tab){
+						this.$set(this.qgd_ruleForm.project_manager, 'uid', item.uid)
+					}
+				})
+			},
 			handleClick(tab) {
-			
 				this.navIndex = JSON.parse(tab.index)
 				this.qingkuan_big_show = false
 				this.qinggou_show = false
@@ -1112,7 +1219,7 @@
 				this.qingkuan_one_show = false
 				this.listCli(item)
 			},
-			listCli(item) {
+			listCli(item){
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", item.approval_id);
@@ -1123,7 +1230,6 @@
 							this.get_img(this.form_Lista.img_list)
 						} else if(item.type === '合同评审表') {
 							this.form_Lista = create_hetongpingshen_list(res.data.data)
-							console.log(this.form_Lista)
 							this.get_img(this.form_Lista.enclosure_id)
 						} else if(item.type === '请购单') {
 							console.log(res.data.data)
@@ -1201,79 +1307,7 @@
 				}
 				this.qgd_ruleForm.add.push(obj)
 			},
-			request_leader() {
-				this.personShow = true
-				this.insertType = 0
-			},
-			pro_leader() {
-				this.personShow = true
-				this.insertType = 1
-			},
-			rec_leader() {
-				this.personShow = true
-				this.insertType = 2
-			},
-			buy_leader() {
-				this.personShow = true
-				this.insertType = 3
-			},
-			cpj_leader() {
-				this.personShow = true
-				this.insertType = 4
-			},
-			qgd_leader() {
-				this.personShow = true
-				this.insertType = 5
-			},
-			qkd_leader() {
-				this.personShow = true
-				this.insertType = 6
-			},
-			psb_leader() {
-				this.personShow = true
-				this.insertType = 7
-			},
-			sqgz_leader(){
-				this.personShow = true
-				this.insertType = 8
-			},
-			closePersonList() {
-				this.personShow = false
-			},
-			choosePerson(item, index) {
-				if(this.insertType === 0) {
-					this.qkd_ruleForm.request_name = item.name
-					this.qkd_ruleForm.phone = item.phone
-				} else if(this.insertType === 1) {
-					this.qgd_ruleForm.contract_responsible = item.name
-					this.qgd_ruleForm.responsible_tel = item.phone
-				} else if(this.insertType === 2) {
-					this.qgd_ruleForm.consignee_uid = item.uid
-					this.qgd_ruleForm.consignee = item.name
-					this.qgd_ruleForm.consignee_phone = item.phone
-				} else if(this.insertType === 3) {
-					this.qgd_ruleForm.buy_person_uid = item.uid
-					this.qgd_ruleForm.buy_person = item.name
-					this.qgd_ruleForm.buy_person_phone = item.phone
-				} else if(this.insertType === 4) {
-					this.cpj_ruleForm.project_manager_name = item.name
-					this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
-				} else if(this.insertType === 5) {
-					this.qgd_ruleForm.project_manager_name = item.name
-					this.$set(this.qgd_ruleForm.project_manager, 'uid', item.uid)
-				} else if(this.insertType === 6) {
-					this.qkd_ruleForm.project_manager_name = item.name
-					this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
-				} else if(this.insertType === 7) {
-					this.psb_ruleForm.project_manager_name = item.name
-					this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
-				} else if(this.insertType === 8) {
-					this.sqgz_ruleForm.project_manager_name = item.name
-					this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
-				}
-				this.personShow = false
 
-			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
@@ -1325,15 +1359,16 @@
 				});
 			},
 			submitForm_psb(formName) {
-				this.$refs[formName].validate((valid) => {
-					if(valid) {
-						this.psb_submit()	
-						this.loading_show =true
-					} else {
-						this.$message.error('请将表单填写完整');
-						return false;
-					}
-				});
+				this.psb_submit()	
+//				this.$refs[formName].validate((valid) => {
+//					if(valid) {
+//						this.psb_submit()	
+//						this.loading_show =true
+//					} else {
+//						this.$message.error('请将表单填写完整');
+//						return false;
+//					}
+//				});
 			},
 			submitForm_qkd(formName) {
 				this.$refs[formName].validate((valid) => {
@@ -1403,11 +1438,13 @@
 				this.pic_time = 0
 				if( (!this.pic || this.pic.length === 0)&&(!this.file || this.file.length === 0)){
 					let param = new URLSearchParams();
+					if(this.sqgz_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.sqgz_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("departmental", this.sqgz_ruleForm.department_id);
 					param.append("user_name", this.sqgz_ruleForm.user_name);
-					param.append("project_manager",  JSON.stringify(this.sqgz_ruleForm.project_manager));
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 					.then((res) => {
@@ -1488,7 +1525,6 @@
 			  	this.psb_ruleForm.arrive_time = JSON.stringify(	this.psb_ruleForm.arrive_time).slice(1,11)
 			  	this.psb_ruleForm.end_time = JSON.stringify(	this.psb_ruleForm.arrive_time).slice(1,11)
 				if( !this.pic &&!this.file ){
-					
 					let param = new URLSearchParams();
 					if(this.psb_ruleForm.project_manager.uid){
 						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
@@ -1585,13 +1621,15 @@
 				this.pic_time = 0
 				if( (!this.pic || this.pic.length === 0)&&(!this.file || this.file.length === 0)){
 					let param = new URLSearchParams();
+					if(this.cpj_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("department_id", this.cpj_ruleForm.department_id);
 					param.append("content", this.cpj_ruleForm.content);
 					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
 					param.append("title", this.cpj_ruleForm.title);
-					param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 					this.$http.post("/index/Mobile/approval/add_chengpi", param)
 					.then((res) => {
 						if(res.data.code === 0){
@@ -1671,27 +1709,15 @@
 				this.pic_time = 0
 				this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1,11)
 				if(!this.pic &&!this.file){
-					let buy_depart_id
-					this.comDepartList.forEach((item) => {
-						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
-							buy_depart_id = item.department_id
-						}
-					})
-					let consignee_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.consignee) {
-							consignee_uid = item.uid
-						}
-					})
-					let buy_person_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.buy_person) {
-							buy_person_uid = item.uid
-						}
-					})
+						let buy_depart_id
+						this.comDepartList.forEach((item) => {
+							if(item.department_name === this.qgd_ruleForm.request_buy_department) {
+								buy_depart_id = item.department_id
+							}
+						})
 						let param = new URLSearchParams();
-						if(this.psb_ruleForm.project_manager.uid){
-							param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+						if(this.qgd_ruleForm.project_manager.uid){
+							param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 						}
 						param.append("uid", this.user.uid);
 						param.append("company_id", this.nowCompanyId);
@@ -1711,8 +1737,8 @@
 						param.append("buy_person", this.qgd_ruleForm.buy_person);
 						param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
 						param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
-						param.append("consignee_uid", consignee_uid);
-						param.append("buy_person_uid", buy_person_uid);
+						param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
+						param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
 						this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
 							if(res.data.code === 0){
@@ -1785,8 +1811,6 @@
 			
 			},
 			qkd_submit() {
-				console.log(this.pic)
-				console.log(this.file)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []	
@@ -1794,6 +1818,9 @@
 				this.pic_time = 0
 				if( !this.pic &&!this.file){
 					let param = new URLSearchParams();
+					if(this.qkd_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
+					}
 					param.append("uid", this.user.uid);
 					param.append("contract_name", this.qkd_ruleForm.contract_name);
 					param.append("company_id", this.nowCompanyId);
@@ -1814,8 +1841,7 @@
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
 					param.append("request_money_basis_type", this.qkd_type);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
-					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
-					param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
+					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);	
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 					.then((res) => {
 						if(res.data.code === 0){
@@ -1991,22 +2017,10 @@
 						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
 							buy_depart_id = item.department_id
 							}
-						})
-					let consignee_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.consignee) {
-							consignee_uid = item.uid
-						}
-					})
-					let buy_person_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.buy_person) {
-							buy_person_uid = item.uid
-						}
 					})
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.qgd_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
@@ -2024,9 +2038,9 @@
 					param.append("receive_address", this.qgd_ruleForm.receive_address);
 					param.append("buy_person", this.qgd_ruleForm.buy_person);
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
-					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
-					param.append("consignee_uid", consignee_uid);
-					param.append("buy_person_uid", buy_person_uid);
+					param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
+					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
+					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					param.append("many_enclosure",JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("type", 2);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
@@ -2042,8 +2056,8 @@
 				}
 				if(this.navIndex === 2){
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.cqj_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.cqj_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
@@ -2065,8 +2079,8 @@
 				}
 				if(this.navIndex === 3){
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.sqgz_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.sqgz_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
@@ -2087,8 +2101,8 @@
 				}
 				if(this.navIndex === 4){
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.qkd_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("contract_name", this.qkd_ruleForm.contract_name);
@@ -2170,22 +2184,10 @@
 						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
 							buy_depart_id = item.department_id
 							}
-						})
-					let consignee_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.consignee) {
-							consignee_uid = item.uid
-						}
-					})
-					let buy_person_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.buy_person) {
-							buy_person_uid = item.uid
-						}
 					})
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.qgd_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
@@ -2203,8 +2205,8 @@
 					param.append("receive_address", this.qgd_ruleForm.receive_address);
 					param.append("buy_person", this.qgd_ruleForm.buy_person);
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
-					param.append("consignee_uid", consignee_uid);
-					param.append("buy_person_uid", buy_person_uid);
+					param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
+					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
 					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					param.append("many_enclosure",JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("type", 2);
@@ -2221,8 +2223,8 @@
 				}
 				if(this.navIndex === 2){
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.cpj_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
@@ -2244,8 +2246,8 @@
 				}
 				if(this.navIndex === 3){
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.sqgz_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.sqgz_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
@@ -2266,8 +2268,8 @@
 				}
 				if(this.navIndex === 4){
 					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid){
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+					if(this.qkd_ruleForm.project_manager.uid){
+						param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("contract_name", this.qkd_ruleForm.contract_name);
@@ -2525,66 +2527,11 @@
 							}
 						}
 					}
-					.person {
-						position: absolute;
-						left: 350px;
-						top: 200px;
-						z-index: 10;
-						.close {
-							position: absolute;
-							right: 2px;
-							top: 2px;
-							color: #3487E2;
-							&:hover {
-								color: #FA5555;
-							}
-						}
-						.personList {
-							width: 200px;
-							height: 280px;
-							background: rgb(241, 241, 241);
-							border: 1px solid #3487E2;
-							overflow-y: scroll;
-							-webkit-border-radius: 4px;
-							-moz-border-radius: 4px;
-							border-radius: 4px;
-							ul {
-								margin-top: 20px;
-								padding: 4px;
-								li {
-									width: 100%;
-									height: 60px;
-									border-bottom: 1px solid #409EFF;
-									color: #2D2F33;
-									cursor: default;
-									.avatar {
-										display: inline-block;
-										float: left;
-										margin: 10px 6px 0 6px;
-										img {
-											display: block;
-											width: 40px;
-											height: 40px;
-											border-radius: 50%;
-										}
-									}
-									.content {
-										display: inline-block;
-										float: left;
-										margin-left: 4px;
-										span {
-											display: block;
-											font-size: 12px;
-											height: 20px;
-											line-height: 20px;
-										}
-									}
-								}
-							}
-						}
-					}
 				}
 				.qinggou {
+					.el-form--inline .el-form-item{
+						margin-right: 5px;
+					}
 					.new_qgd {
 						position: relative;
 						.close {
@@ -2622,125 +2569,9 @@
 							margin-bottom: 10px;
 						}
 					}
-					.person {
-						position: absolute;
-						left: 350px;
-						top: 400px;
-						z-index: 10;
-						.close {
-							position: absolute;
-							right: 2px;
-							top: 2px;
-							color: #3487E2;
-							&:hover {
-								color: #FA5555;
-							}
-						}
-						.personList {
-							width: 200px;
-							height: 280px;
-							background: rgb(241, 241, 241);
-							border: 1px solid #3487E2;
-							overflow-y: scroll;
-							-webkit-border-radius: 4px;
-							-moz-border-radius: 4px;
-							border-radius: 4px;
-							ul {
-								margin-top: 20px;
-								padding: 4px;
-								li {
-									width: 100%;
-									height: 60px;
-									border-bottom: 1px solid #409EFF;
-									color: #2D2F33;
-									cursor: default;
-									.avatar {
-										display: inline-block;
-										float: left;
-										margin: 10px 6px 0 6px;
-										img {
-											display: block;
-											width: 40px;
-											height: 40px;
-											border-radius: 50%;
-										}
-									}
-									.content {
-										display: inline-block;
-										float: left;
-										margin-left: 4px;
-										span {
-											display: block;
-											font-size: 12px;
-											height: 20px;
-											line-height: 20px;
-										}
-									}
-								}
-							}
-						}
-					}
 				}
 				.chengpijian {
-					.person {
-						position: absolute;
-						left: 350px;
-						top: 200px;
-						z-index: 10;
-						.close {
-							position: absolute;
-							right: 2px;
-							top: 2px;
-							color: #3487E2;
-							&:hover {
-								color: #FA5555;
-							}
-						}
-						.personList {
-							width: 200px;
-							height: 280px;
-							background: rgb(241, 241, 241);
-							border: 1px solid #3487E2;
-							overflow-y: scroll;
-							-webkit-border-radius: 4px;
-							-moz-border-radius: 4px;
-							border-radius: 4px;
-							ul {
-								margin-top: 20px;
-								padding: 4px;
-								li {
-									width: 100%;
-									height: 60px;
-									border-bottom: 1px solid #409EFF;
-									color: #2D2F33;
-									cursor: default;
-									.avatar {
-										display: inline-block;
-										float: left;
-										margin: 10px 6px 0 6px;
-										img {
-											display: block;
-											width: 40px;
-											height: 40px;
-											border-radius: 50%;
-										}
-									}
-									.content {
-										margin-top: 10px;
-										display: inline-block;
-										float: left;
-										margin-left: 4px;
-										span {
-											display: block;
-											font-size: 12px;
-											height: 20px;
-											line-height: 20px;
-										}
-									}
-								}
-							}
-						}
-					}
+
 				}
 				.shenqinggongzhang {
 					.close {
@@ -2767,125 +2598,10 @@
 							}
 						}
 					}
-					.person {
-						position: absolute;
-						left: 350px;
-						top: 400px;
-						z-index: 10;
-						.close {
-							position: absolute;
-							right: 2px;
-							top: 2px;
-							color: #3487E2;
-							&:hover {
-								color: #FA5555;
-							}
-						}
-						.personList {
-							width: 200px;
-							height: 280px;
-							background: rgb(241, 241, 241);
-							border: 1px solid #3487E2;
-							overflow-y: scroll;
-							-webkit-border-radius: 4px;
-							-moz-border-radius: 4px;
-							border-radius: 4px;
-							ul {
-								margin-top: 20px;
-								padding: 4px;
-								li {
-									width: 100%;
-									height: 60px;
-									border-bottom: 1px solid #409EFF;
-									color: #2D2F33;
-									cursor: default;
-									.avatar {
-										display: inline-block;
-										float: left;
-										margin: 10px 6px 0 6px;
-										img {
-											display: block;
-											width: 40px;
-											height: 40px;
-											border-radius: 50%;
-										}
-									}
-									.content {
-										margin-top: 10px;
-										display: inline-block;
-										float: left;
-										margin-left: 4px;
-										span {
-											display: block;
-											font-size: 12px;
-											height: 20px;
-											line-height: 20px;
-										}
-									}
-								}
-							}
-						}
-					}
 				}
 				.pingshenbiao {
-					.person {
-						position: absolute;
-						left: 346px;
-						top: 574px;
-						z-index: 10;
-						.close {
-							position: absolute;
-							right: 2px;
-							top: 2px;
-							color: #3487E2;
-							&:hover {
-								color: #FA5555;
-							}
-						}
-						.personList {
-							width: 200px;
-							height: 280px;
-							background: rgb(241, 241, 241);
-							border: 1px solid #3487E2;
-							overflow-y: scroll;
-							-webkit-border-radius: 4px;
-							-moz-border-radius: 4px;
-							border-radius: 4px;
-							ul {
-								margin-top: 20px;
-								padding: 4px;
-								li {
-									width: 100%;
-									height: 60px;
-									border-bottom: 1px solid #409EFF;
-									color: #2D2F33;
-									cursor: default;
-									.avatar {
-										display: inline-block;
-										float: left;
-										margin: 10px 6px 0 6px;
-										img {
-											display: block;
-											width: 40px;
-											height: 40px;
-											border-radius: 50%;
-										}
-									}
-									.content {
-										margin-top: 10px;
-										display: inline-block;
-										float: left;
-										margin-left: 4px;
-										span {
-											display: block;
-											font-size: 12px;
-											height: 20px;
-											line-height: 20px;
-										}
-									}
-								}
-							}
-						}
+					.el-select{
+						width: 100%;
 					}
 				}
 			}

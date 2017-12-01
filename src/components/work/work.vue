@@ -51,12 +51,16 @@
 				</div>
 			</div>
 		</div>
-		<div class="side_right"></div>
-		
+		<div class="side_right">
+			<Date></Date>
+		</div>
 	</div>
 </template>
 <script>
+import {create_depart_list} from 'common/js/initial/depart.js'
+import {createPersonInfo} from 'common/js/person_info'
 import {mapMutations} from 'vuex'
+import Date from '@/base/date/date'
 import inviteCol from '@/base/invite_colleague/invite_colleague'
 import everyday from '@/base/everyday/everyday'
 import formReceipt from '@/base/form_receipt/form_receipt'
@@ -73,7 +77,6 @@ import { mapGetters } from 'vuex'
 export default {
 	data() {
 		return {
-			workList: ['日常','审批', '发起审批', '公司管理', '权限管理', '表单回执','邀请同事','通讯录','创建公司'],
 			examNav: ['日常', '审批'],
 			pStr: '',
 			currentIndex: 0,
@@ -115,13 +118,17 @@ export default {
 			jurisdictionManageShow: false,
 			examShow: false,
 			addApprovalShow: false,
-			inviteColShow:false
+			inviteColShow:false,
+			ComPartPersonList:[]
 		}
 	},
 	props:{
 		workIndex:{
 			type:Number,
 			default:0
+		},
+		workList:{
+			type:Array
 		}
 	},
 	methods: {
@@ -164,6 +171,8 @@ export default {
 					this.currentIndex = 0
 					break;
 				case '公司管理':
+					this._getComPartPersonList()
+					this._getComDepart()
 					this.manageCompanyShow = true
 					break;
 				case '权限管理':
@@ -173,24 +182,25 @@ export default {
 					this.form_receiptShow = true
 					break;
 				case '通讯录':
+					this._getComPersonList()
 					this.address_bookShow = true
 					break;
 				case '日常':
 					this.everydayShow = true
 					break;
 				case '发起审批':
+				    this._getComPersonList()
+					this._getComDepart()
 					this.addApprovalShow = true
 					break;
 				case '邀请同事':
+					this._getComDepart()
 					this.inviteColShow = true
 					break;
 				case '审批':
 					this.examShow = true
 					break;
-			}
-			
-			
-			
+			}	
 		},
 		_getToken(uid){
 				 let nparam = new URLSearchParams();
@@ -201,15 +211,81 @@ export default {
 						this.set_token(res.data.data)
 					})
 		},
+			_getComPartPersonList(){
+				let param = new URLSearchParams();
+				param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+			    	let resData=res.data.data
+			    	for(let j = 0,len=resData.length; j < len; j++) {
+			    		if(this.numOne>=len){
+			    			return
+			    		}
+			    		let obj={}
+   						this.$set(obj,'department_name',resData[j].department_name)
+						let newparam = new URLSearchParams();
+					    newparam.append("company_id",this.nowCompanyId); 
+					    newparam.append("department_id",resData[j].department_id);
+					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		reaDa.push(createPersonInfo(item))
+					    	})
+					    	this.$set(obj,'person',reaDa)					    	
+					    	this.ComPartPersonList.push(obj)
+					    })	
+					    this.numOne++				   
+					}   	
+					this.setComPartPersonList(this.ComPartPersonList)
+			    })
+			},
+			_getComDepart(){
+				let param = new URLSearchParams();
+				param.append("company_id",this.nowCompanyId);
+			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    .then((res)=>{
+			    	let arr=[]
+			    	res.data.data.forEach((item)=>{
+			    		arr.push(create_depart_list(item))
+			    	})
+			    	this.setComDepartList(arr)
+			    })
+			},
+			_getComPersonList(){
+				let newparam = new URLSearchParams();
+				newparam.append("company_id",this.nowCompanyId); 
+				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+					    .then((res)=>{
+					    	let reaDa=[]
+					    	res.data.data.forEach((item)=>{
+					    		item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+					    		reaDa.push(item)
+					    	})
+					    	this.setComPersonList(reaDa)
+					    	
+					    })
+			},
 		...mapMutations({
-				set_token: 'SET_TOKEN'
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST',
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
 			})
 	},
 	computed: {
 		...mapGetters([
-			'user',
-			'token',
-			'nowCompanyId'
+			 'user',	    
+		        'token',
+		        'nowCompanyName',
+		        'userState',
+		        'nowCompanyId',
+		        'comDepartList',
+		        'companyList'
 		])
 	},
 	components: {
@@ -221,13 +297,12 @@ export default {
 		addressBook,
 		formReceipt,
 		everyday,
-		inviteCol
+		inviteCol,
+		Date
 	},
 	mounted() {
 	},
 	created() {
-		
-		
 	},
 	watch:{
 		nowCompanyId(){
@@ -259,7 +334,6 @@ export default {
 			>.publish {
 				padding: 20px;
 				>.extend {
-					border: 1px solid #ddd;
 					-webkit-border-radius: 2px;
 					border-radius: 2px;
 					margin-top: 4px;
@@ -356,8 +430,7 @@ export default {
 			}
 		}
 		>.side_right {
-			background: #DDDDDD;
-			height: 600px;
+			
 			float: right;
 			width: 310px;
 		}

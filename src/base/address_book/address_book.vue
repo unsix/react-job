@@ -58,16 +58,20 @@
 	}
 </script>
 
-<style lang="scss" scoped="scoped">
+<style lang="scss" >
 .address_book{
 	>ul{
 		padding: 10px;
 		>li{
+			
 			cursor: default;
 			display: block;
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 14px;
 			transition:.3s; 
+			.el-button.is-round{
+				padding: 5px 10px;
+			}
 			>.lzz{
 				font-weight: 700;
 				font-size: 15px;

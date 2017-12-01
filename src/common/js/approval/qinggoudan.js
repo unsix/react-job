@@ -39,6 +39,7 @@ export function create_qinggoudan_list(item) {
 	    contract_name_new: item.contract_name_new,
 	    department_name: item.department_name,
 	    buy_person:item.buy_person,
+	    buy_person_phone:item.buy_person_phone,
 	    project_manager_name:get_manager_name(item),
 	    executor:item.executor,
 	    contract_responsible:item.contract_responsible,

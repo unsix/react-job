@@ -10,16 +10,37 @@
 			</div>
 			<div class="list" >
 				<ul>
-					<li v-for="(item,index) in untreated" :key="item.approval_id">
+					<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list">
 						<div class="avatar" v-if="ilaunched">
 							<img :src="item.avatar" alt="" />
 						</div>
 						<div class="edit">
 							<el-button type="primary" round @click="listCli(item,index)">查看</el-button>
+							<div class="process" v-if="approval_process">
+								<span  v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
+							</div>
+							<div class="color" v-if="handle_time_show">
+								<span style="font-family: '黑体" @click="biao(index)" ref="biao">{{biaos}}</span>
+								<div class="choose" v-show="index === colorIndex">
+									<span @click="colorOne(item)"></span>
+									<span @click="colorTwo(item)"></span>
+									<span @click="colorThree(item)"></span>
+									<span @click="colorFour(item)"></span>
+								</div>
+							</div>
 						</div>
 						<div class="content">
 							<div class="name"  v-if="ilaunched">
-								<span>名称：{{item.name}}</span>
+								<span>姓名：{{item.name}}</span>
+							</div>
+							<div class="title">
+								<span>标题：{{item.title}}</span>
+							</div>
+							<div class="type">
+								<span>类型：{{item.type}}</span>
+							</div>
+							<div class="startComP">
+								<span>发起公司：{{item.company_name}}</span>
 							</div>
 							<div class="creatTime">
 								<span>发起时间：{{item.add_time}}</span>
@@ -27,18 +48,7 @@
 							<div class="creatTime" v-if="handle_time_show">
 								<span>处理时间：{{item.add_time}}</span>
 							</div>
-							<div class="type">
-								<span>类型：{{item.type}}</span>
-							</div>
-							<div class="title">
-								<span>标题：{{item.title}}</span>
-							</div>
-							<div class="startComP">
-								<span>发起公司：{{item.company_name}}</span>
-							</div>
-							<div class="process" v-if="approval_process">
-								<span>审批进程：</span><span  v-html="item.approval_state"></span>
-							</div>
+							
 						</div>
 					</li>
 					<div class="page">
@@ -289,12 +299,13 @@
 					<div>
 						<span>本次请款￥：</span><span>{{form_Lista.request_subtotal}}</span>
 					</div>
-					<!--<div>
-						<span>合同执行进度：</span><span>{{form_Lista.contract_state}}</span>
-					</div>-->
 					<div>
 						<span>请款内容：</span><span>{{form_Lista.request_content}}</span>
 					</div>
+					<div>
+						<span>项目负责人(项目经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+					</div>
+					
 					<div>
 						<span>附件列表：</span>
 						<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
@@ -549,6 +560,7 @@ export default{
 			nowType:1,
 			listShow:true,
 			formShow:false,
+			colorIndex:-1,
 			qingkuandan_show:false,
 			cengpijian_show:false,
 			qinggoudan_show:false,
@@ -565,6 +577,7 @@ export default{
 			loading_show:false,
 			nextPageShow:true,
 			pic_index:0,
+			colorShow:false,
 			input_value:'',
 			file: '',
 			pic_hash:'',
@@ -573,14 +586,15 @@ export default{
 			fileList:[],
 			file_arr:[],
 			pic_hash_arr:[],
-			pageIndex:1
+			pageIndex:1,
+			biaos:'标'
 		}
 	},
 	computed:{
 		...mapGetters([
 			'user',
 			'nowCompanyId'
-		])
+		]),
 	},
 	created(){
 		this._getExamList()
@@ -591,6 +605,46 @@ export default{
 		loading
 	},
 	methods:{
+//		sign(){
+//			let param = new URLSearchParams();
+//			param.append("uid",this.user.uid);
+//			this.$http.post("/index/Mobile/path/get_token",param)
+//			
+//		},
+		biao(index){
+			this.colorIndex = index
+			this.colorShow = true
+		},
+		colorOne(item){
+			console.log(item)
+			this.biaos = ''
+			this.$refs.list[this.colorIndex].style.background="rgba(255,0,0,0.1)"
+			this.$refs.biao[this.colorIndex].style.background="rgba(255,0,0,1)"
+			this.$refs.biao[this.colorIndex].style.border="none"
+			this.colorIndex = -1
+		},
+		colorTwo(){
+			this.biaos = ''
+			this.$refs.list[this.colorIndex].style.background="rgba(255,255,0,0.02)"
+			this.$refs.biao[this.colorIndex].style.background="rgba(255,255,0,1)"
+			this.$refs.biao[this.colorIndex].style.border="none"
+			this.colorIndex = -1
+		},
+		colorThree(){
+			this.biaos = ''
+			this.$refs.list[this.colorIndex].style.background="rgba(0,255,0,0.1)"
+			this.$refs.biao[this.colorIndex].style.background="rgba(0,255,0,1)"
+			this.$refs.biao[this.colorIndex].style.border="none"
+			this.colorIndex = -1
+		},
+		colorFour(){
+			this.biaos = ''
+			this.$refs.list[this.colorIndex].style.background="rgba(0,0,255,0.1)"
+			this.$refs.biao[this.colorIndex].style.background="rgba(0,0,255,1)"
+			this.$refs.biao[this.colorIndex].style.border="none"
+			this.colorIndex = -1
+		},
+		
 		first_page(){
 			this.nextPageShow = true
 			this.pageIndex = 1
@@ -634,7 +688,7 @@ export default{
 			this.menuShow=true
 			let param = new URLSearchParams();
 			param.append("uid",this.user.uid);
-			this.$http.post("/index/Mobile/path/get_token",param)
+			this.$http.post("/index/Mobile/approval/add_tagging",param)
 			.then((res)=>{
 				this.input_value = res.data.data
 			})
@@ -998,7 +1052,6 @@ export default{
 </script>
 
 <style lang="scss" >
-
 .exam_wrapper{
 	width: 100%;
 	height: 100%;
@@ -1021,7 +1074,7 @@ export default{
 			}
 		}
 		>.list{
-			width: 100%;
+			width: 550px;
 			>ul{
 				padding: 4px;
 				>.page{
@@ -1037,17 +1090,22 @@ export default{
 					}	
 				}
 				>li{
+					display: block;
+					margin-bottom: 10px;
+					
 					color: #2D2F33;
-					font-size: 14px;
-					border-bottom: 1px solid #3487E2;
+					font-size: 13px;
+					oz-box-shadow:1px 1px 2px #999999;
+					-webkit-box-shadow:1px 1px 2px #999999;
+					 box-shadow:1px 1px 2px #999999;
 					>.avatar{
 						display: inline-block;
 						vertical-align: top;
-						margin-top: 4px;
+						margin:8px 15px 0 15px;
 						img{
-							width: 30px;
-							height: 30px;
-							border-radius: 50%;
+							width:40px;
+							height: 40px;
+							border-radius:4px;
 							display: block;
 						}
 					}
@@ -1060,12 +1118,61 @@ export default{
 						.el-button.is-round{
 							padding: 4px 12px;
 						}
+						.process{
+							margin-top: 10px;
+						}
+						>.color{
+							position: relative;
+							width: 50px;
+							height: 30px;
+							margin-top: 20px;
+							>span{
+								float: right;
+								margin-right: 10px;
+								display: inline-block;
+								width: 28px;
+								text-align: center;
+								height: 28px;
+								font-weight: 700;
+								line-height: 28px;
+								border-radius: 50%;
+								background: #FFFFFF;
+								border:  1px solid #999999;
+							}
+							>.choose{
+								transition: all 1s; 
+								position: absolute;
+								right: 50px;
+								bottom: 2px;
+								width: 128px;
+								height: 28px;
+								display: flex;
+								>span{
+									border-radius: 50%;
+									flex: 1;
+									margin-left:4px; 
+									&:nth-child(1){
+										background: #ff0000;
+									}
+									&:nth-child(2){
+										background: #ffff00;
+									}
+									&:nth-child(3){
+										background: #00ff00;
+									}
+									&:nth-child(4){
+										background: #0000ff;
+									}
+								}
+							}
+						}
 					}
 					.content{
 						padding: 4px 0;
 						display: inline-block;
 						>div{
-							line-height: 18px;
+							height: 20px;
+							line-height: 20px;
 						}
 					}
 				}

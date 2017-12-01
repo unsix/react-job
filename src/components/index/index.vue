@@ -5,11 +5,11 @@
 				<span>{{nowCompanyName}}</span>
 				<span class="changeCompany">更换公司
 					<ul @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" v-show="userOperationLeftShow">
-						<li v-for="(item,index) in userCompanyInfo" @click="changeCompany(item,index)">{{item.company_name}}</li>
+						<li v-for="(item,index) in companyList" @click="changeCompany(item,index)">{{item.company_name}}</li>
 					</ul>
 					<img src="../../assets/down.svg" @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" ref="userIconLeft"/>
 				</span>
-			
+
 			</div>
 			<div class="nav">
 				<div class="nav_main">
@@ -23,168 +23,219 @@
 			<div class="personInfo">
 				<div class="person_main">
 					<a>{{user.name}}</a>
-					<img src="../../assets/down.svg" alt="" @mouseover ="userIconOver" @mouseout="userIconOut"   ref="userIcon"/>
-					<div class="userOperation" v-show="userOperationShow" @mouseover ="userIconOver" @mouseout="userIconOut" >
+					<img src="../../assets/down.svg" alt="" @mouseover="userIconOver" @mouseout="userIconOut" ref="userIcon" />
+					<div class="userOperation" v-show="userOperationShow" @mouseover="userIconOver" @mouseout="userIconOut">
 						<router-link to="">升级说明</router-link>
 						<router-link to="">个人设置</router-link>
 						<a @click="compamyShow = true">创建公司</a>
-						<router-link to="">退出登录</router-link>		
+						<router-link to="">退出登录</router-link>
 					</div>
 				</div>
 			</div>
 		</div>
-		<router-view :workIndex="workIndex" @changeWorkIndex="changeWorkIndex"></router-view>		
+		<router-view :workIndex="workIndex" @changeWorkIndex="changeWorkIndex" :workList="workList"></router-view>
 		<createCompany v-if="compamyShow" @companyClose="companyClose()"></createCompany>
 	</div>
 </template>
 
 <script>
-import createCompany from '@/base/create_company/create_company'
-import {create_depart_list} from 'common/js/initial/depart.js'
-import {createPersonInfo} from 'common/js/person_info'
-import {prefixStyle} from '@/common/js/dom'
-const transform = prefixStyle('transform')
-const transitionDuration = prefixStyle('transitionDuration')
-import {mapGetters,mapMutations} from 'vuex'
-	export default{
-		data(){
-			return{
-				typeArr:[
-					{'title':'工作','url':'/work'},
-					{'title':'应用','url':'/apply'}
+	import createCompany from '@/base/create_company/create_company'
+	import { create_depart_list } from 'common/js/initial/depart.js'
+	import { createPersonInfo } from 'common/js/person_info'
+	import { prefixStyle } from '@/common/js/dom'
+	const transform = prefixStyle('transform')
+	const transitionDuration = prefixStyle('transitionDuration')
+	import { mapGetters, mapMutations } from 'vuex'
+	export default {
+		data() {
+			return {
+				typeArr: [{
+						'title': '工作',
+						'url': '/work'
+					},
+					{
+						'title': '应用',
+						'url': '/apply'
+					}
 				],
-				userCompanyInfo:[],
-				nowCompanyName:'',
-				userOperationShow:false,
-				userOperationLeftShow:false,
-				ComPartPersonList:[],
-				companyPersonList:[],
-				numOne:0,
-				workIndex:0,
-				compamyShow:false
+				userCompanyInfo: [],
+				userOperationShow: false,
+				userOperationLeftShow: false,
+				ComPartPersonList: [],
+				companyPersonList: [],
+				workList: [],
+				numOne: 0,
+				workIndex: 0,
+				compamyShow: false
 			}
 		},
-		methods:{
-			changeWorkIndex(index){
+		methods: {
+			changeWorkIndex(index) {
 				this.workIndex = index
 			},
-			changeType(item,index){
-				if(index === 0){
+			changeType(item, index) {
+				if(index === 0) {
 					this.$router.push('/index/work');
-				}else{
+				} else {
 					this.$router.push('/index/apply/mineApp');
 				}
 			},
-			userIconOver(){
+			userIconOver() {
 				this.$refs.userIcon.style.transition = 'all 0.4s'
 				this.$refs.userIcon.style[transform] = `rotate(180deg)`
-				this.userOperationShow=true
+				this.userOperationShow = true
 			},
-			userIconOut(){
+			userIconOut() {
 				this.$refs.userIcon.style.transition = 'all 0.4s'
 				this.$refs.userIcon.style[transform] = `rotate(360deg)`
-				this.userOperationShow=false
+				this.userOperationShow = false
 			},
-			userIconOverLeft(){
+			userIconOverLeft() {
 				this.$refs.userIconLeft.style.transition = 'all 0.4s'
 				this.$refs.userIconLeft.style[transform] = `rotate(180deg)`
-				this.userOperationLeftShow=true
+				this.userOperationLeftShow = true
 			},
-			userIconOutLeft(){
+			userIconOutLeft() {
 				this.$refs.userIconLeft.style.transition = 'all 0.4s'
 				this.$refs.userIconLeft.style[transform] = `rotate(360deg)`
-				this.userOperationLeftShow=false
+				this.userOperationLeftShow = false
 			},
-			changeCompany(item,index){
+			changeCompany(item, index) {
 				this.workIndex = 0
-				this.nowCompanyName = item.company_name
-				this.userOperationLeftShow=false
+				this.setNowCompanyName(item.company_name)
+				this.userOperationLeftShow = false
 				this.setNowCompanyId(item.company_id)
-				localStorage.nowCompanyId = JSON.stringify(item.company_id);
-				localStorage.nowCompanyName = JSON.stringify(item.company_name);
-				this._getComDepart()
-				this._getComPersonList()
-				this._getComPartPersonList()
-				this._getPersonnelId()
+				this._getUserState()
+				this._getToken()
 			},
-			handleScroll () {
-			
+			handleScroll() {
+
 			},
 			companyClose() {
 				this.compamyShow = false
 			},
-			_getComDepart(){
+			_getComDepart() {
 				let param = new URLSearchParams();
-				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
-			    this.$http.post("/index/Mobile/user/get_department_lest",param)
-			    .then((res)=>{
-			    	let arr=[]
-			    	res.data.data.forEach((item)=>{
-			    		arr.push(create_depart_list(item))
-			    	})
-			    	this.setComDepartList(arr)
-			    })
+				param.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/user/get_department_lest", param)
+					.then((res) => {
+						let arr = []
+						res.data.data.forEach((item) => {
+							arr.push(create_depart_list(item))
+						})
+						this.setComDepartList(arr)
+					})
 			},
-			_getComPersonList(){
+			_getComPersonList() {
 				let newparam = new URLSearchParams();
-				newparam.append("company_id",JSON.parse(localStorage.nowCompanyId)); 
-				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
-					    .then((res)=>{
-					    	let reaDa=[]
-					    	res.data.data.forEach((item)=>{
-					    		item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
-					    		reaDa.push(item)
-					    	})
-					    	this.setComPersonList(reaDa)
-					    	
-					    })
+				newparam.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
+					.then((res) => {
+						let reaDa = []
+						res.data.data.forEach((item) => {
+							item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+							reaDa.push(item)
+						})
+						this.setComPersonList(reaDa)
+
+					})
 			},
-			_getComPartPersonList(){
+			_getComPartPersonList() {
 				let param = new URLSearchParams();
-				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
-			    this.$http.post("/index/Mobile/user/get_department_lest",param)
-			    .then((res)=>{
-			    	let resData=res.data.data
-			    	for(let j = 0,len=resData.length; j < len; j++) {
-			    		if(this.numOne>=len){
-			    			return
-			    		}
-			    		let obj={}
-   						this.$set(obj,'department_name',resData[j].department_name)
-						let newparam = new URLSearchParams();
-					    newparam.append("company_id",JSON.parse(localStorage.nowCompanyId)); 
-					    newparam.append("department_id",resData[j].department_id);
-					    this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
-					    .then((res)=>{
-					    	let reaDa=[]
-					    	res.data.data.forEach((item)=>{
-					    		reaDa.push(createPersonInfo(item))
-					    	})
-					    	this.$set(obj,'person',reaDa)					    	
-					    	this.ComPartPersonList.push(obj)
-					    })	
-					    this.numOne++				   
-					}   	
-					this.setComPartPersonList(this.ComPartPersonList)
-			    })
+				param.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/user/get_department_lest", param)
+					.then((res) => {
+						let resData = res.data.data
+						for(let j = 0, len = resData.length; j < len; j++) {
+							if(this.numOne >= len) {
+								return
+							}
+							let obj = {}
+							this.$set(obj, 'department_name', resData[j].department_name)
+							let newparam = new URLSearchParams();
+							newparam.append("company_id", this.nowCompanyId);
+							newparam.append("department_id", resData[j].department_id);
+							this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
+								.then((res) => {
+									let reaDa = []
+									res.data.data.forEach((item) => {
+										reaDa.push(createPersonInfo(item))
+									})
+									this.$set(obj, 'person', reaDa)
+									this.ComPartPersonList.push(obj)
+								})
+							this.numOne++
+						}
+						this.setComPartPersonList(this.ComPartPersonList)
+					})
 			},
-			_getPersonnelId(){
-				let param = new URLSearchParams();
-				param.append("uid",JSON.parse(localStorage.text).uid);
-				param.append("company_id",JSON.parse(localStorage.nowCompanyId));
-				this.$http.post("/index/Mobile/User/return_company_new",param)
-				.then((res)=>{
-					localStorage.nowPersonelId = JSON.stringify(res.data.data.personnel_id);
-				})
-			},
-			_getToken(){
+
+			_getToken() {
 				let nparam = new URLSearchParams();
-				nparam.append("uid",this.user.uid);
-				this.$http.post("/index/Mobile/path/get_token",nparam)
-				.then((res)=>{
-					localStorage.token = JSON.stringify(res.data.data);
-					this.setToken(res.data.data)
-				})
+				nparam.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/path/get_token", nparam)
+					.then((res) => {
+						localStorage.token = JSON.stringify(res.data.data);
+						this.setToken(res.data.data)
+					})
+			},
+			_getUserState() {
+				let param = new URLSearchParams();
+				param.append("company_id", this.nowCompanyId);
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/User/return_company_new", param)
+					.then((res) => {
+						let is_manage = parseInt(res.data.data.is_manage)
+						let is_finance = parseInt(res.data.data.is_finance)
+						this.setUserState({
+							'manage': is_manage,
+							'finance': is_finance,
+						})
+						this.judgeState()
+					})
+			},
+			judgeState() {
+				let m = this.userState.manage
+				let f = this.userState.finance
+				if(m === 0 && f === 0) {
+					this.workList = ['日常', '审批', '发起审批', '通讯录']
+				}
+				if(m === 1 && f === 0) {
+					this.workList = ['日常', '审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
+				}
+				if(m === 0 && f === 1) {
+					this.workList = ['日常', '审批', '发起审批', '表单回执', '邀请同事', '通讯录']
+				}
+				if(m === 1 && f === 1) {
+					this.workList = ['日常', '审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
+				}
+			},
+			_getUserCompanyList() {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/user/companies_list", param)
+					.then((res) => {
+						this.setCompanyList(res.data.data)
+						this.setNowCompanyId(res.data.data[0].company_id)
+						this.setNowCompanyName(res.data.data[0].company_name)
+						this._getUserState()
+					})
+			},
+			_getUserState() {
+				let param = new URLSearchParams();
+				param.append("company_id", this.nowCompanyId);
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/User/return_company_new", param)
+					.then((res) => {
+
+						let is_manage = parseInt(res.data.data.is_manage)
+						let is_finance = parseInt(res.data.data.is_finance)
+						this.setUserState({
+							'manage': is_manage,
+							'finance': is_finance,
+						})
+						this.judgeState()
+					})
 			},
 			...mapMutations({
 				setUser: 'SET_USER',
@@ -192,186 +243,183 @@ import {mapGetters,mapMutations} from 'vuex'
 				setComPersonList: 'SET_COM_PERSON_LIST',
 				setComDepartList: 'SET_COM_DEPART_LIST',
 				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
-				setToken:'SET_TOKEN'
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+				setToken: 'SET_TOKEN',
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST'
 			})
 		},
-		mounted(){
-			window.addEventListener('scroll', this.handleScroll);
+		mounted() {
+
 		},
-		computed:{
+		computed: {
 			...mapGetters([
-		        'user',	    
-		        'token'
-		      ])
+				'user',
+				'token',
+				'nowCompanyName',
+				'userState',
+				'nowCompanyId',
+				'comDepartList',
+				'companyList'
+			])
 		},
-		created(){
-			this.userCompanyInfo = JSON.parse(localStorage.nowCompanyList)
-			this.nowCompanyName = JSON.parse(localStorage.nowCompanyName)
-			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
-			let text = JSON.parse(localStorage.text)
-			this.setUser({
-				'uid':text.uid,
-				'name':text.name
-			})
-			this._getComPartPersonList()
-			this._getComPersonList()
-			this._getComDepart()
-			this._getPersonnelId()
+		created() {
+			this.setUser(JSON.parse(localStorage.user))
+			this._getUserCompanyList()
 			this._getToken()
 		},
-		components:{
+		components: {
 			createCompany
 		},
-		watch:{
-		}
+		watch: {}
 	}
 </script>
 
 <style lang="scss" scoped>
-.index{
-	position: fixed;
-	min-width: 1200px;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	background:rgb(227,228,233);
-	overflow-y: scroll;
-	.top{
+	.index {
+		position: fixed;
+		min-width: 1200px;
+		top: 0;
 		width: 100%;
-		background: #f4f6fc;
-		display: flex;
-		color:#666666;
-		height: 60px;
-		font-size: 14px;
-		text-decoration: none;
-		box-shadow: 0 0 2px rgba(0,0,0,.2);
-		-webkit-box-shadow:0 0 2px rgba(0,0,0,.2);
-		.title{
-			flex: 1;
-			align-self: center;
-			span{
-				display: inline-block;
-				float: left;
-				margin-left: 40px;
-				&.changeCompany{
-					margin-left:10px;
-					font-size: 12px;
-					color: #67C23A;
-					cursor: pointer;
-					margin-top: 1px;
-					position: absolute;
-					ul{
+		height: 100%;
+		background: rgb(227, 228, 233);
+		overflow-y: scroll;
+		.top {
+			width: 100%;
+			background: #f4f6fc;
+			display: flex;
+			color: #666666;
+			height: 60px;
+			font-size: 14px;
+			text-decoration: none;
+			box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+			-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+			.title {
+				flex: 1;
+				align-self: center;
+				span {
+					display: inline-block;
+					float: left;
+					margin-left: 40px;
+					&.changeCompany {
+						margin-left: 10px;
+						font-size: 12px;
+						color: #67C23A;
+						cursor: pointer;
+						margin-top: 1px;
 						position: absolute;
-					    top: 15px;
-					    left: 0px;
-					    background:#f4f6fc;
-					    padding: 10px 0;
-					    border-radius: 2px;
-					    box-shadow: 0 0 2px rgba(0,0,0,.2);
-					    z-index: 2;
-					    color: #666666;
-					    li{
-					    	display: block;
-					    	padding: 10px 6px;
-					    };
+						ul {
+							position: absolute;
+							top: 15px;
+							left: 0px;
+							background: #f4f6fc;
+							padding: 10px 0;
+							border-radius: 2px;
+							box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+							z-index: 2;
+							color: #666666;
+							li {
+								display: block;
+								padding: 10px 6px;
+							}
+							;
+						}
+						img {
+							width: 20px;
+							height: 20px;
+							position: absolute;
+							top: -4px;
+							left: 50px;
+							cursor: pointer;
+						}
 					}
-					img{
-						width: 20px;
-						height: 20px;
+				}
+			}
+			.nav {
+				flex: 0 20%;
+				align-self: center;
+				a {
+					display: inline-block;
+					border-bottom: 3px solid transparent;
+					padding: 22px 10px 20px;
+					color: #666666;
+					cursor: pointer;
+					&.active {
+						border-bottom: 3px solid #fc923f;
+					}
+					&:hover {
+						color: #FC923F;
+					}
+				}
+			}
+			.search {
+				flex: 0 20%;
+				align-self: center;
+				position: relative;
+				input {
+					float: right;
+					border: 1px solid #ccc;
+					padding: 12px 100px;
+					border-radius: 3px;
+					/*css3属性IE不支持*/
+					padding-left: 5px;
+					text-indent: 10px;
+					outline: none;
+				}
+				img {
+					width: 16px;
+					height: 16px;
+					position: absolute;
+					top: 12px;
+					right: 20px;
+					cursor: pointer;
+				}
+			}
+			.personInfo {
+				flex: 1;
+				align-self: center;
+				/*position:relative;
+			right: 0;*/
+				.person_main {
+					position: relative;
+					float: right;
+					margin-right: 40px;
+					.userOperation {
 						position: absolute;
-						top: -4px;
-						left: 50px;
+						top: 20px;
+						right: 0px;
+						width: 84px;
+						padding: 10px 0;
+						background: #FFF;
+						border-radius: 2px;
+						box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+						line-height: 27px;
+						z-index: 2;
+						a {
+							display: block;
+							height: 26px;
+							line-height: 26px;
+							padding: 0 15px;
+							color: #333;
+							font-size: 13px;
+							&:hover {
+								color: #3487E2;
+							}
+						}
+					}
+					a {
+						cursor: pointer;
+						display: inline-block;
+						height: 20px;
+						line-height: 20px;
+					}
+					img {
+						width: 20px;
+						vertical-align: top;
 						cursor: pointer;
 					}
 				}
 			}
-			
-		}
-		.nav{
-			flex: 0 20%;
-			align-self: center;
-			a{
-				display: inline-block;
-				border-bottom: 3px solid transparent;
-				padding: 22px 10px 20px;
-				color: #666666;
-				cursor: pointer;
-				&.active{
-					border-bottom: 3px solid #fc923f;
-				}
-				&:hover{
-					color: #FC923F;
-				}
-			}
-		}
-		.search{
-			flex:  0 20%;
-			align-self: center;
-			position: relative;
-			input{
-				float: right;
-				border: 1px solid #ccc; 
-                padding: 12px 100px;
-                border-radius: 3px; /*css3属性IE不支持*/
-                padding-left:5px; 
-                text-indent: 10px;
-                outline: none;
-			}
-			img{
-				width: 16px;
-				height: 16px;
-				position: absolute;
-				top: 12px;
-				right: 20px;
-				cursor: pointer;
-			}
-		}
-		.personInfo{
-			flex:1;
-			align-self: center;
-			/*position:relative;
-			right: 0;*/
-			.person_main{
-				position: relative;
-				float: right;
-				margin-right: 40px;
-				.userOperation{
-					position: absolute;
-				    top: 20px;
-				    right: 0px;
-				    width: 84px;
-				    padding: 10px 0;
-				    background: #FFF;
-				    border-radius: 2px;
-				    box-shadow: 0 0 2px rgba(0,0,0,.2);
-				    line-height: 27px;
-				    z-index: 2;
-				    a{
-				    	display: block;
-					    height: 26px;
-					    line-height: 26px;
-					    padding: 0 15px;
-					    color: #333;
-					    font-size: 13px;
-					    &:hover{
-					    	color: #3487E2;
-					    }
-				    }
-				}
-				a{
-					cursor: pointer;
-					display: inline-block;
-					height: 20px;
-					line-height: 20px;
-				}
-				img{
-					width: 20px;
-					vertical-align: top;
-					cursor: pointer;
-				}
-			}
-				
 		}
 	}
-}
 </style>

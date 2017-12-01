@@ -3,7 +3,7 @@
 //import VueAxios from 'vue-axios'
 //Vue.use(VueAxios, axios)
 export default class exam_list {
-  constructor({approval_id, name,avatar,company_name,add_time,type,title,approval_state}) {
+  constructor({approval_id, name,avatar,company_name,add_time,type,title,approval_state,participation_id}) {
     this.approval_id = approval_id
     this.name = name
     this.avatar = avatar
@@ -12,6 +12,7 @@ export default class exam_list {
     this.type = type
     this.title = title
     this.approval_state = approval_state
+    this.participation_id = participation_id
   }
 }
 function get_data(time){
@@ -28,7 +29,8 @@ export function create_exam_list(item) {
     add_time:get_data(item.add_time),
     type:get_type(item.type),
     title:item.title,
-    approval_state:get_state(item.approval_state)
+    approval_state:get_state(item.approval_state),
+    participation_id:item.participation_id
   })
 }
 
