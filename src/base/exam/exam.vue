@@ -10,7 +10,7 @@
 			</div>
 			<div class="list" >
 				<ul>
-					<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list">
+					<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list" :style="{background:item.tagging}">
 						<div class="avatar" v-if="ilaunched">
 							<img :src="item.avatar" alt="" />
 						</div>
@@ -20,7 +20,7 @@
 								<span  v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
 							</div>
 							<div class="color" v-if="handle_time_show">
-								<span style="font-family: '黑体" @click="biao(index)" ref="biao">{{biaos}}</span>
+								<span style="font-family: '黑体" @click="biao(index)">标</span>
 								<div class="choose" v-show="index === colorIndex">
 									<span @click="colorOne(item)"></span>
 									<span @click="colorTwo(item)"></span>
@@ -586,8 +586,7 @@ export default{
 			fileList:[],
 			file_arr:[],
 			pic_hash_arr:[],
-			pageIndex:1,
-			biaos:'标'
+			pageIndex:1
 		}
 	},
 	computed:{
@@ -605,46 +604,74 @@ export default{
 		loading
 	},
 	methods:{
-//		sign(){
-//			let param = new URLSearchParams();
-//			param.append("uid",this.user.uid);
-//			this.$http.post("/index/Mobile/path/get_token",param)
-//			
-//		},
 		biao(index){
 			this.colorIndex = index
 			this.colorShow = true
 		},
 		colorOne(item){
-			console.log(item)
-			this.biaos = ''
 			this.$refs.list[this.colorIndex].style.background="rgba(255,0,0,0.1)"
-			this.$refs.biao[this.colorIndex].style.background="rgba(255,0,0,1)"
-			this.$refs.biao[this.colorIndex].style.border="none"
 			this.colorIndex = -1
+			let param = new URLSearchParams();
+			param.append("uid",this.user.uid);
+			param.append("tagging",'#FF0000');
+			param.append("participation_id",item.participation_id);
+			this.$http.post("/index/Mobile/approval/add_tagging",param)
+			.then((res)=>{
+				if(res.data.code === 0){
+					this.$message.success('标记成功');
+				}else{
+					this.$message.error('标记失败');
+				}
+			})
 		},
-		colorTwo(){
-			this.biaos = ''
+		colorTwo(item){
 			this.$refs.list[this.colorIndex].style.background="rgba(255,255,0,0.02)"
-			this.$refs.biao[this.colorIndex].style.background="rgba(255,255,0,1)"
-			this.$refs.biao[this.colorIndex].style.border="none"
 			this.colorIndex = -1
+			let param = new URLSearchParams();
+			param.append("uid",this.user.uid);
+			param.append("tagging",'#FFF000');
+			param.append("participation_id",item.participation_id);
+			this.$http.post("/index/Mobile/approval/add_tagging",param)
+			.then((res)=>{
+				if(res.data.code === 0){
+					this.$message.success('标记成功');
+				}else{
+					this.$message.error('标记失败');
+				}
+			})
 		},
-		colorThree(){
-			this.biaos = ''
+		colorThree(item){
 			this.$refs.list[this.colorIndex].style.background="rgba(0,255,0,0.1)"
-			this.$refs.biao[this.colorIndex].style.background="rgba(0,255,0,1)"
-			this.$refs.biao[this.colorIndex].style.border="none"
 			this.colorIndex = -1
+			let param = new URLSearchParams();
+			param.append("uid",this.user.uid);
+			param.append("tagging",'#00FF00');
+			param.append("participation_id",item.participation_id);
+			this.$http.post("/index/Mobile/approval/add_tagging",param)
+			.then((res)=>{
+				if(res.data.code === 0){
+					this.$message.success('标记成功');
+				}else{
+					this.$message.error('标记失败');
+				}
+			})
 		},
-		colorFour(){
-			this.biaos = ''
+		colorFour(item){
 			this.$refs.list[this.colorIndex].style.background="rgba(0,0,255,0.1)"
-			this.$refs.biao[this.colorIndex].style.background="rgba(0,0,255,1)"
-			this.$refs.biao[this.colorIndex].style.border="none"
 			this.colorIndex = -1
+			let param = new URLSearchParams();
+			param.append("uid",this.user.uid);
+			param.append("tagging",'#0000FF');
+			param.append("participation_id",item.participation_id);
+			this.$http.post("/index/Mobile/approval/add_tagging",param)
+			.then((res)=>{
+				if(res.data.code === 0){
+					this.$message.success('标记成功');
+				}else{
+					this.$message.error('标记失败');
+				}
+			})
 		},
-		
 		first_page(){
 			this.nextPageShow = true
 			this.pageIndex = 1
@@ -688,7 +715,7 @@ export default{
 			this.menuShow=true
 			let param = new URLSearchParams();
 			param.append("uid",this.user.uid);
-			this.$http.post("/index/Mobile/approval/add_tagging",param)
+			this.$http.post("/index/Mobile/path/get_token",param)
 			.then((res)=>{
 				this.input_value = res.data.data
 			})
@@ -813,7 +840,6 @@ export default{
 					formData.append('token', JSON.parse(localStorage.token));
 					let config = {headers: {'Content-Type': 'multipart/form-data'}}
 					this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-						console.log(res)
 					this.pic_hash_arr.push(res.data.hash)
 					if(this.pic_hash_arr.length === this.pic.length) {
 						let nparam = new URLSearchParams();
@@ -897,7 +923,6 @@ export default{
 					this.get_img(this.form_Lista.many_enclosure)
 					this.get_file(this.form_Lista.many_enclosure)
 				}else if(item.type === '请款单'){
-					
 					this.form_Lista = create_qingkuandan_list(res.data.data)
 					this.get_img(this.form_Lista.many_enclosure)
 					this.get_file(this.form_Lista.many_enclosure)
@@ -935,8 +960,6 @@ export default{
 					}
 				})
 				this.form_Listb=create_approval_list(res.data.data)
-				
-				
 			})
 		},
 //		获取图片
@@ -983,7 +1006,6 @@ export default{
 				})
 				}
 			})
-
 		},
 		handleClick(tab){
 			this.pageIndex = 1

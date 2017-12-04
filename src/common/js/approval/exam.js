@@ -3,7 +3,7 @@
 //import VueAxios from 'vue-axios'
 //Vue.use(VueAxios, axios)
 export default class exam_list {
-  constructor({approval_id, name,avatar,company_name,add_time,type,title,approval_state,participation_id}) {
+  constructor({approval_id, name,avatar,company_name,add_time,type,title,approval_state,participation_id,tagging}) {
     this.approval_id = approval_id
     this.name = name
     this.avatar = avatar
@@ -13,6 +13,7 @@ export default class exam_list {
     this.title = title
     this.approval_state = approval_state
     this.participation_id = participation_id
+    this.tagging = tagging
   }
 }
 function get_data(time){
@@ -30,8 +31,24 @@ export function create_exam_list(item) {
     type:get_type(item.type),
     title:item.title,
     approval_state:get_state(item.approval_state),
-    participation_id:item.participation_id
+    participation_id:item.participation_id,
+    tagging:getColor(item)
   })
+}
+function getColor(item){
+	if(!item.tagging){
+		return
+	}
+	if(item.tagging === 'FF0000'){
+		return 'rgba(255,0,0,0.1)'
+	}else if(item.tagging === '#FFF000'){
+		return 'rgba(255,255,0,0.1)'
+	}else if(item.tagging === '#00FF00'){
+		return 'rgba(0,255,255,0.1)'
+	}else if(item.tagging === '#0000FF'){
+		return 'rgba(0,0,255,0.1)'
+	}
+	
 }
 
 function get_state(state){
