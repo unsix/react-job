@@ -2,7 +2,7 @@
 	<div class="choose_template">
 		<div class="list">
 			<ul>
-				<el-button type="primary" plain @click="returnForm">返回</el-button>
+				<!--<el-button type="primary" plain @click="returnForm">返回</el-button>-->
 				<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list" :style="{background:item.tagging}">
 					<div class="edit">
 						<el-button type="primary" round @click="viewInfo(item,index)">查看</el-button>
@@ -53,13 +53,16 @@
 			first_page() {
 				this.nextPageShow = true
 				this.pageIndex = 1
+				this._getExamList()
 			},
 			last_page() {
 				this.nextPageShow = true
-					--this.pageIndex
+				--this.pageIndex
+				this._getExamList()
 			},
 			next_page() {
 				++this.pageIndex
+				this._getExamList()
 			},
 			viewInfo(item, index) {
 				this.$emit('viewInfo', item)
@@ -75,7 +78,7 @@
 				param.append("uid", this.user.uid);
 				param.append("type", 3);
 				param.append("each", 10);
-				param.append("p", 0);
+				param.append("p", this.pageIndex);
 				param.append("company_id", this.nowCompanyId);
 				param.append("approval_type", this.approval_type);
 				this.$http.post("/index/Mobile/approval/see_approval_list", param)
@@ -85,6 +88,10 @@
 							arr.push(create_exam_list(item))
 						})
 						this.untreated = arr
+						if(arr.length < 10) {
+							this.nextPageShow = false
+						}
+						
 					})
 			}
 		},

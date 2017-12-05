@@ -60,16 +60,9 @@
 			<el-form-item label="到货时间" prop="arrival_time">
 				<el-date-picker type="date" v-model="qgd_ruleForm.arrival_time" style="width: 100%;"></el-date-picker>
 			</el-form-item>
-			<!--<el-form-item label="合同" prop="contract_id">
-				<el-input v-model="qgd_ruleForm.contract_id"></el-input>
-			</el-form-item>-->
 			<el-form-item label="合计" prop="total">
 				<el-input v-model="qgd_ruleForm.total"></el-input>
 			</el-form-item>
-
-			<!--<el-form-item label="请购内容" prop="content">
-				<el-input v-model="qgd_ruleForm.content"></el-input>
-			</el-form-item>-->
 			<el-form-item label="收货地址" prop="receive_address">
 				<el-input type="textarea" v-model="qgd_ruleForm.receive_address"></el-input>
 			</el-form-item>
@@ -124,11 +117,12 @@
 				<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>
 			</el-form-item>
 		</el-form>
-
+		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
 
 <script>
+	import loading from '@/base/loading/loading'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -243,7 +237,7 @@
 				pic_index: 0,
 				img_arr: [],
 				pic_enclosure_id: '',
-				loading_show: false,
+				loadingShow: false,
 				returnOk: false,
 			}
 		},
@@ -264,6 +258,9 @@
 				'comDepartList',
 				'token'
 			])
+		},
+		components:{
+			loading
 		},
 		methods: {
 			initial_data() {
@@ -469,6 +466,7 @@
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
+				this.loadingShow = true
 				this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1, 11)
 				if(!this.pic && !this.file) {
 					let buy_depart_id
@@ -515,7 +513,7 @@
 					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
-							console.log(res)
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -648,6 +646,7 @@
 					param.append("type", 2);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -711,6 +710,7 @@
 					param.append("type", 2);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false

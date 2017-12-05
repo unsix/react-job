@@ -36,16 +36,17 @@ export function create_exam_list(item) {
   })
 }
 function getColor(item){
+	console.log(item.tagging)
 	if(!item.tagging){
 		return
 	}
-	if(item.tagging === 'FF0000'){
+	if(item.tagging === 'FF0000' ||item.tagging === '#FF0000'){
 		return 'rgba(255,0,0,0.1)'
-	}else if(item.tagging === '#FFF000'){
+	}else if(item.tagging === '#FFF000'||item.tagging === 'FFF000'){
 		return 'rgba(255,255,0,0.1)'
-	}else if(item.tagging === '#00FF00'){
-		return 'rgba(0,255,255,0.1)'
-	}else if(item.tagging === '#0000FF'){
+	}else if(item.tagging === '#00FF00'||item.tagging === '00FF00'){
+		return 'rgba(0,255,0,0.1)'
+	}else if(item.tagging === '#0000FF'||item.tagging === '0000FF'){
 		return 'rgba(0,0,255,0.1)'
 	}
 	

@@ -14,7 +14,7 @@
 				<el-button type="primary" plain @click="chooseTem">从模版选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
-				<addQkd v-if="qkd_show" :approval_id="approval_id" @return_exam="return_Add"></addQkd>
+				<addQkd v-if="qkd_show" :approval_id="approval_id" @return_exam="return_Add" :form_approval_id="form_approval_id"></addQkd>
 				<addCpj v-if="cpj_show" :approval_id="approval_id" @return_exam="return_Add"></addCpj>
 				<addPsb v-if="psb_show" :approval_id="approval_id" @return_exam="return_Add"></addPsb>
 				<addQgd v-if="qgd_show" :approval_id="approval_id" @return_exam="return_Add"></addQgd>
@@ -50,11 +50,11 @@
 						</div>
 					</div>
 				</li>
-				<!--<div class="page">
+				<div class="page">
 					<span @click="first_page">首页</span>
 					<span @click="last_page" v-show="pageIndex > 1">上一页</span>
 					<span @click="next_page" v-show="nextPageShow">下一页</span>
-				</div>-->
+				</div>
 			</ul>
 		</div>
 		<loading v-show="loading_show"></loading>
@@ -118,7 +118,10 @@
 				approval_type: 111,
 				approval_id: '',
 				form_approval_id:'',
-				qk_return:false
+				qk_return:false,
+				nextPageShow: true,
+				pageIndex:1,
+				xindex:0
 			}
 		},
 		computed: {
@@ -133,6 +136,20 @@
 		},
 
 		methods: {
+			first_page() {
+				this.nextPageShow = true
+				this.pageIndex = 1
+				this._getExamList()
+			},
+			last_page() {
+				this.nextPageShow = true
+				--this.pageIndex
+				this._getExamList()
+			},
+			next_page() {
+				++this.pageIndex
+				this._getExamList()
+			},
 			return_qk(){
 				this.qgd_if = false
 				this.qk_return = false
@@ -416,21 +433,26 @@
 				
 			},
 			_getExamList(index) {
+				if(!index){
+					index = this.xindex
+				}
+				this.xindex = index
 				let type
-				if(index === 0) {
+				if(this.xindex === 0) {
 					type = 3
-				} else if(index === 1) {
+				} else if(this.xindex === 1) {
 					type = 1
-				} else if(index === 2) {
+				} else if(this.xindex === 2) {
 					type = 6
 				} else {
 					type = -1
 					return
-				}
+				}	
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_type", type);
-				param.append("each", '20');
+				param.append("each", '10');
+				param.append("p", this.pageIndex);
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/approval/request_monry_basis", param)
 					.then((res) => {
@@ -439,6 +461,9 @@
 							arr.push(create_exam_list(item))
 						})
 						this.untreated = arr
+						if(arr.length < 10) {
+							this.nextPageShow = false
+						}
 					})
 			},
 
@@ -580,6 +605,9 @@
 	}
 	
 	.add_approval_wrapper {
+		background: #FFFFFF;
+		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+				-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 		width: 558px;
 		.add_approval {
 			padding: 0px 10px;

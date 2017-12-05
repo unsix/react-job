@@ -293,9 +293,13 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 
 <style lang="scss">
 .jurisdictionManage_wrapper{
+	background: #FFFFFF;
+		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+		-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 	>.jurisdictionManage{
 		width: 558px;
 		overflow: hidden;
+		margin-left: 20px;
 		>.nav{
 			width: 100%;
 			margin: 4px 0;

@@ -327,16 +327,14 @@ export default {
 		>.info_main {
 			float: left;
 			width: 600px;
-			background: #fff;
-			border-radius: 2px;
-			box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-			-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+			/*box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+			-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);*/
 			>.publish {
-				padding: 20px;
+				/*padding: 10px;*/
 				>.extend {
 					-webkit-border-radius: 2px;
 					border-radius: 2px;
-					margin-top: 4px;
+					/*margin-top: 4px;*/
 				}
 			}
 		}

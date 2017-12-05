@@ -1,6 +1,6 @@
 <template>
 	<div class="qingkuan">
-		<el-form  :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
+		<el-form :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
 			<el-form-item label="工程名称" prop="contract_name">
 				<el-input v-model="qkd_ruleForm.contract_name"></el-input>
 			</el-form-item>
@@ -20,16 +20,16 @@
 				<el-input v-model="qkd_ruleForm.account_name"></el-input>
 			</el-form-item>
 			<el-form-item label="银行卡号" prop="bank_card">
-				<el-input v-model.number="qkd_ruleForm.bank_card"></el-input>
+				<el-input v-model="qkd_ruleForm.bank_card"></el-input>
 			</el-form-item>
 			<el-form-item label="工种" prop="worker_type">
 				<el-input v-model="qkd_ruleForm.worker_type"></el-input>
 			</el-form-item>
 			<el-form-item label="合同金额" prop="subtotal">
-				<el-input v-model.number="qkd_ruleForm.subtotal"></el-input>
+				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="本次请款金额" prop="request_subtotal">
-				<el-input v-model.number="qkd_ruleForm.request_subtotal"></el-input>
+				<el-input v-model="qkd_ruleForm.request_subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="请款内容" prop="request_content">
 				<el-input type="textarea" v-model="qkd_ruleForm.request_content"></el-input>
@@ -38,13 +38,13 @@
 				<el-input v-model="qkd_ruleForm.draw_money_name"></el-input>
 			</el-form-item>
 			<el-form-item label="增减金额">
-				<el-input v-model.number="qkd_ruleForm.gain_reduction_subtotal"></el-input>
+				<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="请款次数">
-				<el-input v-model.number="qkd_ruleForm.request_num"></el-input>
+				<el-input v-model="qkd_ruleForm.request_num"></el-input>
 			</el-form-item>
 			<el-form-item label="已领工程款">
-				<el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
+				<el-input v-model="qkd_ruleForm.balance_subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
@@ -72,7 +72,9 @@
 </template>
 
 <script>
-	import { mapGetters,mapMutations} from 'vuex'
+	import loading from '@/base/loading/loading'
+	import { mapGetters, mapMutations } from 'vuex'
+	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
 	export default {
 		data() {
 			return {
@@ -115,22 +117,18 @@
 					request_name: [{
 						required: true,
 						message: '请填写请款人姓名',
-						trigger: 'chagne'
+						trigger: 'blur'
 					}],
 					phone: [{
 						required: true,
 						message: '请填写联系方式',
-						trigger: 'chagne'
+						trigger: 'blur'
 					}],
 					bank_card: [{
-							required: true,
-							message: '请填写银行卡号'
-						},
-						{
-							type: 'number',
-							message: '银行卡号必须为数字值'
-						}
-					],
+						required: true,
+						message: '请填写银行卡号',
+						trigger: 'blur'
+					}],
 					bank_name: [{
 						required: true,
 						message: '请填写银行账户名称',
@@ -147,23 +145,15 @@
 						trigger: 'blur'
 					}],
 					subtotal: [{
-							required: true,
-							message: '请填写合同金额'
-						},
-						{
-							type: 'number',
-							message: '合同金额必须为数字值'
-						}
-					],
+						required: true,
+						message: '请填写合同金额',
+						trigger: 'blur'
+					}],
 					request_subtotal: [{
-							required: true,
-							message: '请填写请款金额'
-						},
-						{
-							type: 'number',
-							message: '请款金额必须为数字值'
-						}
-					],
+						required: true,
+						message: '请填写请款金额',
+						trigger: 'blur'
+					}],
 					request_content: [{
 						required: true,
 						message: '请填写请求内容',
@@ -181,9 +171,10 @@
 				file_time: 0,
 				pic_time: 0,
 				pic_show: false,
+				loadingShow:false,
 				pic_index: 0,
 				img_arr: [],
-				pic_enclosure_id:''
+				pic_enclosure_id: ''
 
 			}
 		},
@@ -191,12 +182,13 @@
 			approval_id: {
 				type: String
 			},
-			form_approval_id:{
+			form_approval_id: {
 				type: String
 			}
 		},
 		created() {
 			this._getToken()
+			this.initial_data()
 		},
 		computed: {
 			...mapGetters([
@@ -207,7 +199,37 @@
 				'token'
 			])
 		},
+		components:{
+			loading
+		},
 		methods: {
+			initial_data() {
+				if(!this.approval_id) {
+					return
+				}
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("approval_id", this.approval_id);
+				this.$http.post("/index/Mobile/approval/approval_process_show", param)
+					.then((res) => {
+						this.form_Lista = create_qingkuandan_list(res.data.data)
+						this.qkd_ruleForm.balance_subtotal = this.form_Lista.balance_subtotal
+						this.qkd_ruleForm.contract_name_new = this.form_Lista.contract_name_new
+						this.qkd_ruleForm.contract_name = this.form_Lista.contract_name
+						this.qkd_ruleForm.bank_name = this.form_Lista.bank_name
+						this.qkd_ruleForm.bank_card = this.form_Lista.bank_card
+						this.qkd_ruleForm.worker_type = this.form_Lista.worker_type
+						this.qkd_ruleForm.bank_address = this.form_Lista.bank_address
+						this.qkd_ruleForm.subtotal = this.form_Lista.subtotal
+						this.qkd_ruleForm.request_subtotal = this.form_Lista.request_subtotal
+						this.qkd_ruleForm.request_content = this.form_Lista.request_content
+						this.qkd_ruleForm.request_name = this.form_Lista.request_name
+						this.qkd_ruleForm.request_num = this.form_Lista.request_num
+						this.qkd_ruleForm.phone = this.form_Lista.phone
+						this.qkd_ruleForm.draw_money_name = this.form_Lista.draw_money_name
+						this.qkd_ruleForm.request_num = this.form_Lista.request_num
+					})
+			},
 			add_ok() {
 				this.$message({
 					showClose: true,
@@ -324,6 +346,7 @@
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
+				this.loadingShow = true
 				if(!this.pic && !this.file) {
 					let param = new URLSearchParams();
 					if(this.qkd_ruleForm.project_manager.uid) {
@@ -347,11 +370,12 @@
 					param.append("type", '2');
 					param.append("form_approval_id", this.form_approval_id);
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-					param.append("request_money_basis_type", this.qkd_type);
+					param.append("request_money_basis_type", -1);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -460,11 +484,12 @@
 					param.append("type", '2');
 					param.append("form_approval_id", this.form_approval_id);
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-					param.append("request_money_basis_type", this.qkd_type);
+					param.append("request_money_basis_type", -1);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
+					this.loadingShow = false
 						.then((res) => {
 							if(res.data.code === 0) {
 								this.add_ok()
@@ -506,11 +531,12 @@
 				param.append("type", '2');
 				param.append("form_approval_id", this.form_approval_id);
 				param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-				param.append("request_money_basis_type", this.qkd_type);
+				param.append("request_money_basis_type", -1);
 				param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 				param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 				param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 				this.$http.post("/index/Mobile/approval/add_request_money", param)
+				this.loadingShow = false
 					.then((res) => {
 						if(res.data.code === 0) {
 							this.add_ok()

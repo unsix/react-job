@@ -62,16 +62,41 @@
 		<div v-if="form_Listb.list">
 			<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
 		</div>
-		<div v-if="form_Listb.content">
+		<div>
 			<span>审批：</span>
-			<br />
-			<span v-for="item in form_Listb.content" style="color: #444444;">
-						{{item.department_name}}	
-						{{item.name}} 	
-						{{item.is_agree}} 
-						{{item.add_time}}
-						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
-						</span>
+			<div v-for="item in form_Listb.content">
+				<div class="exam_info">
+					<div class="avatar lzz">
+						<span style="margin-left: 5px;">状态</span>
+					</div>
+					<div class="tel lzz">
+						<span>姓名</span>
+					</div>
+					<div class="name lzz">
+						<span>部门</span>
+					</div>
+					<div class="operation lzz">
+						<span>时间</span>
+					</div>
+				</div>
+				<div class="exam_info">
+					<div class="avatar">
+						<span>{{item.is_agree}}</span>
+					</div>
+					<div class="name">
+						<span>{{item.department_name}}</span>
+					</div>
+					<div class="tel">
+						<span>{{item.opinion}}</span>
+					</div>
+					<div class="operation">
+						<span>{{item.add_time}}</span>
+					</div>
+				</div>
+				<div>
+					<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+				</div>
+			</div>
 		</div>
 		<div v-if="form_Listb.finance">
 			<span>表单回执：</span>

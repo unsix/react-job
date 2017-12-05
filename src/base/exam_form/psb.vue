@@ -13,7 +13,7 @@
 		<div v-if="form_Lista.contract_num">
 			<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
 		</div>
-		<div >
+		<div>
 			<span>甲方：</span><span>{{form_Lista.a_name}}</span>
 		</div>
 		<div v-if="form_Lista.b_name">
@@ -62,23 +62,50 @@
 		<div v-if="form_Listb.list">
 			<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;margin-left: 4px;">{{item}}</span>
 		</div>
-		<div v-if="form_Listb.content">
+		<div>
 			<span>审批：</span>
-			<br />
-			<span v-for="item in form_Listb.content" style="color: #444444;">
-				{{item.department_name}}	{{item.name}} 	{{item.is_agree}} {{item.add_time}}
-				<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/>
+			<div v-for="item in form_Listb.content">
+				<div class="exam_info">
+					<div class="avatar lzz">
+						<span style="margin-left: 5px;">状态</span>
+					</div>
+					<div class="tel lzz">
+						<span>姓名</span>
+					</div>
+					<div class="name lzz">
+						<span>部门</span>
+					</div>
+					<div class="operation lzz">
+						<span>时间</span>
+					</div>
 				</div>
-			</span>
+				<div class="exam_info">
+					<div class="avatar">
+						<span>{{item.is_agree}}</span>
+					</div>
+					<div class="name">
+						<span>{{item.department_name}}</span>
+					</div>
+					<div class="tel">
+						<span>{{item.opinion}}</span>
+					</div>
+					<div class="operation">
+						<span>{{item.add_time}}</span>
+					</div>
+				</div>
+				<div>
+					<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+				</div>
+			</div>
 		</div>
 		<div v-if="form_Listb.finance">
 			<span>表单回执：</span>
 			<br />
 			<span style="color: #444444;">
 				<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
-				<div>
-					<img :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" />
-				</div>
+			<div>
+				<img :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" />
+			</div>
 			</span>
 		</div>
 		<div class="menu" v-show="handle_show">
@@ -128,8 +155,8 @@
 			psb_approval_id: {
 				type: String
 			},
-			file_arr:{
-				type:Array
+			file_arr: {
+				type: Array
 			}
 		},
 		computed: {
@@ -348,7 +375,7 @@
 </script>
 
 <style lang="scss" scoped="scoped">
-.form {
+	.form {
 		padding: 10px;
 		color: #999999;
 		>.top {

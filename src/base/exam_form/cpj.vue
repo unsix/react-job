@@ -117,8 +117,8 @@
 			psb_approval_id: {
 				type: String
 			},
-			file_arr:{
-				type:Array
+			file_arr: {
+				type: Array
 			}
 		},
 		computed: {
@@ -337,7 +337,7 @@
 </script>
 
 <style lang="scss" scoped="scoped">
-.form {
+	.form {
 		padding: 10px;
 		color: #999999;
 		>.top {

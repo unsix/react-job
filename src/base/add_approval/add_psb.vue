@@ -66,6 +66,7 @@
 </template>
 
 <script>
+	import loading from '@/base/loading/loading'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -161,7 +162,7 @@
 				pic_index: 0,
 				img_arr: [],
 				pic_enclosure_id: '',
-				loading_show:false
+				loadingShow:false
 			}
 		},
 		props: {
@@ -181,6 +182,9 @@
 		created() {
 			this._getToken()
 			this.initial_data()
+		},
+		components:{
+			loading
 		},
 		methods: {
 			initial_data() {
@@ -280,6 +284,7 @@
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
+				this.loadingShow = true
 				this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
 				this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
 				if(!this.pic && !this.file) {	
@@ -304,6 +309,7 @@
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -411,10 +417,10 @@
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
+							this.loadingShow = false
 							this.loading_show = false
 							if(res.data.code === 0) {
 								this.add_ok()
-
 								this.$emit('return_exam')
 							} else {
 								this.add_fail()
@@ -451,6 +457,7 @@
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
+							this.loadingShow = false
 							this.loading_show = false
 							if(res.data.code === 0) {
 								this.add_ok()

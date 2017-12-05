@@ -65,6 +65,7 @@
 </template>
 
 <script>
+	import loading from '@/base/loading/loading'
 	import { mapGetters,mapMutations} from 'vuex'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	export default {
@@ -128,6 +129,7 @@
 				file_time: 0,
 				pic_time: 0,
 				pic_show: false,
+				loadingShow:false,
 				pic_index: 0,
 				img_arr: []
 			}
@@ -149,6 +151,9 @@
 				'comDepartList',
 				'token'
 			])
+		},
+		components:{
+			loading
 		},
 		methods: {
 			initial_data() {
@@ -268,6 +273,7 @@
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
+				this.loadingShow = true
 				if((!this.pic || this.pic.length === 0) && (!this.file || this.file.length === 0)) {
 					let param = new URLSearchParams();
 					if(this.sqgz_ruleForm.project_manager.uid) {
@@ -280,6 +286,7 @@
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -377,6 +384,7 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -406,6 +414,7 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_seal", param)
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false

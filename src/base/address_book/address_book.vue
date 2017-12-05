@@ -60,10 +60,12 @@
 
 <style lang="scss" >
 .address_book{
+	background: #FFFFFF;
+		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+		-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 	>ul{
 		padding: 10px;
 		>li{
-			
 			cursor: default;
 			display: block;
 			border-bottom: 1px solid #DDDDDD;

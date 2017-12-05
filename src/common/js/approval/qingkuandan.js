@@ -7,10 +7,12 @@ export default class qingkuandan_list {
   	account_name,
   	bank_address,
   	bank_card,
+  	bank_name,
   	request_num,
   	subtotal,
   	gain_reduction_subtotal,
   	request_subtotal,
+  	draw_money_name,
   	contract_state,
   	request_content,
   	project_manager_name,
@@ -24,6 +26,7 @@ export default class qingkuandan_list {
     this.project_manager_name = project_manager_name
     this.bank_address = bank_address
     this.bank_card = bank_card
+    this.bank_name = bank_name
     this.request_num = request_num
     this.subtotal = subtotal
     this.gain_reduction_subtotal = gain_reduction_subtotal
@@ -33,6 +36,7 @@ export default class qingkuandan_list {
     this.many_enclosure = many_enclosure
     this.worker_type = worker_type
     this.phone = phone
+    this.draw_money_name = draw_money_name
     this.request_content = request_content
     this.balance_subtotal = balance_subtotal
   
@@ -47,6 +51,7 @@ export function create_qingkuandan_list(item) {
 	    project_manager_name:get_manager_name(item),
 	    executor:item.executor,
 	    bank_card:item.bank_card,
+	    bank_name:item.bank_name,
 	    request_num:item.request_num,
 	    subtotal:item.subtotal,
 	    gain_reduction_subtotal:item.gain_reduction_subtotal,
@@ -58,6 +63,7 @@ export function create_qingkuandan_list(item) {
 	    request_content:item.request_content,
 	    worker_type:item.worker_type,
 	    phone:item.phone,
+	    draw_money_name:item.draw_money_name,
 	    balance_subtotal:item.balance_subtotal
 	   
 	})
