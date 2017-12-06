@@ -2,95 +2,116 @@
 	<div class="everyday_wrapper">
 		<div class="everyday">
 			<div class="postLog">
-				<!--<span class="title">发布日志</span>-->
-				<div class="text">
-					<div>
-						<span>请填写本{{dayType}}工作总结</span>
-						<textarea></textarea>
-					</div>
-					<div>
-						<span>请填写明{{dayType}}工作计划</span>
-						<textarea></textarea>
-					</div>
-					<div>
-						<span>请填写工作心得体会</span>
-						<textarea></textarea>
-					</div>
+				<div class="state" v-show="stateShow" @click="stateShow = !stateShow">
+					<i class="fa fa-edit"></i>
+					<span>填写工作日志...</span>
 				</div>
-				<div class="opera">
-					<i class="fa fa-picture-o"></i>
-					<i class="fa fa-paperclip"></i>
-				</div>
-				<div class="choosePanel">
-					<div class="top">
-						<span v-for="(item,index) in chooseDayList" :class="{'active':currentIndex === index}" @click="chooseDay(item,index)">
-							{{item}}
-						</span>
-					</div>
-					<div class="info1" v-show="info1Show">
+				<div v-show="!stateShow">
+					<div class="text">
 						<div>
-							<span>时间：</span>
-							<el-date-picker v-model="time1" type="date" placeholder="选择日期">
-							</el-date-picker>
+							<span>请填写本{{dayType}}工作总结<i class="fa fa-close" @click="stateShow = !stateShow"></i></span>
+							<textarea v-model="todayTxt"></textarea>
 						</div>
 						<div>
-							<span>点评人：</span>
-							<el-form>
-								<el-select v-model="people" placeholder="选择点评人">
-									<el-option :label="item.name" :value="item.name" v-for="(item,index) in comPersonList" :key="index"></el-option>
-								</el-select>
-								</el-form-item>
-							</el-form>
-						</div>
-					</div>
-					<div class="info2" v-show="info2Show">
-						<div>
-							<span>时间：</span>
-							<el-date-picker type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-							</el-date-picker>
+							<span>请填写明{{dayType}}工作计划</span>
+							<textarea v-model="tomorrowTxt"></textarea>
 						</div>
 						<div>
-							<span>点评人：</span>
-							<el-form>
-								<el-select v-model="people" placeholder="选择点评人">
-									<el-option :label="item.name" :value="item.name" v-for="(item,index) in comPersonList" :key="index"></el-option>
-								</el-select>
-								</el-form-item>
-							</el-form>
+							<span>请填写工作心得体会</span>
+							<textarea v-model="workExp"></textarea>
 						</div>
 					</div>
-					<div class="info3" v-show="info3Show">
-						<div>
-							<span>时间：</span>
-							<el-date-picker type="month" placeholder="选择月">
-							</el-date-picker>
+					<div class="opera">
+						<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+							<i class="fa fa-picture-o"></i>
+							<i class="fa fa-paperclip"></i>
+						</el-upload>
+					</div>
+					<div class="choosePanel">
+						<div class="top">
+							<span v-for="(item,index) in chooseDayList" :class="{'active':currentIndex === index}" @click="chooseDay(item,index)">
+								{{item}}
+							</span>
 						</div>
-						<div>
-							<span>点评人：</span>
-							<el-form>
-								<el-select v-model="people" placeholder="选择点评人">
-									<el-option :label="item.name" :value="item.name" v-for="(item,index) in comPersonList" :key="index"></el-option>
-								</el-select>
-								</el-form-item>
-							</el-form>
+						<div class="info1" v-show="info1Show">
+							<div>
+								<span>时间：</span>
+								<el-date-picker v-model="time1" type="date" placeholder="选择日期">
+								</el-date-picker>
+							</div>
+							<div>
+								<span>点评人：</span>
+								<el-form>
+									<el-select v-model="people" placeholder="选择点评人">
+										<el-option :label="item.name" :value="item.name" v-for="(item,index) in comPersonList" :key="index"></el-option>
+									</el-select>
+									</el-form-item>
+								</el-form>
+							</div>
+						</div>
+						<div class="info2" v-show="info2Show">
+							<div>
+								<span>时间：</span>
+								<el-date-picker type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+								</el-date-picker>
+							</div>
+							<div>
+								<span>点评人：</span>
+								<el-form>
+									<el-select v-model="people" placeholder="选择点评人">
+										<el-option :label="item.name" :value="item.name" v-for="(item,index) in comPersonList" :key="index"></el-option>
+									</el-select>
+									</el-form-item>
+								</el-form>
+							</div>
+						</div>
+						<div class="info3" v-show="info3Show">
+							<div>
+								<span>时间：</span>
+								<el-date-picker type="month" placeholder="选择月">
+								</el-date-picker>
+							</div>
+							<div>
+								<span>点评人：</span>
+								<el-form>
+									<el-select v-model="people" placeholder="选择点评人">
+										<el-option :label="item.name" :value="item.name" v-for="(item,index) in comPersonList" :key="index"></el-option>
+									</el-select>
+									</el-form-item>
+								</el-form>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="ccRange">
-					<span>刘忠哲<i class="fa fa-close"></i></span>
-					<div class="choose">
-						<i class="fa fa-plus"></i>
-						<span>选择抄送范围</span>
+					<div class="ccRange">
+						<!--<span>刘忠哲<i class="fa fa-close"></i></span>-->
+						<div class="choose" @click="chooseRange">
+							<i class="fa fa-plus"></i>
+							<span>选择抄送范围</span>
+						</div>
 					</div>
-				</div>
-				<div class="ccForm">
-					<div class="nav">
-						<span class="active">同事</span>
-						<span>部门</span>
+					<div class="ccForm" v-show="ccFormShow">
+						<div class="nav">
+							<span v-for="(item,index) in navGroup" :class="{'active':navIndex === index}" @click="navClick(index)">{{item}}</span>
+						</div>
+						<div class="chooseColleague" v-show="chooseColleagueShow">
+							<el-checkbox-group v-model="checkPersonList">
+								<el-checkbox :label="item.name" v-for="(item,index) in comPersonList"></el-checkbox>
+							</el-checkbox-group>
+						</div>
+						<div class="chooseDepartment" v-show="!chooseColleagueShow">
+							<el-checkbox-group v-model="checkDepartList">
+								<el-checkbox :label="item.department_name" v-for="(item,index) in comDepartList"></el-checkbox>
+							</el-checkbox-group>
+						</div>
+						<div class="button">
+							<el-button plain @click="cancelCC">取消</el-button>
+							<el-button type="info" @click="resetCC">重置</el-button>
+							<el-button type="primary" @click="submitCC">确定</el-button>
+						</div>
 					</div>
-					<ul>
-						<li></li>
-					</ul>
+					<div class="posted">
+						<el-button type="primary" @click="posted">发布</el-button>
+					</div>
 				</div>
 			</div>
 			<div class="logList">
@@ -128,13 +149,37 @@
 									{{item.work_exp}}
 								</span>
 							</div>
+							<div class="file">
+								<span>附件列表：</span>
+								<a :href="list.address" v-for="list in item.fList" target="_blank" class="file">{{list.name}}</a>
+							</div>
+							<div class="img">
+								<a v-for="list in item.imgList">
+									<img :src="list" alt="" />
+								</a>
+							</div>
 						</div>
 						<div class="opera">
 							<div>
 								<i class="fa fa-thumbs-up"></i>
 							</div>
 							<div>
-								<a>回复</a>
+								<a @click="comment(item,index)">回复</a>
+							</div>
+						</div>
+						<div class="comment" v-show="commentIndex === index">
+							<div class="txt">
+								<textarea placeholder="添加回复..." v-model="commentTxt"></textarea>
+								<div class="opera">
+									<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+										<i class="fa fa-picture-o"></i>
+										<i class="fa fa-paperclip"></i>
+									</el-upload>
+								</div>
+							</div>
+							<div class="button">
+								<el-button type="primary" @click="replyComment(item)">回复</el-button>
+								<el-button>取消</el-button>
 							</div>
 						</div>
 					</li>
@@ -145,6 +190,7 @@
 </template>
 
 <script>
+	import { create_depart_list } from 'common/js/initial/depart.js'
 	import { createDayList } from '@/common/js/day.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -153,23 +199,313 @@
 				pageIndex: 1,
 				dayList: [],
 				chooseDayList: ['日计划', '周计划', '月计划'],
+				navGroup: ['同事', '部门'],
 				currentIndex: 0,
 				people: '',
 				time1: '',
 				info1Show: true,
 				info2Show: false,
 				info3Show: false,
-				dayType: '日'
+				ccFormShow: false,
+				dayType: '日',
+				navIndex: 0,
+				checkPersonList: [],
+				checkDepartList: [],
+				commentIndex: -1,
+				todayTxt: '',
+				tomorrowTxt: '',
+				workExp: '',
+				chooseColleagueShow: true,
+				ccArr: [],
+				stateShow: true,
+				commentTxt: '',
+				postData: {
+					token: ''
+				},
+				fileHeaders: {
+					'Content-Type': 'multipart/form-data'
+				},
+				fileList: [],
+				pic_hash_arr: [],
+				picArr: [],
+				fileArr: [],
+				afile_hash_arr: [],
+				file_hash_arr: [],
+				pic_time: 0,
+				file_time: 0,
+				nowpublishId: 0,
+				nowDoWhat: '发布日志',
+				file_arr: [],
+				img_arr: []
+
 			}
 		},
 		computed: {
 			...mapGetters([
+				'token',
 				'user',
 				'nowCompanyId',
-				'comPersonList'
+				'comPersonList',
+				'comDepartList'
 			])
 		},
 		methods: {
+			getFile(enclosure, index) {
+				if(!enclosure) {
+					return
+				}
+				enclosure.forEach((item) => {
+					if(item.type === 3) {
+						let param = new URLSearchParams();
+						param.append("enclosure_id", item.contract_id);
+						this.$http.post("/index/Mobile/approval/look_enclosure", param)
+							.then((res) => {
+								let arr = []
+								res.data.data.picture.forEach((item) => {
+									if(item != '') {
+										arr.push('http://img-bbsf.6655.la/' + item)
+									}
+								})
+								this.$set(this.dayList[index], 'imgList', arr)
+							})
+					} else if(item.type === 4) {
+						let param = new URLSearchParams();
+						param.append("attachments_id", item.contract_id);
+						this.$http.post("/index/Mobile/approval/look_attachments", param)
+							.then((res) => {
+								let arr=[]
+								let obj = {}
+								let file_data = res.data.data
+								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								obj.name = file_data.file_name
+								obj.address = file_add
+								arr.push(obj)
+								this.$set(this.dayList[index], 'fList', arr)
+							})
+					}
+				})
+			},
+			handleRemove(file, fileList) {
+				this.fileList = fileList
+			},
+			handlePreview(file, fileList) {
+				this.fileList = fileList
+			},
+			comment(item, index) {
+				if(this.commentIndex === index) {
+					this.commentIndex = -1
+					return
+				}
+				this.commentIndex = index
+			},
+			replyComment(item) {
+				this.nowDoWhat = '评论'
+				this.nowpublishId = item.publish_id
+				this.picArr = []
+				this.fileArr = []
+				this.pic_hash_arr = []
+				this.pic_time = 0
+				this.file_time = 0
+				this.fileList.forEach((item) => {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+						this.picArr.push(item)
+					} else {
+						this.fileArr.push(item)
+					}
+				})
+				if(this.picArr.length != 0) {
+					for(let i = 0; i < this.picArr.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.picArr[i].raw);
+						formData.append('token', this.token);
+						let config = {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.picArr.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.afile_hash_arr.push({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id,
+											"name": this.picArr[i].name
+										})
+										if(this.afile_hash_arr.length === this.picArr.length) {
+											let aDate = Date.parse(new Date())
+											this.pic_time = aDate
+										}
+									})
+							}
+						})
+					}
+				}
+				if(this.fileArr.length != 0) {
+					for(let i = 0; i < this.fileArr.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.fileArr[i]);
+						formData.append('token', this.token);
+						let config = {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							let index = this.fileArr[i].name.indexOf('.')
+							let attribute = this.fileArr[i].name.slice(index)
+							let file_name = this.fileArr[i].name.slice(0, index)
+							let param = new URLSearchParams();
+							param.append("uid", this.user.uid);
+							param.append("attribute", attribute);
+							param.append("attachments", res.data.hash);
+							param.append("file_name", this.fileArr[i].name);
+							this.$http.post("/index/Mobile/approval/add_attachments", param)
+								.then((res) => {
+									this.file_hash_arr.push({
+										"type": 4,
+										"contract_id": res.data.data.attachments_id,
+										"name": this.fileArr[i].name
+									})
+									if(this.file_hash_arr.length === this.fileArr.length) {
+										let bDate = Date.parse(new Date())
+										this.file_time = bDate
+									}
+								})
+						})
+					}
+				}
+			},
+			posted() {
+				this.nowDoWhat = '发布日志'
+				this.picArr = []
+				this.fileArr = []
+				this.pic_hash_arr = []
+				this.pic_time = 0
+				this.file_time = 0
+				this.fileList.forEach((item) => {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+						this.picArr.push(item)
+					} else {
+						this.fileArr.push(item)
+					}
+				})
+				if(this.picArr.length != 0) {
+					for(let i = 0; i < this.picArr.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.picArr[i].raw);
+						formData.append('token', this.token);
+						let config = {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.pic_hash_arr.push(res.data.hash)
+							if(this.pic_hash_arr.length === this.picArr.length) {
+								let nparam = new URLSearchParams();
+								nparam.append("uid", this.user.uid);
+								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+								this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									.then((res) => {
+										this.afile_hash_arr.push({
+											"type": 3,
+											"contract_id": res.data.data.enclosure_id,
+											"name": this.picArr[i].name
+										})
+										if(this.afile_hash_arr.length === this.picArr.length) {
+											let aDate = Date.parse(new Date())
+											this.pic_time = aDate
+										}
+									})
+							}
+						})
+					}
+				}
+				if(this.fileArr.length != 0) {
+					for(let i = 0; i < this.fileArr.length; i++) {
+						let formData = new FormData();
+						formData.append('file', this.fileArr[i]);
+						formData.append('token', this.token);
+						let config = {
+							headers: {
+								'Content-Type': 'multipart/form-data'
+							}
+						}
+						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							let index = this.fileArr[i].name.indexOf('.')
+							let attribute = this.fileArr[i].name.slice(index)
+							let file_name = this.fileArr[i].name.slice(0, index)
+							let param = new URLSearchParams();
+							param.append("uid", this.user.uid);
+							param.append("attribute", attribute);
+							param.append("attachments", res.data.hash);
+							param.append("file_name", this.fileArr[i].name);
+							this.$http.post("/index/Mobile/approval/add_attachments", param)
+								.then((res) => {
+									this.file_hash_arr.push({
+										"type": 4,
+										"contract_id": res.data.data.attachments_id,
+										"name": this.fileArr[i].name
+									})
+									if(this.file_hash_arr.length === this.fileArr.length) {
+										let bDate = Date.parse(new Date())
+										this.file_time = bDate
+									}
+								})
+						})
+					}
+				}
+			},
+			cancelCC() {
+				this.ccFormShow = false
+			},
+			resetCC() {
+
+			},
+			submitCC() {
+				this.ccArr = []
+				this.ccFormShow = false
+				this.checkPersonList.forEach((name) => {
+					this.comPersonList.forEach((item) => {
+						if(item.name === name) {
+
+							let obj = {}
+							obj.id = item.personnel_id
+							obj.type = 1
+							this.ccArr.push(obj)
+						}
+					})
+				})
+				this.checkDepartList.forEach((name) => {
+					this.comDepartList.forEach((item) => {
+						if(item.department_name === name) {
+							let obj = {}
+							obj.id = item.department_id
+							obj.type = 2
+							this.ccArr.push(obj)
+						}
+					})
+				})
+
+			},
+			chooseRange() {
+				this._getComPersonList()
+				this._getComDepart()
+				this.ccFormShow = true
+			},
+			navClick(index) {
+				this.navIndex = index
+				if(index === 0) {
+					this.chooseColleagueShow = true
+				} else {
+					this.chooseColleagueShow = false
+				}
+			},
 			chooseDay(item, index) {
 				this.currentIndex = index
 				this.info1Show = false
@@ -195,12 +531,13 @@
 					param.append("p", this.pageIndex);
 					this.$http.post("/index/Mobile/company/publish_look_two", param)
 						.then((res) => {
-							console.log(res)
-							res.data.data.forEach((item) => {
+							res.data.data.forEach((item, index) => {
 								this.dayList.push(createDayList(item))
+								this.getFile(item.enclosure, index)
 							})
+							console.log(this.dayList)
 						})
-				}, 700)
+				}, 1000)
 			},
 			_getComPersonList() {
 				let newparam = new URLSearchParams();
@@ -216,14 +553,148 @@
 
 					})
 			},
+			_getComDepart() {
+				let param = new URLSearchParams();
+				param.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/user/get_department_lest", param)
+					.then((res) => {
+						let arr = []
+						res.data.data.forEach((item) => {
+							arr.push(create_depart_list(item))
+						})
+						this.setComDepartList(arr)
+					})
+			},
 			...mapMutations({
+				setComDepartList: 'SET_COM_DEPART_LIST',
 				setComPersonList: 'SET_COM_PERSON_LIST'
 			})
 		},
+		watch: {
+			file_time() {
+				if(this.nowDoWhat === '评论') {
+					if(this.picArr.length != 0) {
+						if(this.pic_time === 0) {
+							return
+						}
+					}
+					if(this.file_time != 0 || this.pic_time != 0) {
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("publish_id", this.nowpublishId);
+						param.append("content", this.commentTxt);
+						param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+						this.$http.post("/index/Mobile/company/user_comment", param)
+							.then((res) => {
+								console.log(res)
+							})
+					}
+				}
+				if(this.nowDoWhat === '发布日志') {
+					if(this.picArr.length != 0) {
+						if(this.pic_time === 0) {
+							return
+						}
+					}
+					if(this.file_time != 0 || this.pic_time != 0) {
+						let logType
+						if(this.dayType === '日') {
+							logType = 1
+						} else if(this.dayType === '周') {
+							logType = 2
+						} else {
+							logType = 3
+						}
+						let reviewerId
+						this.comPersonList.forEach((item) => {
+							if(item.name === this.people) {
+								reviewerId = item.uid
+							}
+						})
+						let save_time = Date.parse(new Date()).toString().slice(0, 10)
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("company_id", this.nowCompanyId);
+						param.append("summary_today", this.todayTxt);
+						param.append("tomorrow_plan", this.tomorrowTxt);
+						param.append("work_exp", this.workExp);
+						param.append("reviewer", reviewerId);
+						param.append("json", JSON.stringify(this.ccArr));
+						param.append("log_type", 1);
+						param.append("user_save_time", save_time);
+						param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+						this.$http.post("/index/Mobile/company/publish_log", param)
+							.then((res) => {
+								console.log(res)
+							})
+					}
+
+				}
+
+			},
+			pic_time() {
+				if(this.nowDoWhat === '评论') {
+					if(this.fileArr.length != 0) {
+						if(this.file_time === 0) {
+							return
+						}
+					}
+					if(this.file_time != 0 || this.pic_time != 0) {
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("publish_id", this.nowpublishId);
+						param.append("content", this.commentTxt);
+						param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+						this.$http.post("/index/Mobile/company/user_comment", param)
+							.then((res) => {
+								console.log(res)
+							})
+					}
+				}
+				if(this.nowDoWhat === '发布日志') {
+					if(this.fileArr.length != 0) {
+						if(this.file_time === 0) {
+							return
+						}
+					}
+					if(this.file_time != 0 || this.pic_time != 0) {
+						let logType
+						if(this.dayType === '日') {
+							logType = 1
+						} else if(this.dayType === '周') {
+							logType = 2
+						} else {
+							logType = 3
+						}
+						let reviewerId
+						this.comPersonList.forEach((item) => {
+							if(item.name === this.people) {
+								reviewerId = item.uid
+							}
+						})
+						let save_time = Date.parse(new Date()).toString().slice(0, 10)
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("company_id", this.nowCompanyId);
+						param.append("summary_today", this.todayTxt);
+						param.append("tomorrow_plan", this.tomorrowTxt);
+						param.append("work_exp", this.workExp);
+						param.append("reviewer", reviewerId);
+						param.append("json", JSON.stringify(this.ccArr));
+						param.append("log_type", 1);
+						param.append("user_save_time", save_time);
+						param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+						this.$http.post("/index/Mobile/company/publish_log", param)
+							.then((res) => {
+								console.log(res)
+							})
+					}
+				}
+			}
+		},
 		created() {
 			this.getData()
-			this._getComPersonList()
-
+			this.$set(this.postData, 'token', JSON.parse(localStorage.token))
 		}
 
 	}
@@ -241,18 +712,33 @@
 				box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 				-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 				padding: 10px 25px;
-				>.ccForm{
-					display: none;
+				position: relative;
+				>.state {
+					font-size: 18px;
+					color: #DDDDDD;
+					cursor: pointer;
+					transition: .2s;
+					&:hover {
+						color: #999999;
+					}
+				}
+				.ccForm {
+					position: absolute;
+					z-index: 10;
+					left: 150px;
+					top: 580px;
 					width: 300px;
-					height: 500px;
+					height: 450px;
 					background: #FFFFFF;
 					box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 					-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-					>.nav{
+					>.nav {
 						font-size: 14px;
 						height: 30px;
 						width: 100%;
-						span{
+						cursor: pointer;
+						span {
+							background: #F9F9F9;
 							color: #3487E2;
 							display: inline-block;
 							width: 50%;
@@ -260,17 +746,47 @@
 							float: left;
 							text-align: center;
 							line-height: 30px;
-							&.active{
-								background: #DDDDDD;
+							&.active {
+								background: #FFFFFF;
+								color: #444444;
 							}
 						}
 					}
+					>.chooseColleague {
+						padding: 10px 0;
+						height: 330px;
+						overflow-y: scroll;
+					}
+					>.chooseDepartment {
+						padding: 10px 0;
+						height: 330px;
+						overflow-y: scroll;
+					}
+					>.button {
+						margin-top: 20px;
+						margin-left: 35px;
+						.el-button--info {
+							margin-left: 20px;
+						}
+						.el-button+.el-button {
+							margin-left: 6px;
+						}
+					}
+					.el-checkbox {
+						display: block;
+						height: 26px;
+						margin-left: 30px;
+					}
 				}
-				>.ccRange {
+				.posted {
+					margin-top: 10px;
+					margin-left: 480px;
+				}
+				.ccRange {
 					margin-top: 10px;
 					border: 1px solid #DDDDDD;
 					padding: 4px 7px 0;
-					>.choose{
+					>.choose {
 						cursor: pointer;
 						font-size: 13px;
 						display: inline-block;
@@ -288,11 +804,10 @@
 						>i {
 							margin-left: 4px;
 							font-size: 14px;
-							
 						}
 					}
 				}
-				>.choosePanel {
+				.choosePanel {
 					margin-top: 20px;
 					height: 150px;
 					border: 1px solid #ddd;
@@ -362,24 +877,25 @@
 						}
 					}
 				}
-				>.opera {
+				.opera {
 					text-align: left;
-					height: 35px;
-					padding: 0 10px;
 					background: #F9F9F9;
 					border: 1px solid #ddd;
 					border-top: none;
-					>i {
+					.el-upload {
+						outline: none;
+					}
+					i {
 						cursor: pointer;
 						font-size: 16px;
-						margin-top: 10px;
-						margin-left: 10px;
+						margin: 10px;
+						margint: 10px;
 					}
 				}
-				>.title {
+				.title {
 					font-size: 14px;
 				}
-				>.text {
+				.text {
 					padding: 0 10px 46px;
 					border: 1px solid #ddd;
 					border-bottom: none;
@@ -388,6 +904,15 @@
 						>span {
 							color: #999;
 							display: block;
+							>i {
+								cursor: pointer;
+								padding: 2px;
+								float: right;
+								color: #CCCCCC;
+								&:hover {
+									color: #999999;
+								}
+							}
 						}
 						>textarea {
 							width: 500px;
@@ -413,6 +938,54 @@
 						/*border: 1px solid #CCCCCC;*/
 						box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 						-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+						>.comment {
+							background: #F9FBFF;
+							padding: 10px 24px;
+							>.txt {
+								border: 1px solid #DDDDDD;
+								textarea {
+									border: none;
+									resize: none;
+									outline: none;
+									width: 546px;
+									height: 50px;
+									text-indent: 10px;
+									padding-top: 10px;
+								}
+								>.opera {
+									width: 100%;
+									background: #F9F9F9;
+									transition: .5s;
+									.el-upload {
+										outline: none;
+									}
+									.el-upload-list__item {
+										outline:none &:first-child {
+											margin-top: 0;
+										}
+										line-height: 1;
+									}
+									.el-upload-list__item:hover {
+										background: #DDDDDD;
+									}
+									i {
+										cursor: pointer;
+										margin: 10px;
+										color: #666666;
+										font-size: 16px;
+										&:hover {
+											color: #444444;
+										}
+									}
+								}
+							}
+							>.button {
+								margin-top: 8px;
+								>.el-button {
+									padding: 4px 10px;
+								}
+							}
+						}
 						>.opera {
 							background-color: #f4f7fd;
 							height: 46px;
@@ -515,6 +1088,28 @@
 									color: #444444;
 									line-height: 27px;
 									font-size: 14px;
+								}
+								img {
+									cursor: pointer;
+									width: 100px;
+									margin-right: 5px;
+									margin-bottom: 5px;
+								}
+								&.file{
+									
+									>a{
+										display: block;
+										height: 24px;
+										line-height: 24px;
+										color: #000000;
+										padding: 2px 10px;
+										background: #DDDDDD;
+										text-align: center;
+										margin-bottom: 5px;
+										&:hover{
+											background: #EEEEEE;
+										}
+									}
 								}
 							}
 						}

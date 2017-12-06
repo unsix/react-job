@@ -150,6 +150,7 @@
 			},
 			getPic(event) {
 				this.pic = event.target.files;
+				console.log(this.pic)
 			},
 			getFile(event) {
 				this.file = event.target.files;

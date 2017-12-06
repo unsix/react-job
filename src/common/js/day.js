@@ -1,6 +1,6 @@
 
 export default class dayList {
-  constructor({avatar, enclosure,add_time,summary_today,tomorrow_plan,work_exp,name,form_type}) {
+  constructor({avatar, enclosure,add_time,summary_today,tomorrow_plan,work_exp,name,form_type,publish_id}) {
     this.enclosure = enclosure
     this.add_time = add_time
     this.avatar = avatar
@@ -9,6 +9,7 @@ export default class dayList {
     this.work_exp = work_exp
     this.name = name
     this.form_type = form_type
+    this.publish_id = publish_id
   }
 }
 
@@ -21,7 +22,8 @@ export function createDayList(item) {
     work_exp: item.work_exp,
     name: item.name,
     form_type: item.form_type,
-    avatar: 'http://img-bbsf.6655.la/' +item.avatar
+    publish_id: item.form_type,
+    avatar: 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
   })
 }
 
