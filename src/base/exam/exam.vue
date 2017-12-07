@@ -117,7 +117,7 @@
 						</span>
 				</div>
 				<div>
-					<span>审批：</span>
+					<span></span>
 					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar lzz">
@@ -130,7 +130,7 @@
 								<span>部门</span>
 							</div>
 							<div class="operation lzz">
-								<span>时间</span>
+								<span>处理时间</span>
 							</div>
 						</div>
 						<div class="exam_info">
@@ -138,10 +138,10 @@
 								<span>{{item.is_agree}}</span>
 							</div>
 							<div class="name">
-								<span>{{item.department_name}}</span>
+								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.opinion}}</span>
+								<span>{{item.department_name}}</span>
 							</div>
 							<div class="operation">
 								<span>{{item.add_time}}</span>
@@ -230,7 +230,7 @@
 						</span>
 				</div>
 				<div>
-					<span>审批：</span>
+					<span></span>
 					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar lzz">
@@ -243,7 +243,7 @@
 								<span>部门</span>
 							</div>
 							<div class="operation lzz">
-								<span>时间</span>
+								<span>处理时间</span>
 							</div>
 						</div>
 						<div class="exam_info">
@@ -251,10 +251,10 @@
 								<span>{{item.is_agree}}</span>
 							</div>
 							<div class="name">
-								<span>{{item.department_name}}</span>
+								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.opinion}}</span>
+								<span>{{item.department_name}}</span>
 							</div>
 							<div class="operation">
 								<span>{{item.add_time}}</span>
@@ -341,12 +341,40 @@
 					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
 				</div>
 				<div>
-					<span>审批：</span>
-					<br />
-					<span v-for="item in form_Listb.content" style="color: #444444;">
-						{{item.is_agree}}  {{item.department_name}}	{{item.name}} {{item.opinion}} 	{{item.add_time}}
-						<div><img :src="list" alt=""  v-for="(list,index) in item.picture" @click="cl_pic(item,index)"/></div>
-						</span>
+					<span></span>
+					<div v-for="item in form_Listb.content">
+						<div class="exam_info">
+							<div class="avatar lzz">
+								<span style="margin-left: 5px;">状态</span>
+							</div>
+							<div class="tel lzz">
+								<span>姓名</span>
+							</div>
+							<div class="name lzz">
+								<span>部门</span>
+							</div>
+							<div class="operation lzz">
+								<span>处理时间</span>
+							</div>
+						</div>
+						<div class="exam_info">
+							<div class="avatar">
+								<span>{{item.is_agree}}</span>
+							</div>
+							<div class="name">
+								<span>{{item.name}}</span>
+							</div>
+							<div class="tel">
+								<span>{{item.department_name}}</span>
+							</div>
+							<div class="operation">
+								<span>{{item.add_time}}</span>
+							</div>
+						</div>
+						<div>
+							<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+						</div>
+					</div>
 				</div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
@@ -421,7 +449,7 @@
 					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
 				</div>
 				<div>
-					<span>审批：</span>
+					<span></span>
 					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar lzz">
@@ -434,7 +462,7 @@
 								<span>部门</span>
 							</div>
 							<div class="operation lzz">
-								<span>时间</span>
+								<span>处理时间</span>
 							</div>
 						</div>
 						<div class="exam_info">
@@ -442,10 +470,10 @@
 								<span>{{item.is_agree}}</span>
 							</div>
 							<div class="name">
-								<span>{{item.department_name}}</span>
+								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.opinion}}</span>
+								<span>{{item.department_name}}</span>
 							</div>
 							<div class="operation">
 								<span>{{item.add_time}}</span>
@@ -505,7 +533,7 @@
 						</span>
 				</div>
 				<div>
-					<span>审批：</span>
+					<span></span>
 					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar lzz">
@@ -518,7 +546,7 @@
 								<span>部门</span>
 							</div>
 							<div class="operation lzz">
-								<span>时间</span>
+								<span>处理时间</span>
 							</div>
 						</div>
 						<div class="exam_info">
@@ -526,10 +554,10 @@
 								<span>{{item.is_agree}}</span>
 							</div>
 							<div class="name">
-								<span>{{item.department_name}}</span>
+								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.opinion}}</span>
+								<span>{{item.department_name}}</span>
 							</div>
 							<div class="operation">
 								<span>{{item.add_time}}</span>
@@ -568,7 +596,7 @@
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
-	import { mapGetters } from 'vuex'
+	import { mapGetters ,mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -621,9 +649,24 @@
 				'nowCompanyId'
 			])
 		},
+		watch: {
+			pageIndex(){
+				this._getExamList()
+				if(this.searchShow){
+					this.doSearch()
+				}
+			},
+			searchInfo(){
+				this.doSearch()
+			},
+			nowCompanyId(){
+				this._getExamList()
+			}
+		},
 		created() {
-			this._getExamList()
+			this._getUserCompanyList()
 			this._getToken()
+			this._getExamList()
 		},
 		components: {
 			browsePic,
@@ -646,8 +689,17 @@
 				}
 				this.doSearch()
 			},
+			_getUserCompanyList() {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/user/companies_list", param)
+					.then((res) => {				
+						this.setNowCompanyId(res.data.data[0].company_id)
+						this.setCompanyList(res.data.data)
+						this.setNowCompanyName(res.data.data[0].company_name)
+					})
+			},
 			doSearch(){
-				console.log(this.pageIndex)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
@@ -742,6 +794,17 @@
 						}
 					})
 			},
+			...mapMutations({
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+				setToken: 'SET_TOKEN',
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST'
+			}),
 			colorFour(item) {
 				this.$refs.list[this.colorIndex].style.background = "rgba(0,0,255,0.1)"
 				let param = new URLSearchParams();
@@ -1154,17 +1217,7 @@
 					})
 			}
 		},
-		watch: {
-			pageIndex(){
-				this._getExamList()
-				if(this.searchShow){
-					this.doSearch()
-				}
-			},
-			searchInfo(){
-				this.doSearch()
-			}
-		}
+		
 	}
 </script>
 
@@ -1187,9 +1240,9 @@
 		width: 100%;
 		height: 100%;
 		>.exam {
-			width: 558px;
+			width: 600px;
 			overflow: hidden;
-			background: #FFFFFF;
+			/*background: #FFFFFF;*/
 			>.nav {
 				position: relative;
 				font-weight: 700;
@@ -1199,6 +1252,10 @@
 					right: 20px;
 					font-size: 14px;
 					cursor: pointer;
+				}
+				.el-tabs__header{
+					background: #FFFFFF;
+					margin-bottom: 5px;
 				}
 				.el-tabs__active-bar {
 					width: 150px;
@@ -1210,7 +1267,9 @@
 				}
 			}
 			>.search {
-				margin-top: 50px;
+				background: #FFFFFF;
+				padding-top: 50px;
+				padding-bottom: 20px;
 				>.one {
 					display: inline-block;
 					margin-left: 40px;
@@ -1249,10 +1308,8 @@
 				}
 			}
 			>.list {
-				width: 550px;
-				margin-left: 4px;
+				width: 600px;
 				>ul {
-					padding: 4px;
 					>.page {
 						width: 100%;
 						padding: 4px;
@@ -1266,8 +1323,9 @@
 						}
 					}
 					>li {
+						background: #FFFFFF;
 						display: block;
-						margin-bottom: 10px;
+						margin-bottom: 5px;
 						color: #2D2F33;
 						font-size: 13px;
 						oz-box-shadow: 1px 1px 2px #999999;
@@ -1355,8 +1413,12 @@
 			}
 		}
 		.form_wrapper {
-			width: 556px;
+			min-height: 400px;
+			background: #FFFFFF;
+			width: 600px;
 			overflow: hidden;
+			box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+				-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 			.top {
 				width: 100%;
 				display: block;

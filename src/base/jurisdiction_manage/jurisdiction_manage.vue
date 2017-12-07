@@ -70,9 +70,8 @@
 
 <script>
 import {createJurisdictionList} from 'common/js/jurisdiction_list.js'
-import {mapGetters} from 'vuex' 
+import {mapGetters,mapMutations} from 'vuex' 
 import {createPersonInfo} from 'common/js/person_info'
-import personList from '@/base/person_list/person_list'
 import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 	export default{
 		data(){
@@ -123,9 +122,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			])
 		},
 		methods:{
-			handleChange(){
-				
-			},
 			handleClick(tab){
 				let index = JSON.parse(tab.index)
 				switch(index)
@@ -155,6 +151,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					this.setFormRePerShow = false
 					this.jurisdictionItemShow = true
 					this._getApproval()
+					
 				}
 			},
 			handleClose(){
@@ -226,8 +223,30 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				this.formRePersonIndex = -1
 				this.personShow = false
 			},
-			
-			_getHuizhi(){
+			_getUserCompanyList() {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/user/companies_list", param)
+					.then((res) => {			
+						this.setNowCompanyId(res.data.data[0].company_id)
+						this.setCompanyList(res.data.data)
+						this.setNowCompanyName(res.data.data[0].company_name)
+					})
+			},
+			 _getComPersonList(){
+				let newparam = new URLSearchParams();
+				newparam.append("company_id",this.nowCompanyId); 
+				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+				.then((res)=>{
+				   	let reaDa=[]
+				    res.data.data.forEach((item)=>{
+				    	item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+				    	reaDa.push(item)
+				    })	
+				   	this.setComPersonList(reaDa)
+				})
+			},
+			_getHuizhi(){	
 				let param = new URLSearchParams();
 			    param.append("company_id",this.nowCompanyId);
 			    param.append("uid",this.user.uid);
@@ -273,18 +292,30 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 						
 					})
 			    })
-			}
+			},
+			...mapMutations({
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+				setToken: 'SET_TOKEN',
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST'
+			})
 		},
 		components:{
-			personList,
 			jurisdictionItem
 		},
 		created(){
+			this._getUserCompanyList()
 			this._getHuizhi()
 		},
 		watch:{
 			nowCompanyId(){
 				this._getHuizhi()
+				this._getComPersonList()
 				this._getApproval()
 			}
 		}
@@ -357,8 +388,9 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					top: 0px;
 					right: 10px;
 					z-index: 10;
-					width: 150px;
+					width: 170px;
 					height: 300px;
+					overflow-y: scroll;
 					.el-collapse-item__content{
 						padding-bottom: 0;
 					}

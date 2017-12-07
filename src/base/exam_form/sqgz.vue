@@ -61,10 +61,10 @@
 						<span>{{item.is_agree}}</span>
 					</div>
 					<div class="name">
-						<span>{{item.department_name}}</span>
+						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.opinion}}</span>
+						<span>{{item.department_name}}</span>
 					</div>
 					<div class="operation">
 						<span>{{item.add_time}}</span>
@@ -344,6 +344,7 @@
 
 <style lang="scss" scoped="scoped">
 	.form {
+		background: #FFFFFF;
 		padding: 10px;
 		color: #999999;
 		>.top {

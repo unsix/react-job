@@ -36,7 +36,6 @@ export function create_exam_list(item) {
   })
 }
 function getColor(item){
-	console.log(item.tagging)
 	if(!item.tagging){
 		return
 	}

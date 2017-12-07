@@ -6,20 +6,20 @@
 				<el-button type="primary" round @click="redact">编辑</el-button>
 			</div>
 		</div>
-		<div class="chooseApprovalPerson" >
-				<el-collapse  v-model="activeNames">
-					 <el-collapse-item title="人员列表" name="1">
-						<div class="info" v-for="(item,index) in comPersonList" @click="chooseContractApprovalPerson(item,index)">
-							<div class="avatar">
-								<img :src="item.avatar" alt="" />
-									</div>
-									<div class="content">
-									<span class="name">{{item.department_name}}</span>
-									<span class="name">{{item.name}}</span>	
-								</div>
-							</div>
-					</el-collapse-item>
-				</el-collapse>
+		<div class="chooseApprovalPerson">
+			<el-collapse v-model="activeNames">
+				<el-collapse-item title="人员列表" name="1">
+					<div class="info" v-for="(item,index) in comPersonList" @click="chooseContractApprovalPerson(item,index)">
+						<div class="avatar">
+							<img :src="item.avatar" alt="" />
+						</div>
+						<div class="content">
+							<span class="name">{{item.department_name}}</span>
+							<span class="name">{{item.name}}</span>
+						</div>
+					</div>
+				</el-collapse-item>
+			</el-collapse>
 		</div>
 		<div class="jurisdictionFormList">
 			<ul>
@@ -37,13 +37,13 @@
 			</ul>
 		</div>
 		<div class="dialog_wrapper" v-show="dialogVisible">
-			<div class="dialog">	
+			<div class="dialog">
 				<div class="title">
 					<span>提示</span>
 				</div>
 				<div class="close">
 					<i class="el-icon-close" @click="cancel"></i>
-				</div>	
+				</div>
 				<div class="info">
 					<span>您确定提交吗</span>
 				</div>
@@ -55,36 +55,36 @@
 		</div>
 	</div>
 	</div>
-	
+
 </template>
 
 <script>
-	import {mapGetters,mapMutations} from 'vuex'
-	import {createPersonInfo} from 'common/js/person_info'
-	import {createOrder} from 'common/js/order'
+	import { mapGetters, mapMutations } from 'vuex'
+	import { createPersonInfo } from 'common/js/person_info'
+	import { createOrder } from 'common/js/order'
 	export default {
-		data(){
-			return{
-				contractApprovalShow:false,
-				originalJurisdictionFormList:[],
+		data() {
+			return {
+				contractApprovalShow: false,
+				originalJurisdictionFormList: [],
 				dialogVisible: false,
-				submitAddPersonShow:false,
-				numOne:0,
-				perIndex:-1,
-				arr:[],
-				activeNames:['0']
+				submitAddPersonShow: false,
+				numOne: 0,
+				perIndex: -1,
+				arr: [],
+				activeNames: ['0']
 			}
 		},
-		props:{
-			jurisdictionFormList:{
-				type:Array,
-				default:[]
+		props: {
+			jurisdictionFormList: {
+				type: Array,
+				default: []
 			},
-			formType:{
-				type:Number
+			formType: {
+				type: Number
 			}
 		},
-		computed:{
+		computed: {
 			...mapGetters([
 				'nowCompanyId',
 				'user',
@@ -92,86 +92,86 @@
 				'comPartPersonList'
 			])
 		},
-		methods:{
-			save(){
+		methods: {
+			save() {
 				this.dialogVisible = true
 				this.activeNames = ['0']
 			},
-		    cancel(){
-		    	this.dialogVisible=false
-		    	this.submitAddPersonShow = false
-		    },
-			submit(){
-				this.arr = []
-				this.jurisdictionFormList.forEach((item,index)=>{
-					this.arr.push(createOrder(item,index))
-				})
-				
-				this.dialogVisible=false
-				let param = new URLSearchParams();
-				param.append("uid",this.user.uid);
-				param.append("company_id",this.nowCompanyId);
-				param.append("type",this.formType);
-				param.append("sequence",JSON.stringify(this.arr));
-			    this.$http.post("/index/Mobile/approval/set_sequence",param)
-			    .then((res)=>{
-			    	this.submitAddPersonShow = false
-			    	this.$emit('reload')
-			    	if(res.data.code === 0){
-			    		this.$message({
-				          message: '修改成功',
-				          type: 'success'
-				        });
-			    	}else{
-			    		this.$message.error('修改失败');
-			    	}
-			    })
+			cancel() {
+				this.dialogVisible = false
+				this.submitAddPersonShow = false
 			},
-			redact(){
+			submit() {
+				this.arr = []
+				this.jurisdictionFormList.forEach((item, index) => {
+					this.arr.push(createOrder(item, index))
+				})
+
+				this.dialogVisible = false
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("company_id", this.nowCompanyId);
+				param.append("type", this.formType);
+				param.append("sequence", JSON.stringify(this.arr));
+				this.$http.post("/index/Mobile/approval/set_sequence", param)
+					.then((res) => {
+						this.submitAddPersonShow = false
+						this.$emit('reload')
+						if(res.data.code === 0) {
+							this.$message({
+								message: '修改成功',
+								type: 'success'
+							});
+						} else {
+							this.$message.error('修改失败');
+						}
+					})
+			},
+			redact() {
 				this.submitAddPersonShow = true
 				this.activeNames = ['1']
 				this.originalJurisdictionFormList = this.jurisdictionFormList
 			},
-//			选择合同评审表人员
-			chooseContractApprovalPerson(item){
-				for(let i = 0;i<this.jurisdictionFormList.length;i++){
-		    		if(item.name===this.jurisdictionFormList[i].name){
-		    			this.$message.error(item.name+'已经在列表中！');
-		    			return
-		    		}	
-		    	}
+			//			选择合同评审表人员
+			chooseContractApprovalPerson(item) {
+				for(let i = 0; i < this.jurisdictionFormList.length; i++) {
+					if(item.name === this.jurisdictionFormList[i].name) {
+						this.$message.error(item.name + '已经在列表中！');
+						return
+					}
+				}
 				this.jurisdictionFormList.push(item)
 			},
-//			删除合同评审表人员
-			deletejurisdictionFormList(item,index){
+			//			删除合同评审表人员
+			deletejurisdictionFormList(item, index) {
 
-				this.jurisdictionFormList.splice(index,1)
+				this.jurisdictionFormList.splice(index, 1)
 			},
-			upjurisdictionFormList(item,index){
-				if(index === 0){
+			upjurisdictionFormList(item, index) {
+				if(index === 0) {
 					return
 				}
 				let nowItem = this.jurisdictionFormList[index]
-				let upItem = this.jurisdictionFormList[index-1]
+				let upItem = this.jurisdictionFormList[index - 1]
 				this.$set(this.jurisdictionFormList, index, upItem);
-				this.$set(this.jurisdictionFormList, index-1, nowItem);
+				this.$set(this.jurisdictionFormList, index - 1, nowItem);
 			},
-			downjurisdictionFormList(item,index){
+			downjurisdictionFormList(item, index) {
 				let len = this.jurisdictionFormList.length
-				if(index === len-1){
+				if(index === len - 1) {
 					return
 				}
 				let nowItem = this.jurisdictionFormList[index]
-				let downItem = this.jurisdictionFormList[index+1]
+				let downItem = this.jurisdictionFormList[index + 1]
 				this.$set(this.jurisdictionFormList, index, downItem);
-				this.$set(this.jurisdictionFormList, index+1, nowItem);
+				this.$set(this.jurisdictionFormList, index + 1, nowItem);
 			},
 			...mapMutations({
-				setComPersonList : 'SET_COM_PERSON_LIST'
+				setComPersonList: 'SET_COM_PERSON_LIST'
 			})
 		},
-		watch:{
-			jurisdictionFormList(){
+		watch: {
+			jurisdictionFormList() {
 				this.submitAddPersonShow = false
 				this.activeNames = ['0']
 			}
@@ -180,60 +180,60 @@
 </script>
 
 <style lang="scss" scoped>
-.dialog_wrapper{
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background:rgba(0,0,0,0.4);
-	z-index: 10;
-	.dialog{
-		opacity: 1;
-		width: 30%;
-		background: #fff;
-		margin: 200px auto;
-		padding: 10px;
-		>div{
-			display: inline-block;
-		}
-		.close{
-			cursor: pointer;
-			float: right;
-			padding:2px;
-			 
-			&:hover{
-				color: #3487E2;	
+	.dialog_wrapper {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.4);
+		z-index: 10;
+		.dialog {
+			opacity: 1;
+			width: 30%;
+			background: #fff;
+			margin: 200px auto;
+			padding: 10px;
+			>div {
+				display: inline-block;
 			}
-		}
-		.info{
-			display: block;
-			clear: both;
-			height: 80px;
-			line-height: 80px;
-			font-size: 14px;
-			color: #2D2F33;
-		}
-		.button{
-			display: block;
-			width: 100%;
-			height: 30px;
-			span{
-				border-radius: 4px;
-				text-align: center;
-				font-size: 14px;
+			.close {
 				cursor: pointer;
 				float: right;
-				margin-right: 10px;
-				width: 60px;
+				padding: 2px;
+				&:hover {
+					color: #3487E2;
+				}
+			}
+			.info {
+				display: block;
+				clear: both;
+				height: 80px;
+				line-height: 80px;
+				font-size: 14px;
+				color: #2D2F33;
+			}
+			.button {
+				display: block;
+				width: 100%;
 				height: 30px;
-				line-height: 30px;
-				background: #FFFFFF;
-				border:1px solid #3487E2;
+				span {
+					border-radius: 4px;
+					text-align: center;
+					font-size: 14px;
+					cursor: pointer;
+					float: right;
+					margin-right: 10px;
+					width: 60px;
+					height: 30px;
+					line-height: 30px;
+					background: #FFFFFF;
+					border: 1px solid #3487E2;
+				}
 			}
 		}
 	}
-}
+	
 	.contractApproval {
 		position: relative;
 		.addPerson {
@@ -324,34 +324,37 @@
 			top: 50px;
 			width: 200px;
 			height: 300px;
-			.info{
-						cursor: default;
-						font-size:0;
-						margin-bottom:4px;
-						>.avatar{
-							vertical-align: top;
-							display: inline-block;
-							img{
-								width: 40px;
-								height: 40px;
-								border-radius: 50%;
-							}	
-						}	
-						>.content{
-							display: inline-block;
-							margin-left: 10px;
-							>span{
-								display: block;
-								font-size: 12px;
-							}
-						}
+			overflow-y: scroll;
+			.info {
+				cursor: default;
+				font-size: 0;
+				margin-bottom: 4px;
+				>.avatar {
+					vertical-align: top;
+					display: inline-block;
+					img {
+						width: 40px;
+						height: 40px;
+						border-radius: 50%;
 					}
+				}
+				>.content {
+					display: inline-block;
+					margin-left: 10px;
+					>span {
+						display: block;
+						font-size: 12px;
+					}
+				}
+			}
 		}
 	}
-.el-button.is-round{
-	padding: 6px 10px;
-}
-.v-modal{
-	z-index: -100;
-}
+	
+	.el-button.is-round {
+		padding: 6px 10px;
+	}
+	
+	.v-modal {
+		z-index: -100;
+	}
 </style>

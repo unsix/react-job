@@ -105,8 +105,10 @@
 				this.setNowCompanyName(item.company_name)
 				this.userOperationLeftShow = false
 				this.setNowCompanyId(item.company_id)
+				this.judgeState()
 				this._getUserState()
 				this._getToken()
+				
 			},
 			handleScroll() {
 
@@ -198,16 +200,16 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-					this.workList = ['日常', '审批', '发起审批', '通讯录']
+					this.workList = ['审批', '发起审批', '通讯录']
 				}
 				if(m === 1 && f === 0) {
-					this.workList = ['日常', '审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
+					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
 				}
 				if(m === 0 && f === 1) {
-					this.workList = ['日常', '审批', '发起审批', '表单回执', '邀请同事', '通讯录']
+					this.workList = ['审批', '发起审批', '表单回执', '邀请同事', '通讯录']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['日常', '审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
+					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
 				}
 			},
 			_getUserCompanyList() {
@@ -309,6 +311,7 @@
 						margin-top: 1px;
 						position: absolute;
 						ul {
+							min-width: 100px;
 							position: absolute;
 							top: 15px;
 							left: 0px;
@@ -317,12 +320,14 @@
 							border-radius: 2px;
 							box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 							z-index: 2;
-							color: #666666;
 							li {
 								display: block;
 								padding: 10px 6px;
+								color: #666666;
+								&:hover{
+									color: #F09835;
+								}
 							}
-							;
 						}
 						img {
 							width: 20px;
@@ -378,8 +383,6 @@
 			.personInfo {
 				flex: 1;
 				align-self: center;
-				/*position:relative;
-			right: 0;*/
 				.person_main {
 					position: relative;
 					float: right;

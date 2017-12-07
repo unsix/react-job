@@ -31,8 +31,8 @@
 		<div v-if="form_Lista.total_prive">
 			<span>总价：</span><span>{{form_Lista.total_prive}}</span>
 		</div>
-		<div>
-			<span v-if="form_Lista.difference">与投标价格差异：</span><span>{{form_Lista.difference}}</span>
+		<div v-if="form_Lista.difference">
+			<span >与投标价格差异：</span><span>{{form_Lista.difference}}</span>
 		</div>
 		<div v-if="form_Lista.pay_method">
 			<span>付款方式：</span><span>{{form_Lista.pay_method}}</span>
@@ -43,8 +43,8 @@
 		<div v-if="form_Lista.arrive_time">
 			<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
 		</div>
-		<div>
-			<span v-if="form_Lista.remarks">合同主要内容：</span><span>{{form_Lista.remarks}}</span>
+		<div v-if="form_Lista.remarks">
+			<span >合同主要内容：</span><span>{{form_Lista.remarks}}</span>
 		</div>
 		<div>
 			<span>附件列表：</span>
@@ -76,7 +76,7 @@
 						<span>部门</span>
 					</div>
 					<div class="operation lzz">
-						<span>时间</span>
+						<span>处理时间</span>
 					</div>
 				</div>
 				<div class="exam_info">
@@ -84,10 +84,10 @@
 						<span>{{item.is_agree}}</span>
 					</div>
 					<div class="name">
-						<span>{{item.department_name}}</span>
+						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.opinion}}</span>
+						<span>{{item.department_name}}</span>
 					</div>
 					<div class="operation">
 						<span>{{item.add_time}}</span>
@@ -376,6 +376,7 @@
 
 <style lang="scss" scoped="scoped">
 	.form {
+		background: #FFFFFF;
 		padding: 10px;
 		color: #999999;
 		>.top {

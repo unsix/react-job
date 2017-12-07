@@ -80,6 +80,7 @@
 	import sqgz from '@/base/exam_form/sqgz'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
+	import { create_depart_list } from 'common/js/initial/depart.js'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
@@ -134,8 +135,37 @@
 
 			])
 		},
-
+		watch:{
+			nowCompanyId(){
+				this._getComPersonList()
+				this._getComDepart()
+			}
+		},
+		created(){
+			this._getUserCompanyList()
+			this._getToken()
+		},
 		methods: {
+			_getComDepart() {
+				let param = new URLSearchParams();
+				param.append("company_id", this.nowCompanyId);
+				this.$http.post("/index/Mobile/user/get_department_lest", param)
+					.then((res) => {
+						let arr = []
+						res.data.data.forEach((item) => {
+							arr.push(create_depart_list(item))
+						})
+						this.setComDepartList(arr)
+					})
+			},
+			_getToken() {
+				let nparam = new URLSearchParams();
+				nparam.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/path/get_token", nparam)
+					.then((res) => {
+						localStorage.token = JSON.stringify(res.data.data);
+					})
+			},
 			first_page() {
 				this.nextPageShow = true
 				this.pageIndex = 1
@@ -228,6 +258,27 @@
 				this.formShow = true
 				this.qkd_show = true
 			},
+			_getUserCompanyList() {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/user/companies_list", param)
+					.then((res) => {	
+						this.setNowCompanyId(res.data.data[0].company_id)
+						this.setCompanyList(res.data.data)
+						this.setNowCompanyName(res.data.data[0].company_name)
+					})
+			},
+			...mapMutations({
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+				setToken: 'SET_TOKEN',
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST'
+			}),
 			useInfo(item) {
 				this.formShow = true
 				this.qkd_show = false
@@ -466,10 +517,19 @@
 						}
 					})
 			},
-
-			...mapMutations({
-				setToken: 'SET_TOKEN'
-			})
+			_getComPersonList(){
+				let newparam = new URLSearchParams();
+				newparam.append("company_id",this.nowCompanyId); 
+				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+				.then((res)=>{
+				   	let reaDa=[]
+				    res.data.data.forEach((item)=>{
+				    	item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+				    	reaDa.push(item)
+				    })	
+				   	this.setComPersonList(reaDa)
+				})
+			}
 		},
 		components: {
 			loading,
@@ -608,7 +668,7 @@
 		background: #FFFFFF;
 		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 				-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-		width: 558px;
+		width: 600px;
 		.add_approval {
 			padding: 0px 10px;
 			>.nav {

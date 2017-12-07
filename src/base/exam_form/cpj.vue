@@ -58,10 +58,10 @@
 						<span>{{item.is_agree}}</span>
 					</div>
 					<div class="name">
-						<span>{{item.department_name}}</span>
+						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.opinion}}</span>
+						<span>{{item.department_name}}</span>
 					</div>
 					<div class="operation">
 						<span>{{item.add_time}}</span>
@@ -82,6 +82,8 @@
 				<el-button type="danger" round @click="refuse">拒绝</el-button>
 			</div>
 		</div>
+		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+		<loading v-show="loading_show"></loading>
 	</div>
 </template>
 
@@ -338,6 +340,7 @@
 
 <style lang="scss" scoped="scoped">
 	.form {
+		background: #FFFFFF;
 		padding: 10px;
 		color: #999999;
 		>.top {

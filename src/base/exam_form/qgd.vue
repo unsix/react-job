@@ -82,7 +82,7 @@
 						<span>部门</span>
 					</div>
 					<div class="operation lzz">
-						<span>时间</span>
+						<span>处理时间</span>
 					</div>
 				</div>
 				<div class="exam_info">
@@ -90,10 +90,10 @@
 						<span>{{item.is_agree}}</span>
 					</div>
 					<div class="name">
-						<span>{{item.department_name}}</span>
+						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.opinion}}</span>
+						<span>{{item.department_name}}</span>
 					</div>
 					<div class="operation">
 						<span>{{item.add_time}}</span>
@@ -387,6 +387,7 @@
 
 <style lang="scss" scoped="scoped">
 	.form {
+		background: #FFFFFF;
 		padding: 10px;
 		color: #999999;
 		>.top {

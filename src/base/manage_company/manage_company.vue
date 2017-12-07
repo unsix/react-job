@@ -76,17 +76,20 @@
 				typeName: ['添加部门', '添加工程项目'],
 				radioo: '2',
 				adminArr: [],
-				personShow: false,
 				numOne: 0,
 				activeName: '',
 				activeName1: ['1'],
 				newDepartmentName: '',
 				activeName2: '1',
-				returnOne: false
+				returnOne: false,
+				ComPartPersonList: []
 			}
 		},
 		created() {
+			this.setUser(JSON.parse(localStorage.user))
+			this._getUserCompanyList()
 			this._getAdmin()
+			this._getComPartPersonList()
 		},
 		computed: {
 			...mapGetters([
@@ -97,9 +100,9 @@
 			])
 		},
 		watch: {
-			nowCompanyId: function() {
-				//				this.numOne=0
-				//				this._getAdmin()
+			nowCompanyId() {
+				this._getAdmin()
+				this._getComPartPersonList()
 			}
 		},
 		methods: {
@@ -148,6 +151,7 @@
 			},
 			handleChange() {},
 			setAdministrator(item) {
+				
 				this.adminArr.forEach((list) => {
 					if(list.personnel_id === item.personnel_id) {
 						this.$message({
@@ -162,13 +166,14 @@
 					return
 				}
 				let arr = []
-				arr.push(item.person[0].personnel_id)
+				arr.push(item.personnel_id)			
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("personnel_id", JSON.stringify(arr));
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/User/give_manage", param)
 					.then((res) => {
+						
 						this.activeName1 = ['1']
 						this.activeName2 = '0'
 						if(res.data.code === 0) {
@@ -184,38 +189,34 @@
 			},
 
 			cancelAdministrator(item) {
-				this.$confirm('确定删除' + item.name + '吗', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消'
-				}).then(() => {
-					if(item.personnel_id === JSON.parse(localStorage.nowCompanyId)) {
-						this.$message.error('管理员不可删除自己')
-						return
+				this.$alert('确定删除管理员'+item.name+'吗', '操作', {
+					
+					callback: action => {
+						if(item.personnel_id === JSON.parse(localStorage.personnelId)) {				
+							this.$message.error('管理员不可删除自己')
+							return
+						}
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("my_personnel_id", JSON.parse(localStorage.personnelId));
+						param.append("personnel_id", item.personnel_id);
+						param.append("company_id", this.nowCompanyId);
+						this.$http.post("/index/Mobile/User/del_manage", param)
+							.then((res) => {
+								if(res.data.code === 1) {
+									this.$message.error(res.data.message);
+								} else if(res.data.code === 0) {
+									this._getComPartPersonList()
+									this._getAdmin()
+									this.$message({
+										message: '删除成功',
+										type: 'success'
+									});
+								}
+							})
 					}
-					let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("my_personnel_id", JSON.parse(localStorage.nowPersonelId));
-					param.append("personnel_id", item.personnel_id);
-					param.append("company_id", this.nowCompanyId);
-					this.$http.post("/index/Mobile/User/del_manage", param)
-						.then((res) => {
-							if(res.data.code === 1) {
-								this.$message.error(res.data.message);
-							} else if(res.data.code === 0) {
-								this._getComPartPersonList()
-								this._getAdmin()
-								this.$message({
-									message: '删除成功',
-									type: 'success'
-								});
-							}
-						})
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
 				});
+
 			},
 			deleteMember(item, index, i) {
 				this.$confirm('确定删除' + item.name + '吗', '提示', {
@@ -246,19 +247,20 @@
 					});
 				});
 			},
-
-			closePersonList() {
-				this.personShow = false
-			},
-
-			closeInvite() {
-				this.navIndex = -1
-				this.listShow = true
-				this.addAdministratorShow = false
+			_getUserCompanyList() {
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				this.$http.post("/index/Mobile/user/companies_list", param)
+					.then((res) => {
+						this.setNowCompanyId(res.data.data[0].company_id)
+						this.setCompanyList(res.data.data)
+						this.setNowCompanyName(res.data.data[0].company_name)
+					})
 			},
 			_getComPartPersonList() {
+				this.ComPartPersonList = []
 				let param = new URLSearchParams();
-				param.append("company_id", JSON.parse(localStorage.nowCompanyId));
+				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/user/get_department_lest", param)
 					.then((res) => {
 						let resData = res.data.data
@@ -269,7 +271,7 @@
 							let obj = {}
 							this.$set(obj, 'department_name', resData[j].department_name)
 							let newparam = new URLSearchParams();
-							newparam.append("company_id", JSON.parse(localStorage.nowCompanyId));
+							newparam.append("company_id", this.nowCompanyId);
 							newparam.append("department_id", resData[j].department_id);
 							this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
 								.then((res) => {
@@ -306,7 +308,15 @@
 					})
 			},
 			...mapMutations({
-				setComPartPersonList: 'SET_COM_PART_PERSON_LIST'
+				setUser: 'SET_USER',
+				setNowCompanyId: 'SET_NOWCOMPANY_ID',
+				setComPersonList: 'SET_COM_PERSON_LIST',
+				setComDepartList: 'SET_COM_DEPART_LIST',
+				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+				setToken: 'SET_TOKEN',
+				setUserState: 'SET_USERSTATE',
+				setCompanyList: 'SET_COMPANYLIST'
 			})
 		}
 	}
@@ -314,15 +324,13 @@
 
 <style lang="scss">
 	.manageCompany_wrapper {
+		padding: 0 10px 10px 10px;
 		z-index: 20;
 		background: #FFFFFF;
 		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 		-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 		.manageCompany {
 			position: relative;
-			width: 550px;
-			padding: 4px;
-			margin-left: 20px;
 			overflow: hidden;
 			border-radius: 6px;
 			-moz-border-radius: 6px;
@@ -359,6 +367,9 @@
 					}
 					.el-collapse-item.is-active .el-collapse-item__header {
 						background: #EEEEEE;
+					}
+					.el-button.is-round {
+						padding: 10px 20px;
 					}
 					.list_item {
 						margin-top: 5px;
@@ -475,64 +486,6 @@
 										}
 									}
 								}
-							}
-						}
-					}
-				}
-			}
-		}
-		.person {
-			position: absolute;
-			left: 260px;
-			top: 100px;
-			z-index: 10;
-			.close {
-				position: absolute;
-				right: 2px;
-				top: 2px;
-				color: #3487E2;
-				&:hover {
-					color: #FA5555;
-				}
-			}
-			.personList {
-				width: 200px;
-				height: 280px;
-				background: rgb(241, 241, 241);
-				border: 1px solid #3487E2;
-				overflow-y: scroll;
-				-webkit-border-radius: 4px;
-				-moz-border-radius: 4px;
-				border-radius: 4px;
-				ul {
-					margin-top: 20px;
-					padding: 4px;
-					li {
-						width: 100%;
-						height: 34px;
-						border-bottom: 1px solid #409EFF;
-						color: #2D2F33;
-						cursor: default;
-						.avatar {
-							display: inline-block;
-							float: left;
-							margin-top: 2px;
-							img {
-								display: block;
-								width: 30px;
-								height: 30px;
-								border-radius: 50%;
-							}
-						}
-						.content {
-							display: inline-block;
-							float: left;
-							margin-left: 4px;
-							span {
-								display: block;
-								font-size: 12px;
-								height: 17px;
-								line-height: 17px;
 							}
 						}
 					}

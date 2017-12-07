@@ -10,7 +10,7 @@
 				<el-input v-model="cpj_ruleForm.content"></el-input>
 			</el-form-item>
 			<el-form-item label="文件编号" prop="chengpi_num">
-				<el-input v-model.number="cpj_ruleForm.chengpi_num"></el-input>
+				<el-input v-model="cpj_ruleForm.chengpi_num"></el-input>
 			</el-form-item>
 			<el-form-item label="主题内容" prop="title">
 				<el-input v-model="cpj_ruleForm.title"></el-input>
@@ -229,7 +229,7 @@
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
-								this.$emit('return_exam')
+								this.$router.push({ path: '/work/exam' })
 							} else {
 								this.add_fail()
 							}
@@ -329,7 +329,7 @@
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
-								this.$emit('return_exam')
+								this.$router.push({ path: '/work/exam' })
 							} else {
 								this.add_fail()
 							}
@@ -360,7 +360,7 @@
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
-								this.$emit('return_exam')
+								this.$router.push({ path: '/work/exam' })
 							} else {
 								this.add_fail()
 							}

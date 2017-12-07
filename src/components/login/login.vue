@@ -88,6 +88,7 @@
 			    .then((res)=>{	    	
 					if(res.data.code === 0){
 						let avatar = getAvatar(res.data.data.avatar)
+						
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,
@@ -98,7 +99,7 @@
 						this._getComDepart()
 						this.loadingShow=true
 						setTimeout(()=>{
-							this.$router.push('/index/work');
+							this.$router.push('/work');
 							this.loadingShow=false
 						},500)
 					}else{
@@ -140,6 +141,7 @@
 					this.setCompanyList(res.data.data)
 					this.setNowCompanyId(res.data.data[0].company_id)
 					this.setNowCompanyName(res.data.data[0].company_name)
+					localStorage.personnelId = JSON.stringify(res.data.data[0].personnel_id);
 					this._getUserState()
 				})
 			},

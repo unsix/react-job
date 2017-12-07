@@ -391,6 +391,7 @@
 
 <style lang="scss" scoped="scoped">
 	.form {
+		background: #FFFFFF;
 		padding: 10px;
 		color: #999999;
 		>.top {
@@ -408,6 +409,52 @@
 				text-align: center;
 				height: 30px;
 				line-height: 30px;
+			}
+		}
+		.exam_info {
+			cursor: default;
+			display: block;
+			border-bottom: 1px solid #DDDDDD;
+			font-size: 14px;
+			transition: .3s;
+			margin-bottom: 4px;
+			>.lzz {
+				font-weight: 700;
+				font-size: 15px;
+				text-indent: 2px;
+			}
+			&:first-child {
+				border-bottom: 1px solid transparent;
+				&:hover {
+					background: none;
+				}
+			}
+			&:nth-child(even) {
+				background: rgb(245, 247, 250);
+			}
+			&:hover {
+				background: #EEEEEE;
+			}
+			>div {
+				height: 40px;
+				line-height: 40px;
+				display: inline-block;
+			}
+			.avatar {
+				vertical-align: top;
+				width: 70px;
+			}
+			.name {
+				width: 100px;
+			}
+			.tel {
+				width: 100px;
+			}
+			.operation {
+				width: 200px;
+				button {
+					display: block;
+				}
 			}
 		}
 		>div {
