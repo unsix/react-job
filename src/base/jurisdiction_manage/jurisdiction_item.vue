@@ -325,6 +325,7 @@
 			width: 200px;
 			height: 300px;
 			overflow-y: scroll;
+			overflow-x: hidden;
 			.info {
 				cursor: default;
 				font-size: 0;

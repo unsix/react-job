@@ -391,6 +391,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					width: 170px;
 					height: 300px;
 					overflow-y: scroll;
+					overflow-x: hidden;
 					.el-collapse-item__content{
 						padding-bottom: 0;
 					}

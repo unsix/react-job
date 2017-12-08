@@ -89,7 +89,6 @@
 			this.setUser(JSON.parse(localStorage.user))
 			this._getUserCompanyList()
 			this._getAdmin()
-			this._getComPartPersonList()
 		},
 		computed: {
 			...mapGetters([

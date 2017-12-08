@@ -53,32 +53,16 @@
 						</li>
 					</ul>
 				</div>
-				<div class="department_wtapper">
+				<!--<div class="department_wtapper">
 					<div class="title">部门</div>
 					<router-link to="">软件技术部</router-link>
-				</div>
+				</div>-->
 			</div>
 			<div class="info_main">
-				<router-view></router-view>
-						<addApproval v-if="addApprovalShow" @return_exam="return_exam"></addApproval>
-						<keep-alive>
-							<exam v-if="examShow"></exam>
-						</keep-alive>
-						<keep-alive>
-							<manageCompany v-if="manageCompanyShow" @close="manageCompanyClose"></manageCompany>
-						</keep-alive>
-						<keep-alive>
-							<jurisdictionManage v-if="jurisdictionManageShow" @close="jurisdictionManageClose"></jurisdictionManage>
-						</keep-alive>
-						<keep-alive>
-							<addressBook v-if="address_bookShow"></addressBook>
-						</keep-alive>
-						<keep-alive>
-							<formReceipt v-if="form_receiptShow"></formReceipt>
-						</keep-alive>
-						<keep-alive>
-							<inviteCol v-if="inviteColShow" @close="inviteColClose"></inviteCol>
-						</keep-alive>
+				<router-view @changeWorkIndex="changeWorkIndex">
+					
+				</router-view>
+						
 			</div>
 			<div class="side_right">
 				<Date></Date>
@@ -91,14 +75,6 @@
 	import { createPersonInfo } from 'common/js/person_info'
 	import { mapMutations } from 'vuex'
 	import Date from '@/base/date/date'
-	import inviteCol from '@/base/invite_colleague/invite_colleague'
-	//import everyday from '@/base/everyday/everyday'
-	import formReceipt from '@/base/form_receipt/form_receipt'
-	import addressBook from '@/base/address_book/address_book'
-	import exam from '@/base/exam/exam'
-	import addApproval from '@/base/add_approval/add_approval'
-	import manageCompany from '@/base/manage_company/manage_company'
-	import jurisdictionManage from '@/base/jurisdiction_manage/jurisdiction_manage'
 	import sysP from '@/base/sys-p/sys-p'
 	import { prefixStyle } from '@/common/js/dom'
 	const transform = prefixStyle('transform')
@@ -148,16 +124,7 @@
 					}
 				],
 				value1: '',
-				form_receiptShow: false,
-				address_bookShow: false,
-				listShow: true,
 				compamyShow: false,
-				everydayShow: true,
-				manageCompanyShow: false,
-				jurisdictionManageShow: false,
-				examShow: false,
-				addApprovalShow: false,
-				inviteColShow: false,
 				userOperationShow: false,
 				userOperationLeftShow: false,
 				ComPartPersonList: [],
@@ -189,6 +156,9 @@
 					this.$router.push('/index/apply/mineApp');
 				}
 			},
+			changeWorkIndex(num){
+				this.workIndex = num
+			},
 			userIconOver() {
 				this.$refs.userIcon.style.transition = 'all 0.4s'
 				this.$refs.userIcon.style[transform] = `rotate(180deg)`
@@ -219,21 +189,6 @@
 				this._getToken()
 
 			},
-			return_exam() {
-				this.addApprovalShow = false
-				this.examShow = true
-				this.everydayShow = false
-			},
-			inviteColClose() {
-				this.inviteColShow = false
-				this.everydayShow = true
-			},
-			manageCompanyClose() {
-				this.manageCompanyShow = false
-			},
-			jurisdictionManageClose() {
-				this.jurisdictionManageShow = false
-			},
 			doList(item, index) {
 				if(item === '创建公司') {
 					this.compamyShow = true
@@ -241,52 +196,34 @@
 				}
 				this.workIndex = index
 				this.now_type_name = item
-				this.addApprovalShow = false
-				this.listShow = false
-				this.everydayShow = false
-				this.manageCompanyShow = false
-				this.inviteColShow = false
-				this.jurisdictionManageShow = false
-				this.examShow = false
-				this.address_bookShow = false
-				this.form_receiptShow = false
 				switch(item) {
 					case '公司管理':
 						this._getComPartPersonList()
-						this._getComDepart()
-//						this.manageCompanyShow = true
 						this.$router.push({ path: '/work/manageCompany' })
 						break;
 					case '权限管理':
-//						this.jurisdictionManageShow = true
 						this.$router.push({ path: '/work/jurisdictionManage' })
 						break
 					case '表单回执':
-//						this.form_receiptShow = true
 						this.$router.push({ path: '/work/formReceipt' })
 						break;
 					case '通讯录':
 						this._getComPersonList()
-//						this.address_bookShow = true
 						this.$router.push({ path: '/work/addressBook' })
 						break;
 					case '日常':
-//						this.everydayShow = true
 						this.$router.push({ path: '/work/everyday' })
 						break;
 					case '发起审批':
 						this._getComPersonList()
 						this._getComDepart()
-//						this.addApprovalShow = true
 						this.$router.push({ path: '/work/addApproval' })
 						break;
 					case '邀请同事':
 						this._getComDepart()
-//						this.inviteColShow = true
 						this.$router.push({ path: '/work/inviteCol' })
 						break;
 					case '审批':
-//						this.examShow = true
 						this.$router.push({ path: '/work/exam' })
 						break;
 				}
@@ -406,34 +343,18 @@
 		},
 		components: {
 			sysP,
-			manageCompany,
-			jurisdictionManage,
-			exam,
-			addApproval,
-			addressBook,
-			formReceipt,
-			//		everyday,
-			inviteCol,
 			Date
 		},
 		mounted() {},
 		created() {
 			this.setUser(JSON.parse(localStorage.user))
 			this._getUserCompanyList()
-			this.judgeState()
 			this._getToken()
 		},
 		watch: {
 			nowCompanyId() {
-				this.form_receiptShow = false
-				this.address_bookShow = false
 				this.compamyShow = false
-				this.everydayShow = true
-				this.manageCompanyShow = false
-				this.jurisdictionManageShow = false
-				this.examShow = false
-				this.addApprovalShow = false
-				this.listShow = true
+				this._getUserState()
 			}
 		}
 	}

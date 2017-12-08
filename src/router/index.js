@@ -23,7 +23,7 @@ Vue.use(Router)
 export default new Router({
 	routes: [{
 			path: '/',
-			component: workerList
+			redirect: '/login'
 		},
 		{
 			path: '/worker_list',

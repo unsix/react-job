@@ -2,14 +2,14 @@
 	<div class="inviteColleagues">
 		<div class="inviteCo">
 			<el-form ref="form" :model="form" label-width="80px">
-				<el-form-item label="姓名" style="margin-top: 50px;">
+				<el-form-item label="姓名" style="margin-top: 30px;">
 					<el-input v-model="form.name"></el-input>
 				</el-form-item>
 				<el-form-item label="手机号码" style="margin-top: 10px;">
 					<el-input v-model="form.phone"></el-input>
 				</el-form-item>
 				<el-form-item label="指定部门" style="margin-top: 10px;">
-					<el-select v-model="form.depart" placeholder="请选择部门">
+					<el-select v-model="form.depart" placeholder="请选择部门" style="width: 100%;">
 						<el-option :label="item.department_name" :value="item.department_name" v-for="item in comDepartList" :key="item.department_id"></el-option>
 					</el-select>
 				</el-form-item>
@@ -43,6 +43,11 @@
 				'comDepartList',
 				'nowCompanyId'
 			])
+		},
+		mounted() {
+			if(this.$route.path === '/work/inviteCol') {
+				this.$emit('changeWorkIndex', 5)
+			}
 		},
 		watch: {
 			nowCompanyId() {

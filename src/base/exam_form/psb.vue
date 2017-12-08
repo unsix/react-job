@@ -32,7 +32,7 @@
 			<span>总价：</span><span>{{form_Lista.total_prive}}</span>
 		</div>
 		<div v-if="form_Lista.difference">
-			<span >与投标价格差异：</span><span>{{form_Lista.difference}}</span>
+			<span>与投标价格差异：</span><span>{{form_Lista.difference}}</span>
 		</div>
 		<div v-if="form_Lista.pay_method">
 			<span>付款方式：</span><span>{{form_Lista.pay_method}}</span>
@@ -44,7 +44,7 @@
 			<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
 		</div>
 		<div v-if="form_Lista.remarks">
-			<span >合同主要内容：</span><span>{{form_Lista.remarks}}</span>
+			<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
 		</div>
 		<div>
 			<span>附件列表：</span>
@@ -216,6 +216,8 @@
 				this.file = event.target.files;
 			},
 			agree() {
+				this.loading_show = true
+				this.pic_hash_arr = []
 				if(this.handle_txt === '') {
 					this.$message.error('请填写回执内容');
 					return
@@ -242,8 +244,7 @@
 							this.pic_hash_arr.push(res.data.hash)
 						})
 					}
-					if(this.pic_hash_arr.length === this.file.length) {
-						this.loading_show = true
+					setTimeout(() => {
 						let mparam = new URLSearchParams();
 						mparam.append("uid", this.user.uid);
 						mparam.append("company_id", this.nowCompanyId);
@@ -280,16 +281,19 @@
 										})
 								}
 							})
-					}
+					}, 1000)
 				}
 			},
 
 			refuse() {
+				
 				if(this.handle_txt === '') {
 					this.$message.error('请填写回执内容');
 					return
 				}
+				this.loading_show = true
 				if(!this.file) {
+					console.log(1)
 					let param = new URLSearchParams();
 					param.append("uid", this.user.uid);
 					param.append("approval_id", this.psb_approval_id);
@@ -299,6 +303,7 @@
 					param.append("receipt_content", this.handle_txt);
 					this.$http.post("/index/Mobile/find/finance_receipt", param)
 						.then((res) => {
+							console.log(res)
 							this.loading_show = false
 							if(res.data.code === 0) {
 								this.$message({
@@ -325,8 +330,7 @@
 							this.pic_hash_arr.push(res.data.hash)
 						})
 					}
-					if(this.pic_hash_arr.length === this.file.length) {
-						this.loading_show = true
+					setTimeout(() => {
 						let mparam = new URLSearchParams();
 						mparam.append("uid", this.user.uid);
 						mparam.append("company_id", this.nowCompanyId);
@@ -363,7 +367,7 @@
 										})
 								}
 							})
-					}
+					}, 1000)
 				}
 			}
 		},

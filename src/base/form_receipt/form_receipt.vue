@@ -93,6 +93,11 @@
 				'user'
 			])
 		},
+		mounted() {
+			if(this.$route.path === '/work/formReceipt') {
+				this.$emit('changeWorkIndex', 4)
+			}
+		},
 		created() {
 			this._get_data()
 			this._getUserCompanyList()
