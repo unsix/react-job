@@ -4,7 +4,6 @@
 			<el-button type="info" plain @click="return_">返回列表</el-button>
 			<span class="title">请款单</span>
 		</div>
-		
 		<div v-if="form_Lista.contract_name">
 			<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 		</div>
@@ -29,6 +28,9 @@
 		<div v-if="form_Lista.bank_card">
 			<span>银行卡号：</span><span>{{form_Lista.bank_card}}</span>
 		</div>
+		<div v-if="form_Lista.contract_state">
+			<span>合同进程：</span><span>{{form_Lista.contract_state}}</span>
+		</div>
 		<div v-if="form_Lista.request_num">
 			<span>请款次数：</span><span>{{form_Lista.request_num}}</span>
 		</div>
@@ -44,7 +46,6 @@
 		<div v-if="form_Lista.request_subtotal">
 			<span>本次请款￥：</span><span>{{form_Lista.request_subtotal}}</span>
 		</div>
-
 		<div v-if="form_Lista.request_content">
 			<span>请款内容：</span><span>{{form_Lista.request_content}}</span>
 		</div>

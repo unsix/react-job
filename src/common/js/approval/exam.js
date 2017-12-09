@@ -1,7 +1,4 @@
-//import Vue from 'vue'
-//import axios from 'axios'
-//import VueAxios from 'vue-axios'
-//Vue.use(VueAxios, axios)
+import {getPic} from '@/common/js/pic.js'
 export default class exam_list {
   constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,participation_id,tagging}) {
     this.approval_id = approval_id
@@ -32,7 +29,7 @@ export function create_exam_list(item) {
   return new exam_list({
     approval_id: item.approval_id,
     name: item.name,
-    avatar: 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns',
+    avatar:getPic(item.avatar),
     company_name:item.company_name,
     add_time:get_data(item.add_time),
     creat_time:get_data1(item.creat_time),

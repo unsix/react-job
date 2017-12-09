@@ -35,7 +35,7 @@
 	import {createPersonInfo} from 'common/js/person_info'
 	import uncreatedCompany from '@/base/uncreated_company/uncreated_company'
 	import {mapMutations,mapGetters} from 'vuex'
-	import {getAvatar} from '@/common/js/avatar.js'
+	import {getPic} from '@/common/js/pic.js'
 	import md5 from 'js-md5';
 	export default{
 		data(){
@@ -91,9 +91,8 @@
 			    this.$http.post("/index.php/Mobile/skey/login",param)
 			    .then((res)=>{	    	
 			    	console.log(res)
-//			    	return
 					if(res.data.code === 0){
-						let avatar = getAvatar(res.data.data.avatar)
+						let avatar = getPic(res.data.data.avatar)
 						
 						this.setUser({
 							'uid':res.data.data.uid,

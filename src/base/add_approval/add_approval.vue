@@ -150,6 +150,11 @@
 				this._getComDepart()
 			}
 		},
+		mounted(){
+			if(this.$route.path === '/work/addApproval') {
+				this.$emit('changeWorkIndex', 1)
+			}
+		},
 		created(){
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()

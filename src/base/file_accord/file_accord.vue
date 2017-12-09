@@ -268,7 +268,7 @@
 			</div>
 			<div>
 				<span>审批：</span>
-				<div class="exam_info" v-if="form_Listb.content.length">
+				<div class="exam_info">
 					<div class="avatar lzz">
 						<span style="margin-left: 5px;">状态</span>
 					</div>
@@ -307,6 +307,7 @@
 </template>
 
 <script>
+	import {getPic} from '@/common/js/pic.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
@@ -405,7 +406,7 @@
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
-												arr.push('http://img-bbsf.6655.la/' + item)
+												arr.push(getPic(item))
 											}
 										})
 									})
@@ -429,7 +430,7 @@
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
-										arr.push('http://img-bbsf.6655.la/' + item)
+										arr.push(getPic(item))
 									}
 								})
 								this.img_arr = arr
@@ -452,7 +453,7 @@
 							.then((res) => {
 								let obj = {}
 								let file_data = res.data.data
-								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
 								obj.name = file_data.file_name
 								obj.address = file_add
 								this.file_arr.push(obj)

@@ -53,6 +53,7 @@
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import qkd from '@/base/exam_form/qkd'
+	import {getPic} from '@/common/js/pic.js'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
@@ -230,7 +231,7 @@
 											let arr = []
 											res.data.data.picture.forEach((item) => {
 												if(item != '') {
-													arr.push('http://img-bbsf.6655.la/' + item)
+													arr.push(getPic(item))
 												}
 											})
 											item.picture = arr
@@ -252,7 +253,7 @@
 									let arr = []
 									res.data.data.picture.forEach((item) => {
 										if(item != '') {
-											arr.push('http://img-bbsf.6655.la/' + item)
+											arr.push(getPic(item))
 										}
 									})
 									this.$set(this.form_Listb, 're_pic', arr)
@@ -288,7 +289,7 @@
 								if(item.indexOf('jpg') > 0 || item.indexOf('png') > 0 || item.indexOf('Enclos') > 0) {
 									arr.push('http://img-bbsf.6655.la/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
 								} else {
-									arr.push('http://img-bbsf.6655.la/' + item)
+									arr.push(getPic(item))
 								}
 							}
 						})
@@ -308,7 +309,7 @@
 										if(item.indexOf('jpg') > 0 || item.indexOf('png') > 0 || item.indexOf('Enclos') > 0) {
 											arr.push('http://img-bbsf.6655.la/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
 										} else {
-											arr.push('http://img-bbsf.6655.la/' + item)
+											arr.push(getPic(item))
 										}
 									}
 								})

@@ -1,3 +1,4 @@
+
 export default class approval_list {
   constructor({found_name, is_ok,list,content,participation_id,finance}) {
     this.found_name = found_name

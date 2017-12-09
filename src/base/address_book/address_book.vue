@@ -35,6 +35,7 @@
 </template>
 
 <script>
+	import {getPic} from '@/common/js/pic.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -61,7 +62,7 @@
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {
-							item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+							item.avatar = getPic(item.avatar)
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)
@@ -92,6 +93,7 @@
 		created() {
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
+			this._getComPersonList()
 
 		},
 		mounted() {

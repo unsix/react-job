@@ -1,4 +1,4 @@
-
+import {getPic} from '@/common/js/pic.js'
 export default class person_info {
   constructor({uid, name,avatar, personnel_id, department_name,phone,is_manage}) {
     this.uid = uid
@@ -10,15 +10,11 @@ export default class person_info {
     this.is_manage = is_manage
   }
 }
-function getAvatar(str) {
-	return 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
-//		return 'http://img-bbsf.6655.la/' + str
-}
 export function createPersonInfo(item) {
   return new person_info({
     uid: item.uid,
     name: item.name,
-    avatar: getAvatar(item.avatar),
+    avatar: getPic(item.avatar),
     personnel_id: item.personnel_id,
     department_name: item.department_name,
     phone: item.phone,

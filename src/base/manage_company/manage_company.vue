@@ -59,7 +59,7 @@
 
 <script>
 	import { createPersonInfo } from 'common/js/person_info'
-	import { getAvatar } from '@/common/js/avatar.js'
+	import { getPic } from '@/common/js/pic.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -88,8 +88,10 @@
 		created() {
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this.setUser(JSON.parse(localStorage.user))
+			this._getComPartPersonList()
 			this._getUserCompanyList()
 			this._getAdmin()
+			this.ComPartPersonList = []
 		},
 		computed: {
 			...mapGetters([
@@ -98,6 +100,11 @@
 				'comPartPersonList',
 				'comPersonList'
 			])
+		},
+		mounted(){
+			if(this.$route.path === '/work/manageCompany') {
+				this.$emit('changeWorkIndex', 2)
+			}
 		},
 		watch: {
 			nowCompanyId() {
@@ -297,13 +304,15 @@
 					.then((res) => {
 						if(res.data.data.length != 0) {
 							res.data.data.forEach((list) => {
+								console.log(list)
 								let mewObj = {}
 								mewObj.personnel_id = list.personnel_id
 								mewObj.department_name = list.department_name
 								mewObj.name = list.name
 								mewObj.phone = list.phone
-								mewObj.avatar = getAvatar(list.avatar)
+								mewObj.avatar = getPic(list.avatar)
 								this.adminArr.push(mewObj)
+								
 							})
 						}
 					})

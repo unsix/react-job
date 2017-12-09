@@ -316,6 +316,9 @@
 					<span>请款次数：</span><span>{{form_Lista.request_num}}</span>
 				</div>
 				<div>
+					<span>合同进度：</span><span>{{form_Lista.contract_state}}</span>
+				</div>
+				<div>
 					<span>合同金额￥：</span><span>{{form_Lista.subtotal}}</span>
 				</div>
 				<div>
@@ -600,6 +603,7 @@
 	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
+	import {getPic} from '@/common/js/pic.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -698,8 +702,14 @@
 				this.fileAccordShow = false
 			},
 			fileAccord(item){
+				if(item.approval_type === -1){
+					this.$message({
+			          message: '没有附件或者无法查看',
+			          type: 'warning'
+			        });
+			        return
+				}
 				this.fileAccordShow = true
-				console.log(item.approval_type)
 				if(item.approval_type === '7'){
 					this.request_money_basis_type = '请购单'
 				}else if(item.approval_type === '111'){
@@ -1146,7 +1156,7 @@
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
-												arr.push('http://img-bbsf.6655.la/' + item)
+												arr.push(getPic(item))
 											}
 										})
 									})
@@ -1170,7 +1180,7 @@
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
-										arr.push('http://img-bbsf.6655.la/' + item)
+										arr.push(getPic(item))
 									}
 								})
 								this.img_arr = arr
@@ -1193,7 +1203,7 @@
 							.then((res) => {
 								let obj = {}
 								let file_data = res.data.data
-								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
 								obj.name = file_data.file_name
 								obj.address = file_add
 								this.file_arr.push(obj)
@@ -1362,9 +1372,10 @@
 				width: 600px;
 				>ul {
 					>.page {
-						width: 100%;
 						padding: 4px;
 						text-align: center;
+						background: #FFFFFF;
+						margin-bottom: 10px;
 						span {
 							cursor: pointer;
 							font-size: 12px;

@@ -13,23 +13,22 @@
 
 				</div>
 				<div class="nav">
-					<div class="nav_main">
+					<!--<div class="nav_main">
 						<a v-for="(item,index) in typeArr" @click="changeType(item,index)">{{item.title}}</a>
-					</div>
+					</div>-->
 				</div>
 				<div class="search">
-					<input type="text" placeholder="暂不能使用" />
-					<img src="../../assets/find.svg" alt="" />
+					<!--<input type="text" placeholder="暂不能使用" />
+					<img src="../../assets/find.svg" alt="" />-->
 				</div>
 				<div class="personInfo">
 					<div class="person_main">
 						<a>{{user.name}}</a>
 						<img src="../../assets/down.svg" alt="" @mouseover="userIconOver" @mouseout="userIconOut" ref="userIcon" />
 						<div class="userOperation" v-show="userOperationShow" @mouseover="userIconOver" @mouseout="userIconOut">
-							<router-link to="">升级说明</router-link>
 							<router-link to="">个人设置</router-link>
-							<a @click="compamyShow = true">创建公司</a>
-							<router-link to="">退出登录</router-link>
+							<!--<a>创建公司</a>-->
+							<a @click="logOut">退出登录</a>
 						</div>
 					</div>
 				</div>
@@ -132,6 +131,9 @@
 			}
 		},
 		methods: {
+			logOut(){
+				this.userOperationShow = false
+			},
 			judgeState() {
 				let m = this.userState.manage
 				let f = this.userState.finance

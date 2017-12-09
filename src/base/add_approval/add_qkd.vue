@@ -37,8 +37,8 @@
 			<el-form-item label="请款内容" prop="request_content">
 				<el-input type="textarea" v-model="qkd_ruleForm.request_content"></el-input>
 			</el-form-item>
-			<el-form-item label="收款人姓名" prop="draw_money_name">
-				<el-input v-model="qkd_ruleForm.draw_money_name"></el-input>
+			<el-form-item label="合同进程" prop="contract_state">
+				<el-input v-model="qkd_ruleForm.contract_state"></el-input>
 			</el-form-item>
 			<el-form-item label="增减金额">
 				<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
@@ -100,7 +100,7 @@
 					request_name: '',
 					request_num: '',
 					phone: '',
-					draw_money_name: '',
+					contract_state: '',
 					project_manager_name: '',
 					project_manager: {}
 				},
@@ -165,9 +165,9 @@
 						message: '请填写请求内容',
 						trigger: 'blur'
 					}],
-					draw_money_name: [{
+					contract_state: [{
 						required: true,
-						message: '请填写收款人姓名',
+						message: '请填写请款进程',
 						trigger: 'blur'
 					}]
 				},
@@ -233,7 +233,7 @@
 						this.qkd_ruleForm.balance_subtotal = this.form_Lista.balance_subtotal
 						this.qkd_ruleForm.contract_name_new = this.form_Lista.contract_name_new
 						this.qkd_ruleForm.contract_name = this.form_Lista.contract_name
-						this.qkd_ruleForm.bank_name = this.form_Lista.bank_name
+						this.qkd_ruleForm.account_name = this.form_Lista.account_name
 						this.qkd_ruleForm.bank_card = this.form_Lista.bank_card
 						this.qkd_ruleForm.worker_type = this.form_Lista.worker_type
 						this.qkd_ruleForm.bank_address = this.form_Lista.bank_address
@@ -243,8 +243,7 @@
 						this.qkd_ruleForm.request_name = this.form_Lista.request_name
 						this.qkd_ruleForm.request_num = this.form_Lista.request_num
 						this.qkd_ruleForm.phone = this.form_Lista.phone
-						this.qkd_ruleForm.draw_money_name = this.form_Lista.draw_money_name
-						this.qkd_ruleForm.request_num = this.form_Lista.request_num
+						this.qkd_ruleForm.contract_state = this.form_Lista.contract_state
 					})
 			},
 			add_ok() {
@@ -389,7 +388,7 @@
 						param.append("form_approval_id", this.form_approval_id);
 					}
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
+					param.append("contract_state", this.qkd_ruleForm.contract_state);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					this.$http.post("/index.php/Mobile/approval/add_request_money", param)
 						.then((res) => {
@@ -504,7 +503,7 @@
 						param.append("form_approval_id", this.form_approval_id);
 					}
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
+					param.append("contract_state", this.qkd_ruleForm.contract_state);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_request_money", param)
@@ -521,7 +520,6 @@
 				}
 			},
 		pic_time() {
-			console.log(this.pic_time)
 			if(this.file) {
 				if(this.file_time === 0) {
 					return
@@ -541,6 +539,7 @@
 				param.append("phone", this.qkd_ruleForm.phone);
 				param.append("account_name", this.qkd_ruleForm.account_name);
 				param.append("contract_name_new", this.qkd_ruleForm.contract_name_new);
+				param.append("contract_state", this.qkd_ruleForm.contract_state);
 				param.append("bank_card", this.qkd_ruleForm.bank_card);
 				param.append("bank_address", this.qkd_ruleForm.bank_address);
 				param.append("subtotal", this.qkd_ruleForm.subtotal);

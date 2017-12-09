@@ -154,9 +154,6 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 					
 				}
 			},
-			handleClose(){
-				
-			},
 			close(){
 				this.$emit('close')
 			},
@@ -240,7 +237,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				.then((res)=>{
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{
-				    	item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+				    	item.avatar = getPic(item.avatar)
 				    	reaDa.push(item)
 				    })	
 				   	this.setComPersonList(reaDa)
@@ -308,10 +305,16 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 		components:{
 			jurisdictionItem
 		},
+		mounted(){
+			if(this.$route.path === '/work/jurisdictionManage') {
+				this.$emit('changeWorkIndex', 3)
+			}
+		},
 		created(){
-			this._getUserCompanyList()
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
+			this._getUserCompanyList()
 			this._getHuizhi()
+			this._getComPersonList()
 		},
 		watch:{
 			nowCompanyId(){

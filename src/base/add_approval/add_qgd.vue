@@ -97,10 +97,10 @@
 				</el-form>
 				<el-form :inline="true" class="demo-form-inline">
 					<el-form-item label="单价">
-						<el-input v-model.number="item.subtotal"></el-input>
+						<el-input v-model.number="item.price"></el-input>
 					</el-form-item>
 					<el-form-item label="总额">
-						<el-input v-model.number="item.price"></el-input>
+						<el-input v-model.number="item.subtotal"></el-input>
 					</el-form-item>
 				</el-form>
 			</div>
