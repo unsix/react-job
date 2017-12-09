@@ -4,10 +4,6 @@
 			
 		</div>
 		<div class="login">
-				<!--<div class="nav">
-					<a :class="{ 'active': isA}" @click="toLogin">登录</a>
-					<a :class="{ 'active': isB}" @click="toRegister">注册</a>
-				</div>-->
 				<div class="title">
 					请登录
 				</div>
@@ -79,13 +75,23 @@
 				this.isB = true
 			},
 			login(){
+				if(this.account_num === ''){
+					  this.$message.error('请填写账号');
+					  return
+				}
+				if(this.password_num === ''){
+					  this.$message.error('请填写密码');
+					  return
+				}
 				let password_num = md5(this.password_num)
 				let param = new URLSearchParams();
 			    param.append("phone",this.account_num );
 			    param.append("password",password_num);
-			    param.append("is_web",1);
+			    param.append("phone_type",'web');
 			    this.$http.post("/index/Mobile/skey/login",param)
 			    .then((res)=>{	    	
+			    	console.log(res)
+//			    	return
 					if(res.data.code === 0){
 						let avatar = getAvatar(res.data.data.avatar)
 						
@@ -101,9 +107,9 @@
 						setTimeout(()=>{
 							this.$router.push('/work');
 							this.loadingShow=false
-						},500)
+						},1000)
 					}else{
-						this.errorShow = true;
+						 this.$message.error('登录失败');
 					}
 			    })
 			},
@@ -141,6 +147,8 @@
 					this.setCompanyList(res.data.data)
 					this.setNowCompanyId(res.data.data[0].company_id)
 					this.setNowCompanyName(res.data.data[0].company_name)
+					localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
+					localStorage.nowCompanyName = JSON.stringify(res.data.data[0].company_name);
 					localStorage.personnelId = JSON.stringify(res.data.data[0].personnel_id);
 					this._getUserState()
 				})

@@ -155,8 +155,7 @@
 						num: "",
 						price: "",
 						subtotal: "",
-						purpose: "",
-						remarks: ''
+						purpose: ""
 					}]
 				},
 				qgd_rules: {
@@ -276,7 +275,6 @@
 						let department_name
 						setTimeout(() => {
 							this.comDepartList.forEach((item) => {
-								console.log(this.form_Lista)
 								if(item.department_id === this.form_Lista.request_buy_department) {
 									department_name = item.department_name
 								}
@@ -324,7 +322,6 @@
 							if(item != '') {
 								arr.push('http://img-bbsf.6655.la/' + item)
 							}
-
 						})
 						this.img_arr = arr
 						this.$set(this.form_Lista, 'img_list', arr)
@@ -433,8 +430,7 @@
 					num: "",
 					price: "",
 					subtotal: "",
-					purpose: "",
-					remarks: ''
+					purpose: ""
 				}
 				this.qgd_ruleForm.add.push(obj)
 			},
@@ -494,9 +490,7 @@
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
-					param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
 					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
-					param.append("is_urgent", this.qgd_ruleForm.is_urgent);
 					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
 					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
 					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
@@ -626,9 +620,7 @@
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
-					param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
 					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
-					param.append("is_urgent", this.qgd_ruleForm.is_urgent);
 					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
 					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
 					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
@@ -641,11 +633,11 @@
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
 					param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
 					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
-					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("type", 2);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
+							console.log(res)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
@@ -690,9 +682,7 @@
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
-					param.append("is_add_plan", this.qgd_ruleForm.is_add_plan);
 					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
-					param.append("is_urgent", this.qgd_ruleForm.is_urgent);
 					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
 					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
 					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
@@ -705,11 +695,11 @@
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
 					param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
 					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
-					param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("type", 2);
 					this.$http.post("/index/Mobile/approval/add_request_buy", param)
 						.then((res) => {
+							console.log(res)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()

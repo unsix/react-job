@@ -27,7 +27,7 @@
 				<li @click="pick(day)" v-for="day in days">
 					<span v-if="day.getMonth()+1 != currentMonth" class="other-month" style="color: #DDDDDD">{{ day.getDate() }}</span>
 					<span v-else="">  
-	            	<span v-if="day.getFullYear() == new Date().getFullYear() && day.getMonth() == new Date().getMonth() && day.getDate() == new Date().getDate()" class="active" style="color: #409EFF;">{{ day.getDate() }}</span>
+	            	<span v-if="day.getFullYear() == new Date().getFullYear() && day.getMonth() == new Date().getMonth() && day.getDate() == new Date().getDate()" class="active" style="color: blue;">{{ day.getDate() }}</span>
 					<span v-else="" style="color: #444444;">{{ day.getDate() }}</span>
 					</span>
 				</li>
@@ -191,14 +191,14 @@
 			width: 100%;
 			>li{
 				cursor:pointer;
-				font-size: 13px;
+				font-size: 14px;
 				text-align: center;
 				height: 26px;
 				line-height: 26px;
 				width: 40px;
 				float: left;
 				&:hover{
-					color: #409EFF;	
+					color: red;	
 				}
 			}
 		}

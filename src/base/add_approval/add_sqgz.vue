@@ -61,13 +61,14 @@
 				<el-button @click="resetForm('sqgz_ruleForm')">重置</el-button>
 			</el-form-item>
 		</el-form>
+		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
 
 <script>
 	import loading from '@/base/loading/loading'
-	import { mapGetters,mapMutations} from 'vuex'
-	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
+	import { mapGetters, mapMutations } from 'vuex'
+	import { create_gongzhang_list } from '@/common/js/approval/gongzhang.js'
 	export default {
 		data() {
 			return {
@@ -129,14 +130,14 @@
 				file_time: 0,
 				pic_time: 0,
 				pic_show: false,
-				loadingShow:false,
+				loadingShow: false,
 				pic_index: 0,
 				img_arr: []
 			}
 		},
 		props: {
-			approval_id:{
-				type:String
+			approval_id: {
+				type: String
 			}
 		},
 		created() {
@@ -152,7 +153,7 @@
 				'token'
 			])
 		},
-		components:{
+		components: {
 			loading
 		},
 		methods: {
@@ -163,12 +164,14 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
-				this.$http.post("/index/Mobile/approval/create_cengpijian_list", param)
+				this.$http.post("/index/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-						this.form_Lista = create_cengpijian_list(res.data.data)
-						this.sqgz_ruleForm.departmental = this.form_Lista.departmental
+						console.log(res)
+						this.form_Lista = create_gongzhang_list(res.data.data)
+						
+						this.sqgz_ruleForm.departmental = this.form_Lista.department_name
 						this.sqgz_ruleForm.department_id = this.form_Lista.department_id
-						this.sqgz_ruleForm.add = this.form_Lista.add
+						this.sqgz_ruleForm.add = this.form_Lista.info
 					})
 			},
 			add_ok() {

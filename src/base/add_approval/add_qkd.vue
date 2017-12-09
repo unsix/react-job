@@ -1,5 +1,8 @@
 <template>
 	<div class="qingkuan">
+		<div class="as">
+			<el-button type="primary" plain @click="fileAccordS" v-show="form_approval_id != 0">依据附件</el-button>
+		</div>
 		<el-form :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
 			<el-form-item label="工程名称" prop="contract_name">
 				<el-input v-model="qkd_ruleForm.contract_name"></el-input>
@@ -68,10 +71,13 @@
 				<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
 			</el-form-item>
 		</el-form>
+		<loading v-show="loadingShow"></loading>
+		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
 	</div>
 </template>
 
 <script>
+	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
 	import { mapGetters, mapMutations } from 'vuex'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -171,11 +177,11 @@
 				file_time: 0,
 				pic_time: 0,
 				pic_show: false,
-				loadingShow:false,
+				loadingShow: false,
 				pic_index: 0,
 				img_arr: [],
-				pic_enclosure_id: ''
-
+				pic_enclosure_id: '',
+				fileAccordShow:false
 			}
 		},
 		props: {
@@ -183,6 +189,10 @@
 				type: String
 			},
 			form_approval_id: {
+				type: String,
+				default:'0'
+			},
+			request_money_basis_type:{
 				type: String
 			}
 		},
@@ -199,10 +209,17 @@
 				'token'
 			])
 		},
-		components:{
-			loading
+		components: {
+			loading,
+			fileAccord
 		},
 		methods: {
+			closeAcc(){
+				this.fileAccordShow = false
+			},
+			fileAccordS() {
+				this.fileAccordShow = true
+			},
 			initial_data() {
 				if(!this.approval_id) {
 					return
@@ -368,9 +385,10 @@
 					param.append("request_content", this.qkd_ruleForm.request_content);
 					param.append("request_num", this.qkd_ruleForm.request_num);
 					param.append("type", '2');
-					param.append("form_approval_id", this.form_approval_id);
+					if(this.form_approval_id != '0'){
+						param.append("form_approval_id", this.form_approval_id);
+					}
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-					param.append("request_money_basis_type", -1);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
@@ -482,15 +500,16 @@
 					param.append("request_content", this.qkd_ruleForm.request_content);
 					param.append("request_num", this.qkd_ruleForm.request_num);
 					param.append("type", '2');
-					param.append("form_approval_id", this.form_approval_id);
+					if(this.form_approval_id != '0'){
+						param.append("form_approval_id", this.form_approval_id);
+					}
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-					param.append("request_money_basis_type", -1);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index/Mobile/approval/add_request_money", param)
-					this.loadingShow = false
 						.then((res) => {
+							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
@@ -500,9 +519,9 @@
 							}
 						})
 				}
-			}
-		},
+			},
 		pic_time() {
+			console.log(this.pic_time)
 			if(this.file) {
 				if(this.file_time === 0) {
 					return
@@ -529,15 +548,16 @@
 				param.append("request_content", this.qkd_ruleForm.request_content);
 				param.append("request_num", this.qkd_ruleForm.request_num);
 				param.append("type", '2');
-				param.append("form_approval_id", this.form_approval_id);
+				if(this.form_approval_id != '0'){
+					param.append("form_approval_id", this.form_approval_id);
+				}
 				param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
-				param.append("request_money_basis_type", -1);
 				param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 				param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 				param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 				this.$http.post("/index/Mobile/approval/add_request_money", param)
-				this.loadingShow = false
 					.then((res) => {
+						this.loadingShow = false
 						if(res.data.code === 0) {
 							this.add_ok()
 							this.loading_show = false
@@ -549,10 +569,19 @@
 			}
 		}
 	}
+		}
 </script>
 
 <style lang="scss">
 	.qingkuan {
+		.as {
+			display: block;
+			button {
+				position: relative;
+				bottom: 50px;
+				left: 450px;
+			}
+		}
 		.content {
 			font-size: 14px;
 			border-bottom: 1px solid #666666;

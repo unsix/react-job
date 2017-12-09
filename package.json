@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "axios": "^0.17.0",
-    "better-scroll": "^0.1.15",
     "body-parser": "^1.18.2",
     "crypto": "^1.0.1",
     "element-ui": "^2.0.2",

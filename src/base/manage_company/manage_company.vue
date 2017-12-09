@@ -86,6 +86,7 @@
 			}
 		},
 		created() {
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this.setUser(JSON.parse(localStorage.user))
 			this._getUserCompanyList()
 			this._getAdmin()
@@ -118,13 +119,15 @@
 					this.$http.post("/index/Mobile/User/add_department", param)
 						.then((res) => {
 							if(res.data.code === 0) {
+								this.activeName = '1'
+								this.listShow = true
+								this.addDepartmentShow = false
+								this._getComPartPersonList()
 								this.$message({
 									message: '添加部门成功',
 									type: 'success'
 								});
-								this.listShow = true
-								this.addDepartmentShow = false
-								this._getComPartPersonList()
+								
 							} else {
 								this.$message.error('添加部门失败');
 							}
@@ -148,7 +151,6 @@
 					this.addAdministratorShow = true
 				}
 			},
-			handleChange() {},
 			setAdministrator(item) {
 				
 				this.adminArr.forEach((list) => {
@@ -251,9 +253,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/user/companies_list", param)
 					.then((res) => {
-						this.setNowCompanyId(res.data.data[0].company_id)
+//						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						this.setNowCompanyName(res.data.data[0].company_name)
+//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			_getComPartPersonList() {

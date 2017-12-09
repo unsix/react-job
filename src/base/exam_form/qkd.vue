@@ -4,6 +4,7 @@
 			<el-button type="info" plain @click="return_">返回列表</el-button>
 			<span class="title">请款单</span>
 		</div>
+		
 		<div v-if="form_Lista.contract_name">
 			<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 		</div>
@@ -64,30 +65,30 @@
 		</div>
 		<div>
 			<span>审批：</span>
-			<div v-for="item in form_Listb.content">
-				<div class="exam_info">
-					<div class="avatar lzz">
-						<span style="margin-left: 5px;">状态</span>
-					</div>
-					<div class="tel lzz">
-						<span>姓名</span>
-					</div>
-					<div class="name lzz">
-						<span>部门</span>
-					</div>
-					<div class="operation lzz">
-						<span>时间</span>
-					</div>
+			<div class="exam_info">
+				<div class="avatar lzz">
+					<span style="margin-left: 5px;">状态</span>
 				</div>
+				<div class="tel lzz">
+					<span>姓名</span>
+				</div>
+				<div class="name lzz">
+					<span>部门</span>
+				</div>
+				<div class="operation lzz">
+					<span>时间</span>
+				</div>
+			</div>
+			<div v-for="item in form_Listb.content">
 				<div class="exam_info">
 					<div class="avatar">
 						<span>{{item.is_agree}}</span>
 					</div>
 					<div class="name">
-						<span>{{item.department_name}}</span>
+						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.opinion}}</span>
+						<span>{{item.department_name}}</span>
 					</div>
 					<div class="operation">
 						<span>{{item.add_time}}</span>
@@ -394,6 +395,14 @@
 		background: #FFFFFF;
 		padding: 10px;
 		color: #999999;
+		.as {
+			display: block;
+			button {
+				float: right;
+				position: relative;
+				bottom: 50px;
+			}
+		}
 		>.top {
 			width: 100%;
 			display: block;
@@ -417,19 +426,13 @@
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 14px;
 			transition: .3s;
-			margin-bottom: 4px;
+			margin-bottom: 0px;
 			>.lzz {
 				font-weight: 700;
 				font-size: 15px;
 				text-indent: 2px;
 			}
-			&:first-child {
-				border-bottom: 1px solid transparent;
-				&:hover {
-					background: none;
-				}
-			}
-			&:nth-child(even) {
+			&:nth-child(2) {
 				background: rgb(245, 247, 250);
 			}
 			&:hover {

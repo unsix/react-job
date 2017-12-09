@@ -66,6 +66,7 @@ function get_manager_name(item){
 	if(item.project_manager_name.name){
 		return item.project_manager_name.name
 	}
+	
 }
 function get_enclosure_id(item){
 	if(!item.enclosure_id){

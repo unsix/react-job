@@ -11,14 +11,14 @@
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
-				<el-button type="primary" plain @click="chooseTem">从模版选择</el-button>
+				<el-button type="primary" plain @click="chooseTem">从模板选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
-				<addQkd v-if="qkd_show" :approval_id="approval_id" @return_exam="return_Add" :form_approval_id="form_approval_id"></addQkd>
-				<addCpj v-if="cpj_show" :approval_id="approval_id" @return_exam="return_Add"></addCpj>
-				<addPsb v-if="psb_show" :approval_id="approval_id" @return_exam="return_Add"></addPsb>
-				<addQgd v-if="qgd_show" :approval_id="approval_id" @return_exam="return_Add"></addQgd>
-				<addSqgz v-if="sqgz_show" :approval_id="approval_id" @return_exam="return_Add"></addSqgz>
+				<addQkd v-if="qkd_show" :approval_id="approval_id5" @return_exam="return_Add" :form_approval_id="form_approval_id" :request_money_basis_type="request_money_basis_type"></addQkd>
+				<addCpj v-if="cpj_show" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
+				<addPsb v-if="psb_show" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
+				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
+				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add" ></addSqgz>
 			</div>
 		</div>
 		<div class="as_what" v-show="as_what_show">
@@ -64,6 +64,7 @@
 		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
+		
 	</div>
 </template>
 
@@ -117,12 +118,20 @@
 				nowType: 1,
 				insertType: 0,
 				approval_type: 111,
-				approval_id: '',
+				approval_id1: '',
+				approval_id2: '',
+				approval_id3: '',
+				approval_id4: '',
+				approval_id5: '',
 				form_approval_id:'',
 				qk_return:false,
 				nextPageShow: true,
 				pageIndex:1,
-				xindex:0
+				xindex:0,
+				request_money_basis_type:'',
+				form_approval_id:''
+				
+				
 			}
 		},
 		computed: {
@@ -142,10 +151,16 @@
 			}
 		},
 		created(){
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
 			this._getToken()
+			this._getComDepart()
+			this._getComPersonList()
 		},
 		methods: {
+			fileAccordS(){
+				console.log(1)
+			},
 			_getComDepart() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
@@ -252,6 +267,7 @@
 					})
 			},
 			qkUser(item,index){
+				this.request_money_basis_type = item.type
 				this.form_approval_id = ''
 				this.at_qingkuanShow = false
 				this.form_approval_id = item.approval_id
@@ -263,9 +279,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/user/companies_list", param)
 					.then((res) => {	
-						this.setNowCompanyId(res.data.data[0].company_id)
+//						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						this.setNowCompanyName(res.data.data[0].company_name)
+//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			...mapMutations({
@@ -280,6 +296,11 @@
 				setCompanyList: 'SET_COMPANYLIST'
 			}),
 			useInfo(item) {
+				this.approval_id1 = ''
+				this.approval_id2 = ''
+				this.approval_id3 = ''
+				this.approval_id4 = ''
+				this.approval_id5 = ''
 				this.formShow = true
 				this.qkd_show = false
 				this.qgd_show = false
@@ -288,16 +309,20 @@
 				this.sqgz_show = false
 				this.at_qingkuanShow = false
 				this.chooseTemShow = false
-				this.approval_id = item.approval_id
 				if(item.type === '合同评审表') {
+					this.approval_id1 = item.approval_id
 					this.psb_show = true
 				} else if(item.type === '请购单') {
+					this.approval_id2 = item.approval_id
 					this.qgd_show = true
 				} else if(item.type === '呈批件') {
+					this.approval_id3 = item.approval_id
 					this.cpj_show = true
 				} else if(item.type === '申请公章') {
+					this.approval_id4 = item.approval_id
 					this.sqgz_show = true
 				} else if(item.type === '请款单') {
+					this.approval_id5 = item.approval_id
 					this.qkd_show = true
 				}
 
@@ -454,6 +479,7 @@
 					this.sqgz_show = true
 					this.approval_type = 5
 				} else if(this.navIndex === 4) {
+					this.qkd_show = true
 					this.as_what_show = true
 					this.formShow = false
 					this.approval_type = 1001
@@ -474,14 +500,21 @@
 			return_Add() {
 				this.formShow = false
 				this.psb_show = false
-				this.$emit('return_exam')
+				this.$router.push({ path: '/work/exam' })
 			},
 
 			as_click(index) {
-				this._getExamList(index)
-				this.at_qingkuanShow = true
-				this.as_what_show = false
-				
+				if(index === 3){
+					this.formShow = true
+					this.qkd_show = true
+					this.as_what_show = false
+					this.at_qingkuanShow = false
+					return
+				}else{
+					this._getExamList(index)
+					this.at_qingkuanShow = true
+					this.as_what_show = false
+				}
 			},
 			_getExamList(index) {
 				if(!index){
@@ -550,7 +583,7 @@
 
 <style lang="scss">
 	.as_qingkuan {
-		width: 550px;
+		width: 600px;
 		>ul {
 			padding: 4px;
 			>.page {
@@ -667,7 +700,7 @@
 	.add_approval_wrapper {
 		background: #FFFFFF;
 		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-				-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+		-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 		width: 600px;
 		.add_approval {
 			padding: 0px 10px;

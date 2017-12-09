@@ -37,6 +37,7 @@
 				<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>
 			</el-form-item>
 		</el-form>
+		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
 
@@ -313,8 +314,8 @@
 				}
 				if(this.file_time != 0 || this.pic_time != 0) {
 					let param = new URLSearchParams();
-					if(this.cqj_ruleForm.project_manager.uid) {
-						param.append("project_manager", JSON.stringify(this.cqj_ruleForm.project_manager));
+					if(this.cpj_ruleForm.project_manager.uid) {
+						param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 					}
 					param.append("uid", this.user.uid);
 					param.append("company_id", this.nowCompanyId);

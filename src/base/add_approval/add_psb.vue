@@ -62,6 +62,7 @@
 				<el-button @click="resetForm('psb_ruleForm')">重置</el-button>
 			</el-form-item>
 		</el-form>
+		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
 
@@ -191,6 +192,7 @@
 				if(!this.approval_id) {
 					return
 				}
+				console.log(this.approval_id)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);

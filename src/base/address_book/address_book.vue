@@ -72,9 +72,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/user/companies_list", param)
 					.then((res) => {
-						this.setNowCompanyId(res.data.data[0].company_id)
+//						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						this.setNowCompanyName(res.data.data[0].company_name)
+//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			...mapMutations({
@@ -90,6 +90,7 @@
 			})
 		},
 		created() {
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
 
 		},

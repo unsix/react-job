@@ -110,7 +110,7 @@
 <style lang="scss">
 	.choose_template {
 		>.list {
-			width: 550px;
+			width: 600px;
 			>ul {
 				padding: 4px;
 				>.page {

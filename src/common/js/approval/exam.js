@@ -3,12 +3,13 @@
 //import VueAxios from 'vue-axios'
 //Vue.use(VueAxios, axios)
 export default class exam_list {
-  constructor({approval_id, name,avatar,company_name,add_time,type,title,approval_state,participation_id,tagging}) {
+  constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,participation_id,tagging}) {
     this.approval_id = approval_id
     this.name = name
     this.avatar = avatar
     this.company_name = company_name
     this.add_time = add_time
+    this.creat_time = creat_time
     this.type = type
     this.title = title
     this.approval_state = approval_state
@@ -20,7 +21,13 @@ function get_data(time){
 	return `${time.slice(0,4)}年${time.slice(5,7)}月${time.slice(8,10)}日
 	${time.slice(11)}`
 }
-
+function get_data1(time){
+	if(!time){
+		return
+	}
+	return `${time.slice(0,4)}年${time.slice(5,7)}月${time.slice(8,10)}日
+	${time.slice(11)}`
+}
 export function create_exam_list(item) {
   return new exam_list({
     approval_id: item.approval_id,
@@ -28,6 +35,7 @@ export function create_exam_list(item) {
     avatar: 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns',
     company_name:item.company_name,
     add_time:get_data(item.add_time),
+    creat_time:get_data1(item.creat_time),
     type:get_type(item.type),
     title:item.title,
     approval_state:get_state(item.approval_state),

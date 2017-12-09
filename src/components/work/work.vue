@@ -75,7 +75,6 @@
 	import { createPersonInfo } from 'common/js/person_info'
 	import { mapMutations } from 'vuex'
 	import Date from '@/base/date/date'
-	import sysP from '@/base/sys-p/sys-p'
 	import { prefixStyle } from '@/common/js/dom'
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
@@ -180,14 +179,14 @@
 				this.userOperationLeftShow = false
 			},
 			changeCompany(item, index) {
+				console.log(item.company_name)
 				this.workIndex = 0
 				this.setNowCompanyName(item.company_name)
 				this.userOperationLeftShow = false
 				this.setNowCompanyId(item.company_id)
-				this.judgeState()
-				this._getUserState()
-				this._getToken()
-
+				localStorage.nowCompanyId = JSON.stringify(item.company_id);
+				localStorage.nowCompanyName = JSON.stringify(item.company_name);
+				this.$router.push('/work');
 			},
 			doList(item, index) {
 				if(item === '创建公司') {
@@ -234,6 +233,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/User/return_company_new", param)
 					.then((res) => {
+						console.log(res)
 						let is_manage = parseInt(res.data.data.is_manage)
 						let is_finance = parseInt(res.data.data.is_finance)
 						this.setUserState({
@@ -342,19 +342,21 @@
 			])
 		},
 		components: {
-			sysP,
 			Date
 		},
 		mounted() {},
 		created() {
 			this.setUser(JSON.parse(localStorage.user))
-			this._getUserCompanyList()
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
+			this.setNowCompanyName(JSON.parse(localStorage.nowCompanyName))
 			this._getToken()
+			this._getUserState()
 		},
 		watch: {
 			nowCompanyId() {
 				this.compamyShow = false
 				this._getUserState()
+				this._getToken()
 			}
 		}
 	}

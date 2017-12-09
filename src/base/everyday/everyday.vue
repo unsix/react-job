@@ -1,4 +1,4 @@
-<template>
+<!--<template>
 	<div class="everyday_wrapper">
 		<div class="everyday">
 			<div class="postLog">
@@ -1656,4 +1656,4 @@
 			}
 		}
 	}
-</style>
+</style>-->

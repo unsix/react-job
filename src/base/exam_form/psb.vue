@@ -13,7 +13,7 @@
 		<div v-if="form_Lista.contract_num">
 			<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
 		</div>
-		<div>
+		<div v-if="form_Lista.a_name">
 			<span>甲方：</span><span>{{form_Lista.a_name}}</span>
 		</div>
 		<div v-if="form_Lista.b_name">
@@ -64,21 +64,21 @@
 		</div>
 		<div>
 			<span>审批：</span>
-			<div v-for="item in form_Listb.content">
-				<div class="exam_info">
-					<div class="avatar lzz">
-						<span style="margin-left: 5px;">状态</span>
-					</div>
-					<div class="tel lzz">
-						<span>姓名</span>
-					</div>
-					<div class="name lzz">
-						<span>部门</span>
-					</div>
-					<div class="operation lzz">
-						<span>处理时间</span>
-					</div>
+			<div class="exam_info">
+				<div class="avatar lzz">
+					<span style="margin-left: 5px;">状态</span>
 				</div>
+				<div class="tel lzz">
+					<span>姓名</span>
+				</div>
+				<div class="name lzz">
+					<span>部门</span>
+				</div>
+				<div class="operation lzz">
+					<span>时间</span>
+				</div>
+			</div>
+			<div v-for="item in form_Listb.content">
 				<div class="exam_info">
 					<div class="avatar">
 						<span>{{item.is_agree}}</span>
@@ -293,28 +293,35 @@
 				}
 				this.loading_show = true
 				if(!this.file) {
-					console.log(1)
-					let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("approval_id", this.psb_approval_id);
-					param.append("personnel_id", this.now_personnel_id);
-					param.append("company_id", this.nowCompanyId);
-					param.append("finance_state", 1);
-					param.append("receipt_content", this.handle_txt);
-					this.$http.post("/index/Mobile/find/finance_receipt", param)
-						.then((res) => {
-							console.log(res)
-							this.loading_show = false
-							if(res.data.code === 0) {
-								this.$message({
-									message: '恭喜你，操作成功',
-									type: 'success'
-								});
-								this.return_()
-							} else {
-								this.$message.error('操作失败');
-							}
-						})
+					let mparam = new URLSearchParams();
+					mparam.append("uid", this.user.uid);
+					mparam.append("company_id", this.nowCompanyId);
+					this.$http.post("/index/Mobile/User/return_company_new", mparam)
+					.then((res)=>{
+						this.now_personnel_id = res.data.data.personnel_id
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("approval_id", this.psb_approval_id);
+						param.append("personnel_id", this.now_personnel_id);
+						param.append("company_id", this.nowCompanyId);
+						param.append("finance_state", 1);
+						param.append("receipt_content", this.handle_txt);
+						this.$http.post("/index/Mobile/find/finance_receipt", param)
+							.then((res) => {
+								console.log(res)
+								this.loading_show = false
+								if(res.data.code === 0) {
+									this.$message({
+										message: '恭喜你，操作成功',
+										type: 'success'
+									});
+									this.return_()
+								} else {
+									this.$message.error('操作失败');
+								}
+							})
+					})
+					
 				}
 				if(this.file) {
 					for(let i = 0; i < this.file.length; i++) {
@@ -406,7 +413,7 @@
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 14px;
 			transition: .3s;
-			margin-bottom: 4px;
+			margin-bottom: 0px;
 			>.lzz {
 				font-weight: 700;
 				font-size: 15px;

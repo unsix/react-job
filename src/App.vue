@@ -18,7 +18,6 @@ export default {
 
 <style scoped>
 @import '/static/reset.css';
-@import '/static/common.scss';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -101,10 +101,15 @@
 		created() {
 			this._get_data()
 			this._getUserCompanyList()
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			
 		},
 		methods: {
 			handleClick(tab) {
+				this.psb_if = false
+				this.qkd_if = false
+				this.qgd_if = false
+				this.listShow = true
 				let index = tab.index
 				if(index === '0') {
 					this.handle_show = true
@@ -166,6 +171,7 @@
 				this.qgd_if = false
 				this.qkd_if = false
 				this.listShow = true
+				this._get_data()
 			},
 			listCli(item) {
 				this.listShow = false
@@ -190,9 +196,9 @@
 						} else if(item.type === '请款单') {
 							this.qkd_if = true
 							this.form_Lista = create_qingkuandan_list(res.data.data)
-							if(res.data.data.contract_id) {
-								this.get_img(res.data.data.contract_id[0].contract_id)
-							}
+//							if(res.data.data.contract_id) {
+//								this.get_img(res.data.data.contract_id[0].contract_id)
+//							}
 							if(res.data.data.many_enclosure) {
 								this.get_moreimg(res.data.data.many_enclosure)
 							}

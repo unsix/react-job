@@ -70,21 +70,21 @@
 		</div>
 		<div>
 			<span>审批：</span>
-			<div v-for="item in form_Listb.content">
-				<div class="exam_info">
-					<div class="avatar lzz">
-						<span style="margin-left: 5px;">状态</span>
-					</div>
-					<div class="tel lzz">
-						<span>姓名</span>
-					</div>
-					<div class="name lzz">
-						<span>部门</span>
-					</div>
-					<div class="operation lzz">
-						<span>处理时间</span>
-					</div>
+			<div class="exam_info">
+				<div class="avatar lzz">
+					<span style="margin-left: 5px;">状态</span>
 				</div>
+				<div class="tel lzz">
+					<span>姓名</span>
+				</div>
+				<div class="name lzz">
+					<span>部门</span>
+				</div>
+				<div class="operation lzz">
+					<span>时间</span>
+				</div>
+			</div>
+			<div v-for="item in form_Listb.content">
 				<div class="exam_info">
 					<div class="avatar">
 						<span>{{item.is_agree}}</span>
@@ -413,7 +413,7 @@
 			border-bottom: 1px solid #DDDDDD;
 			font-size: 14px;
 			transition: .3s;
-			margin-bottom: 4px;
+			margin-bottom: 0px;
 			>.lzz {
 				font-weight: 700;
 				font-size: 15px;

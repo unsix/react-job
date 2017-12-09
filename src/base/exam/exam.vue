@@ -3,11 +3,11 @@
 		<div class="exam" v-show="listShow">
 			<div class="nav">
 				<transition name="fade">
-				<el-tabs v-model="activeName" @tab-click="handleClick" v-show="!searchShow">
-					<el-tab-pane label="未处理"></el-tab-pane>
-					<el-tab-pane label="已处理"></el-tab-pane>
-					<el-tab-pane label="我发起的"></el-tab-pane>
-				</el-tabs>
+					<el-tabs v-model="activeName" @tab-click="handleClick" v-show="!searchShow">
+						<el-tab-pane label="未处理"></el-tab-pane>
+						<el-tab-pane label="已处理"></el-tab-pane>
+						<el-tab-pane label="我发起的"></el-tab-pane>
+					</el-tabs>
 				</transition>
 				<div class="filtrate" @click="doFiltrate">筛选<i :class="{ 'el-icon-arrow-down': searchShow, 'el-icon-arrow-up': !searchShow }"></i></div>
 			</div>
@@ -15,10 +15,10 @@
 				<div class="search" v-show="searchShow">
 					<div class="one">
 						<el-radio v-model="classRadio" label="1">我发起的</el-radio>
-	  					<el-radio v-model="classRadio" label="2">我处理的</el-radio>
+						<el-radio v-model="classRadio" label="2">我处理的</el-radio>
 					</div>
 					<div class="two">
-						<el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="searchInfo"  style="display: inline-block;">
+						<el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="searchInfo" style="display: inline-block;">
 						</el-input>
 					</div>
 					<div class="three">
@@ -60,8 +60,11 @@
 							<div class="startComP">
 								<span>发起公司：{{item.company_name}}</span>
 							</div>
-							<div class="creatTime">
+							<div class="creatTime" v-if="!handle_time_show">
 								<span>发起时间：{{item.add_time}}</span>
+							</div>
+							<div class="creatTime" v-if="handle_time_show">
+								<span>发起时间：{{item.creat_time}}</span>
 							</div>
 							<div class="creatTime" v-if="handle_time_show">
 								<span>处理时间：{{item.add_time}}</span>
@@ -80,10 +83,17 @@
 		<div class="form_wrapper" v-show="formShow">
 			<div class="top">
 				<el-button type="info" plain @click="return_list">返回列表</el-button>
+				<div class="as">
+					<el-button type="primary" plain @click="fileAccord(form_Lista)" v-show="now_type_name === '请款单'">依据附件</el-button>
+				</div>
 				<span class="title">{{now_type_name}}</span>
+				
 			</div>
 			<!--呈批件展示-->
 			<div class="form" name="呈批件" v-if="cengpijian_show">
+				<div class="top">
+					<span class="title">呈批件</span>
+				</div>
 				<div>
 					<span>呈批标题：</span><span>{{form_Lista.title}}</span>
 				</div>
@@ -105,34 +115,34 @@
 				</div>
 				<div>
 					<span>图片附件：</span>
-					<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-						<img :src="item" alt="" @click="ctrl_pic_show" />
+					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
 				</div>
 				<div>
 					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 				</div>
 				<div>
-					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
+					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
 						</span>
 				</div>
 				<div>
-					<span></span>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar lzz">
-								<span style="margin-left: 5px;">状态</span>
-							</div>
-							<div class="tel lzz">
-								<span>姓名</span>
-							</div>
-							<div class="name lzz">
-								<span>部门</span>
-							</div>
-							<div class="operation lzz">
-								<span>处理时间</span>
-							</div>
+					<span>审批：</span>
+					<div class="exam_info">
+						<div class="avatar lzz">
+							<span style="margin-left: 5px;">状态</span>
 						</div>
+						<div class="tel lzz">
+							<span>姓名</span>
+						</div>
+						<div class="name lzz">
+							<span>部门</span>
+						</div>
+						<div class="operation lzz">
+							<span>时间</span>
+						</div>
+					</div>
+					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar">
 								<span>{{item.is_agree}}</span>
@@ -199,7 +209,7 @@
 					<span>收货人联系方式：</span><span>{{form_Lista.consignee_phone}}</span>
 				</div>
 				<div>
-					<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager}}</span>
+					<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 				</div>
 				<div v-for="item in form_Lista.content" class="qingdan_qinggou">
 					<h4>请购清单</h4>
@@ -218,34 +228,34 @@
 				</div>
 				<div>
 					<span>图片附件：</span>
-					<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-						<img :src="item" alt="" @click="ctrl_pic_show" />
+					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
 				</div>
 				<div>
 					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 				</div>
 				<div>
-					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
+					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
 						</span>
 				</div>
 				<div>
-					<span></span>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar lzz">
-								<span style="margin-left: 5px;">状态</span>
-							</div>
-							<div class="tel lzz">
-								<span>姓名</span>
-							</div>
-							<div class="name lzz">
-								<span>部门</span>
-							</div>
-							<div class="operation lzz">
-								<span>处理时间</span>
-							</div>
+					<span>审批：</span>
+					<div class="exam_info">
+						<div class="avatar lzz">
+							<span style="margin-left: 5px;">状态</span>
 						</div>
+						<div class="tel lzz">
+							<span>姓名</span>
+						</div>
+						<div class="name lzz">
+							<span>部门</span>
+						</div>
+						<div class="operation lzz">
+							<span>时间</span>
+						</div>
+					</div>
+					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar">
 								<span>{{item.is_agree}}</span>
@@ -330,33 +340,33 @@
 				</div>
 				<div>
 					<span>图片附件：</span>
-					<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-						<img :src="item" alt="" @click="ctrl_pic_show" />
+					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
 				</div>
 				<div>
 					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 				</div>
 				<div>
-					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
+					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
 				</div>
 				<div>
-					<span></span>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar lzz">
-								<span style="margin-left: 5px;">状态</span>
-							</div>
-							<div class="tel lzz">
-								<span>姓名</span>
-							</div>
-							<div class="name lzz">
-								<span>部门</span>
-							</div>
-							<div class="operation lzz">
-								<span>处理时间</span>
-							</div>
+					<span>审批：</span>
+					<div class="exam_info">
+						<div class="avatar lzz">
+							<span style="margin-left: 5px;">状态</span>
 						</div>
+						<div class="name lzz">
+							<span>姓名</span>
+						</div>
+						<div class="tel lzz">
+							<span>部门</span>
+						</div>
+						<div class="operation lzz">
+							<span>时间</span>
+						</div>
+					</div>
+					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar">
 								<span>{{item.is_agree}}</span>
@@ -427,7 +437,7 @@
 					<span>到货时间：</span><span>{{form_Lista.arrive_time}}</span>
 				</div>
 				<div>
-					<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
+					<span>完工时间：</span><span>{{form_Lista.end_time}}</span>
 				</div>
 				<div>
 					<span>备注：</span><span>{{form_Lista.remarks}}</span>
@@ -438,33 +448,33 @@
 				</div>
 				<div>
 					<span>图片附件：</span>
-					<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-						<img :src="item" alt="" @click="ctrl_pic_show" />
+					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
 				</div>
 				<div>
 					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 				</div>
 				<div>
-					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}</span>
+					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
 				</div>
 				<div>
-					<span></span>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar lzz">
-								<span style="margin-left: 5px;">状态</span>
-							</div>
-							<div class="tel lzz">
-								<span>姓名</span>
-							</div>
-							<div class="name lzz">
-								<span>部门</span>
-							</div>
-							<div class="operation lzz">
-								<span>处理时间</span>
-							</div>
+					<span>审批：</span>
+					<div class="exam_info">
+						<div class="avatar lzz">
+							<span style="margin-left: 5px;">状态</span>
 						</div>
+						<div class="name lzz">
+							<span>姓名</span>
+						</div>
+						<div class="tel lzz">
+							<span>部门</span>
+						</div>
+						<div class="operation lzz">
+							<span>时间</span>
+						</div>
+					</div>
+					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar">
 								<span>{{item.is_agree}}</span>
@@ -521,34 +531,34 @@
 				</div>
 				<div>
 					<span>图片附件：</span>
-					<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-						<img :src="item" alt="" @click="ctrl_pic_show" />
+					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
 				</div>
 				<div>
 					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 				</div>
 				<div>
-					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
+					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
 						</span>
 				</div>
 				<div>
-					<span></span>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar lzz">
-								<span style="margin-left: 5px;">状态</span>
-							</div>
-							<div class="tel lzz">
-								<span>姓名</span>
-							</div>
-							<div class="name lzz">
-								<span>部门</span>
-							</div>
-							<div class="operation lzz">
-								<span>处理时间</span>
-							</div>
+					<span>审批：</span>
+					<div class="exam_info">
+						<div class="avatar lzz">
+							<span style="margin-left: 5px;">状态</span>
 						</div>
+						<div class="name lzz">
+							<span>姓名</span>
+						</div>
+						<div class="tel lzz">
+							<span>部门</span>
+						</div>
+						<div class="operation lzz">
+							<span>时间</span>
+						</div>
+					</div>
+					<div v-for="item in form_Listb.content">
 						<div class="exam_info">
 							<div class="avatar">
 								<span>{{item.is_agree}}</span>
@@ -568,7 +578,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="menu" v-show="handle_show">
+ 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
 						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
@@ -582,11 +592,12 @@
 		</div>
 		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 		<loading v-show="loading_show"></loading>
+		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
 	</div>
-
 </template>
 
 <script>
+	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
@@ -596,7 +607,7 @@
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
-	import { mapGetters ,mapMutations} from 'vuex'
+	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -607,7 +618,7 @@
 				listShow: true,
 				formShow: false,
 				colorIndex: -1,
-				listSeaShow:true,
+				listSeaShow: true,
 				qingkuandan_show: false,
 				cengpijian_show: false,
 				qinggoudan_show: false,
@@ -617,7 +628,7 @@
 				form_Listb: [],
 				menuShow: false,
 				ilaunched: true,
-				searchShow:false,
+				searchShow: false,
 				handle_time_show: false,
 				approval_process: false,
 				handle_show: true,
@@ -630,7 +641,7 @@
 				file: '',
 				pic_hash: '',
 				activeName: '',
-				classRadio:'1',
+				classRadio: '1',
 				img_arr: [],
 				fileList: [],
 				file_arr: [],
@@ -638,9 +649,12 @@
 				pageIndex: 1,
 				searchInfo: '',
 				classValue: '',
-				approval_type:0,
-				classIndex:-1,
-				group:['合同评审表','请购单','请款单','呈批件','申请公章']
+				approval_type: 0,
+				classIndex: -1,
+				group: ['合同评审表', '请购单', '请款单', '呈批件', '申请公章'],
+				form_approval_id:'',
+				request_money_basis_type:'',
+				fileAccordShow:false
 			}
 		},
 		computed: {
@@ -650,41 +664,64 @@
 			])
 		},
 		watch: {
-			pageIndex(){
+			pageIndex() {
 				this._getExamList()
-				if(this.searchShow){
+				if(this.searchShow) {
 					this.doSearch()
 				}
 			},
-			searchInfo(){
+			searchInfo() {
 				this.doSearch()
 			},
-			nowCompanyId(){
+			nowCompanyId() {
 				this._getExamList()
+			}
+		},
+		mounted() {
+			if(this.$route.path === '/work/exam') {
+				this.$emit('changeWorkIndex', 0)
 			}
 		},
 		created() {
 			this._getUserCompanyList()
+			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getToken()
 			this._getExamList()
 		},
 		components: {
 			browsePic,
-			loading
+			loading,
+			fileAccord
 		},
 		methods: {
-			classButton(item,index){
+			closeAcc(){
+				this.fileAccordShow = false
+			},
+			fileAccord(item){
+				this.fileAccordShow = true
+				console.log(item.approval_type)
+				if(item.approval_type === '7'){
+					this.request_money_basis_type = '请购单'
+				}else if(item.approval_type === '111'){
+					this.request_money_basis_type = '合同评审表'
+				}else{
+					this.request_money_basis_type = '呈批件'
+				}
+				
+				this.form_approval_id = item.form_approval_id
+			},
+			classButton(item, index) {
 				this.pageIndex = 1
-				this.classIndex = index 
-				if(item === '合同评审表'){
+				this.classIndex = index
+				if(item === '合同评审表') {
 					this.approval_type = 1
-				}else if(item ==='请购单'){
+				} else if(item === '请购单') {
 					this.approval_type = 3
-				}else if(item ==='申请公章'){
+				} else if(item === '申请公章') {
 					this.approval_type = 5
-				}else if(item ==='呈批件'){
+				} else if(item === '呈批件') {
 					this.approval_type = 6
-				}else if(item ==='请款单'){
+				} else if(item === '请款单') {
 					this.approval_type = 7
 				}
 				this.doSearch()
@@ -693,55 +730,55 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/user/companies_list", param)
-					.then((res) => {				
-						this.setNowCompanyId(res.data.data[0].company_id)
+					.then((res) => {
+						//						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						this.setNowCompanyName(res.data.data[0].company_name)
+						//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
-			doSearch(){
+			doSearch() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
 				param.append("select", this.searchInfo);
-				param.append("type",parseInt(this.classRadio));
+				param.append("type", parseInt(this.classRadio));
 				param.append("each", '10');
 				param.append("p", this.pageIndex);
-				if(this.approval_type != -1){
-					param.append("approval_type",this.approval_type);
+				if(this.approval_type != -1) {
+					param.append("approval_type", this.approval_type);
 				}
 				this.$http.post("/index/Mobile/approval/select_approval", param)
-				.then((res)=>{
-					console.log(res)
-					if(res.data.code === 0){
-						let arr = []
-						res.data.data.forEach((item) => {
-							arr.push(create_exam_list(item))
-						})
-						this.untreated = arr
-						if(arr.length < 10) {
-							this.nextPageShow = false
+					.then((res) => {
+						console.log(res)
+						if(res.data.code === 0) {
+							let arr = []
+							res.data.data.forEach((item) => {
+								arr.push(create_exam_list(item))
+							})
+							this.untreated = arr
+							if(arr.length < 10) {
+								this.nextPageShow = false
+							}
+							this.listSeaShow = true
+						} else {
+							this.listSeaShow = false
+							//						this.$message.error('未查到相关数据');
 						}
-						this.listSeaShow = true
-					}else{
-						this.listSeaShow = false
-						 this.$message.error('未查到相关数据');
-					}
-				})
+					})
 			},
-			doFiltrate(){
-				if(this.searchShow){
+			doFiltrate() {
+				if(this.searchShow) {
 					this.pageIndex = 1
 					this._getExamList()
 					this.listSeaShow = true
 					this.classIndex = -1
 					this.searchShow = false
-				}else{
+				} else {
 					this.pageIndex = 1
 					this.listSeaShow = false
 					this.searchShow = true
 				}
-				
+
 			},
 			biao(index) {
 				this.colorIndex = index
@@ -751,11 +788,11 @@
 				this.$refs.list[this.colorIndex].style.background = "rgba(255,0,0,0.1)"
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				param.append("tagging", '#FF0000');
+				param.append("tagging", 'FF0000');
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index/Mobile/approval/add_tagging", param)
 					.then((res) => {
-						console.log(res)
+						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this.$message.success('标记成功');
 						} else {
@@ -767,11 +804,11 @@
 				this.$refs.list[this.colorIndex].style.background = "rgba(255,255,0,0.1)"
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				param.append("tagging", '#FFF000');
+				param.append("tagging", 'FFF000');
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index/Mobile/approval/add_tagging", param)
 					.then((res) => {
-						console.log(res)
+						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this.$message.success('标记成功');
 						} else {
@@ -783,10 +820,27 @@
 				this.$refs.list[this.colorIndex].style.background = "rgba(0,255,0,0.1)"
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				param.append("tagging", '#00FF00');
+				param.append("tagging", '00FF00');
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index/Mobile/approval/add_tagging", param)
 					.then((res) => {
+						this.colorIndex = -1
+						if(res.data.code === 0) {
+							this.$message.success('标记成功');
+						} else {
+							this.$message.error('标记失败');
+						}
+					})
+			},
+			colorFour(item) {
+				this.$refs.list[this.colorIndex].style.background = "rgba(0,0,255,0.1)"
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("tagging", '0000FF');
+				param.append("participation_id", item.participation_id);
+				this.$http.post("/index/Mobile/approval/add_tagging", param)
+					.then((res) => {
+						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this.$message.success('标记成功');
 						} else {
@@ -805,21 +859,6 @@
 				setUserState: 'SET_USERSTATE',
 				setCompanyList: 'SET_COMPANYLIST'
 			}),
-			colorFour(item) {
-				this.$refs.list[this.colorIndex].style.background = "rgba(0,0,255,0.1)"
-				let param = new URLSearchParams();
-				param.append("uid", this.user.uid);
-				param.append("tagging", '#0000FF');
-				param.append("participation_id", item.participation_id);
-				this.$http.post("/index/Mobile/approval/add_tagging", param)
-					.then((res) => {
-						if(res.data.code === 0) {
-							this.$message.success('标记成功');
-						} else {
-							this.$message.error('标记失败');
-						}
-					})
-			},
 			first_page() {
 				this.nextPageShow = true
 				this.pageIndex = 1
@@ -855,7 +894,9 @@
 				}
 				++this.pic_index
 			},
-			ctrl_pic_show() {
+			ctrl_pic_show(item, index) {
+				this.img_arr = item
+				this.pic_index = index
 				this.pic_show = true
 			},
 			handle() {
@@ -881,7 +922,6 @@
 					param.append("participation_id", this.form_Listb.participation_id);
 					param.append("is_agree", '1');
 					param.append("company_id", this.nowCompanyId);
-					param.append("handle_txt", this.handle_txt);
 					param.append("opinion", this.handle_txt);
 					this.$http.post("/index/Mobile/find/approval_process", param)
 						.then((res) => {
@@ -964,7 +1004,6 @@
 					param.append("participation_id", this.form_Listb.participation_id);
 					param.append("is_agree", '2');
 					param.append("company_id", this.nowCompanyId);
-					param.append("handle_txt", this.handle_txt);
 					param.append("opinion", this.handle_txt);
 					this.$http.post("/index/Mobile/find/approval_process", param)
 						.then((res) => {
@@ -1009,7 +1048,6 @@
 										param.append("is_agree", '2');
 										param.append("picture", res.data.data.enclosure_id);
 										param.append("company_id", this.nowCompanyId);
-										param.append("handle_txt", this.handle_txt);
 										param.append("opinion", this.handle_txt);
 										this.$http.post("/index/Mobile/find/approval_process", param)
 											.then((res) => {
@@ -1045,14 +1083,16 @@
 
 			},
 			listCli(item) {
+				this.form_Lista = []
+				this.form_Listb = []
 				this.listShow = false
 				this.formShow = true
 				this.qingkuandan_show = false,
-					this.cengpijian_show = false,
-					this.qinggoudan_show = false,
-					this.pingshenbiao_show = false,
-					this.gongzhang_show = false,
-					this.now_type_name = item.type
+				this.cengpijian_show = false,
+				this.qinggoudan_show = false,
+				this.pingshenbiao_show = false,
+				this.gongzhang_show = false,
+				this.now_type_name = item.type
 				if(item.type === '呈批件') {
 					this.cengpijian_show = true
 				} else if(item.type === '请款单') {
@@ -1085,7 +1125,6 @@
 							this.form_Lista = create_gongzhang_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
-
 						} else if(item.type === '请购单') {
 							this.form_Lista = create_qinggoudan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1214,28 +1253,41 @@
 				this.$http.post("/index/Mobile/path/get_token", nparam)
 					.then((res) => {
 						localStorage.token = JSON.stringify(res.data.data);
-					})
+				})
 			}
 		},
-		
+
 	}
 </script>
 
 <style lang="scss">
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
-  opacity: 0
-}
-.fade1-enter-active, .fade1-leave-active {
-  transition: opacity .5s;
-  transform: translateY(-54px);
-}
-.fade1-enter, .fade1-leave-to /* .fade-leave-active in below version 2.1.8 */ {
-  opacity: 0;
-  
-}
+	.fade-enter-active,
+	.fade-leave-active {
+		transition: opacity .5s
+	}
+	
+	.fade-enter,
+	.fade-leave-to
+	/* .fade-leave-active in below version 2.1.8 */
+	
+	{
+		opacity: 0
+	}
+	
+	.fade1-enter-active,
+	.fade1-leave-active {
+		transition: opacity .5s;
+		transform: translateY(-54px);
+	}
+	
+	.fade1-enter,
+	.fade1-leave-to
+	/* .fade-leave-active in below version 2.1.8 */
+	
+	{
+		opacity: 0;
+	}
+	
 	.exam_wrapper {
 		width: 100%;
 		height: 100%;
@@ -1253,7 +1305,7 @@
 					font-size: 14px;
 					cursor: pointer;
 				}
-				.el-tabs__header{
+				.el-tabs__header {
 					background: #FFFFFF;
 					margin-bottom: 5px;
 				}
@@ -1278,9 +1330,9 @@
 					display: inline-block;
 					margin-left: 40px;
 				}
-				>.three{
+				>.three {
 					margin: 15px;
-					span{
+					span {
 						display: inline-block;
 						cursor: pointer;
 						margin-left: 10px;
@@ -1289,21 +1341,20 @@
 						font-size: 14px;
 						color: #878d99;
 						background: #f3f4f5;
-						&:hover{
+						&:hover {
 							background: #878d99;
 							color: #FFFFFF;
 						}
-						&.active{
+						&.active {
 							background: #878d99;
 							color: #FFFFFF;
-							
 						}
 					}
 				}
 				.el-input__inner {
 					width: auto;
 				}
-				.el-input{
+				.el-input {
 					width: auto;
 				}
 			}
@@ -1334,7 +1385,7 @@
 						>.avatar {
 							display: inline-block;
 							vertical-align: top;
-							margin: 8px 15px 0 15px;
+							margin: 8px 5px 0 15px;
 							img {
 								width: 40px;
 								height: 40px;
@@ -1401,6 +1452,7 @@
 							}
 						}
 						.content {
+							margin-left: 20px;
 							padding: 4px 0;
 							display: inline-block;
 							>div {
@@ -1418,10 +1470,15 @@
 			width: 600px;
 			overflow: hidden;
 			box-shadow: 0 0 2px rgba(0, 0, 0, .2);
-				-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+			-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 			.top {
 				width: 100%;
 				display: block;
+				.as{
+					display: inline-block;
+					float: right;
+					margin-right: 10px;
+				}
 				button {
 					margin-left: 10px;
 					margin-top: 10px;
@@ -1438,6 +1495,7 @@
 			.form {
 				padding: 10px;
 				color: #999999;
+				
 				.exam_info {
 					cursor: default;
 					display: block;
@@ -1475,10 +1533,10 @@
 						width: 100px;
 					}
 					.tel {
-						width: 100px;
+						width: 200px;
 					}
 					.operation {
-						width: 200px;
+						width: 150px;
 						button {
 							display: block;
 						}
