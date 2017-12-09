@@ -150,9 +150,9 @@
 			},
 			changeType(item, index) {
 				if(index === 0) {
-					this.$router.push('/index/work');
+					this.$router.push('/index.php/work');
 				} else {
-					this.$router.push('/index/apply/mineApp');
+					this.$router.push('/index.php/apply/mineApp');
 				}
 			},
 			changeWorkIndex(num){
@@ -231,7 +231,7 @@
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
 				param.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/User/return_company_new", param)
+				this.$http.post("/index.php/Mobile/User/return_company_new", param)
 					.then((res) => {
 						console.log(res)
 						let is_manage = parseInt(res.data.data.is_manage)
@@ -246,7 +246,7 @@
 			_getToken(uid) {
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/path/get_token", nparam)
+				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
 //						localStorage.token = JSON.stringify(res.data.data);
 						this.setToken(res.data.data)
@@ -255,7 +255,7 @@
 			_getComPartPersonList() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/user/get_department_lest", param)
+				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
@@ -267,7 +267,7 @@
 							let newparam = new URLSearchParams();
 							newparam.append("company_id", this.nowCompanyId);
 							newparam.append("department_id", resData[j].department_id);
-							this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
+							this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 								.then((res) => {
 									let reaDa = []
 									res.data.data.forEach((item) => {
@@ -284,7 +284,7 @@
 			_getComDepart() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/user/get_department_lest", param)
+				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
 						let arr = []
 						res.data.data.forEach((item) => {
@@ -296,7 +296,7 @@
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/user/companies_list", param)
+				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
@@ -307,7 +307,7 @@
 			_getComPersonList() {
 				let newparam = new URLSearchParams();
 				newparam.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
+				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {

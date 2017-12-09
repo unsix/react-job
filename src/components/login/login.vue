@@ -88,7 +88,7 @@
 			    param.append("phone",this.account_num );
 			    param.append("password",password_num);
 			    param.append("phone_type",'web');
-			    this.$http.post("/index/Mobile/skey/login",param)
+			    this.$http.post("/index.php/Mobile/skey/login",param)
 			    .then((res)=>{	    	
 			    	console.log(res)
 //			    	return
@@ -117,7 +117,7 @@
 				let param = new URLSearchParams();
 				param.append("company_id",this.nowCompanyId);
 				param.append("uid",this.user.uid);
-			    this.$http.post("/index/Mobile/User/return_company_new",param)
+			    this.$http.post("/index.php/Mobile/User/return_company_new",param)
 			    .then((res)=>{
 			    	let is_manage = parseInt(res.data.data.is_manage)
 			    	let is_finance = parseInt(res.data.data.is_finance)
@@ -130,7 +130,7 @@
 			_getComDepart(){
 				let param = new URLSearchParams();
 				param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index/Mobile/user/get_department_lest",param)
+			    this.$http.post("/index.php/Mobile/user/get_department_lest",param)
 			    .then((res)=>{
 			    	let arr=[]
 			    	res.data.data.forEach((item)=>{
@@ -142,7 +142,7 @@
 			_getUserCompanyList(uid){
 				let param = new URLSearchParams();
 				param.append("uid",uid);
-				this.$http.post("/index/Mobile/user/companies_list",param)
+				this.$http.post("/index.php/Mobile/user/companies_list",param)
 				.then((res)=>{
 					this.setCompanyList(res.data.data)
 					this.setNowCompanyId(res.data.data[0].company_id)

@@ -168,7 +168,7 @@
 				this.menuShow = true
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/path/get_token", param)
+				this.$http.post("/index.php/Mobile/path/get_token", param)
 					.then((res) => {
 						this.input_value = res.data.data
 					})
@@ -211,14 +211,14 @@
 						let mparam = new URLSearchParams();
 						mparam.append("uid", this.user.uid);
 						mparam.append("company_id", this.nowCompanyId);
-						this.$http.post("/index/Mobile/User/return_company_new", mparam)
+						this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
 							.then((res) => {
 								this.now_personnel_id = res.data.data.personnel_id
 								if(this.now_personnel_id === res.data.data.personnel_id) {
 									let nparam = new URLSearchParams();
 									nparam.append("uid", this.user.uid);
 									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
 										.then((res) => {
 											let param = new URLSearchParams();
 											param.append("uid", this.user.uid);
@@ -228,7 +228,7 @@
 											param.append("finance_state", 1);
 											param.append("receipt_content", '111');
 											param.append("receipt_pic", res.data.data.enclosure_id);
-											this.$http.post("/index/Mobile/find/finance_receipt", param)
+											this.$http.post("/index.php/Mobile/find/finance_receipt", param)
 												.then((res) => {
 													this.loading_show = false
 													if(res.data.code === 0) {
@@ -261,7 +261,7 @@
 					param.append("company_id", this.nowCompanyId);
 					param.append("finance_state", 1);
 					param.append("receipt_content", this.handle_txt);
-					this.$http.post("/index/Mobile/find/finance_receipt", param)
+					this.$http.post("/index.php/Mobile/find/finance_receipt", param)
 						.then((res) => {
 							this.loading_show = false
 							if(res.data.code === 0) {
@@ -294,14 +294,14 @@
 						let mparam = new URLSearchParams();
 						mparam.append("uid", this.user.uid);
 						mparam.append("company_id", this.nowCompanyId);
-						this.$http.post("/index/Mobile/User/return_company_new", mparam)
+						this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
 							.then((res) => {
 								this.now_personnel_id = res.data.data.personnel_id
 								if(this.now_personnel_id === res.data.data.personnel_id) {
 									let nparam = new URLSearchParams();
 									nparam.append("uid", this.user.uid);
 									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
 										.then((res) => {
 											let param = new URLSearchParams();
 											param.append("uid", this.user.uid);
@@ -311,7 +311,7 @@
 											param.append("finance_state", 1);
 											param.append("receipt_content", '111');
 											param.append("receipt_pic", res.data.data.enclosure_id);
-											this.$http.post("/index/Mobile/find/finance_receipt", param)
+											this.$http.post("/index.php/Mobile/find/finance_receipt", param)
 												.then((res) => {
 													this.loading_show = false
 													if(res.data.code === 0) {

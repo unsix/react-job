@@ -113,7 +113,7 @@
 				param.append("company_id", this.nowCompanyId);
 				param.append("type", this.formType);
 				param.append("sequence", JSON.stringify(this.arr));
-				this.$http.post("/index/Mobile/approval/set_sequence", param)
+				this.$http.post("/index.php/Mobile/approval/set_sequence", param)
 					.then((res) => {
 						this.submitAddPersonShow = false
 						this.$emit('reload')

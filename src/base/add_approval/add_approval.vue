@@ -164,7 +164,7 @@
 			_getComDepart() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/user/get_department_lest", param)
+				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
 						let arr = []
 						res.data.data.forEach((item) => {
@@ -176,7 +176,7 @@
 			_getToken() {
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/path/get_token", nparam)
+				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
 						localStorage.token = JSON.stringify(res.data.data);
 					})
@@ -212,7 +212,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", item.approval_id);
-				this.$http.post("/index/Mobile/approval/approval_process_show", param)
+				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						if(item.type === '呈批件') {
 							this.cpj_if = true
@@ -245,14 +245,14 @@
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", item.approval_id);
 				nparam.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/approval/approval_process_personnel", nparam)
+				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
 								let zparam = new URLSearchParams();
 								zparam.append("enclosure_id", item.picture);
-								this.$http.post("/index/Mobile/approval/look_enclosure", zparam)
+								this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
@@ -277,7 +277,7 @@
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/user/companies_list", param)
+				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {	
 //						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
@@ -337,7 +337,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", item.approval_id);
-				this.$http.post("/index/Mobile/approval/approval_process_show", param)
+				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						if(item.type === '呈批件') {
 							this.cpj_if = true
@@ -370,14 +370,14 @@
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", item.approval_id);
 				nparam.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/approval/approval_process_personnel", nparam)
+				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
 								let zparam = new URLSearchParams();
 								zparam.append("enclosure_id", item.picture);
-								this.$http.post("/index/Mobile/approval/look_enclosure", zparam)
+								this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
@@ -399,7 +399,7 @@
 					if(item.type === 3) {
 						let param = new URLSearchParams();
 						param.append("enclosure_id", item.contract_id);
-						this.$http.post("/index/Mobile/approval/look_enclosure", param)
+						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
 								let arr = []
 								res.data.data.picture.forEach((item) => {
@@ -422,7 +422,7 @@
 					if(item.type === 4) {
 						let param = new URLSearchParams();
 						param.append("attachments_id", item.contract_id);
-						this.$http.post("/index/Mobile/approval/look_attachments", param)
+						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
 							.then((res) => {
 								let obj = {}
 								let file_data = res.data.data
@@ -538,7 +538,7 @@
 				param.append("each", '10');
 				param.append("p", this.pageIndex);
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/approval/request_monry_basis", param)
+				this.$http.post("/index.php/Mobile/approval/request_monry_basis", param)
 					.then((res) => {
 						let arr = []
 						res.data.data.forEach((item) => {
@@ -553,7 +553,7 @@
 			_getComPersonList(){
 				let newparam = new URLSearchParams();
 				newparam.append("company_id",this.nowCompanyId); 
-				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+				this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
 				.then((res)=>{
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{

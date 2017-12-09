@@ -81,7 +81,7 @@
 				param.append("p", this.pageIndex);
 				param.append("company_id", this.nowCompanyId);
 				param.append("approval_type", this.approval_type);
-				this.$http.post("/index/Mobile/approval/see_approval_list", param)
+				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
 					.then((res) => {
 						let arr = []
 						res.data.data.forEach((item) => {

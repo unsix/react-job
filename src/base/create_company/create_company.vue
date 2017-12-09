@@ -316,7 +316,7 @@
 			    c_param.append("name",this.companyName);
 			    c_param.append("company_address",this.companyAdd);
 			    c_param.append("company_tel",this.companyPhone);
-			    this.$http.post("/index/Mobile/User/add_company",c_param)
+			    this.$http.post("/index.php/Mobile/User/add_company",c_param)
 			    .then((res)=>{
 			    	console.log(res)
 			    	if(res.data.code === '0'){
@@ -349,7 +349,7 @@
 					    param.append("big_json",newRet);
 					    param.append("company_id",this.companyId);
 					    param.append("uid",this.user.uid);
-					    this.$http.post("/index/Mobile/company/entrance_company",param)
+					    this.$http.post("/index.php/Mobile/company/entrance_company",param)
 					      .then((res)=>{
 					      	if(res.data.code === 0){
 					      			this.$message({

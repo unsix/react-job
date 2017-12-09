@@ -183,7 +183,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			    param.append("type",zz);
 			    param.append("personnel",JSON.stringify(narr));
 			    param.append("uid",this.user.uid);
-			    this.$http.post("/index/Mobile/user/give_finance_new",param)
+			    this.$http.post("/index.php/Mobile/user/give_finance_new",param)
 			    .then((res)=>{
 			    	if(res.data.code === 0){
 			    		this._getHuizhi()
@@ -226,7 +226,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/user/companies_list", param)
+				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {			
 //						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
@@ -236,7 +236,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 			 _getComPersonList(){
 				let newparam = new URLSearchParams();
 				newparam.append("company_id",this.nowCompanyId); 
-				this.$http.post("/index/Mobile/user/get_company_personnel",newparam)
+				this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
 				.then((res)=>{
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{
@@ -250,7 +250,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				let param = new URLSearchParams();
 			    param.append("company_id",this.nowCompanyId);
 			    param.append("uid",this.user.uid);
-			    this.$http.post("/index/Mobile/find/finance_personnel_list",param)
+			    this.$http.post("/index.php/Mobile/find/finance_personnel_list",param)
 				.then((res)=>{
 					res.data.data.forEach((item)=>{
 						if(item.type===1){
@@ -279,7 +279,7 @@ import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
 				this.jurisdictionFormList = []
 				let param = new URLSearchParams();
 			    param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index/Mobile/approval/approval_list",param)
+			    this.$http.post("/index.php/Mobile/approval/approval_list",param)
 			    .then((res)=>{
 					res.data.data.approval.forEach((item)=>{
 						if(item.type===this.formType){

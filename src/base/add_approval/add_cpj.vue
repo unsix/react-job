@@ -121,7 +121,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
-				this.$http.post("/index/Mobile/approval/approval_process_show", param)
+				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						this.form_Lista = create_cengpijian_list(res.data.data)
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
@@ -174,7 +174,7 @@
 			_getToken() {
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/path/get_token", nparam)
+				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
 						localStorage.token = JSON.stringify(res.data.data);
 						this.setToken(res.data.data)
@@ -224,7 +224,7 @@
 					param.append("content", this.cpj_ruleForm.content);
 					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
 					param.append("title", this.cpj_ruleForm.title);
-					this.$http.post("/index/Mobile/approval/add_chengpi", param)
+					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
 							this.loadingShow = false
 							if(res.data.code === 0) {
@@ -252,7 +252,7 @@
 									let nparam = new URLSearchParams();
 									nparam.append("uid", this.user.uid);
 									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index/Mobile/approval/upload_enclosure_new", nparam)
+									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
 										.then((res) => {
 											this.pic_enclosure_id = res.data.data.enclosure_id
 											this.afile_hash_arr.push({
@@ -286,7 +286,7 @@
 								param.append("attribute", attribute);
 								param.append("attachments", res.data.hash);
 								param.append("file_name", file_name);
-								this.$http.post("/index/Mobile/approval/add_attachments", param)
+								this.$http.post("/index.php/Mobile/approval/add_attachments", param)
 									.then((res) => {
 										this.file_hash_arr.push({
 											"type": 4,
@@ -324,7 +324,7 @@
 					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
 					param.append("title", this.cpj_ruleForm.title);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-					this.$http.post("/index/Mobile/approval/add_chengpi", param)
+					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
 							this.loadingShow = false
 							if(res.data.code === 0) {
@@ -355,7 +355,7 @@
 					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
 					param.append("title", this.cpj_ruleForm.title);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-					this.$http.post("/index/Mobile/approval/add_chengpi", param)
+					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
 							this.loadingShow = false
 							if(res.data.code === 0) {

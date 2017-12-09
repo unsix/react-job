@@ -81,7 +81,7 @@
 				param.append("phone", this.form.phone);
 				param.append("company_id", this.nowCompanyId);
 				param.append("department_id", departId);
-				this.$http.post("/index/Mobile/User/add_personnel", param)
+				this.$http.post("/index.php/Mobile/User/add_personnel", param)
 					.then((res) => {
 						console.log(res)
 						this.loadingShow = false
@@ -98,7 +98,7 @@
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index/Mobile/user/companies_list", param)
+				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
 //						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
@@ -108,7 +108,7 @@
 			_getComDepart() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/user/get_department_lest", param)
+				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
 						let arr = []
 						res.data.data.forEach((item) => {
