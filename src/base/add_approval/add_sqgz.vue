@@ -20,7 +20,7 @@
 			</el-form-item>
 			<div class="add_sqgz">添加清单条目 <i class="el-icon-circle-plus" @click="add_sqgz"></i></div>
 			<div>
-				<el-form v-for="(item,index) in sqgz_ruleForm.add" label-width="150px" :key="item.seal_type">
+				<el-form v-for="(item,index) in sqgz_ruleForm.add" label-width="150px" :key="index">
 					<div class="close"></div>
 					<el-form-item label="印章类别">
 						<el-radio-group v-model="item.seal_type">
@@ -58,7 +58,7 @@
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_sqgz('sqgz_ruleForm')">立即添加</el-button>
-				<el-button @click="resetForm('sqgz_ruleForm')">重置</el-button>
+				<!--<el-button @click="resetForm('sqgz_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>
@@ -166,12 +166,28 @@
 				param.append("approval_id", this.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-						console.log(res)
+						
 						this.form_Lista = create_gongzhang_list(res.data.data)
 						
+						this.sqgz_ruleForm.user_name = this.form_Lista.user_name
 						this.sqgz_ruleForm.departmental = this.form_Lista.department_name
 						this.sqgz_ruleForm.department_id = this.form_Lista.department_id
 						this.sqgz_ruleForm.add = this.form_Lista.info
+						this.sqgz_ruleForm.add.forEach((item,index)=>{
+							if(item.seal_type ==='公章'){
+								this.sqgz_ruleForm.add[index].seal_type = '1'
+							}else if(item.seal_type ==='法人章'){
+								this.sqgz_ruleForm.add[index].seal_type = '2'
+							}else if(item.seal_type ==='财务章'){
+								this.sqgz_ruleForm.add[index].seal_type = '3'
+							}else if(item.seal_type ==='发票章'){
+								this.sqgz_ruleForm.add[index].seal_type = '4'
+							}else if(item.seal_type ==='合同章'){
+								this.sqgz_ruleForm.add[index].seal_type = '5'
+							}
+							
+						})
+						
 					})
 			},
 			add_ok() {

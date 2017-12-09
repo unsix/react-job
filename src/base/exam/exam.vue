@@ -132,14 +132,14 @@
 						<div class="avatar lzz">
 							<span style="margin-left: 5px;">状态</span>
 						</div>
-						<div class="tel lzz">
+						<div class="name lzz">
 							<span>姓名</span>
 						</div>
-						<div class="name lzz">
-							<span>部门</span>
+						<div class="tel lzz">
+							<span>时间</span>
 						</div>
 						<div class="operation lzz">
-							<span>时间</span>
+							<span>回复</span>
 						</div>
 					</div>
 					<div v-for="item in form_Listb.content">
@@ -151,10 +151,10 @@
 								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.department_name}}</span>
+								<span>{{item.add_time}}</span>
 							</div>
 							<div class="operation">
-								<span>{{item.add_time}}</span>
+								<span>{{item.opinion}}</span>
 							</div>
 						</div>
 						<div>
@@ -245,14 +245,14 @@
 						<div class="avatar lzz">
 							<span style="margin-left: 5px;">状态</span>
 						</div>
-						<div class="tel lzz">
+						<div class="name lzz">
 							<span>姓名</span>
 						</div>
-						<div class="name lzz">
-							<span>部门</span>
+						<div class="tel lzz">
+							<span>时间</span>
 						</div>
 						<div class="operation lzz">
-							<span>时间</span>
+							<span>回复</span>
 						</div>
 					</div>
 					<div v-for="item in form_Listb.content">
@@ -264,10 +264,10 @@
 								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.department_name}}</span>
+								<span>{{item.add_time}}</span>
 							</div>
 							<div class="operation">
-								<span>{{item.add_time}}</span>
+								<span>{{item.opinion}}</span>
 							</div>
 						</div>
 						<div>
@@ -316,7 +316,7 @@
 					<span>请款次数：</span><span>{{form_Lista.request_num}}</span>
 				</div>
 				<div>
-					<span>合同进度：</span><span>{{form_Lista.contract_state}}</span>
+					<span>合同执行进度：</span><span>{{form_Lista.contract_state}}</span>
 				</div>
 				<div>
 					<span>合同金额￥：</span><span>{{form_Lista.subtotal}}</span>
@@ -363,10 +363,10 @@
 							<span>姓名</span>
 						</div>
 						<div class="tel lzz">
-							<span>部门</span>
+							<span>时间</span>
 						</div>
 						<div class="operation lzz">
-							<span>时间</span>
+							<span>回复</span>
 						</div>
 					</div>
 					<div v-for="item in form_Listb.content">
@@ -378,10 +378,10 @@
 								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.department_name}}</span>
+								<span>{{item.add_time}}</span>
 							</div>
 							<div class="operation">
-								<span>{{item.add_time}}</span>
+								<span>{{item.opinion}}</span>
 							</div>
 						</div>
 						<div>
@@ -409,7 +409,7 @@
 					<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 				</div>
 				<div>
-					<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
+					<span>合同编号：</span><span>{{form_Lista.contract_id}}</span>
 				</div>
 				<div>
 					<span>甲方：</span><span>{{form_Lista.a_name}}</span>
@@ -471,10 +471,10 @@
 							<span>姓名</span>
 						</div>
 						<div class="tel lzz">
-							<span>部门</span>
+							<span>时间</span>
 						</div>
 						<div class="operation lzz">
-							<span>时间</span>
+							<span>回复</span>
 						</div>
 					</div>
 					<div v-for="item in form_Listb.content">
@@ -486,10 +486,10 @@
 								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.department_name}}</span>
+								<span>{{item.add_time}}</span>
 							</div>
 							<div class="operation">
-								<span>{{item.add_time}}</span>
+								<span>{{item.opinion}}</span>
 							</div>
 						</div>
 						<div>
@@ -555,10 +555,10 @@
 							<span>姓名</span>
 						</div>
 						<div class="tel lzz">
-							<span>部门</span>
+							<span>时间</span>
 						</div>
 						<div class="operation lzz">
-							<span>时间</span>
+							<span>回复</span>
 						</div>
 					</div>
 					<div v-for="item in form_Listb.content">
@@ -570,10 +570,10 @@
 								<span>{{item.name}}</span>
 							</div>
 							<div class="tel">
-								<span>{{item.department_name}}</span>
+								<span>{{item.add_time}}</span>
 							</div>
 							<div class="operation">
-								<span>{{item.add_time}}</span>
+								<span>{{item.opinion}}</span>
 							</div>
 						</div>
 						<div>
@@ -604,6 +604,7 @@
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import {getPic} from '@/common/js/pic.js'
+	import picLeader from '@/common/js/pic.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -759,7 +760,6 @@
 				}
 				this.$http.post("/index.php/Mobile/approval/select_approval", param)
 					.then((res) => {
-						console.log(res)
 						if(res.data.code === 0) {
 							let arr = []
 							res.data.data.forEach((item) => {
@@ -804,6 +804,7 @@
 					.then((res) => {
 						this.colorIndex = -1
 						if(res.data.code === 0) {
+							this._getExamList()
 							this.$message.success('标记成功');
 						} else {
 							this.$message.error('标记失败');
@@ -820,6 +821,7 @@
 					.then((res) => {
 						this.colorIndex = -1
 						if(res.data.code === 0) {
+							this._getExamList()
 							this.$message.success('标记成功');
 						} else {
 							this.$message.error('标记失败');
@@ -836,6 +838,7 @@
 					.then((res) => {
 						this.colorIndex = -1
 						if(res.data.code === 0) {
+							this._getExamList()
 							this.$message.success('标记成功');
 						} else {
 							this.$message.error('标记失败');
@@ -852,6 +855,7 @@
 					.then((res) => {
 						this.colorIndex = -1
 						if(res.data.code === 0) {
+							this._getExamList()
 							this.$message.success('标记成功');
 						} else {
 							this.$message.error('标记失败');
@@ -1541,13 +1545,13 @@
 						width: 70px;
 					}
 					.name {
-						width: 100px;
+						width: 80px;
 					}
 					.tel {
-						width: 200px;
+						width: 150px;
 					}
 					.operation {
-						width: 150px;
+						width: 240px;
 						button {
 							display: block;
 						}

@@ -3,11 +3,13 @@
 		<div class="add_approval">
 			<div class="nav">
 				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="合同审核表"></el-tab-pane>
+					<el-tab-pane label="合同评审表"></el-tab-pane>		
 					<el-tab-pane label="请购单"></el-tab-pane>
-					<el-tab-pane label="呈批件"></el-tab-pane>
-					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="请款单"></el-tab-pane>
+					<el-tab-pane label="申请公章"></el-tab-pane>
+					<el-tab-pane label="呈批件"></el-tab-pane>
+					
+					
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -81,6 +83,7 @@
 	import sqgz from '@/base/exam_form/sqgz'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
+	import {getPic} from '@/common/js/pic.js'
 	import { create_depart_list } from 'common/js/initial/depart.js'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { create_exam_list } from '@/common/js/approval/exam'
@@ -261,7 +264,7 @@
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
-												arr.push('http://img-bbsf.6655.la/' + item)
+												arr.push(getPic(item))
 											}
 										})
 									})
@@ -318,6 +321,7 @@
 					this.approval_id1 = item.approval_id
 					this.psb_show = true
 				} else if(item.type === '请购单') {
+					console.log(item.approval_id)
 					this.approval_id2 = item.approval_id
 					this.qgd_show = true
 				} else if(item.type === '呈批件') {
@@ -386,7 +390,7 @@
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
-												arr.push('http://img-bbsf.6655.la/' + item)
+												arr.push(getPic(item))
 											}
 										})
 									})
@@ -409,7 +413,7 @@
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
-										arr.push('http://img-bbsf.6655.la/' + item)
+										arr.push(getPic(item))
 									}
 								})
 								this.img_arr = arr
@@ -431,7 +435,7 @@
 							.then((res) => {
 								let obj = {}
 								let file_data = res.data.data
-								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
 								obj.name = file_data.file_name
 								obj.address = file_add
 								this.file_arr.push(obj)
@@ -478,16 +482,20 @@
 					this.qgd_show = true
 					this.approval_type = 1000
 				} else if(this.navIndex === 2) {
-					this.cpj_show = true
-					this.approval_type = 6
-				} else if(this.navIndex === 3) {
-					this.sqgz_show = true
-					this.approval_type = 5
-				} else if(this.navIndex === 4) {
 					this.qkd_show = true
 					this.as_what_show = true
 					this.formShow = false
 					this.approval_type = 1001
+					
+				} else if(this.navIndex === 3) {
+					this.sqgz_show = true
+					this.approval_type = 5
+					
+					
+				} else if(this.navIndex === 4) {
+					this.cpj_show = true
+					this.approval_type = 6
+					
 				}
 			},
 
@@ -562,7 +570,7 @@
 				.then((res)=>{
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{
-				    	item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+				    	item.avatar = getPic(item.avatar)
 				    	reaDa.push(item)
 				    })	
 				   	this.setComPersonList(reaDa)

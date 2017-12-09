@@ -6,14 +6,14 @@
 					<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="呈批标题" prop="content">
-				<el-input v-model="cpj_ruleForm.content"></el-input>
+			<el-form-item label="呈批标题" prop="title">
+				<el-input v-model="cpj_ruleForm.title"></el-input>
 			</el-form-item>
 			<el-form-item label="文件编号" prop="chengpi_num">
 				<el-input v-model="cpj_ruleForm.chengpi_num"></el-input>
 			</el-form-item>
-			<el-form-item label="主题内容" prop="title">
-				<el-input v-model="cpj_ruleForm.title"></el-input>
+			<el-form-item label="主题内容" prop="content">
+				<el-input v-model="cpj_ruleForm.content"></el-input>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
@@ -34,7 +34,7 @@
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即添加</el-button>
-				<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>
+				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>

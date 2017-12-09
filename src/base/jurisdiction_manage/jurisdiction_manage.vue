@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import {getPic} from '@/common/js/pic.js'
 import {createJurisdictionList} from 'common/js/jurisdiction_list.js'
 import {mapGetters,mapMutations} from 'vuex' 
 import {createPersonInfo} from 'common/js/person_info'

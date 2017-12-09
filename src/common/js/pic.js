@@ -1,5 +1,8 @@
-
+var picLeader = 'http://img-bbsf.6655.la/'
 export function getPic(pic){
-	const picLeader = 'http://bbsf-file.hzxb.net/'
+	if(pic == null){
+		return 
+	}
+	
 	return picLeader + pic
 }

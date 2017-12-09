@@ -10,8 +10,8 @@
 		<div v-if="form_Lista.contract_name_new">
 			<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 		</div>
-		<div v-if="form_Lista.contract_num">
-			<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
+		<div v-if="form_Lista.contract_id">
+			<span>合同编号：</span><span>{{form_Lista.contract_id}}</span>
 		</div>
 		<div v-if="form_Lista.a_name">
 			<span>甲方：</span><span>{{form_Lista.a_name}}</span>
@@ -68,14 +68,14 @@
 				<div class="avatar lzz">
 					<span style="margin-left: 5px;">状态</span>
 				</div>
-				<div class="tel lzz">
+				<div class="name lzz">
 					<span>姓名</span>
 				</div>
-				<div class="name lzz">
-					<span>部门</span>
+				<div class="tel lzz">
+					<span>时间</span>
 				</div>
 				<div class="operation lzz">
-					<span>时间</span>
+					<span>回复</span>
 				</div>
 			</div>
 			<div v-for="item in form_Listb.content">
@@ -87,10 +87,10 @@
 						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.department_name}}</span>
+						<span>{{item.add_time}}</span>
 					</div>
 					<div class="operation">
-						<span>{{item.add_time}}</span>
+						<span>{{item.opinion}}</span>
 					</div>
 				</div>
 				<div>
@@ -286,7 +286,7 @@
 			},
 
 			refuse() {
-				
+
 				if(this.handle_txt === '') {
 					this.$message.error('请填写回执内容');
 					return
@@ -297,31 +297,31 @@
 					mparam.append("uid", this.user.uid);
 					mparam.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
-					.then((res)=>{
-						this.now_personnel_id = res.data.data.personnel_id
-						let param = new URLSearchParams();
-						param.append("uid", this.user.uid);
-						param.append("approval_id", this.psb_approval_id);
-						param.append("personnel_id", this.now_personnel_id);
-						param.append("company_id", this.nowCompanyId);
-						param.append("finance_state", 1);
-						param.append("receipt_content", this.handle_txt);
-						this.$http.post("/index.php/Mobile/find/finance_receipt", param)
-							.then((res) => {
-								console.log(res)
-								this.loading_show = false
-								if(res.data.code === 0) {
-									this.$message({
-										message: '恭喜你，操作成功',
-										type: 'success'
-									});
-									this.return_()
-								} else {
-									this.$message.error('操作失败');
-								}
-							})
-					})
-					
+						.then((res) => {
+							this.now_personnel_id = res.data.data.personnel_id
+							let param = new URLSearchParams();
+							param.append("uid", this.user.uid);
+							param.append("approval_id", this.psb_approval_id);
+							param.append("personnel_id", this.now_personnel_id);
+							param.append("company_id", this.nowCompanyId);
+							param.append("finance_state", 1);
+							param.append("receipt_content", this.handle_txt);
+							this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+								.then((res) => {
+									console.log(res)
+									this.loading_show = false
+									if(res.data.code === 0) {
+										this.$message({
+											message: '恭喜你，操作成功',
+											type: 'success'
+										});
+										this.return_()
+									} else {
+										this.$message.error('操作失败');
+									}
+								})
+						})
+
 				}
 				if(this.file) {
 					for(let i = 0; i < this.file.length; i++) {
@@ -441,13 +441,13 @@
 				width: 70px;
 			}
 			.name {
-				width: 100px;
+				width: 80px;
 			}
 			.tel {
-				width: 100px;
+				width: 150px;
 			}
 			.operation {
-				width: 200px;
+				width: 240px;
 				button {
 					display: block;
 				}

@@ -21,10 +21,10 @@
 						<a @click="login">登录<i class="el-icon-loading" v-show="loadingShow"></i></a>
 					</div>
 				</div>
-				<div class="forget">
+				<!--<div class="forget">
 					<span>忘记密码?</span>
 					<span>注册账号</span>
-				</div>
+				</div>-->
 			</div>
 		<uncreatedCompany v-show="uncreatedCompanyShow"></uncreatedCompany>
 	</div>
@@ -90,10 +90,9 @@
 			    param.append("phone_type",'web');
 			    this.$http.post("/index.php/Mobile/skey/login",param)
 			    .then((res)=>{	    	
-			    	console.log(res)
 					if(res.data.code === 0){
 						let avatar = getPic(res.data.data.avatar)
-						
+						console.log(avatar)
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,
@@ -194,7 +193,7 @@ $color3:#409EFF;
 			-o-transform: translateX(-50%) translateY(-50%);
 			transform: translateX(-50%) translateY(-50%);
 			width: 380px;
-			height: 260px;
+			height: 240px;
 			background:rgba(222,228,247,0.8);
 			box-shadow: 0 0 0 4px rgb(222,228,247);
 			-moz-box-shadow: 10px 10px 5px #888888; /* 老的 Firefox */

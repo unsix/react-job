@@ -53,6 +53,7 @@
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import qkd from '@/base/exam_form/qkd'
+	import picLeader from '@/common/js/pic.js'
 	import {getPic} from '@/common/js/pic.js'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'

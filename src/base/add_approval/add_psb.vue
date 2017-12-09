@@ -59,7 +59,7 @@
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_psb('psb_ruleForm')">立即添加</el-button>
-				<el-button @click="resetForm('psb_ruleForm')">重置</el-button>
+				<!--<el-button @click="resetForm('psb_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>
@@ -192,7 +192,6 @@
 				if(!this.approval_id) {
 					return
 				}
-				console.log(this.approval_id)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
@@ -289,6 +288,7 @@
 				this.loadingShow = true
 				this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
 				this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
+				return
 				if(!this.pic && !this.file) {	
 					let param = new URLSearchParams();
 					if(this.psb_ruleForm.project_manager.uid) {
@@ -307,7 +307,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_num", this.psb_ruleForm.contract_id);
+					param.append("contract_id", this.psb_ruleForm.contract_id);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
@@ -415,7 +415,7 @@
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-					param.append("contract_num", this.psb_ruleForm.contract_id);
+					param.append("contract_id", this.psb_ruleForm.contract_id);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
@@ -455,7 +455,7 @@
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-					param.append("contract_num", this.psb_ruleForm.contract_id);
+					param.append("contract_id", this.psb_ruleForm.contract_id);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {

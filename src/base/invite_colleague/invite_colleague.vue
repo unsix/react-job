@@ -87,6 +87,9 @@
 						this.loadingShow = false
 						this.$emit('close')
 						if(res.data.code === 0) {
+							this.form.name = ''
+							this.form.phone = ''
+							this.form.depart = ''
 							this.$message.success('添加成功');
 							this._getComPersonList()
 						} else {

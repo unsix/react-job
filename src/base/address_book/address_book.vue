@@ -63,6 +63,7 @@
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getPic(item.avatar)
+							console.log(item.avatar)
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)

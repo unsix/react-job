@@ -74,14 +74,14 @@
 				<div class="avatar lzz">
 					<span style="margin-left: 5px;">状态</span>
 				</div>
-				<div class="tel lzz">
+				<div class="name lzz">
 					<span>姓名</span>
 				</div>
-				<div class="name lzz">
-					<span>部门</span>
+				<div class="tel lzz">
+					<span>时间</span>
 				</div>
 				<div class="operation lzz">
-					<span>时间</span>
+					<span>回复</span>
 				</div>
 			</div>
 			<div v-for="item in form_Listb.content">
@@ -93,10 +93,10 @@
 						<span>{{item.name}}</span>
 					</div>
 					<div class="tel">
-						<span>{{item.department_name}}</span>
+						<span>{{item.add_time}}</span>
 					</div>
 					<div class="operation">
-						<span>{{item.add_time}}</span>
+						<span>{{item.opinion}}</span>
 					</div>
 				</div>
 				<div>
@@ -441,13 +441,13 @@
 				width: 70px;
 			}
 			.name {
-				width: 100px;
+				width: 80px;
 			}
 			.tel {
-				width: 100px;
+				width: 150px;
 			}
 			.operation {
-				width: 200px;
+				width: 240px;
 				button {
 					display: block;
 				}

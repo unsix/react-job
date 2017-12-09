@@ -48,6 +48,9 @@
 			<el-form-item label="采购负责人联系方式" prop="buy_person_phone">
 				<el-input v-model="qgd_ruleForm.buy_person_phone"></el-input>
 			</el-form-item>
+			<el-form-item label="收货地址" prop="receive_address">
+				<el-input type="textarea" v-model="qgd_ruleForm.receive_address"></el-input>
+			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="qgd_ruleForm.project_manager_name" placeholder="请选择" @change="qgdLeader">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
@@ -57,14 +60,9 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			
 			<el-form-item label="到货时间" prop="arrival_time">
 				<el-date-picker type="date" v-model="qgd_ruleForm.arrival_time" style="width: 100%;"></el-date-picker>
-			</el-form-item>
-			<el-form-item label="合计" prop="total">
-				<el-input v-model="qgd_ruleForm.total"></el-input>
-			</el-form-item>
-			<el-form-item label="收货地址" prop="receive_address">
-				<el-input type="textarea" v-model="qgd_ruleForm.receive_address"></el-input>
 			</el-form-item>
 			<div class="add_qgd">添加清单条目 <i class="el-icon-circle-plus" @click="add_qgd"></i></div>
 			<div v-for="(item,index) in qgd_ruleForm.add" class="new_qgd">
@@ -114,7 +112,7 @@
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即添加</el-button>
-				<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>
+				<!--<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>
@@ -621,6 +619,7 @@
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
 					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
+					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
 					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
 					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
 					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);
@@ -683,6 +682,7 @@
 					param.append("company_id", this.nowCompanyId);
 					param.append("request_buy_department", buy_depart_id);
 					param.append("request_contract_address", this.qgd_ruleForm.request_contract_address);
+					param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
 					param.append("content", JSON.stringify(this.qgd_ruleForm.add));
 					param.append("contract_responsible", this.qgd_ruleForm.contract_responsible);
 					param.append("responsible_tel", this.qgd_ruleForm.responsible_tel);

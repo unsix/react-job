@@ -2,7 +2,7 @@
 	<div class="contractApproval" v-show="contractApprovalShow">
 		<div style="height: 30px;">
 			<div class="addPerson">
-				<el-button type="primary" round style="margin-right: 10px;" v-show="submitAddPersonShow" @click="save">保存修改</el-button>
+				<el-button type="primary" round style="margin-right: 10px;" @click="save">保存修改</el-button>
 				<el-button type="primary" round @click="redact">编辑</el-button>
 			</div>
 		</div>
@@ -59,6 +59,7 @@
 </template>
 
 <script>
+	import {getPic} from '@/common/js/pic.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	import { createPersonInfo } from 'common/js/person_info'
 	import { createOrder } from 'common/js/order'

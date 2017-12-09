@@ -70,6 +70,7 @@
 	</div>
 </template>
 <script>
+	import {getPic} from '@/common/js/pic.js'
 	import { create_depart_list } from 'common/js/initial/depart.js'
 	import { createPersonInfo } from 'common/js/person_info'
 	import { mapMutations } from 'vuex'
@@ -138,16 +139,16 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-					this.workList = ['审批', '发起审批', '通讯录']
+					this.workList = ['处理审批', '发起审批', '通讯录']
 				}
 				if(m === 1 && f === 0) {
-					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
 				}
 				if(m === 0 && f === 1) {
-					this.workList = ['审批', '发起审批', '表单回执', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '表单回执', '邀请同事', '通讯录']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
 				}
 			},
 			changeType(item, index) {
@@ -224,7 +225,7 @@
 						this._getComDepart()
 						this.$router.push({ path: '/work/inviteCol' })
 						break;
-					case '审批':
+					case '处理审批':
 						this.$router.push({ path: '/work/exam' })
 						break;
 				}
@@ -313,7 +314,7 @@
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {
-							item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+							item.avatar = getPic(item.avatar)
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)

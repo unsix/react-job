@@ -3,9 +3,9 @@
 		<div class="manageCompany">
 			<div class="nav">
 				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="人员列表"></el-tab-pane>
-					<el-tab-pane label="添加部门"></el-tab-pane>
-					<el-tab-pane label="添加工程项目"></el-tab-pane>
+					<el-tab-pane label="人员列表" name='1'></el-tab-pane>
+					<el-tab-pane label="添加部门" name='2'></el-tab-pane>
+					<el-tab-pane label="添加工程项目" name='3'></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="type">
@@ -77,7 +77,7 @@
 				radioo: '2',
 				adminArr: [],
 				numOne: 0,
-				activeName: '',
+				activeName: '1',
 				activeName1: ['1'],
 				newDepartmentName: '',
 				activeName2: '1',
@@ -125,11 +125,12 @@
 					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/User/add_department", param)
 						.then((res) => {
+							this._getComPartPersonList()
 							if(res.data.code === 0) {
 								this.activeName = '1'
 								this.listShow = true
 								this.addDepartmentShow = false
-								this._getComPartPersonList()
+								this.newDepartmentName = ''
 								this.$message({
 									message: '添加部门成功',
 									type: 'success'
@@ -181,11 +182,11 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/User/give_manage", param)
 					.then((res) => {
-						
 						this.activeName1 = ['1']
 						this.activeName2 = '0'
 						if(res.data.code === 0) {
 							this._getAdmin()
+							this._getComPartPersonList()
 							this.$message({
 								message: '添加成功',
 								type: 'success'
@@ -266,6 +267,7 @@
 					})
 			},
 			_getComPartPersonList() {
+				this.numOne = 0
 				this.ComPartPersonList = []
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);

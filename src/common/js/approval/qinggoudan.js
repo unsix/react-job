@@ -37,6 +37,7 @@ export default class qinggoudan_list {
   }
 }
 export function create_qinggoudan_list(item) {
+	console.log(item)
 	return new qinggoudan_list({
 			many_enclosure:item.many_enclosure,
 	    request_contract_address:item.request_contract_address,

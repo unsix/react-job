@@ -37,7 +37,7 @@
 			<el-form-item label="请款内容" prop="request_content">
 				<el-input type="textarea" v-model="qkd_ruleForm.request_content"></el-input>
 			</el-form-item>
-			<el-form-item label="合同进程" prop="contract_state">
+			<el-form-item label="合同执行进度" prop="contract_state">
 				<el-input v-model="qkd_ruleForm.contract_state"></el-input>
 			</el-form-item>
 			<el-form-item label="增减金额">
@@ -68,7 +68,7 @@
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_qkd('qkd_ruleForm')">立即添加</el-button>
-				<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>
+				<!--<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>
@@ -244,6 +244,7 @@
 						this.qkd_ruleForm.request_num = this.form_Lista.request_num
 						this.qkd_ruleForm.phone = this.form_Lista.phone
 						this.qkd_ruleForm.contract_state = this.form_Lista.contract_state
+						this.qkd_ruleForm.gain_reduction_subtotal = this.form_Lista.gain_reduction_subtotal
 					})
 			},
 			add_ok() {
