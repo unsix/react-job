@@ -139,6 +139,16 @@
 				localStorage.removeItem('token');
 				localStorage.removeItem('user');
 				this.$router.push({ path: '/login' })
+				this.setUser('')
+				this.setNowCompanyId('')
+				this.setComPersonList('')
+				this.setComPartPersonList('')
+				this.setNowCompanyName('')
+				this.setToken('')
+				this.setUserState('')
+				this.setCompanyList('')
+				this.setUser('')
+				this.setUser('')
 			},
 			judgeState() {
 				console.log(this.userState.manage)
@@ -354,9 +364,11 @@
 			this.setNowCompanyName(JSON.parse(localStorage.nowCompanyName))
 			this._getToken()
 			this._getUserState()
+			
 		},
 		watch: {
 			nowCompanyId() {
+				
 				this.compamyShow = false
 				this._getUserState()
 				this._getToken()
