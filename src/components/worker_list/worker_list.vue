@@ -199,9 +199,9 @@ export default {
 		    	 for (let x in res.data.data.nworker)  
 				  {  
 				    if(res.data.data.nworker[x].avatar.indexOf('jpg')!== -1){
-				   		res.data.data.nworker[x].avatar = 'http://img-bbsf.6655.la/FnF0MmO7g-WONz-QYU6BsWMTwNR_'
+				   		res.data.data.nworker[x].avatar = 'http://bbsf-file.hzxb.net/FnF0MmO7g-WONz-QYU6BsWMTwNR_'
 				    }else{
-				   	 	res.data.data.nworker[x].avatar = 'http://img-bbsf.6655.la/' + res.data.data.nworker[x].avatar
+				   	 	res.data.data.nworker[x].avatar = 'http://bbsf-file.hzxb.net/' + res.data.data.nworker[x].avatar
 				    }
 				    if(res.data.data.nworker[x].type){
 				    	res.data.data.nworker[x].type = res.data.data.nworker[x].type[0]

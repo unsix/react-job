@@ -190,7 +190,7 @@
 							</div>
 							<div class="commentInfo" v-for="(item,index) in commentInfo">
 								<div class="avatar">
-									<img src="http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns" alt="" />
+									<img src="http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns" alt="" />
 								</div>
 								<div class="content">
 									<span class="name">{{item.name}}:</span>
@@ -400,7 +400,7 @@
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
-										arr.push('http://img-bbsf.6655.la/' + item)
+										arr.push('http://bbsf-file.hzxb.net/' + item)
 									}
 								})
 								this.$set(this.dayList[index], 'imgList', arr)
@@ -413,7 +413,7 @@
 								let obj = {}
 								let file_data = res.data.data
 								obj.name = file_data.file_name
-								obj.address = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								obj.address = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
 								farr.push(obj)
 								this.$set(this.dayList[index], 'fList', farr)
 
@@ -436,7 +436,7 @@
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
-										arr.push('http://img-bbsf.6655.la/' + item)
+										arr.push('http://bbsf-file.hzxb.net/' + item)
 									}
 								})
 								this.$set(this.commentInfo[index], 'iList', arr)
@@ -449,7 +449,7 @@
 								let obj = {}
 								let file_data = res.data.data
 								obj.name = file_data.file_name
-								obj.address = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								obj.address = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
 								farr.push(obj)
 								this.$set(this.commentInfo[index], 'fList', farr)
 							})
@@ -873,7 +873,7 @@
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {
-							item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+							item.avatar = 'http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)

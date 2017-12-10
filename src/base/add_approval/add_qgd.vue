@@ -322,7 +322,7 @@
 						let arr = []
 						res.data.data.picture.forEach((item) => {
 							if(item != '') {
-								arr.push('http://img-bbsf.6655.la/' + item)
+								arr.push('http://bbsf-file.hzxb.net/' + item)
 							}
 						})
 						this.img_arr = arr
@@ -340,9 +340,9 @@
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
 										if(item.indexOf('jpg') > 0 || item.indexOf('png') > 0 || item.indexOf('Enclos') > 0) {
-											arr.push('http://img-bbsf.6655.la/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
+											arr.push('http://bbsf-file.hzxb.net/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
 										} else {
-											arr.push('http://img-bbsf.6655.la/' + item)
+											arr.push('http://bbsf-file.hzxb.net/' + item)
 										}
 									}
 								})

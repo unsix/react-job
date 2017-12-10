@@ -664,7 +664,8 @@
 				request_money_basis_type: '',
 				fileAccordShow: false,
 				downApproId:'',
-				downPartId:''
+				downPartId:'',
+				downAddress:''
 			}
 		},
 		computed: {
@@ -1234,20 +1235,22 @@
 					})
 			},
 			down(){
+				console.log(this.participation_id)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
 				param.append("approval_id", this.downApproId);
-				param.append("participation_id", this.participation_id)
+				param.append("participation_id", this.downPartId)
 				this.$http.post("/index.php/Mobile/find/get_download_token", param)
 				.then((res)=>{
-				this.$http.get("/index.php/Mobile/find/aaampd_picture", {
-				　　params: {"token": res.data.data}
-				}).then(function (response) {
-					console.log(response)
-				}).catch(function (error) {
-				　　alert(error);
-				});
+					window.open('/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data)
+//				this.$http.get("/index.php/Mobile/skey/aaampd_picture", {
+//				　　params: {"token": res.data.data}
+//				}).then(function (response) {
+//					
+//				}).catch(function (error) {
+//				　　alert(error);
+//				});
 
 					
 				})
@@ -1286,10 +1289,9 @@
 						param.append("attachments_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
 							.then((res) => {
-								console.log(res)
 								let obj = {}
 								let file_data = res.data.data
-								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
 								obj.name = file_data.file_name + '.'+ file_data.attribute
 								obj.address = file_add
 								this.file_arr.push(obj)

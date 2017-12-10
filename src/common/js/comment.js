@@ -21,6 +21,6 @@ export function createCommentList(item) {
     comment_id: item.comment_id,
     name: item.name,
     publish_id: item.publish_id,
-    avatar: 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+    avatar: 'http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
   })
 }

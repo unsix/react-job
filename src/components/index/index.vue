@@ -135,7 +135,7 @@
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {
-							item.avatar = 'http://img-bbsf.6655.la/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
+							item.avatar = 'http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)
