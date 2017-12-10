@@ -129,6 +129,7 @@
 						this.cpj_ruleForm.content = this.form_Lista.content
 						this.cpj_ruleForm.chengpi_num = this.form_Lista.chengpi_num
 						this.cpj_ruleForm.title = this.form_Lista.title
+						this.cpj_ruleForm.project_manager_name = this.form_Lista.project_manager_name
 					})
 			},
 			add_ok() {
@@ -207,6 +208,13 @@
 				});
 			},
 			cpj_submit() {
+				if(this.cpj_ruleForm.project_manager_name != ''){
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.cpj_ruleForm.project_manager_name) {
+							this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
+						}
+					})
+				}
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -222,7 +230,7 @@
 					param.append("company_id", this.nowCompanyId);
 					param.append("department_id", this.cpj_ruleForm.department_id);
 					param.append("content", this.cpj_ruleForm.content);
-					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+					param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 					param.append("title", this.cpj_ruleForm.title);
 					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
@@ -321,7 +329,7 @@
 					param.append("company_id", this.nowCompanyId);
 					param.append("department_id", this.cpj_ruleForm.department_id);
 					param.append("content", this.cpj_ruleForm.content);
-					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+					param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 					param.append("title", this.cpj_ruleForm.title);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
@@ -352,7 +360,7 @@
 					param.append("company_id", this.nowCompanyId);
 					param.append("department_id", this.cpj_ruleForm.department_id);
 					param.append("content", this.cpj_ruleForm.content);
-					param.append("chengpi_num", parseInt(this.cpj_ruleForm.chengpi_num));
+					param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 					param.append("title", this.cpj_ruleForm.title);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)

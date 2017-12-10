@@ -86,6 +86,11 @@
 			}
 		},
 		created() {
+			if(!localStorage.user) {
+				this.$router.push({
+					path: '/login'
+				})
+			}
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this.setUser(JSON.parse(localStorage.user))
 			this._getComPartPersonList()
@@ -101,7 +106,7 @@
 				'comPersonList'
 			])
 		},
-		mounted(){
+		mounted() {
 			if(this.$route.path === '/work/manageCompany') {
 				this.$emit('changeWorkIndex', 2)
 			}
@@ -135,9 +140,9 @@
 									message: '添加部门成功',
 									type: 'success'
 								});
-								
+
 							} else {
-								this.$message.error('添加部门失败');
+								this.$message.error(res.data.message);
 							}
 						})
 				}).catch(() => {
@@ -160,7 +165,6 @@
 				}
 			},
 			setAdministrator(item) {
-				
 				this.adminArr.forEach((list) => {
 					if(list.personnel_id === item.personnel_id) {
 						this.$message({
@@ -175,7 +179,7 @@
 					return
 				}
 				let arr = []
-				arr.push(item.personnel_id)			
+				arr.push(item.personnel_id)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("personnel_id", JSON.stringify(arr));
@@ -192,16 +196,15 @@
 								type: 'success'
 							});
 						} else {
-							this.$message.error('添加失败')
+							this.$message.error(res.data.message);
 						}
 					})
 			},
 
 			cancelAdministrator(item) {
-				this.$alert('确定删除管理员'+item.name+'吗', '操作', {
-					
+				this.$alert('确定删除管理员' + item.name + '吗', '操作', {
 					callback: action => {
-						if(item.personnel_id === JSON.parse(localStorage.personnelId)) {				
+						if(item.personnel_id === JSON.parse(localStorage.personnelId)) {
 							this.$message.error('管理员不可删除自己')
 							return
 						}
@@ -238,15 +241,16 @@
 					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/user/del_company_personnel", param)
 						.then((res) => {
-							if(res.data.code === 1) {
-								this.$message.error(res.data.message);
-							} else if(res.data.code === 0) {
+							if(res.data.code === 0) {
 								this._getComPartPersonList()
 								this._getAdmin()
 								this.$message({
 									message: '删除成功',
 									type: 'success'
 								});
+							} else {
+								this.$message.error(res.data.message);
+
 							}
 						})
 				}).catch(() => {
@@ -261,9 +265,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-//						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			_getComPartPersonList() {
@@ -314,7 +316,7 @@
 								mewObj.phone = list.phone
 								mewObj.avatar = getPic(list.avatar)
 								this.adminArr.push(mewObj)
-								
+
 							})
 						}
 					})

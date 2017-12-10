@@ -65,6 +65,14 @@
 				}
 			}
 		},
+		created(){
+			if(JSON.parse(localStorage.user).uid){
+				this.setUser(JSON.parse(localStorage.user))
+				this._getUserCompanyList(this.user.uid)
+				this._getComDepart()
+				this.$router.push({ path: '/work' })
+			}
+		},
 		methods:{
 			toLogin(){
 				this.isA = true
@@ -89,10 +97,10 @@
 			    param.append("password",password_num);
 			    param.append("phone_type",'web');
 			    this.$http.post("/index.php/Mobile/skey/login",param)
-			    .then((res)=>{	    	
+			    .then((res)=>{
+			    	console.log(res.data)
 					if(res.data.code === 0){
 						let avatar = getPic(res.data.data.avatar)
-						console.log(avatar)
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,
@@ -105,9 +113,12 @@
 						setTimeout(()=>{
 							this.$router.push('/work');
 							this.loadingShow=false
+							this.account_num = ''
+				 			this.password_num = ''
 						},1000)
+						
 					}else{
-						 this.$message.error('登录失败');
+						 this.$message.error(res.data.message);
 					}
 			    })
 			},

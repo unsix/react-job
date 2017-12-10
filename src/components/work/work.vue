@@ -61,7 +61,6 @@
 				<router-view @changeWorkIndex="changeWorkIndex">
 					
 				</router-view>
-						
 			</div>
 			<div class="side_right">
 				<Date></Date>
@@ -134,8 +133,15 @@
 		methods: {
 			logOut(){
 				this.userOperationShow = false
+				localStorage.removeItem('nowCompanyId');
+				localStorage.removeItem('nowCompanyName');
+				localStorage.removeItem('personnelId');
+				localStorage.removeItem('token');
+				localStorage.removeItem('user');
+				this.$router.push({ path: '/login' })
 			},
 			judgeState() {
+				console.log(this.userState.manage)
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
@@ -149,13 +155,6 @@
 				}
 				if(m === 1 && f === 1) {
 					this.workList = ['处理审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
-				}
-			},
-			changeType(item, index) {
-				if(index === 0) {
-					this.$router.push('/index.php/work');
-				} else {
-					this.$router.push('/index.php/apply/mineApp');
 				}
 			},
 			changeWorkIndex(num){
@@ -182,7 +181,6 @@
 				this.userOperationLeftShow = false
 			},
 			changeCompany(item, index) {
-				console.log(item.company_name)
 				this.workIndex = 0
 				this.setNowCompanyName(item.company_name)
 				this.userOperationLeftShow = false
@@ -243,6 +241,7 @@
 							'manage': is_manage,
 							'finance': is_finance,
 						})
+//						localStorage.userState = JSON.stringify(this.user);
 						this.judgeState()
 					})
 			},
@@ -304,6 +303,7 @@
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
 						this.setNowCompanyName(res.data.data[0].company_name)
+						
 						this._getUserState()
 					})
 			},

@@ -18,6 +18,18 @@ export default class hetongpingshen_list {
     this.contract_id = contract_id
   }
 }
+//function getTime(time){
+//var timestamp2 = Date.parse(new Date(time));
+//timestamp2 = timestamp2 / 1000 +86400
+//		var date = new Date();  
+//  date.setTime(timestamp2 * 1000);  
+//  var y = date.getFullYear();      
+//  var m = date.getMonth() + 1;      
+//  m = m < 10 ? ('0' + m) : m;      
+//  var d = date.getDate();      
+//  d = d < 10 ? ('0' + d) : d;          
+//  return y + '-' + m + '-' + d
+//}
 export function create_hetongpingshen_list(item) {
 	console.log(item)
 	return new hetongpingshen_list({
@@ -32,7 +44,7 @@ export function create_hetongpingshen_list(item) {
 	    difference:item.difference,
 	    pay_method:item.pay_method,
 	    arrive_time:item.arrive_time,
-	    end_time:item.end_time,
+	    end_time: item.end_time,
 	    remarks:item.remarks,
 	    contract_id:item.contract_id,
 	    many_enclosure:item.many_enclosure,

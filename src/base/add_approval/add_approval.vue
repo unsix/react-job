@@ -159,6 +159,10 @@
 			}
 		},
 		created(){
+			if(!localStorage.user){
+				this.$router.push({ path: '/login' })
+			}
+			this.setUser(JSON.parse(localStorage.user))
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
 			this._getToken()
@@ -467,6 +471,11 @@
 			},
 
 			handleClick(tab) {
+				this.approval_id1 = ''
+				this.approval_id2 = ''
+				this.approval_id3 = ''
+				this.approval_id4 = ''
+				this.approval_id5 = ''
 				this.navIndex = JSON.parse(tab.index)
 				this.qkd_show = false
 				this.qgd_show = false

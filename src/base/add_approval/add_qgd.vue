@@ -36,7 +36,7 @@
 			<el-form-item label="收货人联系方式" prop="consignee_phone">
 				<el-input v-model="qgd_ruleForm.consignee_phone"></el-input>
 			</el-form-item>
-			<el-form-item label="采购负责人" prop="buy_person">
+			<el-form-item label="采购执行人" prop="buy_person">
 				<el-select v-model="qgd_ruleForm.buy_person" placeholder="请选择" @change="qgdCaigou">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
@@ -45,11 +45,14 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="采购负责人联系方式" prop="buy_person_phone">
+			<el-form-item label="采购执行人联系方式" prop="buy_person_phone">
 				<el-input v-model="qgd_ruleForm.buy_person_phone"></el-input>
 			</el-form-item>
 			<el-form-item label="收货地址" prop="receive_address">
 				<el-input type="textarea" v-model="qgd_ruleForm.receive_address"></el-input>
+			</el-form-item>
+			<el-form-item label="到货时间" prop="arrival_time"> 
+				<el-date-picker type="date" v-model="qgd_ruleForm.arrival_time" style="width: 100%;"></el-date-picker>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="qgd_ruleForm.project_manager_name" placeholder="请选择" @change="qgdLeader">
@@ -60,13 +63,9 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			
-			<el-form-item label="到货时间" prop="arrival_time">
-				<el-date-picker type="date" v-model="qgd_ruleForm.arrival_time" style="width: 100%;"></el-date-picker>
-			</el-form-item>
 			<div class="add_qgd">添加清单条目 <i class="el-icon-circle-plus" @click="add_qgd"></i></div>
 			<div v-for="(item,index) in qgd_ruleForm.add" class="new_qgd">
-				<div class="close"></div>
+				<div class="close"><i class="fa fa-close" v-show="qgd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
 				<el-form label-width="150px">
 					<el-form-item label="请购名称">
 						<el-input v-model="item.name"></el-input>
@@ -260,8 +259,11 @@
 			loading
 		},
 		methods: {
+			closeQd(index){
+				this.qgd_ruleForm.add.splice(index,1)
+			},
 			initial_data() {
-				if(!this.approval_id) {
+				if(!this.approval_id ||this.approval_id === '') {
 					return
 				}
 				let param = new URLSearchParams();
@@ -289,6 +291,8 @@
 							this.qgd_ruleForm.receive_address = this.form_Lista.receive_address
 							this.qgd_ruleForm.request_contract_address = this.form_Lista.request_contract_address
 							this.qgd_ruleForm.add = this.form_Lista.content
+//							this.qgd_ruleForm.arrival_time = this.form_Lista.arrival_time
+							this.qgd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
 						}, 100)
 
 					})
@@ -440,7 +444,21 @@
 						this.$message.error('请将清单条目填写完整');
 						this.returnOk = true
 					}
+						var re =  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/; 
+					　　if (!re.test(item.num)) {
+					　　　　this.$message.error('数量请填数字');
+					　　　　this.returnOk = true
+					　　}
+					if (!re.test(item.price)) {
+					　　　　this.$message.error('单价请填入数字');
+					　　　　this.returnOk = true
+					　　}
+					if (!re.test(item.subtotal)) {
+					　　　　this.$message.error('总额请填入数字');
+					　　　　this.returnOk = true
+					　　}
 				})
+				　
 				if(this.returnOk === true) {
 					return
 				}
@@ -455,6 +473,25 @@
 				});
 			},
 			qgd_submit() {
+					this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1, 11)
+					let timestamp2 = Date.parse(new Date(this.qgd_ruleForm.arrival_time));
+					timestamp2 = timestamp2 / 1000 +86400
+					let date = new Date();  
+				    date.setTime(timestamp2 * 1000);  
+				    let y = date.getFullYear();      
+				    let m = date.getMonth() + 1;      
+				    m = m < 10 ? ('0' + m) : m;      
+				    let d = date.getDate();      
+				    d = d < 10 ? ('0' + d) : d;          
+				    this.qgd_ruleForm.arrival_time = y + '-' + m + '-' + d
+				    
+				if(this.qgd_ruleForm.project_manager_name != ''){
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qgd_ruleForm.project_manager_name) {
+							this.$set(this.qgd_ruleForm.project_manager, 'uid', item.uid)
+						}
+					})
+				}
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -717,7 +754,6 @@
 </script>
 
 <style lang="scss">
-	.qinggoudan {
 		.el-form--inline .el-form-item {
 			margin-right: 5px;
 		}
@@ -761,5 +797,5 @@
 				margin-bottom: 10px;
 			}
 		}
-	}
+
 </style>

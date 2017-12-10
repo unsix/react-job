@@ -37,7 +37,6 @@ export default class qinggoudan_list {
   }
 }
 export function create_qinggoudan_list(item) {
-	console.log(item)
 	return new qinggoudan_list({
 			many_enclosure:item.many_enclosure,
 	    request_contract_address:item.request_contract_address,
@@ -59,6 +58,18 @@ export function create_qinggoudan_list(item) {
 	    enclosure_id:get_enclosure_id(item)
 	   
 	})
+}
+function getTime(time){
+var timestamp2 = Date.parse(new Date(time));
+timestamp2 = timestamp2 / 1000 +86400
+		var date = new Date();  
+    date.setTime(timestamp2 * 1000);  
+    var y = date.getFullYear();      
+    var m = date.getMonth() + 1;      
+    m = m < 10 ? ('0' + m) : m;      
+    var d = date.getDate();      
+    d = d < 10 ? ('0' + d) : d;          
+    return y + '-' + m + '-' + d
 }
 function get_manager_name(item){
 	if(!item.project_manager_name){

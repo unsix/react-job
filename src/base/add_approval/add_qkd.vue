@@ -10,6 +10,9 @@
 			<el-form-item label="合同名称" prop="contract_name_new">
 				<el-input v-model="qkd_ruleForm.contract_name_new"></el-input>
 			</el-form-item>
+			<el-form-item label="工种" prop="worker_type">
+				<el-input v-model="qkd_ruleForm.worker_type"></el-input>
+			</el-form-item>
 			<el-form-item label="请款人姓名" prop="request_name">
 				<el-input v-model="qkd_ruleForm.request_name"></el-input>
 			</el-form-item>
@@ -24,9 +27,6 @@
 			</el-form-item>
 			<el-form-item label="银行卡号" prop="bank_card">
 				<el-input v-model="qkd_ruleForm.bank_card"></el-input>
-			</el-form-item>
-			<el-form-item label="工种" prop="worker_type">
-				<el-input v-model="qkd_ruleForm.worker_type"></el-input>
 			</el-form-item>
 			<el-form-item label="合同金额" prop="subtotal">
 				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
@@ -44,10 +44,10 @@
 				<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="请款次数">
-				<el-input v-model="qkd_ruleForm.request_num"></el-input>
+				<el-input v-model.number="qkd_ruleForm.request_num"></el-input>
 			</el-form-item>
 			<el-form-item label="已领工程款">
-				<el-input v-model="qkd_ruleForm.balance_subtotal"></el-input>
+				<el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
@@ -245,6 +245,8 @@
 						this.qkd_ruleForm.phone = this.form_Lista.phone
 						this.qkd_ruleForm.contract_state = this.form_Lista.contract_state
 						this.qkd_ruleForm.gain_reduction_subtotal = this.form_Lista.gain_reduction_subtotal
+						this.qkd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
+						
 					})
 			},
 			add_ok() {
@@ -358,6 +360,24 @@
 				});
 			},
 			qkd_submit() {
+				
+				var re = /^[0-9]+$/; 
+				if (!re.test(this.qkd_ruleForm.request_num)) {
+					this.$message.error('请求次数请填正整数');
+					return
+				}
+				var ret =  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/; 
+				if (!ret.test(this.qkd_ruleForm.balance_subtotal)) {
+					this.$message.error('已领工程款请填数字');
+					return
+				}
+				if(this.qkd_ruleForm.project_manager_name != ''){
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.qkd_ruleForm.project_manager_name) {
+							this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
+						}
+					})
+				}
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

@@ -7,6 +7,9 @@
 			<el-form-item label="合同名称" prop="contract_name_new">
 				<el-input v-model="psb_ruleForm.contract_name_new"></el-input>
 			</el-form-item>
+			<el-form-item label="合同编号" prop="contract_id">
+				<el-input v-model="psb_ruleForm.contract_id"></el-input>
+			</el-form-item>
 			<el-form-item label="甲方" prop="a_name">
 				<el-input v-model="psb_ruleForm.a_name"></el-input>
 			</el-form-item>
@@ -34,10 +37,7 @@
 			<el-form-item label="完工时间" prop="end_time">
 				<el-date-picker type="date" v-model="psb_ruleForm.end_time" style="width: 100%;"></el-date-picker>
 			</el-form-item>
-			<el-form-item label="合同编号">
-				<el-input v-model="psb_ruleForm.contract_id"></el-input>
-			</el-form-item>
-			<el-form-item label="备注">
+			<el-form-item label="合同主要内容" prop="remarks">
 				<el-input v-model="psb_ruleForm.remarks"></el-input>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
@@ -132,16 +132,16 @@
 						trigger: 'blur'
 					}],
 					arrive_time: [{
-						type: 'date',
+						type:'date',
 						required: true,
 						message: '请填写到货时间',
-						trigger: 'blur'
+						trigger: 'change'
 					}],
 					end_time: [{
-						type: 'date',
+						type:'date',
 						required: true,
 						message: '请填写	完工时间',
-						trigger: 'blur'
+						trigger: 'change'
 					}],
 					executor: [{
 						required: true,
@@ -151,6 +151,11 @@
 					contract_name_new: [{
 						required: true,
 						message: '请填写合同名称',
+						trigger: 'blur'
+					}],
+					remarks: [{
+						required: true,
+						message: '请填写合同主要内容',
 						trigger: 'blur'
 					}]
 				},
@@ -208,6 +213,10 @@
 						this.psb_ruleForm.pay_method = this.form_Lista.pay_method
 						this.psb_ruleForm.executor = this.form_Lista.executor
 						this.psb_ruleForm.contract_name_new = this.form_Lista.contract_name_new
+						this.psb_ruleForm.remarks = this.form_Lista.remarks
+//						this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
+//						this.psb_ruleForm.end_time = this.form_Lista.end_time
+						this.psb_ruleForm.project_manager_name = this.form_Lista.project_manager_name
 					})
 			},
 			add_ok() {
@@ -279,16 +288,45 @@
 					}
 				});
 			},
-			psb_submit() {
+			psb_submit() {	
+					this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
+					let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
+					timestamp2 = timestamp2 / 1000 +86400
+					let date = new Date();  
+				    date.setTime(timestamp2 * 1000);  
+				    let y = date.getFullYear();      
+				    let m = date.getMonth() + 1;      
+				    m = m < 10 ? ('0' + m) : m;      
+				    let d = date.getDate();      
+				    d = d < 10 ? ('0' + d) : d;          
+				    this.psb_ruleForm.arrive_time = y + '-' + m + '-' + d
+
+					this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
+					let timestamp3 = Date.parse(new Date(this.psb_ruleForm.end_time));
+					timestamp3 = timestamp3 / 1000 +86400
+					let date1 = new Date();  
+				    date1.setTime(timestamp3 * 1000);  
+				    let y1 = date1.getFullYear();      
+				    let m1 = date1.getMonth() + 1;      
+				    m1 = m1 < 10 ? ('0' + m1) : m1;      
+				    let d1 = date1.getDate();      
+				    d1 = d1 < 10 ? ('0' + d1) : d1;          
+				    this.psb_ruleForm.end_time = y1 + '-' + m1 + '-' + d1
+				
+				if(this.psb_ruleForm.project_manager_name != ''){
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.psb_ruleForm.project_manager_name) {
+							this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
+						}
+					})
+				}
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
 				this.file_time = 0
 				this.pic_time = 0
 				this.loadingShow = true
-				this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
-				this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
-				return
+				
 				if(!this.pic && !this.file) {	
 					let param = new URLSearchParams();
 					if(this.psb_ruleForm.project_manager.uid) {

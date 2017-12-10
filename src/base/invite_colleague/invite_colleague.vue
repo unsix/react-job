@@ -55,8 +55,13 @@
 			}
 		},
 		created() {
-			this._getUserCompanyList()
+			if(!localStorage.user){
+				this.$router.push({ path: '/login' })
+			}
+			this.setUser(JSON.parse(localStorage.user))
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
+			this._getUserCompanyList()
+			
 		},
 		methods: {
 			onSubmit() {

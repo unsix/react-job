@@ -165,14 +165,13 @@
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
-					.then((res) => {
-						
+					.then((res) => {				
 						this.form_Lista = create_gongzhang_list(res.data.data)
-						
 						this.sqgz_ruleForm.user_name = this.form_Lista.user_name
 						this.sqgz_ruleForm.departmental = this.form_Lista.department_name
 						this.sqgz_ruleForm.department_id = this.form_Lista.department_id
 						this.sqgz_ruleForm.add = this.form_Lista.info
+						this.sqgz_ruleForm.project_manager_name = this.form_Lista.project_manager_name
 						this.sqgz_ruleForm.add.forEach((item,index)=>{
 							if(item.seal_type ==='公章'){
 								this.sqgz_ruleForm.add[index].seal_type = '1'
@@ -186,8 +185,7 @@
 								this.sqgz_ruleForm.add[index].seal_type = '5'
 							}
 							
-						})
-						
+						})	
 					})
 			},
 			add_ok() {
@@ -268,6 +266,11 @@
 						this.$message.error('请将清单条目填写完整');
 						this.returnOk = true
 					}
+						var re = /^[0-9]+$/; 
+					　　if (!re.test(item.num)) {
+					　　　　this.$message.error('数量请填正整数');
+					　　　　this.returnOk = true
+					　　}
 				})
 				if(this.returnOk === true) {
 					return
@@ -287,6 +290,13 @@
 				});
 			},
 			sqgz_submit() {
+				if(this.sqgz_ruleForm.project_manager_name != ''){
+					this.comPersonList.forEach((item) => {
+						if(item.name === this.sqgz_ruleForm.project_manager_name) {
+							this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
+						}
+					})
+				}
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

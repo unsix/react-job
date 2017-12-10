@@ -34,6 +34,7 @@
 						</div>
 						<div class="edit">
 							<el-button type="primary" round @click="listCli(item,index)">查看</el-button>
+							
 							<div class="process" v-if="approval_process">
 								<span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
 							</div>
@@ -83,11 +84,12 @@
 		<div class="form_wrapper" v-show="formShow">
 			<div class="top">
 				<el-button type="info" plain @click="return_list">返回列表</el-button>
+				<el-button type="primary" plain @click="down" v-show="downShow">下载</el-button>
 				<div class="as">
 					<el-button type="primary" plain @click="fileAccord(form_Lista)" v-show="now_type_name === '请款单'">依据附件</el-button>
 				</div>
 				<span class="title">{{now_type_name}}</span>
-				
+
 			</div>
 			<!--呈批件展示-->
 			<div class="form" name="呈批件" v-if="cengpijian_show">
@@ -175,6 +177,7 @@
 			</div>
 			<!--请购单展示-->
 			<div class="form" name="请购单" v-if="qinggoudan_show">
+				
 				<div>
 					<span>工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
 				</div>
@@ -443,7 +446,7 @@
 					<span>完工时间：</span><span>{{form_Lista.end_time}}</span>
 				</div>
 				<div>
-					<span>备注：</span><span>{{form_Lista.remarks}}</span>
+					<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
 				</div>
 				<div>
 					<span>附件列表：</span>
@@ -581,7 +584,7 @@
 						</div>
 					</div>
 				</div>
- 				<div class="menu" v-show="handle_show">
+				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
 						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
@@ -603,8 +606,7 @@
 	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
-	import {getPic} from '@/common/js/pic.js'
-	import picLeader from '@/common/js/pic.js'
+	import { getPic } from '@/common/js/pic.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -640,6 +642,7 @@
 				pic_show: false,
 				loading_show: false,
 				nextPageShow: true,
+				downShow:false,
 				pic_index: 0,
 				colorShow: false,
 				input_value: '',
@@ -657,9 +660,11 @@
 				approval_type: 0,
 				classIndex: -1,
 				group: ['合同评审表', '请购单', '请款单', '呈批件', '申请公章'],
-				form_approval_id:'',
-				request_money_basis_type:'',
-				fileAccordShow:false
+				form_approval_id: '',
+				request_money_basis_type: '',
+				fileAccordShow: false,
+				downApproId:'',
+				downPartId:''
 			}
 		},
 		computed: {
@@ -688,10 +693,15 @@
 			}
 		},
 		created() {
-			this._getUserCompanyList()
+			if(!localStorage.user){
+				this.$router.push({ path: '/login' })
+			}
+			this.setUser(JSON.parse(localStorage.user))
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
+			this._getUserCompanyList()
 			this._getToken()
 			this._getExamList()
+			this.handle_txt = ''
 		},
 		components: {
 			browsePic,
@@ -699,26 +709,26 @@
 			fileAccord
 		},
 		methods: {
-			closeAcc(){
+			closeAcc() {
 				this.fileAccordShow = false
 			},
-			fileAccord(item){
-				if(item.approval_type === -1){
+			fileAccord(item) {
+				if(item.approval_type === -1) {
 					this.$message({
-			          message: '没有附件或者无法查看',
-			          type: 'warning'
-			        });
-			        return
+						message: '没有附件或者无法查看',
+						type: 'warning'
+					});
+					return
 				}
 				this.fileAccordShow = true
-				if(item.approval_type === '7'){
+				if(item.approval_type === '7') {
 					this.request_money_basis_type = '请购单'
-				}else if(item.approval_type === '111'){
+				} else if(item.approval_type === '111') {
 					this.request_money_basis_type = '合同评审表'
-				}else{
+				} else {
 					this.request_money_basis_type = '呈批件'
 				}
-				
+
 				this.form_approval_id = item.form_approval_id
 			},
 			classButton(item, index) {
@@ -892,7 +902,6 @@
 			getPic(event) {
 				this.pic = event.target.files;
 			},
-			handleUpload() {},
 			close_pic() {
 				this.pic_show = false
 			},
@@ -929,79 +938,101 @@
 					return
 				}
 				if(!this.pic) {
-					this.loading_show = true
-					let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("approval_id", this.untreated.approval_id);
-					param.append("participation_id", this.form_Listb.participation_id);
-					param.append("is_agree", '1');
-					param.append("company_id", this.nowCompanyId);
-					param.append("opinion", this.handle_txt);
-					this.$http.post("/index.php/Mobile/find/approval_process", param)
-						.then((res) => {
-							this.loading_show = false
-							this.handle_txt = ''
-							this.listShow = true
-							this.formShow = false
-							this._getExamList()
-							if(res.data.code === 0) {
-								this.$message({
-									message: '操作成功',
-									type: 'success'
-								});
-							} else {
-								this.$message.error('操作失败');
-							}
-						})
+					this.$confirm('是否提交审批?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.loading_show = true
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("approval_id", this.untreated.approval_id);
+						param.append("participation_id", this.form_Listb.participation_id);
+						param.append("is_agree", '1');
+						param.append("company_id", this.nowCompanyId);
+						param.append("opinion", this.handle_txt);
+						this.$http.post("/index.php/Mobile/find/approval_process", param)
+							.then((res) => {
+								this.loading_show = false
+								this.handle_txt = ''
+								this.listShow = true
+								this.formShow = false
+								this._getExamList()
+								if(res.data.code === 0) {
+									this.$message({
+										message: '操作成功',
+										type: 'success'
+									});
+								} else {
+									this.$message.error('操作失败');
+								}
+							})
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+
 				}
 				if(this.pic) {
-					this.loading_show = true
-					for(let i = 0; i < this.pic.length; i++) {
-						let formData = new FormData();
-						formData.append('file', this.pic[i]);
-						formData.append('token', JSON.parse(localStorage.token));
-						let config = {
-							headers: {
-								'Content-Type': 'multipart/form-data'
+					this.$confirm('是否提交审批?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.loading_show = true
+						for(let i = 0; i < this.pic.length; i++) {
+							let formData = new FormData();
+							formData.append('file', this.pic[i]);
+							formData.append('token', JSON.parse(localStorage.token));
+							let config = {
+								headers: {
+									'Content-Type': 'multipart/form-data'
+								}
 							}
+							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+								this.pic_hash_arr.push(res.data.hash)
+								if(this.pic_hash_arr.length === this.pic.length) {
+									let nparam = new URLSearchParams();
+									nparam.append("uid", this.user.uid);
+									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+										.then((res) => {
+											let param = new URLSearchParams();
+											param.append("uid", this.user.uid);
+											param.append("approval_id", this.untreated.approval_id);
+											param.append("participation_id", this.form_Listb.participation_id);
+											param.append("is_agree", '1');
+											param.append("picture", res.data.data.enclosure_id);
+											param.append("company_id", this.nowCompanyId);
+											param.append("opinion", this.handle_txt);
+											this.$http.post("/index.php/Mobile/find/approval_process", param)
+												.then((res) => {
+													this.loading_show = false
+													this.handle_txt = ''
+													this.listShow = true
+													this.formShow = false
+													this._getExamList()
+													if(res.data.code === 0) {
+														this.$message({
+															message: '操作成功',
+															type: 'success'
+														});
+													} else {
+														this.$message.error('操作失败');
+													}
+												})
+										})
+								}
+							})
 						}
-						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-							this.pic_hash_arr.push(res.data.hash)
-							if(this.pic_hash_arr.length === this.pic.length) {
-								let nparam = new URLSearchParams();
-								nparam.append("uid", this.user.uid);
-								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-								this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-									.then((res) => {
-										let param = new URLSearchParams();
-										param.append("uid", this.user.uid);
-										param.append("approval_id", this.untreated.approval_id);
-										param.append("participation_id", this.form_Listb.participation_id);
-										param.append("is_agree", '1');
-										param.append("picture", res.data.data.enclosure_id);
-										param.append("company_id", this.nowCompanyId);
-										param.append("handle_txt", this.handle_txt);
-										param.append("opinion", this.handle_txt);
-										this.$http.post("/index.php/Mobile/find/approval_process", param)
-											.then((res) => {
-												this.loading_show = false
-												this.handle_txt = ''
-												this.listShow = true
-												this.formShow = false
-												this._getExamList()
-												if(res.data.code === 0) {
-													this.$message({
-														message: '操作成功',
-														type: 'success'
-													});
-												} else {
-													this.$message.error('操作失败');
-												}
-											})
-									})
-							}
-						})
-					}
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
 				}
 			},
 			refuse() {
@@ -1011,81 +1042,106 @@
 					return
 				}
 				if(!this.pic) {
-					this.loading_show = true
-					let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("approval_id", this.untreated.approval_id);
-					param.append("participation_id", this.form_Listb.participation_id);
-					param.append("is_agree", '2');
-					param.append("company_id", this.nowCompanyId);
-					param.append("opinion", this.handle_txt);
-					this.$http.post("/index.php/Mobile/find/approval_process", param)
-						.then((res) => {
-							this.loading_show = false
-							this.handle_txt = ''
-							this.listShow = true
-							this.formShow = false
-							this._getExamList()
-							if(res.data.code === 0) {
-								this.$message({
-									message: '操作成功',
-									type: 'success'
-								});
-							} else {
-								this.$message.error('操作失败');
-							}
-						})
+					this.$confirm('是否提交审批?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.loading_show = true
+						let param = new URLSearchParams();
+						param.append("uid", this.user.uid);
+						param.append("approval_id", this.untreated.approval_id);
+						param.append("participation_id", this.form_Listb.participation_id);
+						param.append("is_agree", '2');
+						param.append("company_id", this.nowCompanyId);
+						param.append("opinion", this.handle_txt);
+						this.$http.post("/index.php/Mobile/find/approval_process", param)
+							.then((res) => {
+								this.loading_show = false
+								this.handle_txt = ''
+								this.listShow = true
+								this.formShow = false
+								this._getExamList()
+								if(res.data.code === 0) {
+									this.$message({
+										message: '操作成功',
+										type: 'success'
+									});
+								} else {
+									this.$message.error('操作失败');
+								}
+							})
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+
 				}
 				if(this.pic) {
-					this.loading_show = true
-					for(let i = 0; i < this.pic.length; i++) {
-						let formData = new FormData();
-						formData.append('file', this.pic[i]);
-						formData.append('token', JSON.parse(localStorage.token));
-						let config = {
-							headers: {
-								'Content-Type': 'multipart/form-data'
+					this.$confirm('是否提交审批?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.loading_show = true
+						for(let i = 0; i < this.pic.length; i++) {
+							let formData = new FormData();
+							formData.append('file', this.pic[i]);
+							formData.append('token', JSON.parse(localStorage.token));
+							let config = {
+								headers: {
+									'Content-Type': 'multipart/form-data'
+								}
 							}
+							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+								this.pic_hash_arr.push(res.data.hash)
+								if(this.pic_hash_arr.length === this.pic.length) {
+									let nparam = new URLSearchParams();
+									nparam.append("uid", this.user.uid);
+									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+										.then((res) => {
+											let param = new URLSearchParams();
+											param.append("uid", this.user.uid);
+											param.append("approval_id", this.untreated.approval_id);
+											param.append("participation_id", this.form_Listb.participation_id);
+											param.append("is_agree", '2');
+											param.append("picture", res.data.data.enclosure_id);
+											param.append("company_id", this.nowCompanyId);
+											param.append("opinion", this.handle_txt);
+											this.$http.post("/index.php/Mobile/find/approval_process", param)
+												.then((res) => {
+													this.loading_show = false
+													this.handle_txt = ''
+													this.listShow = true
+													this.formShow = false
+													this._getExamList()
+													if(res.data.code === 0) {
+														this.$message({
+															message: '操作成功',
+															type: 'success'
+														});
+													} else {
+														this.$message.error('操作失败');
+													}
+												})
+										})
+								}
+							})
 						}
-						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-							this.pic_hash_arr.push(res.data.hash)
-							if(this.pic_hash_arr.length === this.pic.length) {
-								let nparam = new URLSearchParams();
-								nparam.append("uid", this.user.uid);
-								nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-								this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-									.then((res) => {
-										let param = new URLSearchParams();
-										param.append("uid", this.user.uid);
-										param.append("approval_id", this.untreated.approval_id);
-										param.append("participation_id", this.form_Listb.participation_id);
-										param.append("is_agree", '2');
-										param.append("picture", res.data.data.enclosure_id);
-										param.append("company_id", this.nowCompanyId);
-										param.append("opinion", this.handle_txt);
-										this.$http.post("/index.php/Mobile/find/approval_process", param)
-											.then((res) => {
-												this.loading_show = false
-												this.handle_txt = ''
-												this.listShow = true
-												this.formShow = false
-												this._getExamList()
-												if(res.data.code === 0) {
-													this.$message({
-														message: '操作成功',
-														type: 'success'
-													});
-												} else {
-													this.$message.error('操作失败');
-												}
-											})
-									})
-							}
-						})
-					}
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
 				}
 			},
 			return_list() {
+				this.downShow = false
+				this.handle_txt = ''
 				this.formShow = false
 				this.listShow = true
 				this.menuShow = false
@@ -1094,9 +1150,14 @@
 				this.cengpijian_show = false
 				this.pingshenbiao_show = false
 				this.gongzhang_show = false
-
 			},
 			listCli(item) {
+				if(item.approval_state.indexOf('已通过') != -1){
+					this.downShow = true
+				}
+				
+				this.downApproId = item.approval_id
+				this.downPartId = item.participation_id
 				this.form_Lista = []
 				this.form_Listb = []
 				this.listShow = false
@@ -1128,10 +1189,12 @@
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
+							console.log(res.data.data)
 							this.form_Lista = create_hetongpingshen_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '请款单') {
+							
 							this.form_Lista = create_qingkuandan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
@@ -1170,7 +1233,26 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
-			//		获取图片
+			down(){
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("company_id", this.nowCompanyId);
+				param.append("approval_id", this.downApproId);
+				param.append("participation_id", this.downPartId)
+				this.$http.post("/index.php/Mobile/find/get_download_token", param)
+				.then((res)=>{
+//					 	console.log('/index.php/Mobile/find/aaampd_picture?token=' + res.data.data )
+				this.$http.get("/index.php/Mobile/find/aaampd_picture", {
+				　　params: {"token": res.data.data}
+				}).then(function (response) {
+					console.log(response)
+				}).catch(function (error) {
+				　　alert(error);
+				});
+
+					
+				})
+			},
 			get_img(many_enclosure) {
 				if(!many_enclosure) {
 					return
@@ -1205,10 +1287,11 @@
 						param.append("attachments_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
 							.then((res) => {
+								console.log(res)
 								let obj = {}
 								let file_data = res.data.data
-								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
-								obj.name = file_data.file_name
+								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
+								obj.name = file_data.file_name + file_data.attribute
 								obj.address = file_add
 								this.file_arr.push(obj)
 							})
@@ -1267,7 +1350,7 @@
 				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
 						localStorage.token = JSON.stringify(res.data.data);
-				})
+					})
 			}
 		},
 
@@ -1489,7 +1572,7 @@
 			.top {
 				width: 100%;
 				display: block;
-				.as{
+				.as {
 					display: inline-block;
 					float: right;
 					margin-right: 10px;
@@ -1510,7 +1593,6 @@
 			.form {
 				padding: 10px;
 				color: #999999;
-				
 				.exam_info {
 					cursor: default;
 					display: block;
