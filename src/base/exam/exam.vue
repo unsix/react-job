@@ -1238,10 +1238,9 @@
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
 				param.append("approval_id", this.downApproId);
-				param.append("participation_id", this.downPartId)
+				param.append("participation_id", this.participation_id)
 				this.$http.post("/index.php/Mobile/find/get_download_token", param)
 				.then((res)=>{
-//					 	console.log('/index.php/Mobile/find/aaampd_picture?token=' + res.data.data )
 				this.$http.get("/index.php/Mobile/find/aaampd_picture", {
 				　　params: {"token": res.data.data}
 				}).then(function (response) {
@@ -1291,7 +1290,7 @@
 								let obj = {}
 								let file_data = res.data.data
 								let file_add = 'http://img-bbsf.6655.la/' + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
-								obj.name = file_data.file_name + file_data.attribute
+								obj.name = file_data.file_name + '.'+ file_data.attribute
 								obj.address = file_add
 								this.file_arr.push(obj)
 							})
