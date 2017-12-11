@@ -14,8 +14,8 @@
 			<transition name="fade1">
 				<div class="search" v-show="searchShow">
 					<div class="one">
-						<el-radio v-model="classRadio" label="1">我发起的</el-radio>
-						<el-radio v-model="classRadio" label="2">我处理的</el-radio>
+						<el-radio v-model="classRadio" label="1">我处理的</el-radio>
+						<el-radio v-model="classRadio" label="2">我发起的</el-radio>
 					</div>
 					<div class="two">
 						<el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="searchInfo" style="display: inline-block;">
@@ -85,6 +85,7 @@
 			<div class="top">
 				<el-button type="info" plain @click="return_list">返回列表</el-button>
 				<el-button type="primary" plain @click="down" v-show="downShow">下载</el-button>
+				<!--<el-button type="primary" plain @click="repeal" v-show="repealShow">撤销</el-button>-->
 				<div class="as">
 					<el-button type="primary" plain @click="fileAccord(form_Lista)" v-show="now_type_name === '请款单'">依据附件</el-button>
 				</div>
@@ -412,7 +413,7 @@
 					<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 				</div>
 				<div>
-					<span>合同编号：</span><span>{{form_Lista.contract_id}}</span>
+					<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
 				</div>
 				<div>
 					<span>甲方：</span><span>{{form_Lista.a_name}}</span>
@@ -607,6 +608,7 @@
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { getPic } from '@/common/js/pic.js'
+	import { getAvatar } from '@/common/js/avatar.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -663,6 +665,7 @@
 				form_approval_id: '',
 				request_money_basis_type: '',
 				fileAccordShow: false,
+				repealShow:false,
 				downApproId:'',
 				downPartId:'',
 				downAddress:''
@@ -710,6 +713,22 @@
 			fileAccord
 		},
 		methods: {
+			repeal(){
+				this.$confirm('您确定撤销文件？', '提示', {
+		        	confirmButtonText: '确定',
+		        	cancelButtonText: '取消',
+		        	type: 'warning'
+		        }).then(() => {
+		        	let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
+		        }).catch(() => {
+		        	this.$message({
+		            	type: 'info',
+		            	message: '已取消操作'
+		            });          
+		        });
+			},
 			closeAcc() {
 				this.fileAccordShow = false
 			},
@@ -753,9 +772,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						//						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			doSearch() {
@@ -1153,10 +1170,14 @@
 				this.gongzhang_show = false
 			},
 			listCli(item) {
+				if(item.approval_state_num === '0' && this.nowType ===3){
+					this.repealShow	= true
+				}else{
+					this.repealShow = false
+				}
 				if(item.approval_state.indexOf('已通过') != -1){
 					this.downShow = true
 				}
-				
 				this.downApproId = item.approval_id
 				this.downPartId = item.participation_id
 				this.form_Lista = []
@@ -1190,7 +1211,6 @@
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
-							console.log(res.data.data)
 							this.form_Lista = create_hetongpingshen_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
@@ -1224,7 +1244,7 @@
 									.then((res) => {
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
-												arr.push(getPic(item))
+												arr.push(getAvatar(item))
 											}
 										})
 									})
@@ -1235,7 +1255,6 @@
 					})
 			},
 			down(){
-				console.log(this.participation_id)
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
@@ -1243,16 +1262,7 @@
 				param.append("participation_id", this.downPartId)
 				this.$http.post("/index.php/Mobile/find/get_download_token", param)
 				.then((res)=>{
-					window.open('/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data)
-//				this.$http.get("/index.php/Mobile/skey/aaampd_picture", {
-//				　　params: {"token": res.data.data}
-//				}).then(function (response) {
-//					
-//				}).catch(function (error) {
-//				　　alert(error);
-//				});
-
-					
+					window.open('/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data)					
 				})
 			},
 			get_img(many_enclosure) {
@@ -1268,7 +1278,7 @@
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
-										arr.push(getPic(item))
+										arr.push(getAvatar(item))
 									}
 								})
 								this.img_arr = arr

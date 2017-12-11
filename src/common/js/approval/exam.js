@@ -1,6 +1,6 @@
-import {getPic} from '@/common/js/pic.js'
+import {getAvatar} from '@/common/js/avatar.js'
 export default class exam_list {
-  constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,participation_id,tagging}) {
+  constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,approval_state_num,participation_id,tagging}) {
     this.approval_id = approval_id
     this.name = name
     this.avatar = avatar
@@ -12,6 +12,7 @@ export default class exam_list {
     this.approval_state = approval_state
     this.participation_id = participation_id
     this.tagging = tagging
+    this.approval_state_num = approval_state_num
   }
 }
 function get_data(time){
@@ -29,7 +30,7 @@ export function create_exam_list(item) {
   return new exam_list({
     approval_id: item.approval_id,
     name: item.name,
-    avatar:getPic(item.avatar),
+    avatar:getAvatar(item.avatar),
     company_name:item.company_name,
     add_time:get_data(item.add_time),
     creat_time:get_data1(item.creat_time),
@@ -37,6 +38,7 @@ export function create_exam_list(item) {
     title:item.title,
     approval_state:get_state(item.approval_state),
     participation_id:item.participation_id,
+    approval_state_num:item.approval_state,
     tagging:getColor(item)
   })
 }
@@ -86,8 +88,7 @@ function get_type(type){
 		return '请款单'
 	}else if(type === '111'){
 		return '合同评审表'
-	}
-	else if(type === '10'){
+	}else if(type === '10'){
 		return '请购单'
 	}
 

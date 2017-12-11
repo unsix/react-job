@@ -36,6 +36,7 @@
 	import uncreatedCompany from '@/base/uncreated_company/uncreated_company'
 	import {mapMutations,mapGetters} from 'vuex'
 	import {getPic} from '@/common/js/pic.js'
+	import {getAvatar} from '@/common/js/avatar.js'
 	import md5 from 'js-md5';
 	export default{
 		data(){
@@ -100,7 +101,7 @@
 			    .then((res)=>{
 			    	console.log(res.data)
 					if(res.data.code === 0){
-						let avatar = getPic(res.data.data.avatar)
+						let avatar = getAvatar(res.data.data.avatar)
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,

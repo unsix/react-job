@@ -5,7 +5,7 @@
 				<i class="el-icon-arrow-left" @click="left"></i>
 			</div>
 			<transition name="slide">
-				<img :src="img_arr[pic_index]" alt="" />
+				<img :src="imgArr[pic_index]" alt="" />
 			</transition>
 			<div>
 				<i class="el-icon-arrow-right" @click="right"></i>
@@ -19,6 +19,11 @@
 
 <script>
 export default {
+	data(){
+		return{
+			imgArr:[]
+		}
+	},
 	props: {
 		img_arr: {
 			type: Array
@@ -30,6 +35,14 @@ export default {
 		pic_index: {
 			type: Number,
 			default: 0
+		}
+	},
+	watch:{
+		img_arr(){
+			this.img_arr.forEach((res)=>{
+				let current = res.indexOf('?')
+				this.imgArr.push(res.slice(0,current) + '?imageslim' )
+			})
 		}
 	},
 	methods: {
@@ -63,11 +76,11 @@ export default {
   transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 .pic {
-	position: fixed;
+	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100%;
+	min-height: 100%;
 	background: rgba(0, 0, 0, 0.5);
 	z-index: 10;
 	>div{

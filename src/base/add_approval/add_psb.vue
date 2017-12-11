@@ -7,8 +7,8 @@
 			<el-form-item label="合同名称" prop="contract_name_new">
 				<el-input v-model="psb_ruleForm.contract_name_new"></el-input>
 			</el-form-item>
-			<el-form-item label="合同编号" prop="contract_id">
-				<el-input v-model="psb_ruleForm.contract_id"></el-input>
+			<el-form-item label="合同编号" prop="contract_num">
+				<el-input v-model="psb_ruleForm.contract_num"></el-input>
 			</el-form-item>
 			<el-form-item label="甲方" prop="a_name">
 				<el-input v-model="psb_ruleForm.a_name"></el-input>
@@ -75,7 +75,7 @@
 			return {
 				psb_ruleForm: {
 					contract_name: '',
-					contract_id: '',
+					contract_num: '',
 					a_name: '',
 					b_name: '',
 					prive: '',
@@ -96,7 +96,7 @@
 						message: '请填写工程名称',
 						trigger: 'blur'
 					}],
-					contract_id: [{
+					contract_num: [{
 						required: true,
 						message: '请填写合同编号',
 						trigger: 'blur'
@@ -204,7 +204,7 @@
 					.then((res) => {
 						this.form_Lista = create_hetongpingshen_list(res.data.data)
 						this.psb_ruleForm.contract_name = this.form_Lista.contract_name
-						this.psb_ruleForm.contract_id = this.form_Lista.contract_id
+						this.psb_ruleForm.contract_num = this.form_Lista.contract_num
 						this.psb_ruleForm.a_name = this.form_Lista.a_name
 						this.psb_ruleForm.b_name = this.form_Lista.b_name
 						this.psb_ruleForm.prive = this.form_Lista.prive
@@ -345,7 +345,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_id", this.psb_ruleForm.contract_id);
+					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
@@ -453,7 +453,7 @@
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-					param.append("contract_id", this.psb_ruleForm.contract_id);
+					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {
@@ -493,7 +493,7 @@
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-					param.append("contract_id", this.psb_ruleForm.contract_id);
+					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
 					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
 						.then((res) => {

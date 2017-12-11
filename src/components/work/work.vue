@@ -52,10 +52,6 @@
 						</li>
 					</ul>
 				</div>
-				<!--<div class="department_wtapper">
-					<div class="title">部门</div>
-					<router-link to="">软件技术部</router-link>
-				</div>-->
 			</div>
 			<div class="info_main">
 				<router-view @changeWorkIndex="changeWorkIndex">
@@ -151,7 +147,6 @@
 				this.setUser('')
 			},
 			judgeState() {
-				console.log(this.userState.manage)
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
@@ -207,6 +202,7 @@
 				this.workIndex = index
 				this.now_type_name = item
 				switch(item) {
+					
 					case '公司管理':
 						this._getComPartPersonList()
 						this.$router.push({ path: '/work/manageCompany' })
@@ -215,6 +211,7 @@
 						this.$router.push({ path: '/work/jurisdictionManage' })
 						break
 					case '表单回执':
+					console.log(this.workList)
 						this.$router.push({ path: '/work/formReceipt' })
 						break;
 					case '通讯录':
@@ -244,14 +241,11 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/User/return_company_new", param)
 					.then((res) => {
-						console.log(res)
-						let is_manage = parseInt(res.data.data.is_manage)
-						let is_finance = parseInt(res.data.data.is_finance)
 						this.setUserState({
-							'manage': is_manage,
-							'finance': is_finance,
+							'manage': parseInt(res.data.data.is_manage),
+							'finance': parseInt(res.data.data.is_finance),
 						})
-//						localStorage.userState = JSON.stringify(this.user);
+
 						this.judgeState()
 					})
 			},
@@ -260,7 +254,6 @@
 				nparam.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
-//						localStorage.token = JSON.stringify(res.data.data);
 						this.setToken(res.data.data)
 					})
 			},
@@ -360,6 +353,8 @@
 		mounted() {},
 		created() {
 			this.setUser(JSON.parse(localStorage.user))
+			this._getUserCompanyList(this.user.uid)
+			this._getComDepart()
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this.setNowCompanyName(JSON.parse(localStorage.nowCompanyName))
 			this._getToken()
@@ -368,7 +363,6 @@
 		},
 		watch: {
 			nowCompanyId() {
-				
 				this.compamyShow = false
 				this._getUserState()
 				this._getToken()

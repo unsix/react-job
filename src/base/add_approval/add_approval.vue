@@ -84,6 +84,7 @@
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
+	import {getAvatar} from '@/common/js/avatar.js'
 	import { create_depart_list } from 'common/js/initial/depart.js'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { create_exam_list } from '@/common/js/approval/exam'
@@ -579,7 +580,7 @@
 				.then((res)=>{
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{
-				    	item.avatar = getPic(item.avatar)
+				    	item.avatar = getAvatar(item.avatar)
 				    	reaDa.push(item)
 				    })	
 				   	this.setComPersonList(reaDa)

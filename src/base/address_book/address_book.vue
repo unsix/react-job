@@ -36,6 +36,7 @@
 
 <script>
 	import {getPic} from '@/common/js/pic.js'
+	import {getAvatar} from '@/common/js/avatar.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -62,8 +63,8 @@
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {
-							item.avatar = getPic(item.avatar)
-							console.log(item.avatar)
+							item.avatar = getAvatar(item.avatar)
+							
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)

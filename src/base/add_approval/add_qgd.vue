@@ -87,10 +87,13 @@
 						<el-input v-model.number="item.num"></el-input>
 					</el-form-item>
 					<el-form-item label="单位">
+						<el-input v-model="item.unit"></el-input>
+					</el-form-item>
+					<!--<el-form-item label="单位">
 						<el-select v-model="item.unit">
 							<el-option :label="item" :value="item" v-for="item in unit" :key="item"></el-option>
 						</el-select>
-					</el-form-item>
+					</el-form-item>-->
 				</el-form>
 				<el-form :inline="true" class="demo-form-inline">
 					<el-form-item label="单价">
@@ -755,7 +758,7 @@
 
 <style lang="scss">
 		.el-form--inline .el-form-item {
-			margin-right: 5px;
+			margin-left: 20px;
 		}
 		.el-select {
 			width: 100%;

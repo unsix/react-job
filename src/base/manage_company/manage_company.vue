@@ -60,6 +60,7 @@
 <script>
 	import { createPersonInfo } from 'common/js/person_info'
 	import { getPic } from '@/common/js/pic.js'
+	import { getAvatar } from '@/common/js/avatar.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -314,7 +315,7 @@
 								mewObj.department_name = list.department_name
 								mewObj.name = list.name
 								mewObj.phone = list.phone
-								mewObj.avatar = getPic(list.avatar)
+								mewObj.avatar = getAvatar(list.avatar)
 								this.adminArr.push(mewObj)
 
 							})

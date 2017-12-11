@@ -173,8 +173,11 @@
 		},
 		watch: {
 			jurisdictionFormList() {
-				this.submitAddPersonShow = false
+//				this.submitAddPersonShow = false
 				this.activeNames = ['0']
+			},
+			formType(){
+				this.submitAddPersonShow = false
 			}
 		}
 	}

@@ -10,8 +10,8 @@
 		<div v-if="form_Lista.contract_name_new">
 			<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 		</div>
-		<div v-if="form_Lista.contract_id">
-			<span>合同编号：</span><span>{{form_Lista.contract_id}}</span>
+		<div v-if="form_Lista.contract_num">
+			<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
 		</div>
 		<div v-if="form_Lista.a_name">
 			<span>甲方：</span><span>{{form_Lista.a_name}}</span>
