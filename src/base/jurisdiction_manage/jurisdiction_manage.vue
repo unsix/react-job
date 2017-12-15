@@ -178,6 +178,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/give_finance_new", param)
 					.then((res) => {
+						
 						if(res.data.code === 0) {
 							this._getHuizhi()
 							this.formRePersonIndex = -1
@@ -221,9 +222,16 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						//						this.setNowCompanyId(res.data.data[0].company_id)
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						this.setCompanyList(res.data.data)
-						//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			_getComPersonList() {
@@ -231,6 +239,15 @@
 				newparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
@@ -245,6 +262,15 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/find/finance_personnel_list", param)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						res.data.data.forEach((item) => {
 							if(item.type === 1) {
 								let arr = []
@@ -274,6 +300,15 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_list", param)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						res.data.data.approval.forEach((item) => {
 							if(item.type === this.formType) {
 								if(item.list.length != 0) {

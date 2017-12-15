@@ -5,7 +5,9 @@
 				<el-input v-model="psb_ruleForm.contract_name"></el-input>
 			</el-form-item>
 			<el-form-item label="合同名称" prop="contract_name_new">
-				<el-input v-model="psb_ruleForm.contract_name_new"></el-input>
+				<el-input v-model="psb_ruleForm.contract_name_new" style="width:195px;"></el-input>
+				<el-button type="info" plain @click="chooseHetong" style="float: right;">选择合同</el-button>
+				<el-button type="info" plain @click="viewHt" style="float: right;margin-right: 5px;" v-show="psb_ruleForm.contract_id != '' ">查看合同</el-button>
 			</el-form-item>
 			<el-form-item label="合同编号" prop="contract_num">
 				<el-input v-model="psb_ruleForm.contract_num"></el-input>
@@ -49,20 +51,28 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="添加图片">
-				<input name="token" type="hidden" :value="token">
-				<input type="file" name="" id="" @change="getPic($event)" multiple="multiple" accept="image/jpg, image/jpeg, image/png" />
-			</el-form-item>
-			<el-form-item label="添加文件">
-				<input name="token" type="hidden" :value="token">
-				<input type="file" name="" id="" @change="getFile($event)" multiple="multiple" accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint" />
-			</el-form-item>
+			<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+				<el-button size="small" type="info" plain>上传文件</el-button>
+			</el-upload>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_psb('psb_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('psb_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>
+		<div class="hetongList" v-show="hetongListShow">
+			<el-button type="primary" plain>主要按钮</el-button>
+			<div class="list" v-for="(item,index) in hetongList">
+				<div class="content">
+					<span>{{item.add_time}}</span>
+					<span>{{item.b_name}}</span>
+				</div>
+				<div class="view">
+					<el-button type="primary" round @click="viewHetong(item)">查看</el-button>
+					<el-button type="success" round @click="userHetong(item)">使用</el-button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -73,6 +83,8 @@
 	export default {
 		data() {
 			return {
+				hetongListShow: false,
+				fileList: [],
 				psb_ruleForm: {
 					contract_name: '',
 					contract_num: '',
@@ -88,7 +100,8 @@
 					contract_name_new: '',
 					remarks: '',
 					project_manager_name: '',
-					project_manager: {}
+					project_manager: {},
+					contract_id: ''
 				},
 				psb_rules: {
 					contract_name: [{
@@ -132,13 +145,13 @@
 						trigger: 'blur'
 					}],
 					arrive_time: [{
-						type:'date',
+						type: 'date',
 						required: true,
 						message: '请填写到货时间',
 						trigger: 'change'
 					}],
 					end_time: [{
-						type:'date',
+						type: 'date',
 						required: true,
 						message: '请填写	完工时间',
 						trigger: 'change'
@@ -168,12 +181,15 @@
 				pic_index: 0,
 				img_arr: [],
 				pic_enclosure_id: '',
-				loadingShow:false
+				loadingShow: false,
+				hetongList: [],
+				picArr: [],
+				fileArr: []
 			}
 		},
 		props: {
-			approval_id:{
-				type:String
+			approval_id: {
+				type: String
 			}
 		},
 		computed: {
@@ -189,10 +205,35 @@
 			this._getToken()
 			this.initial_data()
 		},
-		components:{
+		components: {
 			loading
 		},
 		methods: {
+			handleRemove(file, fileList) {
+				this.fileList = fileList
+			},
+			handlePreview(file, fileList) {
+				this.fileList = fileList
+			},
+			viewHt() {
+				window.open('/index.php/Mobile/skey/look_draft?id=' + this.psb_ruleForm.contract_id)
+			},
+			userHetong(item) {
+				this.hetongListShow = false
+				this.psb_ruleForm.contract_id = item.contract_draft_id
+			},
+			viewHetong(item) {
+				window.open('/index.php/Mobile/skey/look_draft?id=' + item.contract_draft_id)
+			},
+			chooseHetong() {
+				this.hetongListShow = true
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				this.$http.post("/index.php/Mobile/find/draft_list", param)
+					.then((res) => {
+						this.hetongList = res.data.data
+					})
+			},
 			initial_data() {
 				if(!this.approval_id) {
 					return
@@ -214,8 +255,7 @@
 						this.psb_ruleForm.executor = this.form_Lista.executor
 						this.psb_ruleForm.contract_name_new = this.form_Lista.contract_name_new
 						this.psb_ruleForm.remarks = this.form_Lista.remarks
-//						this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
-//						this.psb_ruleForm.end_time = this.form_Lista.end_time
+						this.psb_ruleForm.contract_id = this.form_Lista.contract_id
 						this.psb_ruleForm.project_manager_name = this.form_Lista.project_manager_name
 					})
 			},
@@ -236,12 +276,6 @@
 			ctrl_pic_show(index) {
 				this.pic_index = index
 				this.pic_show = true
-			},
-			getPic(event) {
-				this.pic = event.target.files;
-			},
-			getFile(event) {
-				this.file = event.target.files;
 			},
 			last_one() {
 				if(this.pic_index === 0) {
@@ -279,7 +313,7 @@
 			},
 			submitForm_psb(formName) {
 				this.$refs[formName].validate((valid) => {
-					if(valid) {		
+					if(valid) {
 						this.psb_submit()
 						this.loading_show = true
 					} else {
@@ -288,32 +322,41 @@
 					}
 				});
 			},
-			psb_submit() {	
-					this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
-					let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
-					timestamp2 = timestamp2 / 1000 +86400
-					let date = new Date();  
-				    date.setTime(timestamp2 * 1000);  
-				    let y = date.getFullYear();      
-				    let m = date.getMonth() + 1;      
-				    m = m < 10 ? ('0' + m) : m;      
-				    let d = date.getDate();      
-				    d = d < 10 ? ('0' + d) : d;          
-				    this.psb_ruleForm.arrive_time = y + '-' + m + '-' + d
+			psb_submit() {
+				this.picArr = []
+				this.fileArr = []
+				this.fileList.forEach((item) => {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+						this.picArr.push(item)
+					} else {
+						this.fileArr.push(item)
+					}
+				})
+				this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
+				let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
+				timestamp2 = timestamp2 / 1000 + 86400
+				let date = new Date();
+				date.setTime(timestamp2 * 1000);
+				let y = date.getFullYear();
+				let m = date.getMonth() + 1;
+				m = m < 10 ? ('0' + m) : m;
+				let d = date.getDate();
+				d = d < 10 ? ('0' + d) : d;
+				this.psb_ruleForm.arrive_time = y + '-' + m + '-' + d
 
-					this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
-					let timestamp3 = Date.parse(new Date(this.psb_ruleForm.end_time));
-					timestamp3 = timestamp3 / 1000 +86400
-					let date1 = new Date();  
-				    date1.setTime(timestamp3 * 1000);  
-				    let y1 = date1.getFullYear();      
-				    let m1 = date1.getMonth() + 1;      
-				    m1 = m1 < 10 ? ('0' + m1) : m1;      
-				    let d1 = date1.getDate();      
-				    d1 = d1 < 10 ? ('0' + d1) : d1;          
-				    this.psb_ruleForm.end_time = y1 + '-' + m1 + '-' + d1
-				
-				if(this.psb_ruleForm.project_manager_name != ''){
+				this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
+				let timestamp3 = Date.parse(new Date(this.psb_ruleForm.end_time));
+				timestamp3 = timestamp3 / 1000 + 86400
+				let date1 = new Date();
+				date1.setTime(timestamp3 * 1000);
+				let y1 = date1.getFullYear();
+				let m1 = date1.getMonth() + 1;
+				m1 = m1 < 10 ? ('0' + m1) : m1;
+				let d1 = date1.getDate();
+				d1 = d1 < 10 ? ('0' + d1) : d1;
+				this.psb_ruleForm.end_time = y1 + '-' + m1 + '-' + d1
+
+				if(this.psb_ruleForm.project_manager_name != '') {
 					this.comPersonList.forEach((item) => {
 						if(item.name === this.psb_ruleForm.project_manager_name) {
 							this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
@@ -326,110 +369,113 @@
 				this.file_time = 0
 				this.pic_time = 0
 				this.loadingShow = true
-				
-				if(!this.pic && !this.file) {	
-					let param = new URLSearchParams();
-					if(this.psb_ruleForm.project_manager.uid) {
-						param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
-					}
-					param.append("uid", this.user.uid);
-					param.append("company_id", this.nowCompanyId);
-					param.append("a_name", this.psb_ruleForm.a_name);
-					param.append("b_name", this.psb_ruleForm.b_name);
-					param.append("prive", this.psb_ruleForm.prive);
-					param.append("total_prive", this.psb_ruleForm.total_prive);
-					param.append("difference", this.psb_ruleForm.difference);
-					param.append("pay_method", this.psb_ruleForm.pay_method);
-					param.append("contract_name", this.psb_ruleForm.contract_name);
-					param.append("arrive_time", this.psb_ruleForm.arrive_time);
-					param.append("end_time", this.psb_ruleForm.end_time);
-					param.append("executor", this.psb_ruleForm.executor);
-					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_num", this.psb_ruleForm.contract_num);
-					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
-					this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
-						.then((res) => {
-							this.loadingShow = false
-							if(res.data.code === 0) {
-								this.add_ok()
-								this.loading_show = false
-								this.$emit('return_exam')
-							} else {
-								this.add_fail()
-							}
-						})
-				} else {
-					if(this.pic) {
-						for(let i = 0; i < this.pic.length; i++) {
-							let formData = new FormData();
-							formData.append('file', this.pic[i]);
-							formData.append('token', this.token);
-							let config = {
-								headers: {
-									'Content-Type': 'multipart/form-data'
+				setTimeout(() => {
+					if(this.picArr.length === 0 && this.fileArr.length === 0) {
+						let param = new URLSearchParams();
+						if(this.psb_ruleForm.project_manager.uid) {
+							param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
+						}
+						param.append("uid", this.user.uid);
+						param.append("company_id", this.nowCompanyId);
+						param.append("a_name", this.psb_ruleForm.a_name);
+						param.append("b_name", this.psb_ruleForm.b_name);
+						param.append("prive", this.psb_ruleForm.prive);
+						param.append("total_prive", this.psb_ruleForm.total_prive);
+						param.append("difference", this.psb_ruleForm.difference);
+						param.append("pay_method", this.psb_ruleForm.pay_method);
+						param.append("contract_name", this.psb_ruleForm.contract_name);
+						param.append("arrive_time", this.psb_ruleForm.arrive_time);
+						param.append("end_time", this.psb_ruleForm.end_time);
+						param.append("executor", this.psb_ruleForm.executor);
+						param.append("remarks", this.psb_ruleForm.remarks);
+						param.append("contract_id", this.psb_ruleForm.contract_id);
+						param.append("contract_num", this.psb_ruleForm.contract_num);
+						param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
+						this.$http.post("/index.php/Mobile/approval/add_approval_conyract_company_new", param)
+							.then((res) => {
+								this.loadingShow = false
+								if(res.data.code === 0) {
+									this.add_ok()
+									this.loading_show = false
+									this.$emit('return_exam')
+								} else {
+									this.add_fail()
 								}
-							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-								this.pic_hash_arr.push(res.data.hash)
-								if(this.pic_hash_arr.length === this.pic.length) {
-									let nparam = new URLSearchParams();
-									nparam.append("uid", this.user.uid);
-									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-										.then((res) => {
-											this.pic_enclosure_id = res.data.data.enclosure_id
-											this.afile_hash_arr.push({
-												"type": 3,
-												"contract_id": res.data.data.enclosure_id,
-												"name": this.pic[i].name
+							})
+					} else {
+						if(this.picArr.length != 0) {
+							for(let i = 0; i < this.picArr.length; i++) {
+								let formData = new FormData();
+								formData.append('file', this.picArr[i].raw);
+								formData.append('token', this.token);
+								let config = {
+									headers: {
+										'Content-Type': 'multipart/form-data'
+									}
+								}
+								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+									this.pic_hash_arr.push(res.data.hash)
+									if(this.pic_hash_arr.length === this.picArr.length) {
+										let nparam = new URLSearchParams();
+										nparam.append("uid", this.user.uid);
+										nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+										this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+											.then((res) => {
+												this.afile_hash_arr.push({
+													"type": 3,
+													"contract_id": res.data.data.enclosure_id,
+													"name": this.picArr[i].name
+												})
+												let aDate = Date.parse(new Date())
+												this.pic_time = aDate
 											})
-											let aDate = Date.parse(new Date())
-											this.pic_time = aDate
-										})
-								}
-							})
-						}
-					}
-					if(this.file) {
-						for(let i = 0; i < this.file.length; i++) {
-							let formData = new FormData();
-							formData.append('file', this.file[i]);
-							formData.append('token', this.token);
-							let config = {
-								headers: {
-									'Content-Type': 'multipart/form-data'
-								}
+									}
+								})
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-								let index = this.file[i].name.indexOf('.')
-								let attribute = this.file[i].name.slice(index)
-								let file_name = this.file[i].name.slice(0, index)
-								let param = new URLSearchParams();
-								param.append("uid", this.user.uid);
-								param.append("attribute", attribute);
-								param.append("attachments", res.data.hash);
-								param.append("file_name", file_name);
-								this.$http.post("/index.php/Mobile/approval/add_attachments", param)
-									.then((res) => {
-										this.file_hash_arr.push({
-											"type": 4,
-											"contract_id": res.data.data.attachments_id,
-											"name": this.file[i].name
+						}
+						if(this.fileArr.length != 0) {
+							for(let i = 0; i < this.fileArr.length; i++) {
+								let formData = new FormData();
+								formData.append('file', this.fileArr[i]);
+								formData.append('token', this.token);
+								let config = {
+									headers: {
+										'Content-Type': 'multipart/form-data'
+									}
+								}
+								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+									let index = this.fileArr[i].name.indexOf('.')
+									let attribute = this.fileArr[i].name.slice(index)
+									let file_name = this.fileArr[i].name.slice(0, index)
+									let param = new URLSearchParams();
+									param.append("uid", this.user.uid);
+									param.append("attribute", attribute);
+									param.append("attachments", res.data.hash);
+									param.append("file_name", this.fileArr[i].name);
+									this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+										.then((res) => {
+											this.file_hash_arr.push({
+												"type": 4,
+												"contract_id": res.data.data.attachments_id,
+												"name": this.fileArr[i].name
+											})
+											if(this.file_hash_arr.length === this.fileArr.length) {
+												let bDate = Date.parse(new Date())
+												this.file_time = bDate
+											}
 										})
-										if(this.file_hash_arr.length === this.file.length) {
-											let bDate = Date.parse(new Date())
-											this.file_time = bDate
-										}
-									})
-							})
+								})
+							}
 						}
 					}
-				}
+				}, 500)
+
 			}
 		},
 		watch: {
 			file_time() {
-				if(this.pic) {
+				console.log(this.picArr.length)
+				if(this.picArr.length != 0) {
 					if(this.pic_time === 0) {
 						return
 					}
@@ -452,6 +498,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
+					param.append("contract_id", this.psb_ruleForm.contract_id);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
@@ -469,7 +516,8 @@
 				}
 			},
 			pic_time() {
-				if(this.file) {
+				console.log(this.fileArr.length)
+				if(this.fileArr.length != 0) {
 					if(this.file_time === 0) {
 						return
 					}
@@ -492,6 +540,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
+					param.append("contract_id", this.psb_ruleForm.contract_id);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
@@ -514,8 +563,59 @@
 
 <style lang="scss">
 	.add_psb {
+		position: relative;
 		.el-select {
 			width: 100%;
+		}
+	}
+	
+	.hetongExhibit {
+		position: absolute;
+		top: -100px;
+		left: -10px;
+		width: 580px;
+		background: darkseagreen;
+		height: 1300px;
+		z-index: 10;
+		background: #FFFFFF;
+	}
+	
+	.hetongList {
+		position: absolute;
+		top: -100px;
+		left: -10px;
+		width: 560px;
+		background: cornflowerblue;
+		height: 1280px;
+		z-index: 10;
+		padding: 10px;
+		background: #FFFFFF;
+		>.list {
+			font-size: 14px;
+			height: 70px;
+			oz-box-shadow: 1px 1px 2px #999999;
+			-webkit-box-shadow: 1px 1px 2px #999999;
+			box-shadow: 1px 1px 2px #999999;
+			margin-top: 10px;
+			>.content {
+				display: inline-block;
+				width: 470px;
+				margin-left: 10px;
+				span {
+					height: 28px;
+					line-height: 28px;
+					display: block;
+				}
+			}
+			>.view {
+				display: inline-block;
+				>button {
+					margin: 0;
+					display: block;
+					padding: 4px 12px;
+					margin-top: 8px;
+				}
+			}
 		}
 	}
 </style>

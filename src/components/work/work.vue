@@ -47,14 +47,13 @@
 						<li class="work_item" v-for="(item,index) in workList" @click="doList(item,index)">
 							<router-link to="" :class="{'active' : index === workIndex}">
 								<span class="content">{{item}}</span>
-								<span class="num_icon"></span>
 							</router-link>
 						</li>
 					</ul>
 				</div>
 			</div>
 			<div class="info_main">
-				<router-view @changeWorkIndex="changeWorkIndex">
+				<router-view @changeWorkIndex="changeWorkIndex" :workList="workList">
 					
 				</router-view>
 			</div>
@@ -128,6 +127,7 @@
 		},
 		methods: {
 			logOut(){
+				this.workIndex = 0
 				this.userOperationShow = false
 				localStorage.removeItem('nowCompanyId');
 				localStorage.removeItem('nowCompanyName');
@@ -195,14 +195,9 @@
 				this.$router.push('/work');
 			},
 			doList(item, index) {
-				if(item === '创建公司') {
-					this.compamyShow = true
-					return
-				}
-				this.workIndex = index
+				this.workIndex = index		
 				this.now_type_name = item
-				switch(item) {
-					
+				switch(item) {		
 					case '公司管理':
 						this._getComPartPersonList()
 						this.$router.push({ path: '/work/manageCompany' })
@@ -211,7 +206,6 @@
 						this.$router.push({ path: '/work/jurisdictionManage' })
 						break
 					case '表单回执':
-					console.log(this.workList)
 						this.$router.push({ path: '/work/formReceipt' })
 						break;
 					case '通讯录':
@@ -241,6 +235,15 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/User/return_company_new", param)
 					.then((res) => {
+						if(res.data.code === 251){						
+							localStorage.removeItem('nowCompanyId');
+							localStorage.removeItem('nowCompanyName');
+							localStorage.removeItem('personnelId');
+							localStorage.removeItem('token');
+							localStorage.removeItem('user');
+							this.$router.push({ path: '/login' })
+							this.$message.error('您的帐号在别处登录，请重新登录');
+						}
 						this.setUserState({
 							'manage': parseInt(res.data.data.is_manage),
 							'finance': parseInt(res.data.data.is_finance),
@@ -262,6 +265,15 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -291,6 +303,15 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+						if(res.data.code === 251){
+							localStorage.removeItem('nowCompanyId');
+							localStorage.removeItem('nowCompanyName');
+							localStorage.removeItem('personnelId');
+							localStorage.removeItem('token');
+							localStorage.removeItem('user');
+							this.$router.push({ path: '/login' })
+							this.$message.error('您的帐号在别处登录，请重新登录');
+						}
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -303,10 +324,10 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
+						console.log(res)
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						this.setNowCompanyName(res.data.data[0].company_name)
-						
+						this.setNowCompanyName(res.data.data[0].company_name)		
 						this._getUserState()
 					})
 			},
@@ -321,7 +342,6 @@
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)
-
 					})
 			},
 			...mapMutations({

@@ -179,6 +179,15 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+						 if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -212,9 +221,6 @@
 				this.qgd_if = false
 				this.qk_return = false
 				this.at_qingkuanShow = true
-			},
-			qkReturn(){
-				
 			},
 			qkView(item,index){
 				this.qk_return = true
@@ -292,9 +298,16 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {	
-//						this.setNowCompanyId(res.data.data[0].company_id)
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			           }
 						this.setCompanyList(res.data.data)
-//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			...mapMutations({
@@ -470,7 +483,6 @@
 				this.sqgz_show = false
 				this.cpj_show = false
 			},
-
 			handleClick(tab) {
 				this.approval_id1 = ''
 				this.approval_id2 = ''
@@ -515,17 +527,14 @@
 			close_qgd(item, index) {
 				this.qgd_ruleForm.add.splice(index, 1)
 			},
-
 			return_show() {
 				this.$emit('return_exam')
 			},
-
 			return_Add() {
 				this.formShow = false
 				this.psb_show = false
 				this.$router.push({ path: '/work/exam' })
 			},
-
 			as_click(index) {
 				if(index === 3){
 					this.formShow = true
@@ -578,6 +587,15 @@
 				newparam.append("company_id",this.nowCompanyId); 
 				this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
 				.then((res)=>{
+					 if(res.data.code === 251){
+		              localStorage.removeItem('nowCompanyId');
+		              localStorage.removeItem('nowCompanyName');
+		              localStorage.removeItem('personnelId');
+		              localStorage.removeItem('token');
+		              localStorage.removeItem('user');
+		              this.$router.push({ path: '/login' })
+		              this.$message.error('您的帐号在别处登录，请重新登录');
+		            }
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{
 				    	item.avatar = getAvatar(item.avatar)

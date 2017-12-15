@@ -24,14 +24,9 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="添加图片">
-				<input name="token" type="hidden" :value="token">
-				<input type="file" name="" id="" @change="getPic($event)" multiple="multiple" accept="image/jpg, image/jpeg, image/png" />
-			</el-form-item>
-			<el-form-item label="添加文件">
-				<input name="token" type="hidden" :value="token">
-				<input type="file" name="" id="" @change="getFile($event)" multiple="multiple" accept="application/msword,	text/plain,	application/pdf,application/vnd.ms-excel,application/vnd.ms-powerpoint" />
-			</el-form-item>
+			<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+				<el-button size="small" type="info" plain>上传文件</el-button>
+			</el-upload>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
@@ -44,10 +39,13 @@
 <script>
 	import loading from '@/base/loading/loading'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
-	import { mapGetters ,mapMutations } from 'vuex'
+	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
+				fileList: [],
+				picArr: [],
+				fileArr: [],
 				cpj_ruleForm: {
 					department_id: '',
 					department_name: '',
@@ -85,16 +83,16 @@
 				file_time: 0,
 				pic_time: 0,
 				pic_show: false,
-				loadingShow:false,
+				loadingShow: false,
 				pic_index: 0,
 				img_arr: [],
-				pic_enclosure_id:''
+				pic_enclosure_id: ''
 
 			}
 		},
 		props: {
-			approval_id:{
-				type:String
+			approval_id: {
+				type: String
 			}
 		},
 		created() {
@@ -110,10 +108,16 @@
 				'token'
 			])
 		},
-		components:{
+		components: {
 			loading
 		},
 		methods: {
+			handleRemove(file, fileList) {
+				this.fileList = fileList
+			},
+			handlePreview(file, fileList) {
+				this.fileList = fileList
+			},
 			initial_data() {
 				if(!this.approval_id) {
 					return
@@ -152,7 +156,6 @@
 			},
 			getPic(event) {
 				this.pic = event.target.files;
-				console.log(this.pic)
 			},
 			getFile(event) {
 				this.file = event.target.files;
@@ -208,7 +211,16 @@
 				});
 			},
 			cpj_submit() {
-				if(this.cpj_ruleForm.project_manager_name != ''){
+				this.picArr = []
+				this.fileArr = []
+				this.fileList.forEach((item) => {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+						this.picArr.push(item)
+					} else {
+						this.fileArr.push(item)
+					}
+				})
+				if(this.cpj_ruleForm.project_manager_name != '') {
 					this.comPersonList.forEach((item) => {
 						if(item.name === this.cpj_ruleForm.project_manager_name) {
 							this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
@@ -221,101 +233,103 @@
 				this.file_time = 0
 				this.pic_time = 0
 				this.loadingShow = true
-				if((!this.pic || this.pic.length === 0) && (!this.file || this.file.length === 0)) {
-					let param = new URLSearchParams();
-					if(this.cpj_ruleForm.project_manager.uid) {
-						param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
-					}
-					param.append("uid", this.user.uid);
-					param.append("company_id", this.nowCompanyId);
-					param.append("department_id", this.cpj_ruleForm.department_id);
-					param.append("content", this.cpj_ruleForm.content);
-					param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
-					param.append("title", this.cpj_ruleForm.title);
-					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
-						.then((res) => {
-							this.loadingShow = false
-							if(res.data.code === 0) {
-								this.add_ok()
-								this.loading_show = false
-								this.$router.push({ path: '/work/exam' })
-							} else {
-								this.add_fail()
-							}
-						})
-				} else {
-					if(this.pic) {
-						for(let i = 0; i < this.pic.length; i++) {
-							let formData = new FormData();
-							formData.append('file', this.pic[i]);
-							formData.append('token', this.token);
-							let config = {
-								headers: {
-									'Content-Type': 'multipart/form-data'
-								}
-							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-								this.pic_hash_arr.push(res.data.hash)
-								if(this.pic_hash_arr.length === this.pic.length) {
-									let nparam = new URLSearchParams();
-									nparam.append("uid", this.user.uid);
-									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-										.then((res) => {
-											this.pic_enclosure_id = res.data.data.enclosure_id
-											this.afile_hash_arr.push({
-												"type": 3,
-												"contract_id": res.data.data.enclosure_id,
-												"name": this.pic[i].name
-											})
-											let aDate = Date.parse(new Date())
-											this.pic_time = aDate
-										})
-								}
-							})
+				setTimeout(() => {
+					if(this.picArr.length === 0 && this.fileArr.length === 0) {
+						let param = new URLSearchParams();
+						if(this.cpj_ruleForm.project_manager.uid) {
+							param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
 						}
-					}
-					if(this.file) {
-						for(let i = 0; i < this.file.length; i++) {
-							let formData = new FormData();
-							formData.append('file', this.file[i]);
-							formData.append('token', this.token);
-							let config = {
-								headers: {
-									'Content-Type': 'multipart/form-data'
-								}
-							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-								let index = this.file[i].name.indexOf('.')
-								let attribute = this.file[i].name.slice(index)
-								let file_name = this.file[i].name.slice(0, index)
-								let param = new URLSearchParams();
-								param.append("uid", this.user.uid);
-								param.append("attribute", attribute);
-								param.append("attachments", res.data.hash);
-								param.append("file_name", file_name);
-								this.$http.post("/index.php/Mobile/approval/add_attachments", param)
-									.then((res) => {
-										this.file_hash_arr.push({
-											"type": 4,
-											"contract_id": res.data.data.attachments_id,
-											"name": this.file[i].name
-										})
-										if(this.file_hash_arr.length === this.file.length) {
-											let bDate = Date.parse(new Date())
-											this.file_time = bDate
-										}
+						param.append("uid", this.user.uid);
+						param.append("company_id", this.nowCompanyId);
+						param.append("department_id", this.cpj_ruleForm.department_id);
+						param.append("content", this.cpj_ruleForm.content);
+						param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
+						param.append("title", this.cpj_ruleForm.title);
+						this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
+							.then((res) => {
+								this.loadingShow = false
+								if(res.data.code === 0) {
+									this.add_ok()
+									this.loading_show = false
+									this.$router.push({
+										path: '/work/exam'
 									})
+								} else {
+									this.add_fail()
+								}
 							})
+					} else {
+						if(this.picArr.length != 0) {
+							for(let i = 0; i < this.picArr.length; i++) {
+								let formData = new FormData();
+								formData.append('file', this.picArr[i].raw);
+								formData.append('token', this.token);
+								let config = {
+									headers: {
+										'Content-Type': 'multipart/form-data'
+									}
+								}
+								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+									this.pic_hash_arr.push(res.data.hash)
+									if(this.pic_hash_arr.length === this.picArr.length) {
+										let nparam = new URLSearchParams();
+										nparam.append("uid", this.user.uid);
+										nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+										this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+											.then((res) => {
+												this.afile_hash_arr.push({
+													"type": 3,
+													"contract_id": res.data.data.enclosure_id,
+													"name": this.picArr[i].name
+												})
+												let aDate = Date.parse(new Date())
+												this.pic_time = aDate
+											})
+									}
+								})
+							}
+						}
+						if(this.fileArr.length != 0) {
+							for(let i = 0; i < this.fileArr.length; i++) {
+								let formData = new FormData();
+								formData.append('file', this.fileArr[i]);
+								formData.append('token', this.token);
+								let config = {
+									headers: {
+										'Content-Type': 'multipart/form-data'
+									}
+								}
+								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+									let index = this.fileArr[i].name.indexOf('.')
+									let attribute = this.fileArr[i].name.slice(index)
+									let file_name = this.fileArr[i].name.slice(0, index)
+									let param = new URLSearchParams();
+									param.append("uid", this.user.uid);
+									param.append("attribute", attribute);
+									param.append("attachments", res.data.hash);
+									param.append("file_name", this.fileArr[i].name);
+									this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+										.then((res) => {
+											this.file_hash_arr.push({
+												"type": 4,
+												"contract_id": res.data.data.attachments_id,
+												"name": this.fileArr[i].name
+											})
+											if(this.file_hash_arr.length === this.fileArr.length) {
+												let bDate = Date.parse(new Date())
+												this.file_time = bDate
+											}
+										})
+								})
+							}
 						}
 					}
-				}
-
+				},500)
 			},
 		},
 		watch: {
 			file_time() {
-				if(this.pic) {
+				if(this.picArr.length != 0) {
 					if(this.pic_time === 0) {
 						return
 					}
@@ -338,7 +352,9 @@
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
-								this.$router.push({ path: '/work/exam' })
+								this.$router.push({
+									path: '/work/exam'
+								})
 							} else {
 								this.add_fail()
 							}
@@ -346,7 +362,7 @@
 				}
 			},
 			pic_time() {
-				if(this.file) {
+				if(this.fileArr.length != 0) {
 					if(this.file_time === 0) {
 						return
 					}
@@ -369,7 +385,9 @@
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
-								this.$router.push({ path: '/work/exam' })
+								this.$router.push({
+									path: '/work/exam'
+								})
 							} else {
 								this.add_fail()
 							}

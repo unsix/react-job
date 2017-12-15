@@ -266,6 +266,15 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -276,6 +285,15 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -307,9 +325,17 @@
 				mparam.append("department_id", -1);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", mparam)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						if(res.data.data.length != 0) {
 							res.data.data.forEach((list) => {
-								console.log(list)
 								let mewObj = {}
 								mewObj.personnel_id = list.personnel_id
 								mewObj.department_name = list.department_name

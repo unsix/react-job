@@ -1,4 +1,4 @@
-<!--<template>
+<template>
 	<div class="everyday_wrapper">
 		<div class="everyday">
 			<div class="postLog">
@@ -84,7 +84,7 @@
 						</div>
 					</div>
 					<div class="ccRange">
-						<!--<span>刘忠哲<i class="fa fa-close"></i></span>-->
+						<span>刘忠哲<i class="fa fa-close"></i></span>
 						<div class="choose" @click="chooseRange">
 							<i class="fa fa-plus"></i>
 							<span>选择抄送范围</span>
@@ -597,8 +597,6 @@
 						}
 					}
 					if(this.fileArr.length != 0) {
-						console.log(this.fileArr)
-						return
 						for(let i = 0; i < this.fileArr.length; i++) {
 							let formData = new FormData();
 							formData.append('file', this.fileArr[i]);

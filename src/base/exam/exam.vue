@@ -9,7 +9,19 @@
 						<el-tab-pane label="我发起的"></el-tab-pane>
 					</el-tabs>
 				</transition>
-				<div class="filtrate" @click="doFiltrate">筛选<i :class="{ 'el-icon-arrow-down': searchShow, 'el-icon-arrow-up': !searchShow }"></i></div>
+				 <el-select v-model="examComName" placeholder="请选择公司" @change="chooseExamCom">
+				 	 <el-option
+				      :key="1"
+				      value="全部"
+				      >全部 </el-option>
+				    <el-option
+				      v-for="(item,index) in companyList"
+				      :key="item.company_id"
+				      :value="item.company_id"
+				      :label="item.company_name">
+				    </el-option>
+				</el-select>
+				<div class="filtrate" @click="doFiltrate">筛选<i :class="{ 'el-icon-arrow-up': searchShow, 'el-icon-arrow-down': !searchShow }"></i></div>
 			</div>
 			<transition name="fade1">
 				<div class="search" v-show="searchShow">
@@ -34,6 +46,7 @@
 						</div>
 						<div class="edit">
 							<el-button type="primary" round @click="listCli(item,index)">查看</el-button>
+							<el-button type="danger" round v-show="item.approval_state_num === '3'" @click="deleteForm(item)">删除</el-button>
 							
 							<div class="process" v-if="approval_process">
 								<span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
@@ -85,12 +98,12 @@
 			<div class="top">
 				<el-button type="info" plain @click="return_list">返回列表</el-button>
 				<el-button type="primary" plain @click="down" v-show="downShow">下载</el-button>
-				<!--<el-button type="primary" plain @click="repeal" v-show="repealShow">撤销</el-button>-->
+				<el-button type="primary" plain @click="repeal" v-show="repealShow">撤销</el-button>
 				<div class="as">
 					<el-button type="primary" plain @click="fileAccord(form_Lista)" v-show="now_type_name === '请款单'">依据附件</el-button>
+					<el-button type="primary" plain @click="viewHt(form_Lista)" v-if="form_Lista.contract_id">合同附件</el-button>
 				</div>
 				<span class="title">{{now_type_name}}</span>
-
 			</div>
 			<!--呈批件展示-->
 			<div class="form" name="呈批件" v-if="cengpijian_show">
@@ -600,6 +613,17 @@
 		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 		<loading v-show="loading_show"></loading>
 		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
+		<div class="ifDown" v-show="ifDownShow">
+			<div class="info">
+				<div class="title">
+					<span>确定下载文件吗</span>
+				</div>
+				<div class="button">
+					<a @click="cancelDown">取消</a>
+  					<a @click="sureDown" :href="downUrl" target="_blank">确定</a>
+				</div>
+			</div>
+		</div>		
 	</div>
 </template>
 
@@ -620,6 +644,7 @@
 	export default {
 		data() {
 			return {
+				ifDownShow:false,
 				untreated: [],
 				now_type_name: '',
 				handle_txt: '',
@@ -668,13 +693,16 @@
 				repealShow:false,
 				downApproId:'',
 				downPartId:'',
-				downAddress:''
+				downAddress:'',
+				examComName:'',
+				downUrl:''
 			}
 		},
 		computed: {
 			...mapGetters([
 				'user',
-				'nowCompanyId'
+				'nowCompanyId',
+				'companyList'
 			])
 		},
 		watch: {
@@ -713,15 +741,95 @@
 			fileAccord
 		},
 		methods: {
+			sureDown(){
+				this.ifDownShow = false
+			},
+			cancelDown(){
+				this.ifDownShow = false
+			},
+			chooseExamCom(){
+				let param = new URLSearchParams();
+				param.append("uid", this.user.uid);
+				param.append("type", this.nowType);
+				param.append("each", '10');
+				param.append("p", this.pageIndex);
+				if(this.examComName != '全部'){
+					param.append("company_id",this.examComName);
+				}
+				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
+					.then((res) => {
+						let arr = []
+						res.data.data.forEach((item) => {
+							arr.push(create_exam_list(item))
+						})
+						this.untreated = arr
+						if(arr.length < 10) {
+							this.nextPageShow = false
+						}
+					})
+			},
+			viewHt(item){
+				window.open('/index.php/Mobile/skey/look_draft?id=' + item.contract_id)	
+			},
+			deleteForm(item){
+				this.$confirm('您确定删除文件？', '提示', {
+		        	confirmButtonText: '确定',
+		        	cancelButtonText: '取消',
+		        	type: 'warning'
+		       }).then(() => {
+		        	let param = new URLSearchParams();
+					param.append("uid", this.user.uid);
+					param.append("approval_id", item.approval_id);
+					param.append("company_id", this.nowCompanyId);
+					this.$http.post("/index.php/Mobile/find/del_approval", param)
+					.then((res)=>{
+						if(res.data.code === 0){
+							this.$message({
+					          message: '删除成功',
+					          type: 'success'
+					        });
+					        this._getExamList()
+						}else{
+							this.$message.error(res.data.message);
+						}
+					})
+		        }).catch(() => {
+		        	this.$message({
+		            	type: 'info',
+		            	message: '已取消操作'
+		            });          
+		        });
+			},
 			repeal(){
 				this.$confirm('您确定撤销文件？', '提示', {
 		        	confirmButtonText: '确定',
 		        	cancelButtonText: '取消',
 		        	type: 'warning'
-		        }).then(() => {
+		       }).then(() => {
 		        	let param = new URLSearchParams();
 					param.append("uid", this.user.uid);
+					param.append("approval_id", this.downApproId);
+					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
+					.then((res)=>{
+						this.listShow = true
+						this.listSeaShow = true
+						this.formShow = false
+						this.qingkuandan_show = false
+						this.cengpijian_show = false
+						this.qinggoudan_show = false
+						this.pingshenbiao_show = false
+						this.gongzhang_show = false
+						if(res.data.code === 0){
+							this.$message({
+					          message: '撤销成功',
+					          type: 'success'
+					        });
+					        this._getExamList()
+						}else{
+							this.$message.error(res.data.message);
+						}
+					})
 		        }).catch(() => {
 		        	this.$message({
 		            	type: 'info',
@@ -1255,6 +1363,7 @@
 					})
 			},
 			down(){
+				this.ifDownShow = true
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
@@ -1262,7 +1371,7 @@
 				param.append("participation_id", this.downPartId)
 				this.$http.post("/index.php/Mobile/find/get_download_token", param)
 				.then((res)=>{
-					window.open('/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data)					
+					this.downUrl = '/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data			
 				})
 			},
 			get_img(many_enclosure) {
@@ -1302,7 +1411,7 @@
 								let obj = {}
 								let file_data = res.data.data
 								let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
-								obj.name = file_data.file_name + '.'+ file_data.attribute
+								obj.name = file_data.file_name
 								obj.address = file_add
 								this.file_arr.push(obj)
 							})
@@ -1395,7 +1504,53 @@
 	{
 		opacity: 0;
 	}
-	
+	.ifDown{
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0,0,0,0.5);
+		z-index: 10;
+		>.info{
+			padding: 10px;
+			width:160px;
+			height: 80px;
+			background: #FFFFFF;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			-moz-transform: translateX(-50%) translateY(-50%);
+			-ms-transform: translateX(-50%) translateY(-50%);
+			-o-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			border-radius: 6px;
+			>.title{
+				width: 100%;
+				text-align: center;
+				font-size: 16px;
+			}
+			>.button{
+				width: 100%;
+				text-align: center;
+				margin-top: 40px;
+				a{
+					cursor: pointer;
+					border-radius: 4px;
+					font-size: 14px;
+					display: inline-block;
+					padding: 6px 12px;
+					border: 1px solid #409EFF;
+					&:first-child{
+						border: 1px solid #D9D9D9;
+					}
+				}
+			}
+		}
+	}
 	.exam_wrapper {
 		width: 100%;
 		height: 100%;
@@ -1413,16 +1568,28 @@
 					font-size: 14px;
 					cursor: pointer;
 				}
+				>.el-select{
+					position: absolute;
+				    top: 5px;
+				    right: 90px;
+				    height: 30px;
+				    font-size: 14px;
+				    cursor: pointer;
+				}
+				.el-input--suffix .el-input__inner{
+					height: 30px;
+					width: 140px;
+				}
 				.el-tabs__header {
 					background: #FFFFFF;
 					margin-bottom: 5px;
 				}
 				.el-tabs__active-bar {
-					width: 150px;
+					width: 100px;
 				}
 				.el-tabs__item {
 					font-weight: 700;
-					width: 160px;
+					width: 120px;
 					text-align: center;
 				}
 			}

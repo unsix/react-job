@@ -49,6 +49,11 @@
 				'comPersonList'
 			])
 		},
+		props:{
+			workList:{
+				type:Array
+			}
+		},
 		methods: {
 			view_info() {
 				this.$message({
@@ -61,6 +66,15 @@
 				newparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
@@ -75,9 +89,16 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-//						this.setNowCompanyId(res.data.data[0].company_id)
+						if(res.data.code === 251){
+			              localStorage.removeItem('nowCompanyId');
+			              localStorage.removeItem('nowCompanyName');
+			              localStorage.removeItem('personnelId');
+			              localStorage.removeItem('token');
+			              localStorage.removeItem('user');
+			              this.$router.push({ path: '/login' })
+			              this.$message.error('您的帐号在别处登录，请重新登录');
+			            }
 						this.setCompanyList(res.data.data)
-//						this.setNowCompanyName(res.data.data[0].company_name)
 					})
 			},
 			...mapMutations({
@@ -96,12 +117,8 @@
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
 			this._getComPersonList()
-
 		},
 		mounted() {
-			if(this.$route.path === '/work/addressBook') {
-				this.$emit('changeWorkIndex', 6)
-			}
 		},
 		watch: {
 			nowCompanyId() {
