@@ -46,6 +46,7 @@
 				fileList: [],
 				picArr: [],
 				fileArr: [],
+        //添加
 				cpj_ruleForm: {
 					department_id: '',
 					department_name: '',
@@ -136,6 +137,7 @@
 						this.cpj_ruleForm.project_manager_name = this.form_Lista.project_manager_name
 					})
 			},
+      //觸發事件
 			add_ok() {
 				this.$message({
 					showClose: true,
@@ -194,6 +196,7 @@
 					}
 				})
 			},
+      //判断文件内容
 			submitForm_cpj(formName) {
 				this.comDepartList.forEach((item) => {
 					if(item.department_name === this.cpj_ruleForm.department_name) {
@@ -210,6 +213,7 @@
 					}
 				});
 			},
+      //提交
 			cpj_submit() {
 				this.picArr = []
 				this.fileArr = []
@@ -259,6 +263,7 @@
 								}
 							})
 					} else {
+					  //图片的判断
 						if(this.picArr.length != 0) {
 							for(let i = 0; i < this.picArr.length; i++) {
 								let formData = new FormData();
@@ -289,10 +294,11 @@
 								})
 							}
 						}
+						//文档的判断
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
 								let formData = new FormData();
-								formData.append('file', this.fileArr[i]);
+								formData.append('file', this.fileArr[i].raw);
 								formData.append('token', this.token);
 								let config = {
 									headers: {
@@ -300,14 +306,17 @@
 									}
 								}
 								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
-									let index = this.fileArr[i].name.indexOf('.')
+									let index = this.fileArr[i].name.lastIndexOf('.')
 									let attribute = this.fileArr[i].name.slice(index)
+                  if(attribute.substr(0,1)=='.'){
+                    attribute=attribute.substr(1)
+                  }
 									let file_name = this.fileArr[i].name.slice(0, index)
 									let param = new URLSearchParams();
 									param.append("uid", this.user.uid);
 									param.append("attribute", attribute);
 									param.append("attachments", res.data.hash);
-									param.append("file_name", this.fileArr[i].name);
+									param.append("file_name", file_name);
 									this.$http.post("/index.php/Mobile/approval/add_attachments", param)
 										.then((res) => {
 											this.file_hash_arr.push({

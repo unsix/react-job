@@ -596,7 +596,7 @@
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
 								let formData = new FormData();
-								formData.append('file', this.fileArr[i]);
+								formData.append('file', this.fileArr[i].raw);
 								formData.append('token', this.token);
 								let config = {
 									headers: {
@@ -606,12 +606,15 @@
 								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
 									let index = this.fileArr[i].name.indexOf('.')
 									let attribute = this.fileArr[i].name.slice(index)
+                  if(attribute.substr(0,1)=='.'){
+                    attribute=attribute.substr(1)
+                  }
 									let file_name = this.fileArr[i].name.slice(0, index)
 									let param = new URLSearchParams();
 									param.append("uid", this.user.uid);
 									param.append("attribute", attribute);
 									param.append("attachments", res.data.hash);
-									param.append("file_name", this.fileArr[i].name);
+									param.append("file_name", file_name);
 									this.$http.post("/index.php/Mobile/approval/add_attachments", param)
 										.then((res) => {
 											this.file_hash_arr.push({
@@ -766,11 +769,11 @@
 	.el-form--inline .el-form-item {
 		margin-left: 20px;
 	}
-	
+
 	.el-select {
 		width: 100%;
 	}
-	
+
 	.new_qgd {
 		position: relative;
 		.close {
@@ -787,7 +790,7 @@
 			}
 		}
 	}
-	
+
 	.add_qgd {
 		display: block;
 		height: 30px;
@@ -801,7 +804,7 @@
 			}
 		}
 	}
-	
+
 	.el-form-item[data-v-1e3f67aa] {
 		&:nth-child(1) {
 			margin-bottom: 10px;

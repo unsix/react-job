@@ -18,7 +18,7 @@ export function create_cengpijian_list(item) {
 	    content:item.content,
 	    project_manager_name:get_project_manager_name(item),
 	    many_enclosure:item.many_enclosure,
-	    contract_id:get_file(item) 
+	    contract_id:get_file(item)
 	})
 }
 

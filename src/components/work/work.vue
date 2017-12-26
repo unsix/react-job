@@ -54,7 +54,7 @@
 			</div>
 			<div class="info_main">
 				<router-view @changeWorkIndex="changeWorkIndex" :workList="workList">
-					
+
 				</router-view>
 			</div>
 			<div class="side_right">
@@ -195,9 +195,9 @@
 				this.$router.push('/work');
 			},
 			doList(item, index) {
-				this.workIndex = index		
+				this.workIndex = index
 				this.now_type_name = item
-				switch(item) {		
+				switch(item) {
 					case '公司管理':
 						this._getComPartPersonList()
 						this.$router.push({ path: '/work/manageCompany' })
@@ -235,7 +235,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/User/return_company_new", param)
 					.then((res) => {
-						if(res.data.code === 251){						
+						if(res.data.code === 251){
 							localStorage.removeItem('nowCompanyId');
 							localStorage.removeItem('nowCompanyName');
 							localStorage.removeItem('personnelId');
@@ -324,10 +324,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						console.log(res)
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
-						this.setNowCompanyName(res.data.data[0].company_name)		
+						this.setNowCompanyName(res.data.data[0].company_name)
 						this._getUserState()
 					})
 			},
@@ -379,7 +378,7 @@
 			this.setNowCompanyName(JSON.parse(localStorage.nowCompanyName))
 			this._getToken()
 			this._getUserState()
-			
+
 		},
 		watch: {
 			nowCompanyId() {

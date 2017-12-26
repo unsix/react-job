@@ -47,7 +47,7 @@
 						<div class="edit">
 							<el-button type="primary" round @click="listCli(item,index)">查看</el-button>
 							<el-button type="danger" round v-show="item.approval_state_num === '3'" @click="deleteForm(item)">删除</el-button>
-							
+
 							<div class="process" v-if="approval_process">
 								<span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
 							</div>
@@ -191,7 +191,7 @@
 			</div>
 			<!--请购单展示-->
 			<div class="form" name="请购单" v-if="qinggoudan_show">
-				
+
 				<div>
 					<span>工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
 				</div>
@@ -623,7 +623,7 @@
   					<a @click="sureDown" :href="downUrl" target="_blank">确定</a>
 				</div>
 			</div>
-		</div>		
+		</div>
 	</div>
 </template>
 
@@ -769,7 +769,7 @@
 					})
 			},
 			viewHt(item){
-				window.open('/index.php/Mobile/skey/look_draft?id=' + item.contract_id)	
+				window.open('/index.php/Mobile/skey/look_draft?id=' + item.contract_id)
 			},
 			deleteForm(item){
 				this.$confirm('您确定删除文件？', '提示', {
@@ -797,7 +797,7 @@
 		        	this.$message({
 		            	type: 'info',
 		            	message: '已取消操作'
-		            });          
+		            });
 		        });
 			},
 			repeal(){
@@ -834,7 +834,7 @@
 		        	this.$message({
 		            	type: 'info',
 		            	message: '已取消操作'
-		            });          
+		            });
 		        });
 			},
 			closeAcc() {
@@ -1323,7 +1323,7 @@
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '请款单') {
-							
+
 							this.form_Lista = create_qingkuandan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
@@ -1371,7 +1371,7 @@
 				param.append("participation_id", this.downPartId)
 				this.$http.post("/index.php/Mobile/find/get_download_token", param)
 				.then((res)=>{
-					this.downUrl = '/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data			
+					this.downUrl = '/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data
 				})
 			},
 			get_img(many_enclosure) {
@@ -1411,7 +1411,7 @@
 								let obj = {}
 								let file_data = res.data.data
 								let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
-								obj.name = file_data.file_name
+								obj.name = file_data.file_name+'.'+file_data.attribute
 								obj.address = file_add
 								this.file_arr.push(obj)
 							})
@@ -1482,25 +1482,25 @@
 	.fade-leave-active {
 		transition: opacity .5s
 	}
-	
+
 	.fade-enter,
 	.fade-leave-to
 	/* .fade-leave-active in below version 2.1.8 */
-	
+
 	{
 		opacity: 0
 	}
-	
+
 	.fade1-enter-active,
 	.fade1-leave-active {
 		transition: opacity .5s;
 		transform: translateY(-54px);
 	}
-	
+
 	.fade1-enter,
 	.fade1-leave-to
 	/* .fade-leave-active in below version 2.1.8 */
-	
+
 	{
 		opacity: 0;
 	}

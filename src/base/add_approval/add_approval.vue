@@ -1,15 +1,17 @@
 <template>
+  <!--添加请求-->
 	<div class="add_approval_wrapper">
 		<div class="add_approval">
 			<div class="nav">
+        <!--导航-->
 				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="合同评审表"></el-tab-pane>		
+					<el-tab-pane label="合同评审表"></el-tab-pane>
 					<el-tab-pane label="请购单"></el-tab-pane>
 					<el-tab-pane label="请款单"></el-tab-pane>
 					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="呈批件"></el-tab-pane>
-					
-					
+
+
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -66,7 +68,7 @@
 		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
-		
+
 	</div>
 </template>
 
@@ -134,8 +136,8 @@
 				xindex:0,
 				request_money_basis_type:'',
 				form_approval_id:''
-				
-				
+
+
 			}
 		},
 		computed: {
@@ -297,7 +299,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
-					.then((res) => {	
+					.then((res) => {
 						if(res.data.code === 251){
 			              localStorage.removeItem('nowCompanyId');
 			              localStorage.removeItem('nowCompanyName');
@@ -321,6 +323,7 @@
 				setUserState: 'SET_USERSTATE',
 				setCompanyList: 'SET_COMPANYLIST'
 			}),
+      //導航分頁
 			useInfo(item) {
 				this.approval_id1 = ''
 				this.approval_id2 = ''
@@ -352,7 +355,6 @@
 					this.approval_id5 = item.approval_id
 					this.qkd_show = true
 				}
-
 			},
 			viewInfo(item) {
 				this.qkd_show = false
@@ -393,12 +395,15 @@
 							this.get_file(this.form_Lista.many_enclosure)
 						}
 					})
+
+
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", item.approval_id);
 				nparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
+					  console.log(res)
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
@@ -418,6 +423,7 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
+      //get_img方法
 			get_img(many_enclosure) {
 				if(!many_enclosure) {
 					return
@@ -440,6 +446,7 @@
 					}
 				})
 			},
+      //get_file方法
 			get_file(many_enclosure) {
 				this.file_arr = []
 				if(!many_enclosure) {
@@ -453,6 +460,7 @@
 							.then((res) => {
 								let obj = {}
 								let file_data = res.data.data
+                console.log(file_data)
 								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
 								obj.name = file_data.file_name
 								obj.address = file_add
@@ -473,7 +481,7 @@
 				this.chooseTemShow = false
 				this.formShow = true
 			},
-			chooseTem() {		
+			chooseTem() {
 				this.at_qingkuanShow = false
 				this.chooseTemShow = true
 				this.formShow = false
@@ -483,6 +491,7 @@
 				this.sqgz_show = false
 				this.cpj_show = false
 			},
+      //tab 切換
 			handleClick(tab) {
 				this.approval_id1 = ''
 				this.approval_id2 = ''
@@ -508,16 +517,16 @@
 					this.as_what_show = true
 					this.formShow = false
 					this.approval_type = 1001
-					
+
 				} else if(this.navIndex === 3) {
 					this.sqgz_show = true
 					this.approval_type = 5
-					
-					
+
+
 				} else if(this.navIndex === 4) {
 					this.cpj_show = true
 					this.approval_type = 6
-					
+
 				}
 			},
 
@@ -563,7 +572,7 @@
 				} else {
 					type = -1
 					return
-				}	
+				}
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_type", type);
@@ -584,7 +593,7 @@
 			},
 			_getComPersonList(){
 				let newparam = new URLSearchParams();
-				newparam.append("company_id",this.nowCompanyId); 
+				newparam.append("company_id",this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
 				.then((res)=>{
 					 if(res.data.code === 251){
@@ -600,7 +609,7 @@
 				    res.data.data.forEach((item)=>{
 				    	item.avatar = getAvatar(item.avatar)
 				    	reaDa.push(item)
-				    })	
+				    })
 				   	this.setComPersonList(reaDa)
 				})
 			}
@@ -684,7 +693,7 @@
 					padding: 12px 10px;
 					display: inline-block;
 					>div {
-						
+
 						line-height: 25px;
 						max-width: 350px;
 					}
@@ -692,7 +701,7 @@
 			}
 		}
 	}
-	
+
 	.as_what {
 		position: fixed;
 		top: 0;
@@ -737,7 +746,7 @@
 			}
 		}
 	}
-	
+
 	.add_approval_wrapper {
 		background: #FFFFFF;
 		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
@@ -762,11 +771,11 @@
 			}
 		}
 	}
-	
+
 	.el-radio+.el-radio {
 		margin-left: 10px;
 	}
-	
+
 	.el-form-item {
 		margin-bottom: 30px;
 	}
