@@ -325,7 +325,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						this.setNowCompanyId(res.data.data[2].company_id)
+						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
 						this.setNowCompanyName(res.data.data[0].company_name)
 						this._getUserState()
