@@ -202,7 +202,7 @@
 								'Content-Type': 'multipart/form-data'
 							}
 						}
-						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+						this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 							this.pic_hash_arr.push(res.data.hash)
 						})
 					}
@@ -285,7 +285,7 @@
 								'Content-Type': 'multipart/form-data'
 							}
 						}
-						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+						this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 							this.pic_hash_arr.push(res.data.hash)
 						})
 					}

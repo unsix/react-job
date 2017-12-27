@@ -229,6 +229,7 @@
 						break;
 				}
 			},
+      //获取当前用户状态
 			_getUserState() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
@@ -248,7 +249,6 @@
 							'manage': parseInt(res.data.data.is_manage),
 							'finance': parseInt(res.data.data.is_finance),
 						})
-
 						this.judgeState()
 					})
 			},
@@ -309,7 +309,7 @@
 							localStorage.removeItem('personnelId');
 							localStorage.removeItem('token');
 							localStorage.removeItem('user');
-							this.$router.push({ path: '/login' })
+							this.$router.push({ path: '/login' });
 							this.$message.error('您的帐号在别处登录，请重新登录');
 						}
 						let arr = []
@@ -319,12 +319,13 @@
 						this.setComDepartList(arr)
 					})
 			},
+      //獲取所有公司
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						this.setNowCompanyId(res.data.data[0].company_id)
+						this.setNowCompanyId(res.data.data[2].company_id)
 						this.setCompanyList(res.data.data)
 						this.setNowCompanyName(res.data.data[0].company_name)
 						this._getUserState()

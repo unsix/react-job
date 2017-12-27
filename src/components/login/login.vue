@@ -1,7 +1,7 @@
 <template>
 	<div class="login-wrapper">
 		<div class="log">
-			
+
 		</div>
 		<div class="login">
 				<div class="title">
@@ -13,7 +13,7 @@
 					</div>
 					<div class="password">
 						<input type="password" placeholder="请输入密码" v-model.trim="password_num"  @keyup.enter="login"/>
-					</div>		
+					</div>
 					<div class="error" v-show="errorShow">
 						<span>账号或密码错误</span>
 					</div>
@@ -117,7 +117,7 @@
 							this.account_num = ''
 				 			this.password_num = ''
 						},1000)
-						
+
 					}else{
 						 this.$message.error(res.data.message);
 					}
@@ -135,7 +135,7 @@
 						'manage':is_manage,
 						'finance':is_finance,
 					})
-			    })
+        })
 			},
 			_getComDepart(){
 				let param = new URLSearchParams();
@@ -148,7 +148,7 @@
 			    	})
 			    })
 			},
-
+      //获取创建的公司
 			_getUserCompanyList(uid){
 				let param = new URLSearchParams();
 				param.append("uid",uid);
@@ -227,17 +227,17 @@ $color3:#409EFF;
 				display: flex;
 				span{
 					flex: 1;
-					cursor:pointer; 
+					cursor:pointer;
 					&:hover{
 						color: #2D2F33;
 					}
 					&:first-child{
-						text-align: left;	
+						text-align: left;
 					}
 					&:last-child{
 						text-align: right;
 					}
-					
+
 				}
 			}
 			.signIn {
@@ -279,7 +279,7 @@ $color3:#409EFF;
 						-webkit-border-radius: 4px;
 						-moz-border-radius: 4px;
 						border-radius: 4px;
-						
+
 						&:hover {
 							background: #9293a7;
 						}

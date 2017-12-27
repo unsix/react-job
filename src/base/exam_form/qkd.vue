@@ -244,7 +244,7 @@
 								'Content-Type': 'multipart/form-data'
 							}
 						}
-						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+						this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 							this.pic_hash_arr.push(res.data.hash)
 							if(this.pic_hash_arr.length === this.file.length) {
 								let mparam = new URLSearchParams();
@@ -326,7 +326,7 @@
 								'Content-Type': 'multipart/form-data'
 							}
 						}
-						this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+						this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 							this.pic_hash_arr.push(res.data.hash)
 						})
 					}

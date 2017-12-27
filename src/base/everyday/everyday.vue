@@ -22,7 +22,7 @@
 						</div>
 					</div>
 					<div class="opera">
-						<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+						<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
 							<i class="fa fa-picture-o"></i>
 							<i class="fa fa-paperclip"></i>
 						</el-upload>
@@ -178,7 +178,7 @@
 							<div class="txt">
 								<textarea placeholder="添加回复..." v-model="commentTxt"></textarea>
 								<div class="opera">
-									<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+									<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
 										<i class="fa fa-picture-o"></i>
 										<i class="fa fa-paperclip"></i>
 									</el-upload>
@@ -213,7 +213,7 @@
 							<div class="txt">
 								<textarea placeholder="添加回复..." v-model="remarkTxt"></textarea>
 								<div class="opera">
-									<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="remarkFileList" :auto-upload="false">
+									<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="remarkFileList" :auto-upload="false">
 										<i class="fa fa-picture-o"></i>
 										<i class="fa fa-paperclip"></i>
 									</el-upload>
@@ -523,7 +523,7 @@
 					})
 			},
 			replyRemark(item){
-				
+
 			},
 			replyComment(item) {
 				this.loadingShow = true
@@ -574,7 +574,7 @@
 									'Content-Type': 'multipart/form-data'
 								}
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 								this.pic_hash_arr.push(res.data.hash)
 								if(this.pic_hash_arr.length === this.picArr.length) {
 									let nparam = new URLSearchParams();
@@ -606,7 +606,7 @@
 									'Content-Type': 'multipart/form-data'
 								}
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 								let index = this.fileArr[i].name.indexOf('.')
 								let attribute = this.fileArr[i].name.slice(index)
 								let file_name = this.fileArr[i].name.slice(0, index)
@@ -710,7 +710,7 @@
 									'Content-Type': 'multipart/form-data'
 								}
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 								this.pic_hash_arr.push(res.data.hash)
 								if(this.pic_hash_arr.length === this.picArr.length) {
 									let nparam = new URLSearchParams();
@@ -746,7 +746,7 @@
 									'Content-Type': 'multipart/form-data'
 								}
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 								let index = this.fileArr[i].name.indexOf('.')
 								let attribute = this.fileArr[i].name.slice(index)
 								let file_name = this.fileArr[i].name.slice(0, index)

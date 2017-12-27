@@ -104,7 +104,7 @@
 					</el-form-item>
 				</el-form>
 			</div>
-			<el-upload class="upload-demo" multiple action="http://up.qiniu.com" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+			<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
 				<el-button size="small" type="info" plain>上传文件</el-button>
 			</el-upload>
 			<el-form-item>
@@ -573,7 +573,7 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
-								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 									this.pic_hash_arr.push(res.data.hash)
 									if(this.pic_hash_arr.length === this.picArr.length) {
 										let nparam = new URLSearchParams();
@@ -603,7 +603,7 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
-								this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 									let index = this.fileArr[i].name.indexOf('.')
 									let attribute = this.fileArr[i].name.slice(index)
                   if(attribute.substr(0,1)=='.'){

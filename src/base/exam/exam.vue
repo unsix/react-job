@@ -9,7 +9,7 @@
 						<el-tab-pane label="我发起的"></el-tab-pane>
 					</el-tabs>
 				</transition>
-				 <el-select v-model="examComName" placeholder="请选择公司" @change="chooseExamCom">
+				 <el-select v-model="examComName" placeholder="全部" value="全部" @change="chooseExamCom">
 				 	 <el-option
 				      :key="1"
 				      value="全部"
@@ -747,6 +747,7 @@
 			cancelDown(){
 				this.ifDownShow = false
 			},
+      //選擇
 			chooseExamCom(){
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -754,8 +755,10 @@
 				param.append("each", '10');
 				param.append("p", this.pageIndex);
 				if(this.examComName != '全部'){
+				  console.log(this.examComName)
 					param.append("company_id",this.examComName);
 				}
+        console.log(this.examComName)
 				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
 					.then((res) => {
 						let arr = []
@@ -766,7 +769,7 @@
 						if(arr.length < 10) {
 							this.nextPageShow = false
 						}
-					})
+        } )
 			},
 			viewHt(item){
 				window.open('/index.php/Mobile/skey/look_draft?id=' + item.contract_id)
@@ -875,6 +878,7 @@
 				}
 				this.doSearch()
 			},
+      //獲取用戶公司清單
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -883,6 +887,7 @@
 						this.setCompanyList(res.data.data)
 					})
 			},
+      //搜索
 			doSearch() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -912,6 +917,7 @@
 						}
 					})
 			},
+      //過濾
 			doFiltrate() {
 				if(this.searchShow) {
 					this.pageIndex = 1
@@ -1057,12 +1063,14 @@
 						this.input_value = res.data.data
 					})
 			},
+      //审批
 			agree() {
 				this.pic_hash_arr = []
-				if(this.handle_txt === '') {
-					this.$message.error('请填写审批意见');
-					return
-				}
+        //同意情况下 如果当前输入框内容为空 提示‘请填写审批意见’ 反之 则同意
+				// if(this.handle_txt === '') {
+				// 	this.$message.error('请填写审批意见');
+				// 	return
+				// }
 				if(!this.pic) {
 					this.$confirm('是否提交审批?', '提示', {
 						confirmButtonText: '确定',
@@ -1117,7 +1125,7 @@
 									'Content-Type': 'multipart/form-data'
 								}
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 								this.pic_hash_arr.push(res.data.hash)
 								if(this.pic_hash_arr.length === this.pic.length) {
 									let nparam = new URLSearchParams();
@@ -1161,6 +1169,7 @@
 					});
 				}
 			},
+      //拒絕
 			refuse() {
 				this.pic_hash_arr = []
 				if(this.handle_txt === '') {
@@ -1221,7 +1230,7 @@
 									'Content-Type': 'multipart/form-data'
 								}
 							}
-							this.$http.post('http://up.qiniu.com', formData, config).then((res) => {
+							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 								this.pic_hash_arr.push(res.data.hash)
 								if(this.pic_hash_arr.length === this.pic.length) {
 									let nparam = new URLSearchParams();
@@ -1451,7 +1460,8 @@
 				param.append("type", this.nowType);
 				param.append("each", '10');
 				param.append("p", this.pageIndex);
-				param.append("company_id", this.nowCompanyId);
+				// param.append("company_id", this.nowCompanyId);
+        //让初始页的companyId为当前公司id 去掉变为全部
 				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
 					.then((res) => {
 						let arr = []

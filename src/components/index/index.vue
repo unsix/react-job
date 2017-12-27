@@ -108,7 +108,7 @@
 				this.judgeState()
 				this._getUserState()
 				this._getToken()
-				
+
 			},
 			handleScroll() {
 
@@ -181,6 +181,7 @@
 						this.setToken(res.data.data)
 					})
 			},
+      //获取当前用户状态
 			_getUserState() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
@@ -196,6 +197,7 @@
 						this.judgeState()
 					})
 			},
+      //判断状态
 			judgeState() {
 				let m = this.userState.manage
 				let f = this.userState.finance
@@ -212,6 +214,7 @@
 					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
 				}
 			},
+      //获取当前用户公司列表
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -229,7 +232,6 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/User/return_company_new", param)
 					.then((res) => {
-
 						let is_manage = parseInt(res.data.data.is_manage)
 						let is_finance = parseInt(res.data.data.is_finance)
 						this.setUserState({
