@@ -54,7 +54,6 @@
 			</div>
 		</div>
 	</div>
-	</div>
 
 </template>
 
@@ -237,7 +236,7 @@
 			}
 		}
 	}
-	
+
 	.contractApproval {
 		position: relative;
 		.addPerson {
@@ -354,11 +353,11 @@
 			}
 		}
 	}
-	
+
 	.el-button.is-round {
 		padding: 6px 10px;
 	}
-	
+
 	.v-modal {
 		z-index: -100;
 	}

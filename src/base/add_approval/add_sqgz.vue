@@ -20,7 +20,7 @@
 			</el-form-item>
 			<div class="add_sqgz">添加清单条目 <i class="el-icon-circle-plus" @click="add_sqgz"></i></div>
 			<div>
-				<el-form v-for="(item,index) in sqgz_ruleForm.add" label-width="150px" :key="index">
+				<el-form v-for="(item,index) in sqgz_ruleForm.add" :rules="sqgz_rules"  label-width="150px" :key="index">
 					<div class="close"></div>
 					<el-form-item label="印章类别">
 						<el-radio-group v-model="item.seal_type">
@@ -37,7 +37,7 @@
 					<el-form-item label="资料名称">
 						<el-input v-model="item.contract_name"></el-input>
 					</el-form-item>
-					<el-form-item label="数量">
+					<el-form-item label="数量" prop="little">
 						<el-input v-model.number="item.num"></el-input>
 					</el-form-item>
 					<el-form-item label="公司名称">
@@ -120,7 +120,13 @@
 						required: true,
 						message: '请填写公司名称',
 						trigger: 'change'
-					}]
+					}],
+          little:[{
+            required: true,
+            pattern:  /^[0-9]*$/,
+            message: '数量请填正整数',
+            trigger: 'blur'
+          }]
 				},
 				pic_hash_arr: [],
 				file_hash_arr: [],

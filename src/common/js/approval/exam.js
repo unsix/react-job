@@ -1,5 +1,6 @@
 import {getAvatar} from '@/common/js/avatar.js'
 export default class exam_list {
+  //审批列表
   constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,approval_state_num,participation_id,tagging}) {
     this.approval_id = approval_id
     this.name = name
@@ -15,6 +16,7 @@ export default class exam_list {
     this.approval_state_num = approval_state_num
   }
 }
+//获取时间
 function get_data(time){
 	return `${time.slice(0,4)}年${time.slice(5,7)}月${time.slice(8,10)}日
 	${time.slice(11)}`
@@ -42,6 +44,7 @@ export function create_exam_list(item) {
     tagging:getColor(item)
   })
 }
+//标记颜色
 function getColor(item){
 	if(!item.tagging){
 		return
@@ -55,9 +58,9 @@ function getColor(item){
 	}else if(item.tagging === '#0000FF'||item.tagging === '0000FF'){
 		return 'rgba(0,0,255,0.1)'
 	}
-	
-}
 
+}
+//获取状态
 function get_state(state){
 	if(state === '0'){
 		return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
@@ -69,6 +72,7 @@ function get_state(state){
 		return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
 	}
 }
+//获取类型
 function get_type(type){
 	if(type === '0'){
 		return '请款单'

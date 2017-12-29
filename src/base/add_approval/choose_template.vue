@@ -6,6 +6,7 @@
 				<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list" :style="{background:item.tagging}">
 					<div class="edit">
 						<el-button type="primary" round @click="viewInfo(item,index)">查看</el-button>
+            <!--从模板选择的使用按钮-->
 						<el-button type="success" round @click="useInfo(item,index)">使用</el-button>
 						<div class="process">
 							<span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
@@ -91,7 +92,7 @@
 						if(arr.length < 10) {
 							this.nextPageShow = false
 						}
-						
+
 					})
 			}
 		},

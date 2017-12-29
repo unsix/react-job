@@ -82,9 +82,9 @@
 						<el-input v-model="item.model"></el-input>
 					</el-form-item>
 				</el-form>
-				<el-form :inline="true" class="demo-form-inline">
-					<el-form-item label="数量">
-						<el-input v-model.number="item.num"></el-input>
+				<el-form :inline="true" :rules="rules" class="demo-form-inline">
+					<el-form-item label="数量" prop="qing_num">
+						<el-input v-model="item.num" id="num"></el-input>
 					</el-form-item>
 					<el-form-item label="单位">
 						<el-input v-model="item.unit"></el-input>
@@ -95,12 +95,12 @@
 						</el-select>
 					</el-form-item>-->
 				</el-form>
-				<el-form :inline="true" class="demo-form-inline">
-					<el-form-item label="单价">
-						<el-input v-model.number="item.price"></el-input>
+				<el-form :inline="true" :rules="rules" class="demo-form-inline">
+					<el-form-item label="单价" prop="qing_price" id="price">
+						<el-input v-model="item.price"></el-input>
 					</el-form-item>
 					<el-form-item label="总额">
-						<el-input v-model.number="item.subtotal"></el-input>
+						<el-input v-model="item.subtotal"></el-input>
 					</el-form-item>
 				</el-form>
 			</div>
@@ -117,6 +117,7 @@
 </template>
 
 <script>
+
 	import loading from '@/base/loading/loading'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { mapGetters, mapMutations } from 'vuex'
@@ -222,8 +223,22 @@
 						required: true,
 						message: '请填写收货地址',
 						trigger: 'blur'
-					}]
+					}],
 				},
+        rules:{
+          qing_num:[{
+            required: true,
+            pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
+            message: '数量请填入数字',
+            trigger: 'blur'
+          }],
+          qing_price:[{
+            required: true,
+            pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
+            message: '单价请填入数字',
+            trigger: 'blur'
+          }]
+        },
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				pic_hash_arr: [],
 				file_hash_arr: [],
@@ -273,6 +288,7 @@
 				if(!this.approval_id || this.approval_id === '') {
 					return
 				}
+				const ha = []
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
@@ -298,8 +314,44 @@
 							this.qgd_ruleForm.receive_address = this.form_Lista.receive_address
 							this.qgd_ruleForm.request_contract_address = this.form_Lista.request_contract_address
 							this.qgd_ruleForm.add = this.form_Lista.content
-							//							this.qgd_ruleForm.arrival_time = this.form_Lista.arrival_time
+              this.qgd_ruleForm.arrival_time = this.form_Lista.arrival_time
 							this.qgd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
+              this.qgd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+              this.form_Lista.many_enclosure.forEach((item)=>{
+                let img_name = item.name
+                if (item.type === 3){
+                  let param = new URLSearchParams();
+                  param.append("enclosure_id", item.contract_id);
+                  this.$http.post("index.php/Mobile/approval/look_enclosure",param)
+                    .then((res)=>{
+                      res.data.data.picture.forEach((item) => {
+                        console.log(item)
+                        let obj = {}
+                        ha.push(item)
+                        console.log(ha)
+                        let img_add = 'http://bbsf-file.hzxb.net/'+item+'?imageView2/1/w/50/h/50'
+                        console.log(img_add)
+                        obj.name = img_name
+                        obj.url = img_add
+                        this.fileList.push(obj)
+                      })
+                    })
+                }else if(item.type === 4){
+                  let param = new URLSearchParams();
+                  param.append("attachments_id", item.contract_id);
+                  this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+                    .then((res) => {
+                      console.log(res)
+                      let obj = {}
+                      let file_data = res.data.data
+                      ha.push(file_data.attachments)
+                      let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                      obj.name = file_data.file_name+'.'+file_data.attribute
+                      obj.address = file_add
+                      this.fileList.push(obj)
+                    })
+                }
+              })
 						}, 100)
 
 					})
@@ -550,6 +602,7 @@
 						param.append("contract_name_new", this.qgd_ruleForm.contract_name_new);
 						param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
 						param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
+            param.append("many_enclosure", this.qgd_ruleForm.many_enclosure);
 						this.$http.post("/index.php/Mobile/approval/add_request_buy", param)
 							.then((res) => {
 								this.loadingShow = false
@@ -595,6 +648,9 @@
 						}
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
+
+
+							  console.log('----------arr--------------')
 								let formData = new FormData();
 								formData.append('file', this.fileArr[i].raw);
 								formData.append('token', this.token);

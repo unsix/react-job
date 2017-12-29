@@ -36,7 +36,7 @@
 
 						<div class="person" ref="person">
 							<div class="submit">
-								<el-button type="primary" round @click="submit">保存更改</el-button>
+								<el-button type="primary" round @click="submit" v-show="showMe">保存更改</el-button>
 							</div>
 							<el-collapse v-model="activeNames">
 								<el-collapse-item title="人员列表" name="1">
@@ -93,6 +93,7 @@
 				},
 				value6: '',
 				redactState: false,
+        showMe:false,
 				setFormRePerShow: true,
 				listShow: true,
 				personShow: false,
@@ -166,6 +167,7 @@
 					zz = 3
 				} else if(this.formRePersonIndex === 'qingkuan') {
 					zz = 7
+
 				}
 				let narr = []
 				this.setFormRe[this.formRePersonIndex].groups.forEach((item) => {
@@ -178,7 +180,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/give_finance_new", param)
 					.then((res) => {
-						
+
 						if(res.data.code === 0) {
 							this._getHuizhi()
 							this.formRePersonIndex = -1
@@ -190,6 +192,7 @@
 							this.$message.error('修改失败');
 						}
 					})
+        this.showMe = false
 			},
 			deleted(gindex, index) {
 				this.setFormRe[index].groups.splice(gindex, 1)
@@ -209,6 +212,7 @@
 				this.setFormRe[this.formRePersonIndex].groups.push(item)
 			},
 			perShow(index) {
+			  this.showMe = true
 				this.formRePersonIndex = index
 				this.redactState = true
 				this.activeNames = ['1']
@@ -532,11 +536,11 @@
 			}
 		}
 	}
-	
+
 	.el-button.is-round {
 		padding: 6px 10px;
 	}
-	
+
 	.v-modal {
 		display: none;
 	}

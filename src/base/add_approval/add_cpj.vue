@@ -16,6 +16,7 @@
 				<el-input v-model="cpj_ruleForm.content"></el-input>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
+
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
@@ -24,9 +25,13 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
-				<el-button size="small" type="info" plain>上传文件</el-button>
+
+			<el-upload class="upload-demo" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+
+
+        <el-button size="small" type="info" plain>上传文件</el-button>
 			</el-upload>
+
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
@@ -38,6 +43,8 @@
 
 <script>
 	import loading from '@/base/loading/loading'
+  import { getPic } from '@/common/js/pic.js'
+  import { getAvatar } from '@/common/js/avatar.js'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -54,7 +61,8 @@
 					chengpi_num: '',
 					title: '',
 					project_manager_name: '',
-					project_manager: {}
+					project_manager: {},
+          // many_enclosure : {}
 				},
 				cpj_rules: {
 					department_name: [{
@@ -123,9 +131,11 @@
 				if(!this.approval_id) {
 					return
 				}
+				const ha = []
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
+        this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						this.form_Lista = create_cengpijian_list(res.data.data)
@@ -135,9 +145,45 @@
 						this.cpj_ruleForm.chengpi_num = this.form_Lista.chengpi_num
 						this.cpj_ruleForm.title = this.form_Lista.title
 						this.cpj_ruleForm.project_manager_name = this.form_Lista.project_manager_name
+            this.cpj_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+            this.form_Lista.many_enclosure.forEach((item)=>{
+              let img_name = item.name
+              if (item.type === 3){
+                let param = new URLSearchParams();
+                param.append("enclosure_id", item.contract_id);
+                this.$http.post("index.php/Mobile/approval/look_enclosure",param)
+                  .then((res)=>{
+                    res.data.data.picture.forEach((item) => {
+                      console.log(item)
+                      let obj = {}
+                      ha.push(item)
+                      console.log(ha)
+                      let img_add = 'http://bbsf-file.hzxb.net/'+item+'?imageView2/1/w/50/h/50'
+                      console.log(img_add)
+                      obj.name = img_name
+                      obj.url = img_add
+                      this.fileList.push(obj)
+                    })
+                  })
+              }else if(item.type === 4){
+                let param = new URLSearchParams();
+                param.append("attachments_id", item.contract_id);
+                this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+                  .then((res) => {
+                    console.log(res)
+                    let obj = {}
+                    let file_data = res.data.data
+                    ha.push(file_data.attachments)
+                    let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                    obj.name = file_data.file_name+'.'+file_data.attribute
+                    obj.address = file_add
+                    this.fileList.push(obj)
+                  })
+              }
+            })
 					})
 			},
-      //觸發事件
+      //触发事件
 			add_ok() {
 				this.$message({
 					showClose: true,
@@ -221,7 +267,7 @@
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
 						this.picArr.push(item)
 					} else {
-						this.fileArr.push(item)
+            this.fileArr.push(item)
 					}
 				})
 				if(this.cpj_ruleForm.project_manager_name != '') {
@@ -249,6 +295,7 @@
 						param.append("content", this.cpj_ruleForm.content);
 						param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 						param.append("title", this.cpj_ruleForm.title);
+
 						this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 							.then((res) => {
 								this.loadingShow = false
@@ -274,6 +321,9 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
+
+								console.log('---------arr----------')
+                console.log(ha)
 								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
 									this.pic_hash_arr.push(res.data.hash)
 									if(this.pic_hash_arr.length === this.picArr.length) {
@@ -390,7 +440,6 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
-							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false

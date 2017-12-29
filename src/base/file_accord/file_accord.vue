@@ -56,7 +56,7 @@
 			</div>
 			<div>
 				<span>附件列表：</span>
-				<a v-for="(item,index) in file_arr" class="file">{{item.name}}</a>
+				<a v-for="(item,index) in file_arr" :href="item.address" class="file">{{item.name}}</a>
 			</div>
 			<div>
 				<span>图片附件：</span>
@@ -166,7 +166,7 @@
 			</div>
 			<div>
 				<span>附件列表：</span>
-				<a v-for="(item,index) in file_arr" class="file">{{item.name}}</a>
+				<a v-for="(item,index) in file_arr" :href="item.address" class="file">{{item.name}}</a>
 			</div>
 			<div v-if="form_Lista.img_list">
 				<span>图片附件：</span>
@@ -251,7 +251,7 @@
 			</div>
 			<div>
 				<span>附件列表：</span>
-				<a  v-for="(item,index) in file_arr" class="file">{{item.name}}</a>
+				<a  v-for="(item,index) in file_arr" :href="item.address"  class="file">{{item.name}}</a>
 			</div>
 			<div>
 				<span>图片附件：</span>
@@ -373,7 +373,7 @@
 				param.append("approval_id", this.form_approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-						
+
 						if(this.type === '呈批件') {
 							this.cpjShow = true
 							this.form_Lista = create_cengpijian_list(res.data.data)

@@ -1323,6 +1323,7 @@
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+					  console.log(res)
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1393,6 +1394,7 @@
 						param.append("enclosure_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
+							  console.log(res)
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
@@ -1411,7 +1413,6 @@
 					return
 				}
 				many_enclosure.forEach((item) => {
-
 					if(item.type === 4) {
 						let param = new URLSearchParams();
 						param.append("attachments_id", item.contract_id);
@@ -1585,6 +1586,8 @@
 				    height: 30px;
 				    font-size: 14px;
 				    cursor: pointer;
+          //修复页面刷新之后选择框跑到左边的问题
+            width: 140px;
 				}
 				.el-input--suffix .el-input__inner{
 					height: 30px;

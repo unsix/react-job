@@ -101,7 +101,8 @@
 					remarks: '',
 					project_manager_name: '',
 					project_manager: {},
-					contract_id: ''
+					contract_id: '',
+          many_enclosure:{}
 				},
 				psb_rules: {
 					contract_name: [{
@@ -238,9 +239,11 @@
 				if(!this.approval_id) {
 					return
 				}
+        const ha = []
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
+				this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						this.form_Lista = create_hetongpingshen_list(res.data.data)
@@ -248,6 +251,8 @@
 						this.psb_ruleForm.contract_num = this.form_Lista.contract_num
 						this.psb_ruleForm.a_name = this.form_Lista.a_name
 						this.psb_ruleForm.b_name = this.form_Lista.b_name
+            this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
+            this.psb_ruleForm.end_time = this.form_Lista.end_time
 						this.psb_ruleForm.prive = this.form_Lista.prive
 						this.psb_ruleForm.total_prive = this.form_Lista.total_prive
 						this.psb_ruleForm.difference = this.form_Lista.difference
@@ -257,6 +262,42 @@
 						this.psb_ruleForm.remarks = this.form_Lista.remarks
 						this.psb_ruleForm.contract_id = this.form_Lista.contract_id
 						this.psb_ruleForm.project_manager_name = this.form_Lista.project_manager_name
+            this.psb_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+            this.form_Lista.many_enclosure.forEach((item)=>{
+              let img_name = item.name
+              if (item.type === 3){
+                let param = new URLSearchParams();
+                param.append("enclosure_id", item.contract_id);
+                this.$http.post("index.php/Mobile/approval/look_enclosure",param)
+                  .then((res)=>{
+                    res.data.data.picture.forEach((item) => {
+                      console.log(item)
+                      let obj = {}
+                      ha.push(item)
+                      console.log(ha)
+                      let img_add = 'http://bbsf-file.hzxb.net/'+item+'?imageView2/1/w/50/h/50'
+                      console.log(img_add)
+                      obj.name = img_name
+                      obj.url = img_add
+                      this.fileList.push(obj)
+                    })
+                  })
+              }else if(item.type === 4){
+                let param = new URLSearchParams();
+                param.append("attachments_id", item.contract_id);
+                this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+                  .then((res) => {
+                    console.log(res)
+                    let obj = {}
+                    let file_data = res.data.data
+                    ha.push(file_data.attachments)
+                    let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                    obj.name = file_data.file_name+'.'+file_data.attribute
+                    obj.address = file_add
+                    this.fileList.push(obj)
+                  })
+              }
+            })
 					})
 			},
 			add_ok() {

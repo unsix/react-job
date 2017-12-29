@@ -65,7 +65,7 @@
 		<chooseTemplate v-if="chooseTemShow" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
 		<psb v-if="psb_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
 		<qgd :qk_return="qk_return" @return_qk="return_qk" v-if="qgd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
-		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></cpj>
+		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
 
@@ -135,9 +135,6 @@
 				pageIndex:1,
 				xindex:0,
 				request_money_basis_type:'',
-				form_approval_id:''
-
-
 			}
 		},
 		computed: {
@@ -224,6 +221,7 @@
 				this.qk_return = false
 				this.at_qingkuanShow = true
 			},
+      //请款单tab
 			qkView(item,index){
 				this.qk_return = true
 				this.at_qingkuanShow = false
@@ -287,6 +285,7 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
+
 			qkUser(item,index){
 				this.request_money_basis_type = item.type
 				this.form_approval_id = ''
@@ -323,7 +322,7 @@
 				setUserState: 'SET_USERSTATE',
 				setCompanyList: 'SET_COMPANYLIST'
 			}),
-      //導航分頁
+
 			useInfo(item) {
 				this.approval_id1 = ''
 				this.approval_id2 = ''
@@ -460,9 +459,8 @@
 							.then((res) => {
 								let obj = {}
 								let file_data = res.data.data
-                console.log(file_data)
-								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
-								obj.name = file_data.file_name
+								let file_add = file_data.attachments + '?attname=' + file_data.file_name +'.'+ file_data.attribute
+								obj.name = file_data.file_name+'.'+ file_data.attribute
 								obj.address = file_add
 								this.file_arr.push(obj)
 							})
