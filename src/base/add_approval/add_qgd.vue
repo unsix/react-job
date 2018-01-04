@@ -648,8 +648,6 @@
 						}
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
-
-
 							  console.log('----------arr--------------')
 								let formData = new FormData();
 								formData.append('file', this.fileArr[i].raw);

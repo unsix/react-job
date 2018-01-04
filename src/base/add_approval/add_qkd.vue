@@ -170,7 +170,7 @@
 					}],
           request_num:[{
             pattern:/^[0-9]+$/,
-            message: '请求次数请填正整数',
+            message: '请款次数请填正整数',
             trigger: 'blur'
           }],
           balance_subtotal:[{

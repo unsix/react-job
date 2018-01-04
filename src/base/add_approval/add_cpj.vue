@@ -27,8 +27,6 @@
 			</el-form-item>
 
 			<el-upload class="upload-demo" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
-
-
         <el-button size="small" type="info" plain>上传文件</el-button>
 			</el-upload>
 
@@ -131,7 +129,6 @@
 				if(!this.approval_id) {
 					return
 				}
-				const ha = []
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
@@ -147,22 +144,24 @@
 						this.cpj_ruleForm.project_manager_name = this.form_Lista.project_manager_name
             this.cpj_ruleForm.many_enclosure = this.form_Lista.many_enclosure
             this.form_Lista.many_enclosure.forEach((item)=>{
+              console.log(item)
               let img_name = item.name
               if (item.type === 3){
                 let param = new URLSearchParams();
                 param.append("enclosure_id", item.contract_id);
                 this.$http.post("index.php/Mobile/approval/look_enclosure",param)
                   .then((res)=>{
+                    console.log(res)
                     res.data.data.picture.forEach((item) => {
-                      console.log(item)
+                      //item 就是hash
                       let obj = {}
-                      ha.push(item)
-                      console.log(ha)
-                      let img_add = 'http://bbsf-file.hzxb.net/'+item+'?imageView2/1/w/50/h/50'
+                      let img_add = 'http://bbsf-file.hzxb.net/'+item
                       console.log(img_add)
+                      obj.hash = item
                       obj.name = img_name
                       obj.url = img_add
                       this.fileList.push(obj)
+                      console.log(this.fileList)
                     })
                   })
               }else if(item.type === 4){
@@ -173,10 +172,10 @@
                     console.log(res)
                     let obj = {}
                     let file_data = res.data.data
-                    ha.push(file_data.attachments)
                     let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                     obj.name = file_data.file_name+'.'+file_data.attribute
                     obj.address = file_add
+                    obj.hash = file_data.attachments
                     this.fileList.push(obj)
                   })
               }
@@ -321,32 +320,54 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
+                //就是这一段加上判断是上传过的还是没上传
+                if(!this.picArr[i].size){
+                  this.pic_hash_arr.push(this.picArr[i].hash)
+                  console.log('---------dd----------')
+                  console.log(this.picArr[i].hash)
+                  let nparam = new URLSearchParams()
+                  nparam.append("uid", this.user.uid);
+                  nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                  this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                    .then((res)=>{
+                      console.log('---------bb----------')
+                      console.log(res)
+                      this.afile_hash_arr.push({
+                        "type": 3,
+                        "contract_id": res.data.data.enclosure_id,
+                        "name": this.picArr[i].name
+                      })
+                      let aDate = Date.parse(new Date())
+                      this.pic_time = aDate
+                    })
+                }else{
+                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                    this.pic_hash_arr.push(res.data.hash)
+                    if(this.pic_hash_arr.length === this.picArr.length) {
+                      let nparam = new URLSearchParams();
+                      nparam.append("uid", this.user.uid);
+                      nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                      this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                        .then((res) => {
+                          this.afile_hash_arr.push({
+                            "type": 3,
+                            "contract_id": res.data.data.enclosure_id,
+                            "name": this.picArr[i].name
+                          })
+                          let aDate = Date.parse(new Date())
+                          this.pic_time = aDate
+                        })
+                    }
+                  })
+                }
+                //请求七牛
 
-								console.log('---------arr----------')
-                console.log(ha)
-								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-									this.pic_hash_arr.push(res.data.hash)
-									if(this.pic_hash_arr.length === this.picArr.length) {
-										let nparam = new URLSearchParams();
-										nparam.append("uid", this.user.uid);
-										nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-										this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-											.then((res) => {
-												this.afile_hash_arr.push({
-													"type": 3,
-													"contract_id": res.data.data.enclosure_id,
-													"name": this.picArr[i].name
-												})
-												let aDate = Date.parse(new Date())
-												this.pic_time = aDate
-											})
-									}
-								})
 							}
 						}
 						//文档的判断
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
+                console.log(this.fileArr[i])
 								let formData = new FormData();
 								formData.append('file', this.fileArr[i].raw);
 								formData.append('token', this.token);
@@ -355,31 +376,59 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
-								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-									let index = this.fileArr[i].name.lastIndexOf('.')
-									let attribute = this.fileArr[i].name.slice(index)
+                if(!this.fileArr[i].size){
+                  let index = this.fileArr[i].name.lastIndexOf('.')
+                  let attribute = this.fileArr[i].name.slice(index)
                   if(attribute.substr(0,1)=='.'){
                     attribute=attribute.substr(1)
                   }
-									let file_name = this.fileArr[i].name.slice(0, index)
-									let param = new URLSearchParams();
-									param.append("uid", this.user.uid);
-									param.append("attribute", attribute);
-									param.append("attachments", res.data.hash);
-									param.append("file_name", file_name);
-									this.$http.post("/index.php/Mobile/approval/add_attachments", param)
-										.then((res) => {
-											this.file_hash_arr.push({
-												"type": 4,
-												"contract_id": res.data.data.attachments_id,
-												"name": this.fileArr[i].name
-											})
-											if(this.file_hash_arr.length === this.fileArr.length) {
-												let bDate = Date.parse(new Date())
-												this.file_time = bDate
-											}
-										})
-								})
+                  let file_name = this.fileArr[i].name.slice(0, index)
+                  let param = new URLSearchParams();
+                  param.append("uid", this.user.uid);
+                  param.append("attribute", attribute);
+                  param.append("attachments", this.fileArr[i].hash);
+                  param.append("file_name", file_name);
+                  this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                    .then((res)=>{
+                      this.file_hash_arr.push({
+                        "type": 4,
+                        "contract_id": res.data.data.attachments_id,
+                        "name": this.fileArr[i].name
+                      })
+                      if(this.file_hash_arr.length === this.fileArr.length) {
+                        let bDate = Date.parse(new Date())
+                        this.file_time = bDate
+                      }
+                    })
+                }else{
+                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                    let index = this.fileArr[i].name.lastIndexOf('.')
+                    let attribute = this.fileArr[i].name.slice(index)
+                    if(attribute.substr(0,1)=='.'){
+                      attribute=attribute.substr(1)
+                    }
+                    let file_name = this.fileArr[i].name.slice(0, index)
+                    let param = new URLSearchParams();
+                    param.append("uid", this.user.uid);
+                    param.append("attribute", attribute);
+                    param.append("attachments", res.data.hash);
+                    param.append("file_name", file_name);
+                    this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                      .then((res) => {
+                        this.file_hash_arr.push({
+                          "type": 4,
+                          "contract_id": res.data.data.attachments_id,
+                          "name": this.fileArr[i].name
+                        })
+                        if(this.file_hash_arr.length === this.fileArr.length) {
+                          let bDate = Date.parse(new Date())
+                          this.file_time = bDate
+                        }
+                      })
+                  })
+                }
+								//这里
+
 							}
 						}
 					}

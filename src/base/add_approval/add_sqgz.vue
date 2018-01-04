@@ -122,10 +122,10 @@
 						trigger: 'change'
 					}],
           little:[{
-            required: true,
-            pattern:  /^[0-9]*$/,
+            pattern:  /^[0-9]+$/,
             message: '数量请填正整数',
-            trigger: 'blur'
+            type:'number',
+            trigger: 'change'
           }]
 				},
 				pic_hash_arr: [],
