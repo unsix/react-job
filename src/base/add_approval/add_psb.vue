@@ -239,7 +239,6 @@
 				if(!this.approval_id) {
 					return
 				}
-        const ha = []
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
@@ -251,8 +250,9 @@
 						this.psb_ruleForm.contract_num = this.form_Lista.contract_num
 						this.psb_ruleForm.a_name = this.form_Lista.a_name
 						this.psb_ruleForm.b_name = this.form_Lista.b_name
-            this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
-            this.psb_ruleForm.end_time = this.form_Lista.end_time
+            //会报一个getTime is not a function
+            //this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
+            //this.psb_ruleForm.end_time = this.form_Lista.end_time
 						this.psb_ruleForm.prive = this.form_Lista.prive
 						this.psb_ruleForm.total_prive = this.form_Lista.total_prive
 						this.psb_ruleForm.difference = this.form_Lista.difference
@@ -273,12 +273,10 @@
                     res.data.data.picture.forEach((item) => {
                       console.log(item)
                       let obj = {}
-                      ha.push(item)
-                      console.log(ha)
-                      let img_add = 'http://bbsf-file.hzxb.net/'+item+'?imageView2/1/w/50/h/50'
-                      console.log(img_add)
+                      let img_add = 'http://bbsf-file.hzxb.net/'+item
                       obj.name = img_name
                       obj.url = img_add
+                      obj.hash = item
                       this.fileList.push(obj)
                     })
                   })
@@ -290,10 +288,10 @@
                     console.log(res)
                     let obj = {}
                     let file_data = res.data.data
-                    ha.push(file_data.attachments)
                     let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                     obj.name = file_data.file_name+'.'+file_data.attribute
                     obj.address = file_add
+                    obj.hash = file_data.attachments
                     this.fileList.push(obj)
                   })
               }
@@ -454,24 +452,43 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
-								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-									this.pic_hash_arr.push(res.data.hash)
-									if(this.pic_hash_arr.length === this.picArr.length) {
-										let nparam = new URLSearchParams();
-										nparam.append("uid", this.user.uid);
-										nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-										this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-											.then((res) => {
-												this.afile_hash_arr.push({
-													"type": 3,
-													"contract_id": res.data.data.enclosure_id,
-													"name": this.picArr[i].name
-												})
-												let aDate = Date.parse(new Date())
-												this.pic_time = aDate
-											})
-									}
-								})
+                if(!this.picArr[i].size){
+                  this.picArr.forEach((item)=>{
+                    this.pic_hash_arr.push(item.hash)
+                    let nparam = new URLSearchParams()
+                    nparam.append("uid", this.user.uid);
+                    nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                    this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                      .then((res)=>{
+                        this.afile_hash_arr.push({
+                          "type": 3,
+                          "contract_id": res.data.data.enclosure_id,
+                          "name": this.picArr[i].name
+                        })
+                        let aDate = Date.parse(new Date())
+                        this.pic_time = aDate
+                      })
+                  })
+                }else{
+                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                    this.pic_hash_arr.push(res.data.hash)
+                    if(this.pic_hash_arr.length === this.picArr.length) {
+                      let nparam = new URLSearchParams();
+                      nparam.append("uid", this.user.uid);
+                      nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                      this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                        .then((res) => {
+                          this.afile_hash_arr.push({
+                            "type": 3,
+                            "contract_id": res.data.data.enclosure_id,
+                            "name": this.picArr[i].name
+                          })
+                          let aDate = Date.parse(new Date())
+                          this.pic_time = aDate
+                        })
+                    }
+                  })
+                }
 							}
 						}
 						if(this.fileArr.length != 0) {
@@ -484,31 +501,57 @@
 										'Content-Type': 'multipart/form-data'
 									}
 								}
-								this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-									let index = this.fileArr[i].name.indexOf('.')
-									let attribute = this.fileArr[i].name.slice(index)
+                if(!this.fileArr[i].size){
+                  let index = this.fileArr[i].name.lastIndexOf('.')
+                  let attribute = this.fileArr[i].name.slice(index)
                   if(attribute.substr(0,1)=='.'){
                     attribute=attribute.substr(1)
                   }
-									let file_name = this.fileArr[i].name.slice(0, index)
-									let param = new URLSearchParams();
-									param.append("uid", this.user.uid);
-									param.append("attribute", attribute);
-									param.append("attachments", res.data.hash);
-									param.append("file_name", file_name);
-									this.$http.post("/index.php/Mobile/approval/add_attachments", param)
-										.then((res) => {
-											this.file_hash_arr.push({
-												"type": 4,
-												"contract_id": res.data.data.attachments_id,
-												"name": this.fileArr[i].name
-											})
-											if(this.file_hash_arr.length === this.fileArr.length) {
-												let bDate = Date.parse(new Date())
-												this.file_time = bDate
-											}
-										})
-								})
+                  let file_name = this.fileArr[i].name.slice(0, index)
+                  let param = new URLSearchParams();
+                  param.append("uid", this.user.uid);
+                  param.append("attribute", attribute);
+                  param.append("attachments", this.fileArr[i].hash);
+                  param.append("file_name", file_name);
+                  this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                    .then((res)=>{
+                      this.file_hash_arr.push({
+                        "type": 4,
+                        "contract_id": res.data.data.attachments_id,
+                        "name": this.fileArr[i].name
+                      })
+                      if(this.file_hash_arr.length === this.fileArr.length) {
+                        let bDate = Date.parse(new Date())
+                        this.file_time = bDate
+                      }
+                    })
+                }else {
+                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                    let index = this.fileArr[i].name.indexOf('.')
+                    let attribute = this.fileArr[i].name.slice(index)
+                    if(attribute.substr(0,1)=='.'){
+                      attribute=attribute.substr(1)
+                    }
+                    let file_name = this.fileArr[i].name.slice(0, index)
+                    let param = new URLSearchParams();
+                    param.append("uid", this.user.uid);
+                    param.append("attribute", attribute);
+                    param.append("attachments", res.data.hash);
+                    param.append("file_name", file_name);
+                    this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                      .then((res) => {
+                        this.file_hash_arr.push({
+                          "type": 4,
+                          "contract_id": res.data.data.attachments_id,
+                          "name": this.fileArr[i].name
+                        })
+                        if(this.file_hash_arr.length === this.fileArr.length) {
+                          let bDate = Date.parse(new Date())
+                          this.file_time = bDate
+                        }
+                      })
+                  })
+                }
 							}
 						}
 					}

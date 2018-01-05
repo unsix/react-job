@@ -26,7 +26,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-upload class="upload-demo" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
+			<el-upload class="upload-demo" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文件</el-button>
 			</el-upload>
 
@@ -60,7 +60,7 @@
 					title: '',
 					project_manager_name: '',
 					project_manager: {},
-          // many_enclosure : {}
+          // many_enclosure : []
 				},
 				cpj_rules: {
 					department_name: [{
@@ -135,6 +135,7 @@
         this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+					  console.log(res)
 						this.form_Lista = create_cengpijian_list(res.data.data)
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
 						this.cpj_ruleForm.department_name = this.form_Lista.department_name
@@ -322,16 +323,14 @@
 								}
                 //就是这一段加上判断是上传过的还是没上传
                 if(!this.picArr[i].size){
+								  //foreach一下
                   this.pic_hash_arr.push(this.picArr[i].hash)
-                  console.log('---------dd----------')
                   console.log(this.picArr[i].hash)
                   let nparam = new URLSearchParams()
                   nparam.append("uid", this.user.uid);
                   nparam.append("picture", JSON.stringify(this.pic_hash_arr));
                   this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
                     .then((res)=>{
-                      console.log('---------bb----------')
-                      console.log(res)
                       this.afile_hash_arr.push({
                         "type": 3,
                         "contract_id": res.data.data.enclosure_id,
