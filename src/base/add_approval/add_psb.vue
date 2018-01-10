@@ -245,14 +245,25 @@
 				this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            console.log(res)
 						this.form_Lista = create_hetongpingshen_list(res.data.data)
 						this.psb_ruleForm.contract_name = this.form_Lista.contract_name
 						this.psb_ruleForm.contract_num = this.form_Lista.contract_num
 						this.psb_ruleForm.a_name = this.form_Lista.a_name
 						this.psb_ruleForm.b_name = this.form_Lista.b_name
-            //会报一个getTime is not a function
-            //this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
-            //this.psb_ruleForm.end_time = this.form_Lista.end_time
+            this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
+            if(this.psb_ruleForm.arrive_time){
+              let strDate = this.psb_ruleForm.arrive_time
+              var time = new Date(strDate)
+              this.psb_ruleForm.arrive_time = time
+              console.log(typeof(this.psb_ruleForm.arrive_time))
+            }
+            this.psb_ruleForm.end_time = this.form_Lista.end_time
+            if(this.psb_ruleForm.end_time){
+              let strDate1 = this.psb_ruleForm.end_time
+              var time1 = new Date(strDate1)
+              this.psb_ruleForm.end_time = time1
+            }
 						this.psb_ruleForm.prive = this.form_Lista.prive
 						this.psb_ruleForm.total_prive = this.form_Lista.total_prive
 						this.psb_ruleForm.difference = this.form_Lista.difference
@@ -371,9 +382,12 @@
 						this.fileArr.push(item)
 					}
 				})
+
+        console.log(typeof(this.psb_ruleForm.arrive_time))
+        console.log(this.psb_ruleForm.arrive_time)
 				this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
-				let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
-				timestamp2 = timestamp2 / 1000 + 86400
+        let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
+				timestamp2 = timestamp2 / 1000 + 64800
 				let date = new Date();
 				date.setTime(timestamp2 * 1000);
 				let y = date.getFullYear();
@@ -385,7 +399,7 @@
 
 				this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
 				let timestamp3 = Date.parse(new Date(this.psb_ruleForm.end_time));
-				timestamp3 = timestamp3 / 1000 + 86400
+				timestamp3 = timestamp3 / 1000 + 64800
 				let date1 = new Date();
 				date1.setTime(timestamp3 * 1000);
 				let y1 = date1.getFullYear();
@@ -443,53 +457,44 @@
 							})
 					} else {
 						if(this.picArr.length != 0) {
-							for(let i = 0; i < this.picArr.length; i++) {
-								let formData = new FormData();
-								formData.append('file', this.picArr[i].raw);
-								formData.append('token', this.token);
-								let config = {
-									headers: {
-										'Content-Type': 'multipart/form-data'
-									}
-								}
-                if(!this.picArr[i].size){
-                  this.picArr.forEach((item)=>{
-                    this.pic_hash_arr.push(item.hash)
-                    let nparam = new URLSearchParams()
-                    nparam.append("uid", this.user.uid);
-                    nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                    this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                      .then((res)=>{
-                        this.afile_hash_arr.push({
-                          "type": 3,
-                          "contract_id": res.data.data.enclosure_id,
-                          "name": this.picArr[i].name
-                        })
-                        let aDate = Date.parse(new Date())
-                        this.pic_time = aDate
-                      })
-                  })
-                }else{
-                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-                    this.pic_hash_arr.push(res.data.hash)
-                    if(this.pic_hash_arr.length === this.picArr.length) {
-                      let nparam = new URLSearchParams();
-                      nparam.append("uid", this.user.uid);
-                      nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                      this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                        .then((res) => {
-                          this.afile_hash_arr.push({
-                            "type": 3,
-                            "contract_id": res.data.data.enclosure_id,
-                            "name": this.picArr[i].name
-                          })
-                          let aDate = Date.parse(new Date())
-                          this.pic_time = aDate
-                        })
+              var upload_enclosure_new = (fn)=>{
+                for(let i = 0; i < this.picArr.length; i++) {
+                  let formData = new FormData();
+                  formData.append('file', this.picArr[i].raw);
+                  formData.append('token', this.token);
+                  let config = {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
                     }
-                  })
+                  }
+                  if(!this.picArr[i].size){
+                    this.pic_hash_arr.push(this.picArr[i].hash);
+                    this.pic_hash_arr.length === this.picArr.length && fn(this.picArr[i].name);
+                  }else{
+                    this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                      this.pic_hash_arr.push(res.data.hash)
+                      if(this.pic_hash_arr.length === this.picArr.length) {
+                        fn(this.picArr[i].name);
+                      }
+                    })
+                  }
                 }
-							}
+              };
+              upload_enclosure_new((name)=>{
+                let nparam = new URLSearchParams()
+                nparam.append("uid", this.user.uid);
+                nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                  .then((res)=>{
+                    this.afile_hash_arr.push({
+                      "type": 3,
+                      "contract_id": res.data.data.enclosure_id,
+                      name,
+                    })
+                    let aDate = Date.parse(new Date());
+                    this.pic_time = aDate
+                  })
+              })
 						}
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
@@ -557,7 +562,7 @@
 					}
 				}, 500)
 
-			}
+			},
 		},
 		watch: {
 			file_time() {

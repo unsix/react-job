@@ -10,8 +10,7 @@
 					<el-tab-pane label="请款单"></el-tab-pane>
 					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="呈批件"></el-tab-pane>
-
-
+          <el-tab-pane label="报销单"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -23,6 +22,7 @@
 				<addPsb v-if="psb_show" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
 				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
 				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add" ></addSqgz>
+        <addBxd v-if="bxd_show" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
 			</div>
 		</div>
 		<div class="as_what" v-show="as_what_show">
@@ -68,7 +68,7 @@
 		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
-
+    <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
 	</div>
 </template>
 
@@ -78,6 +78,7 @@
 	import addPsb from '@/base/add_approval/add_psb'
 	import addSqgz from '@/base/add_approval/add_sqgz'
 	import addQkd from '@/base/add_approval/add_qkd'
+  import addBxd from '@/base/add_approval/add_bxd'
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import cpj from '@/base/exam_form/cpj'
@@ -95,7 +96,8 @@
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
-	import { mapGetters, mapMutations } from 'vuex'
+  import { create_baoxiaodan_list} from "@/common/js/approval/baoxiaodan"
+  import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -109,12 +111,14 @@
 				cpj_if: false,
 				qkd_if: false,
 				sqgz_if: false,
+        bxd_if: false,
 				formShow: true,
 				chooseTemShow: false,
 				as_what_show: false,
 				qkd_show: false,
 				qgd_show: false,
 				cpj_show: false,
+        bxd_show: false,
 				psb_show: true,
 				sqgz_show: false,
 				loading_show: false,
@@ -129,6 +133,7 @@
 				approval_id3: '',
 				approval_id4: '',
 				approval_id5: '',
+        approval_id6:'',
 				form_approval_id:'',
 				qk_return:false,
 				nextPageShow: true,
@@ -258,8 +263,13 @@
 							this.form_Lista = create_qinggoudan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
-						}
-					})
+						} else if(item.type=== '报销单'){
+						  this.bxd_if=true
+              this.form_Lista = create_baoxiaodan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            }
+ 					})
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", item.approval_id);
@@ -329,12 +339,14 @@
 				this.approval_id3 = ''
 				this.approval_id4 = ''
 				this.approval_id5 = ''
+        this.approval_id6 = ''
 				this.formShow = true
 				this.qkd_show = false
 				this.qgd_show = false
 				this.cpj_show = false
 				this.psb_show = false
 				this.sqgz_show = false
+        this.bxd_show = false
 				this.at_qingkuanShow = false
 				this.chooseTemShow = false
 				if(item.type === '合同评审表') {
@@ -353,7 +365,10 @@
 				} else if(item.type === '请款单') {
 					this.approval_id5 = item.approval_id
 					this.qkd_show = true
-				}
+				} else if(item.type === '报销单'){
+				  this.approval_id6 = item.approval_id6
+          this.bxd_show = true
+        }
 			},
 			viewInfo(item) {
 				this.qkd_show = false
@@ -361,6 +376,7 @@
 				this.cpj_show = false
 				this.psb_show = false
 				this.sqgz_show = false
+        this.bxd_show = false
 				this.chooseTemShow = false
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -392,7 +408,12 @@
 							this.form_Lista = create_qinggoudan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
-						}
+						} else if(item.type === '报销单'){
+						  this.bxd_if = true
+              this.form_Lista = create_baoxiaodan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            }
 					})
 
 
@@ -473,6 +494,7 @@
 				this.cpj_if = false
 				this.qkd_if = false
 				this.sqgz_if = false
+        this.bxd_if = false
 				this.chooseTemShow = true
 			},
 			returnForm() {
@@ -488,6 +510,7 @@
 				this.qkd_show = false
 				this.sqgz_show = false
 				this.cpj_show = false
+        this.bxd_show = false
 			},
       //tab 切換
 			handleClick(tab) {
@@ -496,12 +519,14 @@
 				this.approval_id3 = ''
 				this.approval_id4 = ''
 				this.approval_id5 = ''
+        this.approval_id6 = ''
 				this.navIndex = JSON.parse(tab.index)
 				this.qkd_show = false
 				this.qgd_show = false
 				this.cpj_show = false
 				this.psb_show = false
 				this.sqgz_show = false
+        this.bxd_show = false
 				this.chooseTemShow = false
 				this.formShow = true
 				if(this.navIndex === 0) {
@@ -525,7 +550,10 @@
 					this.cpj_show = true
 					this.approval_type = 6
 
-				}
+				} else if(this.navIndex === 5){
+				  this.bxd_show = true
+          this.approval_type = 6
+        }
 			},
 
 			close_sqgz(item, index) {
@@ -624,7 +652,8 @@
 			addQgd,
 			addCpj,
 			addSqgz,
-			addQkd
+			addQkd,
+      addBxd
 		}
 	}
 </script>
@@ -759,7 +788,7 @@
 				.el-tabs__item {
 					font-size: 15px;
 					font-weight: 700;
-					width: 110px;
+					width: 100px;
 					text-align: center;
 				}
 			}

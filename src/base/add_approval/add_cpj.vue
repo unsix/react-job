@@ -18,7 +18,8 @@
 			<el-form-item label="项目负责人(部门经理)">
 
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList"
+                     :key="item.personnel_id" :value="item.name">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -26,7 +27,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-upload class="upload-demo" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+			<el-upload class="upload-demo" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="text" :file-list="fileList" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文件</el-button>
 			</el-upload>
 
@@ -60,7 +61,7 @@
 					title: '',
 					project_manager_name: '',
 					project_manager: {},
-          // many_enclosure : []
+          many_enclosure : {}
 				},
 				cpj_rules: {
 					department_name: [{
@@ -312,56 +313,77 @@
 					} else {
 					  //图片的判断
 						if(this.picArr.length != 0) {
-							for(let i = 0; i < this.picArr.length; i++) {
-								let formData = new FormData();
-								formData.append('file', this.picArr[i].raw);
-								formData.append('token', this.token);
-								let config = {
-									headers: {
-										'Content-Type': 'multipart/form-data'
-									}
-								}
-                //就是这一段加上判断是上传过的还是没上传
-                if(!this.picArr[i].size){
-								  //foreach一下
-                  this.pic_hash_arr.push(this.picArr[i].hash)
-                  console.log(this.picArr[i].hash)
-                  let nparam = new URLSearchParams()
-                  nparam.append("uid", this.user.uid);
-                  nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                  this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                    .then((res)=>{
-                      this.afile_hash_arr.push({
-                        "type": 3,
-                        "contract_id": res.data.data.enclosure_id,
-                        "name": this.picArr[i].name
-                      })
-                      let aDate = Date.parse(new Date())
-                      this.pic_time = aDate
-                    })
-                }else{
-                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-                    this.pic_hash_arr.push(res.data.hash)
-                    if(this.pic_hash_arr.length === this.picArr.length) {
-                      let nparam = new URLSearchParams();
-                      nparam.append("uid", this.user.uid);
-                      nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                      this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                        .then((res) => {
-                          this.afile_hash_arr.push({
-                            "type": 3,
-                            "contract_id": res.data.data.enclosure_id,
-                            "name": this.picArr[i].name
-                          })
-                          let aDate = Date.parse(new Date())
-                          this.pic_time = aDate
-                        })
+              var upload_enclosure_new = (fn)=>{
+                for(let i = 0; i < this.picArr.length; i++) {
+                  let formData = new FormData();
+                  formData.append('file', this.picArr[i].raw);
+                  formData.append('token', this.token);
+                  let config = {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
                     }
-                  })
+                  }
+                  if(!this.picArr[i].size){
+                    this.pic_hash_arr.push(this.picArr[i].hash);
+                    this.pic_hash_arr.length === this.picArr.length && fn(this.picArr[i].name);
+                  }else{
+                    this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                      this.pic_hash_arr.push(res.data.hash)
+                      if(this.pic_hash_arr.length === this.picArr.length) {
+                        fn(this.picArr[i].name);
+                      }
+                    })
+                  }
                 }
-                //请求七牛
-
-							}
+              }
+              upload_enclosure_new((name)=>{
+                let nparam = new URLSearchParams()
+                nparam.append("uid", this.user.uid);
+                nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                  .then((res)=>{
+                    this.afile_hash_arr.push({
+                      "type": 3,
+                      "contract_id": res.data.data.enclosure_id,
+                      name,
+                    })
+                    let aDate = Date.parse(new Date())//看下把
+                    this.pic_time = aDate
+                  })
+              })
+              // Promise.all(this.picArr.map((item,i)=>{
+              //   if(!item.size){
+              //     return  item.hash
+              //   }else{
+              //     return new Promise((resolve,reject)=>{
+              //       let formData = new FormData();
+              //       formData.append('file', item.raw);
+              //       formData.append('token', this.token);
+              //       let config = {
+              //         headers: {
+              //           'Content-Type': 'multipart/form-data'
+              //         }
+              //       }
+              //       this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+              //         resolve(res.data.hash)
+              //       })
+              //     })
+              //   }
+              // })).then((pic_hash_arr)=>{
+              //   let nparam = new URLSearchParams()
+              //   nparam.append("uid", this.user.uid);
+              //   nparam.append("picture", JSON.stringify(pic_hash_arr));
+              //   this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+              //     .then((res)=>{
+              //       this.afile_hash_arr.push({
+              //         "type": 3,
+              //         "contract_id": res.data.data.enclosure_id,
+              //         name: this.picArr[0].name,
+              //       })
+              //       let aDate = Date.parse(new Date())//看下把
+              //       this.pic_time = aDate
+              //     })
+              // })
 						}
 						//文档的判断
 						if(this.fileArr.length != 0) {

@@ -382,53 +382,44 @@
 							})
 					} else {
 						if(this.picArr.length != 0) {
-							for(let i = 0; i < this.picArr.length; i++) {
-								let formData = new FormData();
-								formData.append('file', this.picArr[i].raw);
-								formData.append('token', this.token);
-								let config = {
-									headers: {
-										'Content-Type': 'multipart/form-data'
-									}
-								}
-                if(!this.picArr[i].size){
-                  this.picArr.forEach((item)=>{
-                    this.pic_hash_arr.push(item.hash)
-                    let nparam = new URLSearchParams()
-                    nparam.append("uid", this.user.uid);
-                    nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                    this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                      .then((res)=>{
-                        this.afile_hash_arr.push({
-                          "type": 3,
-                          "contract_id": res.data.data.enclosure_id,
-                          "name": this.picArr[i].name
-                        })
-                        let aDate = Date.parse(new Date())
-                        this.pic_time = aDate
-                      })
-                  })
-                }else{
-                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-                    this.pic_hash_arr.push(res.data.hash)
-                    if(this.pic_hash_arr.length === this.picArr.length) {
-                      let nparam = new URLSearchParams();
-                      nparam.append("uid", this.user.uid);
-                      nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                      this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                        .then((res) => {
-                          this.afile_hash_arr.push({
-                            "type": 3,
-                            "contract_id": res.data.data.enclosure_id,
-                            "name": this.picArr[i].name
-                          })
-                          let aDate = Date.parse(new Date())
-                          this.pic_time = aDate
-                        })
+              var upload_enclosure_new = (fn)=>{
+                for(let i = 0; i < this.picArr.length; i++) {
+                  let formData = new FormData();
+                  formData.append('file', this.picArr[i].raw);
+                  formData.append('token', this.token);
+                  let config = {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
                     }
-                  })
+                  }
+                  if(!this.picArr[i].size){
+                    this.pic_hash_arr.push(this.picArr[i].hash);
+                    this.pic_hash_arr.length === this.picArr.length && fn(this.picArr[i].name);
+                  }else{
+                    this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                      this.pic_hash_arr.push(res.data.hash)
+                      if(this.pic_hash_arr.length === this.picArr.length) {
+                        fn(this.picArr[i].name);
+                      }
+                    })
+                  }
                 }
-							}
+              }
+              upload_enclosure_new((name)=>{
+                let nparam = new URLSearchParams()
+                nparam.append("uid", this.user.uid);
+                nparam.append("picture", JSON.stringify(this.pic_hash_arr));
+                this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                  .then((res)=>{
+                    this.afile_hash_arr.push({
+                      "type": 3,
+                      "contract_id": res.data.data.enclosure_id,
+                      name,
+                    })
+                    let aDate = Date.parse(new Date())//看下把
+                    this.pic_time = aDate
+                  })
+              })
 						}
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
