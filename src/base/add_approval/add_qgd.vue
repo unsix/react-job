@@ -104,9 +104,16 @@
 					</el-form-item>
 				</el-form>
 			</div>
-			<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
-				<el-button size="small" type="info" plain>上传文件</el-button>
-			</el-upload>
+      <el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card"  :file-list="fileList" :auto-upload="false">
+        <i class="el-icon-plus"></i>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+        <!--<el-button size="small" type="info" plain>上传文件</el-button>-->
+      </el-upload>
+
+			<el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" :on-change="handlePreview_a" :on-remove="handleRemove_a" :file-list="fileList_a" :auto-upload="false">
+				<el-button size="small" type="info" plain>上传文本</el-button>
+        <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+      </el-upload>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>-->
@@ -125,6 +132,7 @@
 		data() {
 			return {
 				fileList: [],
+        fileList_a:[],
 				picArr: [],
 				fileArr: [],
 				qgd_ruleForm: {
@@ -281,6 +289,12 @@
 			handlePreview(file, fileList) {
 				this.fileList = fileList
 			},
+      handleRemove_a(file, fileList_a) {
+        this.fileList_a = fileList_a
+      },
+      handlePreview_a(file, fileList_a){
+        this.fileList_a = fileList_a
+      },
 			closeQd(index) {
 				this.qgd_ruleForm.add.splice(index, 1)
 			},
@@ -314,11 +328,11 @@
 							this.qgd_ruleForm.request_contract_address = this.form_Lista.request_contract_address
 							this.qgd_ruleForm.add = this.form_Lista.content
               this.qgd_ruleForm.arrival_time = this.form_Lista.arrival_time
-              if(this.psb_ruleForm.arrive_time){
-                let strDate = this.psb_ruleForm.arrive_time
+              console.log(this.qgd_ruleForm.arrival_time)
+              if(this.qgd_ruleForm.arrival_time){
+                let strDate = this.qgd_ruleForm.arrival_time
                 var time = new Date(strDate)
-                this.psb_ruleForm.arrive_time = time
-                console.log(typeof(this.psb_ruleForm.arrive_time))
+                this.qgd_ruleForm.arrival_time = time
               }
 							this.qgd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
               this.qgd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
@@ -352,7 +366,7 @@
                       obj.name = file_data.file_name+'.'+file_data.attribute
                       obj.address = file_add
                       obj.hash = file_data.attachments
-                      this.fileList.push(obj)
+                      this.fileList_a.push(obj)
                     })
                 }
               })
@@ -534,15 +548,17 @@
 				this.fileList.forEach((item) => {
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
 						this.picArr.push(item)
-					} else {
-						this.fileArr.push(item)
 					}
+				// 	else {
+				// 		this.fileArr.push(item)
+				// 	}
 				})
-				this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1, 11)
+        this.fileList_a.forEach((item) =>{
+          this.fileArr.push(item)
+        })
 				let timestamp2 = Date.parse(new Date(this.qgd_ruleForm.arrival_time));
-				timestamp2 = timestamp2 / 1000 + 64800
 				let date = new Date();
-				date.setTime(timestamp2 * 1000);
+				date.setTime(timestamp2);
 				let y = date.getFullYear();
 				let m = date.getMonth() + 1;
 				m = m < 10 ? ('0' + m) : m;

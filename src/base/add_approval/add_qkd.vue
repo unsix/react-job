@@ -58,9 +58,18 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
-				<el-button size="small" type="info" plain>上传文件</el-button>
+
+			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card":file-list="fileList" :auto-upload="false">
+        <i class="el-icon-plus"></i>
+        <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
+
+      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+        <el-button size="small" type="info" plain>上传文本</el-button>
+        <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+      </el-upload>
+
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_qkd('qkd_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('qkd_ruleForm')">重置</el-button>-->
@@ -80,6 +89,7 @@
 		data() {
 			return {
 				fileList: [],
+        fileList_a: [],
 				picArr: [],
 				fileArr: [],
 				qkd_ruleForm: {
@@ -228,6 +238,12 @@
 			handlePreview(file, fileList) {
 				this.fileList = fileList
 			},
+      handleRemove_a(file, fileList_a) {
+        this.fileList_a = fileList_a
+      },
+      handlePreview_a(file, fileList_a){
+        this.fileList_a = fileList_a
+      },
 			closeAcc() {
 				this.fileAccordShow = false
 			},
@@ -290,7 +306,7 @@
                     obj.name = file_data.file_name+'.'+file_data.attribute
                     obj.address = file_add
                     obj.hash = file_data.attachments
-                    this.fileList.push(obj)
+                    this.fileList_a.push(obj)
                   })
               }
             })
@@ -406,10 +422,15 @@
 				this.fileList.forEach((item) => {
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
 						this.picArr.push(item)
-					} else {
-						this.fileArr.push(item)
 					}
+				// 	else {
+				// 		this.fileArr.push(item)
+				// 	}
 				})
+        this.fileList_a.forEach((item) =>{
+          this.fileArr.push(item)
+        })
+
 				var re = /^[0-9]+$/;
 				if(!re.test(this.qkd_ruleForm.request_num)) {
 					this.$message.error('请求次数请填正整数');

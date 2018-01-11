@@ -51,9 +51,18 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-upload class="upload-demo" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" :auto-upload="false">
-				<el-button size="small" type="info" plain>上传文件</el-button>
+
+			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card"  :file-list="fileList" :auto-upload="false">
+        <i class="el-icon-plus"></i>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+        <!--<el-button size="small" type="info" plain>上传文件</el-button>-->
 			</el-upload>
+
+      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+        <el-button size="small" type="info" plain>上传文本</el-button>
+        <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+      </el-upload>
+
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_psb('psb_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('psb_ruleForm')">重置</el-button>-->
@@ -85,6 +94,7 @@
 			return {
 				hetongListShow: false,
 				fileList:[],
+        fileList_a:[],
 				psb_ruleForm: {
 					contract_name: '',
 					contract_num: '',
@@ -216,6 +226,12 @@
 			handlePreview(file, fileList) {
 				this.fileList = fileList
 			},
+      handleRemove_a(file, fileList_a) {
+        this.fileList_a = fileList_a
+      },
+      handlePreview_a(file, fileList_a){
+        this.fileList_a = fileList_a
+      },
 			viewHt() {
 				window.open('/index.php/Mobile/skey/look_draft?id=' + this.psb_ruleForm.contract_id)
 			},
@@ -256,7 +272,6 @@
               let strDate = this.psb_ruleForm.arrive_time
               var time = new Date(strDate)
               this.psb_ruleForm.arrive_time = time
-              console.log(typeof(this.psb_ruleForm.arrive_time))
             }
             this.psb_ruleForm.end_time = this.form_Lista.end_time
             if(this.psb_ruleForm.end_time){
@@ -303,7 +318,7 @@
                     obj.name = file_data.file_name+'.'+file_data.attribute
                     obj.address = file_add
                     obj.hash = file_data.attachments
-                    this.fileList.push(obj)
+                    this.fileList_a.push(obj)
                   })
               }
             })
@@ -378,18 +393,18 @@
 				this.fileList.forEach((item) => {
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
 						this.picArr.push(item)
-					} else {
-						this.fileArr.push(item)
 					}
+				// 	else {
+				// 		this.fileArr.push(item)
+				// 	}
 				})
+        this.fileList_a.forEach((item) =>{
+          this.fileArr.push(item)
+        })
 
-        console.log(typeof(this.psb_ruleForm.arrive_time))
-        console.log(this.psb_ruleForm.arrive_time)
-				this.psb_ruleForm.arrive_time = JSON.stringify(this.psb_ruleForm.arrive_time).slice(1, 11)
         let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
-				timestamp2 = timestamp2 / 1000 + 64800
 				let date = new Date();
-				date.setTime(timestamp2 * 1000);
+				date.setTime(timestamp2);
 				let y = date.getFullYear();
 				let m = date.getMonth() + 1;
 				m = m < 10 ? ('0' + m) : m;
@@ -397,11 +412,10 @@
 				d = d < 10 ? ('0' + d) : d;
 				this.psb_ruleForm.arrive_time = y + '-' + m + '-' + d
 
-				this.psb_ruleForm.end_time = JSON.stringify(this.psb_ruleForm.end_time).slice(1, 11)
+
 				let timestamp3 = Date.parse(new Date(this.psb_ruleForm.end_time));
-				timestamp3 = timestamp3 / 1000 + 64800
 				let date1 = new Date();
-				date1.setTime(timestamp3 * 1000);
+				date1.setTime(timestamp3);
 				let y1 = date1.getFullYear();
 				let m1 = date1.getMonth() + 1;
 				m1 = m1 < 10 ? ('0' + m1) : m1;
