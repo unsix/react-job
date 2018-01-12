@@ -26,7 +26,7 @@
 			<ul class="days">
 				<li @click="pick(day)" v-for="day in days">
 					<span v-if="day.getMonth()+1 != currentMonth" class="other-month" style="color: #DDDDDD">{{ day.getDate() }}</span>
-					<span v-else="">  
+					<span v-else="">
 	            	<span v-if="day.getFullYear() == new Date().getFullYear() && day.getMonth() == new Date().getMonth() && day.getDate() == new Date().getDate()" class="active" style="color: blue;">{{ day.getDate() }}</span>
 					<span v-else="" style="color: #444444;">{{ day.getDate() }}</span>
 					</span>
@@ -40,10 +40,10 @@
 	export default{
 		data(){
 			return{
-				currentDay: 1,  
-			    currentMonth: 1,  
-			    currentYear: 1970,  
-			    currentWeek: 1,  
+				currentDay: 1,
+			    currentMonth: 1,
+			    currentYear: 1970,
+			    currentWeek: 1,
 			    days: []
 			}
 		},
@@ -51,68 +51,68 @@
 			this.initData()
 		},
 		methods:{
-			  initData(cur) {  
-			      var date;  
-			      if (cur) {  
-			        date = new Date(cur);  
-			      } else {  
-			        date = new Date();  
-			      }  
-			      this.currentDay = date.getDate();  
-			      this.currentYear = date.getFullYear();  
-			      this.currentMonth = date.getMonth() + 1;  
-			      this.currentWeek = date.getDay(); // 1...6,0  
-			      if (this.currentWeek == 0) {  
-			        this.currentWeek = 7;  
-			      }  
-			      var str = this.formatDate(this.currentYear, this.currentMonth, this.currentDay);  
-//			      console.log("today:" + str + "," + this.currentWeek);  
-			      this.days.length = 0;  
-			      // 今天是周日，放在第一行第7个位置，前面6个  
-			      for (var i = this.currentWeek - 1; i >= 0; i--) {  
-			        var d = new Date(str);  
-			        d.setDate(d.getDate() - i);  
-//			        console.log("y:" + d.getDate());  
-			        this.days.push(d);  
-			      }  
-			      for (var i = 1; i <= 35 - this.currentWeek; i++) {  
-			        var d = new Date(str);  
-			        d.setDate(d.getDate() + i);  
-			        this.days.push(d);  
-			      }  
-		    },  
-		    // 当前日期  
-		    pick(date) {  
-//		      console.log(this.formatDate(date.getFullYear(), date.getMonth() + 1, date.getDate()));  
-		    },  
-		    // 上一月  
-		    pickPre(year, month) {  
-		      //  setDate(0); 上月最后一天  
-		      //  setDate(-1); 上月倒数第二天  
-		      //  setDate(dx) 参数dx为 上月最后一天的前后dx天  
-		      var d = new Date(this.formatDate(year, month, 1));  
-		      d.setDate(0);  
-		      this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));  
-		    },  
-		    // 下一月  
-		    pickNext(year, month) {  
-		      var d = new Date(this.formatDate(year, month, 1));  
-		      d.setDate(35);  
-		      this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));  
-		    },  
-		    // 当前年月  
-		    pickYear(year, month) {  
-		      alert(year + "," + month);  
-		    },  
-		  
-		    // 返回 类似 2016-01-02 格式的字符串  
-		    formatDate(year, month, day) {  
-		      var y = year;  
-		      var m = month;  
-		      if (m < 10) m = "0" + m;  
-		      var d = day;  
-		      if (d < 10) d = "0" + d;  
-		      return y + "-" + m + "-" + d  
+			  initData(cur) {
+			      var date;
+			      if (cur) {
+			        date = new Date(cur);
+			      } else {
+			        date = new Date();
+			      }
+			      this.currentDay = date.getDate();
+			      this.currentYear = date.getFullYear();
+			      this.currentMonth = date.getMonth() + 1;
+			      this.currentWeek = date.getDay(); // 1...6,0
+			      if (this.currentWeek == 0) {
+			        this.currentWeek = 7;
+			      }
+			      var str = this.formatDate(this.currentYear, this.currentMonth, this.currentDay);
+//			      console.log("today:" + str + "," + this.currentWeek);
+			      this.days.length = 0;
+			      // 今天是周日，放在第一行第7个位置，前面6个
+			      for (var i = this.currentWeek-1; i >= 0; i--) {
+			        var d = new Date(str);
+			        d.setDate(d.getDate() - i);
+//			        console.log("y:" + d.getDate());
+			        this.days.push(d);
+			      }
+			      for (var i = 1; i <= 43 - this.currentWeek; i++) {
+			        var d = new Date(str);
+			        d.setDate(d.getDate() + i);
+			        this.days.push(d);
+			      }
+		    },
+		    // 当前日期
+		    pick(date) {
+//		      console.log(this.formatDate(date.getFullYear(), date.getMonth() + 1, date.getDate()));
+		    },
+		    // 上一月
+		    pickPre(year, month) {
+		      //  setDate(0); 上月最后一天
+		      //  setDate(-1); 上月倒数第二天
+		      //  setDate(dx) 参数dx为 上月最后一天的前后dx天
+		      var d = new Date(this.formatDate(year, month, 1));
+		      d.setDate(0);
+		      this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
+		    },
+		    // 下一月
+		    pickNext(year, month) {
+		      var d = new Date(this.formatDate(year, month, 1));
+		      d.setDate(35);
+		      this.initData(this.formatDate(d.getFullYear(), d.getMonth() + 1, 1));
+		    },
+		    // 当前年月
+		    pickYear(year, month) {
+		      alert(year + "," + month);
+		    },
+
+		    // 返回 类似 2016-01-02 格式的字符串
+		    formatDate(year, month, day) {
+		      var y = year;
+		      var m = month;
+		      if (m < 10) m = "0" + m;
+		      var d = day;
+		      if (d < 10) d = "0" + d;
+		      return y + "-" + m + "-" + d
 		    }
 		  }
 	}
@@ -123,7 +123,7 @@
 	width: 280px;
 	height: 250px;
 	>.calendar{
-		
+
 		padding: 15px;
 		padding-top: 25px;
 		width: 100%;
@@ -147,7 +147,7 @@
 						color: #999999;
 					}
 					&.year-month{
-						
+
 					}
 					&.last{
 						float: left;
@@ -156,7 +156,7 @@
 						cursor: pointer;
 						margin-top: 4px;
 						color: #409EFF;
-						font-weight:700; 
+						font-weight:700;
 						&:hover{
 							color: #199475;
 						}
@@ -168,7 +168,7 @@
 						cursor: pointer;
 						margin-top: 4px;
 						color: #409EFF;
-						font-weight:700; 
+						font-weight:700;
 						&:hover{
 							color: #199475;
 						}
@@ -198,7 +198,7 @@
 				width: 40px;
 				float: left;
 				&:hover{
-					color: red;	
+					color: red;
 				}
 			}
 		}

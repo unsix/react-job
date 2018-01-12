@@ -277,7 +277,7 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
-					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
 				// 	else {
@@ -301,7 +301,8 @@
 				this.pic_time = 0
 				this.loadingShow = true
 				setTimeout(() => {
-					if(this.picArr.length === 0 && this.fileArr.length === 0) {
+          console.log(this.picArr.length)
+          if(this.picArr.length === 0 && this.fileArr.length === 0) {
 						let param = new URLSearchParams();
 						if(this.cpj_ruleForm.project_manager.uid) {
 							param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
@@ -312,7 +313,6 @@
 						param.append("content", this.cpj_ruleForm.content);
 						param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 						param.append("title", this.cpj_ruleForm.title);
-
 						this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 							.then((res) => {
 								this.loadingShow = false
@@ -329,6 +329,8 @@
 					} else {
 					  //图片的判断
 						if(this.picArr.length != 0) {
+						  console.log('----------22---------')
+              console.log(this.picArr.length)
               var upload_enclosure_new = (fn)=>{
                 for(let i = 0; i < this.picArr.length; i++) {
                   let formData = new FormData();

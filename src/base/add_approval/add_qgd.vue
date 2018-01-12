@@ -73,6 +73,12 @@
 					<el-form-item label="申报采购原因及用途">
 						<el-input v-model="item.purpose"></el-input>
 					</el-form-item>
+          <el-form-item label="规格">
+            <el-input v-model="item.spec"></el-input>
+          </el-form-item>
+          <el-form-item label="型号">
+            <el-input v-model="item.model"></el-input>
+          </el-form-item>
 				</el-form>
 				<el-form :inline="true" class="demo-form-inline">
 					<el-form-item label="规格">
@@ -83,7 +89,7 @@
 					</el-form-item>
 				</el-form>
 				<el-form :inline="true" :rules="rules" class="demo-form-inline">
-					<el-form-item label="数量" prop="qing_num">
+					<el-form-item label="数量" prop="add_num">
 						<el-input v-model="item.num" id="num"></el-input>
 					</el-form-item>
 					<el-form-item label="单位">
@@ -96,7 +102,7 @@
 					</el-form-item>-->
 				</el-form>
 				<el-form :inline="true" :rules="rules" class="demo-form-inline">
-					<el-form-item label="单价" prop="qing_price" id="price">
+					<el-form-item label="单价" prop="add_price" id="price">
 						<el-input v-model="item.price"></el-input>
 					</el-form-item>
 					<el-form-item label="总额">
@@ -233,20 +239,20 @@
 						trigger: 'blur'
 					}],
 				},
-        rules:{
-          qing_num:[{
-            required: true,
-            pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
-            message: '数量请填入数字',
-            trigger: 'blur'
-          }],
-          qing_price:[{
-            required: true,
-            pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
-            message: '单价请填入数字',
-            trigger: 'blur'
-          }]
-        },
+        // rules:{
+        //   add_num:[{
+        //     //required: true,
+        //     pattern:  /^-?[1-9]\d*$/,
+        //     message: '数量请填入数字',
+        //     trigger: 'blur'
+        //   }],
+        //   add_price:[{
+        //     //required: true,
+        //     pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
+        //     message: '单价请填入数字',
+        //     trigger: 'blur'
+        //   }]
+        // },
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				pic_hash_arr: [],
 				file_hash_arr: [],
@@ -546,7 +552,7 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
-					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
 				// 	else {

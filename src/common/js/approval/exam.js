@@ -29,6 +29,7 @@ function get_data1(time){
 	${time.slice(11)}`
 }
 export function create_exam_list(item) {
+  //console.log(item)
   return new exam_list({
     approval_id: item.approval_id,
     name: item.name,
@@ -96,6 +97,8 @@ function get_type(type){
 		return '合同评审表'
 	}else if(type === '10'){
 		return '请购单'
-	}
+	} else if(type === '11'){
+    return '报销单'
+  }
 
 }

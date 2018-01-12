@@ -526,89 +526,173 @@
 				</div>
 			</div>
 			<!--申请公章展示-->
-			<div class="form" name="申请公章" v-if="gongzhang_show">
-				<div>
-					<span>用章部门：</span><span>{{form_Lista.department_name}}</span>
-				</div>
-				<div>
-					<span>申请人：</span><span>{{form_Lista.user_name}}</span>
-				</div>
-				<div>
-					<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
-				</div>
-				<div v-for="item in form_Lista.info" class="qingdan">
-					<h4>申请清单</h4>
-					<p>印章类别:<span>{{item.seal_type}}</span></p>
-					<p>盖章事由:<span>{{item.reason}}</span></p>
-					<p>资料名称:<span>{{item.contract_name}}</span></p>
-					<p>公司名称:<span>{{item.name_company}}</span></p>
-					<p>数量:<span>{{item.num}}</span></p>
-					<p>备注:<span>{{item.remarks}}</span></p>
-				</div>
-				<div>
-					<span>附件列表：</span>
-					<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
-				</div>
-				<div>
-					<span>图片附件：</span>
-					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
-						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
-					</a>
-				</div>
-				<div>
-					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
-				</div>
-				<div>
-					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
+      <div class="form" name="申请公章" v-if="gongzhang_show">
+        <div>
+          <span>用章部门：</span><span>{{form_Lista.department_name}}</span>
+        </div>
+        <div>
+          <span>申请人：</span><span>{{form_Lista.user_name}}</span>
+        </div>
+        <div>
+          <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+        </div>
+        <div v-for="item in form_Lista.info" class="qingdan">
+          <h4>申请清单</h4>
+          <p>印章类别:<span>{{item.seal_type}}</span></p>
+          <p>盖章事由:<span>{{item.reason}}</span></p>
+          <p>资料名称:<span>{{item.contract_name}}</span></p>
+          <p>公司名称:<span>{{item.name_company}}</span></p>
+          <p>数量:<span>{{item.num}}</span></p>
+          <p>备注:<span>{{item.remarks}}</span></p>
+        </div>
+        <div>
+          <span>附件列表：</span>
+          <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+        </div>
+        <div>
+          <span>图片附件：</span>
+          <a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+            <img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
+          </a>
+        </div>
+        <div>
+          <span>发起人：</span><span>{{form_Listb.found_name}}</span>
+        </div>
+        <div>
+          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
 						</span>
-				</div>
-				<div>
-					<span>审批：</span>
-					<div class="exam_info">
-						<div class="avatar lzz">
-							<span style="margin-left: 5px;">状态</span>
-						</div>
-						<div class="name lzz">
-							<span>姓名</span>
-						</div>
-						<div class="tel lzz">
-							<span>时间</span>
-						</div>
-						<div class="operation lzz">
-							<span>回复</span>
-						</div>
-					</div>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar">
-								<span>{{item.is_agree}}</span>
-							</div>
-							<div class="name">
-								<span>{{item.name}}</span>
-							</div>
-							<div class="tel">
-								<span>{{item.add_time}}</span>
-							</div>
-							<div class="operation">
-								<span>{{item.opinion}}</span>
-							</div>
-						</div>
-						<div>
-							<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
-						</div>
-					</div>
-				</div>
-				<div class="menu" v-show="handle_show">
-					<el-button type="primary" plain @click="handle">处理</el-button>
-					<div class="button" v-show="menuShow">
-						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-						<input name="token" type="hidden" :value="input_value">
-						<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-						<el-button type="primary" round @click="agree($event)">同意</el-button>
-						<el-button type="danger" round @click="refuse">拒绝</el-button>
-					</div>
-				</div>
-			</div>
+        </div>
+        <div>
+          <span>审批：</span>
+          <div class="exam_info">
+            <div class="avatar lzz">
+              <span style="margin-left: 5px;">状态</span>
+            </div>
+            <div class="name lzz">
+              <span>姓名</span>
+            </div>
+            <div class="tel lzz">
+              <span>时间</span>
+            </div>
+            <div class="operation lzz">
+              <span>回复</span>
+            </div>
+          </div>
+          <div v-for="item in form_Listb.content">
+            <div class="exam_info">
+              <div class="avatar">
+                <span>{{item.is_agree}}</span>
+              </div>
+              <div class="name">
+                <span>{{item.name}}</span>
+              </div>
+              <div class="tel">
+                <span>{{item.add_time}}</span>
+              </div>
+              <div class="operation">
+                <span>{{item.opinion}}</span>
+              </div>
+            </div>
+            <div>
+              <img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+          </div>
+        </div>
+        <div class="menu" v-show="handle_show">
+          <el-button type="primary" plain @click="handle">处理</el-button>
+          <div class="button" v-show="menuShow">
+            <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            <input name="token" type="hidden" :value="input_value">
+            <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
+            <el-button type="primary" round @click="agree($event)">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
+          </div>
+        </div>
+      </div>
+      <!--报销单展示-->
+      <div class="form" name="申请公章" v-if="baoxiaodan_show">
+        <div>
+          <span>报销部门：</span><span>{{form_Lista.department_name}}</span>
+        </div>
+        <div>
+          <span>报销人：</span><span>{{form_Lista.user_name}}</span>
+        </div>
+        <div>
+          <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+        </div>
+        <div v-for="item in form_Lista.info" class="qingdan">
+          <h4>报销条目</h4>
+          <p>日期:<span>{{item.month_day}}</span></p>
+          <p>报销内容:<span>{{item.content}}</span></p>
+          <p>金额:<span>{{item.price}}</span></p>
+          <p>单据张数:<span>{{item.amount}}</span></p>
+          <p>备注:<span>{{item.remarks}}</span></p>
+        </div>
+        <div>
+          <span>附件列表：</span>
+          <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+        </div>
+        <div>
+          <span>图片附件：</span>
+          <a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+            <img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
+          </a>
+        </div>
+        <div>
+          <span>发起人：</span><span>{{form_Listb.found_name}}</span>
+        </div>
+        <div>
+          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
+						</span>
+        </div>
+        <div>
+          <span>审批：</span>
+          <div class="exam_info">
+            <div class="avatar lzz">
+              <span style="margin-left: 5px;">状态</span>
+            </div>
+            <div class="name lzz">
+              <span>姓名</span>
+            </div>
+            <div class="tel lzz">
+              <span>时间</span>
+            </div>
+            <div class="operation lzz">
+              <span>回复</span>
+            </div>
+          </div>
+          <div v-for="item in form_Listb.content">
+            <div class="exam_info">
+              <div class="avatar">
+                <span>{{item.is_agree}}</span>
+              </div>
+              <div class="name">
+                <span>{{item.name}}</span>
+              </div>
+              <div class="tel">
+                <span>{{item.add_time}}</span>
+              </div>
+              <div class="operation">
+                <span>{{item.opinion}}</span>
+              </div>
+            </div>
+            <div>
+              <img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+          </div>
+        </div>
+        <div class="menu" v-show="handle_show">
+          <el-button type="primary" plain @click="handle">处理</el-button>
+          <div class="button" v-show="menuShow">
+            <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            <input name="token" type="hidden" :value="input_value">
+            <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
+            <el-button type="primary" round @click="agree($event)">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
+          </div>
+        </div>
+      </div>
+
 		</div>
 		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 		<loading v-show="loading_show"></loading>
@@ -638,7 +722,8 @@
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
-	import { create_exam_list } from '@/common/js/approval/exam'
+  import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan";
+  import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -658,6 +743,7 @@
 				qinggoudan_show: false,
 				pingshenbiao_show: false,
 				gongzhang_show: false,
+        baoxiaodan_show:false,
 				form_Lista: [],
 				form_Listb: [],
 				menuShow: false,
@@ -686,7 +772,7 @@
 				classValue: '',
 				approval_type: 0,
 				classIndex: -1,
-				group: ['合同评审表', '请购单', '请款单', '呈批件', '申请公章'],
+				group: ['合同评审表', '请购单', '请款单', '呈批件', '申请公章','报销单'],
 				form_approval_id: '',
 				request_money_basis_type: '',
 				fileAccordShow: false,
@@ -815,6 +901,7 @@
 					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
 					.then((res)=>{
+					  //撤销审批
 						this.listShow = true
 						this.listSeaShow = true
 						this.formShow = false
@@ -823,6 +910,7 @@
 						this.qinggoudan_show = false
 						this.pingshenbiao_show = false
 						this.gongzhang_show = false
+            this.baoxiaodan_show = false
 						if(res.data.code === 0){
 							this.$message({
 					          message: '撤销成功',
@@ -863,6 +951,7 @@
 				this.form_approval_id = item.form_approval_id
 			},
 			classButton(item, index) {
+			  console.log(item)
 				this.pageIndex = 1
 				this.classIndex = index
 				if(item === '合同评审表') {
@@ -875,7 +964,9 @@
 					this.approval_type = 6
 				} else if(item === '请款单') {
 					this.approval_type = 7
-				}
+				} else if(item === '报销单'){
+				  this.approval_type = 11
+        }
 				this.doSearch()
 			},
       //獲取用戶公司清單
@@ -1284,6 +1375,7 @@
 				this.qinggoudan_show = false
 				this.cengpijian_show = false
 				this.pingshenbiao_show = false
+        this.baoxiaodan_show = false
 				this.gongzhang_show = false
 			},
 			listCli(item) {
@@ -1305,6 +1397,7 @@
 				this.cengpijian_show = false,
 				this.qinggoudan_show = false,
 				this.pingshenbiao_show = false,
+        this.baoxiaodan_show = false,
 				this.gongzhang_show = false,
 				this.now_type_name = item.type
 				if(item.type === '呈批件') {
@@ -1317,13 +1410,14 @@
 					this.pingshenbiao_show = true
 				} else if(item.type === '申请公章') {
 					this.gongzhang_show = true
-				}
+				} else if(item.type === '报销单'){
+			    this.baoxiaodan_show = true
+        }
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-					  console.log(res)
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1333,7 +1427,6 @@
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '请款单') {
-
 							this.form_Lista = create_qingkuandan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
@@ -1345,7 +1438,11 @@
 							this.form_Lista = create_qinggoudan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
-						}
+						} else if(item.type === '报销单'){
+              this.form_Lista = create_baoxiaodan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            }
 					})
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);

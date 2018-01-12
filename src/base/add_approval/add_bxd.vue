@@ -10,6 +10,16 @@
         <el-input v-model="bxd_ruleForm.baoxiaoren"></el-input>
       </el-form-item>
 
+      <el-form-item label="项目负责人(部门经理)">
+        <el-select v-model="bxd_ruleForm.project_manager_name" placeholder="请选择" @change="bxdSelectOk">
+          <el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+            <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
+            <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
+          </el-option>
+        </el-select>
+      </el-form-item>
+
       <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i></div>
       <div v-for="(item,index) in bxd_ruleForm.add" class="new_bxd">
         <div class="close"><i class="fa fa-close" v-show="bxd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
@@ -36,15 +46,7 @@
         </el-form>
       </div>
 
-      <el-form-item label="项目负责人(部门经理)">
-        <el-select v-model="bxd_ruleForm.project_manager_name" placeholder="请选择" @change="bxdSelectOk">
-          <el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
-            <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
-            <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
+
 
       <el-upload class="upload-demo" v-model="bxd_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文件</el-button>
@@ -74,7 +76,6 @@
             bxd_ruleForm:{
               department_id:'',
               department_name:'',
-              content:'',
               project_manager: {},
               project_manager_name: '',
               add:[{
@@ -216,7 +217,6 @@
           }),
           bxdSelectOk(tab){
             this.comPersonList.forEach((item) => {
-              console.log(item)
               if(item.name === tab) {
                 this.$set(this.bxd_ruleForm.project_manager, 'uid', item.uid)
               }
@@ -273,6 +273,7 @@
             this.loadingShow = true
             setTimeout(()=>{
               if(this.picArr.length === 0 && this.fileArr.length === 0){
+                console.log("-----------ss----------")
                 let param = new URLSearchParams();
                 if (this.bxd_ruleForm.project_manager.uid){
                   param.append("project_manager", JSON.stringify(this.bxd_ruleForm.project_manager));
@@ -280,13 +281,8 @@
                 param.append("uid",this.user.uid)
                 param.append("company_id",this.nowCompanyId)
                 param.append("department_id",this.bxd_ruleForm.department_id)
-                param.append("content",this.bxd_ruleForm.content)
-                param.append("month_day",this.bxd_ruleForm.month_day)
-                param.append("amount",this.bxd_ruleForm.amount)
-                param.append("price",this.bxd_ruleForm.price)
-                param.append("remarks",this.bxd_ruleForm.remarks)
-                param.append("money",this.bxd_ruleForm.money)
-                param.append("title",this.bxd_ruleForm.title)
+                param.append("baoxiaoren",this.bxd_ruleForm.baoxiaoren)
+                param.append("content", JSON.stringify(this.bxd_ruleForm.add));
 
                 this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                   .then((res)=>{
@@ -303,6 +299,7 @@
                   })
               }else{
                 if(this.picArr.length != 0) {
+                  console.log("-----------dd----------")
                   for(let i = 0; i < this.picArr.length; i++) {
                     let formData = new FormData();
                     formData.append('file', this.picArr[i].raw);
@@ -448,7 +445,6 @@
               param.append("price",this.bxd_ruleForm.price)
               param.append("remarks",this.bxd_ruleForm.remarks)
               param.append("money",this.bxd_ruleForm.money)
-              param.append("title",this.bxd_ruleForm.title)
               this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                 .then((res)=>{
                   this.loadingShow = false
@@ -484,7 +480,6 @@
               param.append("price",this.bxd_ruleForm.price)
               param.append("remarks",this.bxd_ruleForm.remarks)
               param.append("money",this.bxd_ruleForm.money)
-              param.append("title",this.bxd_ruleForm.title)
               this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                 .then((res)=>{
                   this.loadingShow = false

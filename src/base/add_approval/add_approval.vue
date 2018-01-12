@@ -84,6 +84,7 @@
 	import cpj from '@/base/exam_form/cpj'
 	import qkd from '@/base/exam_form/qkd'
 	import sqgz from '@/base/exam_form/sqgz'
+  //import bxd from '@/base/exam_form/bxd'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
@@ -514,6 +515,7 @@
 			},
       //tab 切換
 			handleClick(tab) {
+			  console.log(tab)
 				this.approval_id1 = ''
 				this.approval_id2 = ''
 				this.approval_id3 = ''
@@ -544,15 +546,12 @@
 				} else if(this.navIndex === 3) {
 					this.sqgz_show = true
 					this.approval_type = 5
-
-
 				} else if(this.navIndex === 4) {
 					this.cpj_show = true
 					this.approval_type = 6
-
 				} else if(this.navIndex === 5){
 				  this.bxd_show = true
-          this.approval_type = 6
+          this.approval_type = 11
         }
 			},
 
@@ -648,6 +647,7 @@
 			cpj,
 			qkd,
 			sqgz,
+      //bxd,
 			addPsb,
 			addQgd,
 			addCpj,

@@ -391,7 +391,7 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
-					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
 				// 	else {
@@ -724,4 +724,30 @@
 			}
 		}
 	}
+  #picc{
+    ul{
+      li{
+        width: 85px;
+        height: 85px;
+      }
+    }
+  }
+  .el-upload--picture-card{
+    width: 85px;
+    height: 85px;
+    .el-upload-list__item.is-success{
+      width: 85px;
+      height: 85px;
+    }
+  }
+  .el-icon-plus{
+    position: relative;
+    top: -25px;
+  }
+  .upload-demo_a{
+    margin-top: 20px;
+  }
+  .el-button.el-button--primary{
+    margin-top: 10px;
+  }
 </style>

@@ -420,7 +420,7 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
-					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
 				// 	else {

@@ -24,7 +24,7 @@ function list(list){
 	return arr
 }
 function content(item){
-	item.forEach((list)=>{	
+	item.forEach((list)=>{
 		if(list.is_agree === '1'){
 			list.is_agree = '已同意'
 		}else if(list.is_agree === '2'){

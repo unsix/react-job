@@ -37,7 +37,7 @@
 					<el-form-item label="资料名称">
 						<el-input v-model="item.contract_name"></el-input>
 					</el-form-item>
-					<el-form-item label="数量" prop="little">
+					<el-form-item label="数量" prop="num">
 						<el-input v-model.number="item.num"></el-input>
 					</el-form-item>
 					<el-form-item label="公司名称">
@@ -117,26 +117,27 @@
 						message: '请填写呈资料名称',
 						trigger: 'change'
 					}],
-					num: [{
-							required: true,
-							message: '请填写数量'
-						},
-						{
-							type: 'number',
-							message: '数量必须为数字值'
-						}
-					],
+				// 	num: [{
+				// 			required: true,
+				// 			message: '请填写数量'
+				// 		},
+				// 		{
+				// 			type: 'number',
+				// 			message: '数量必须为数字值'
+				// 		}
+				// 	],
 					name_company: [{
 						required: true,
 						message: '请填写公司名称',
 						trigger: 'change'
 					}],
-          little:[{
-            pattern:  /^[0-9]+$/,
-            message: '数量请填正整数',
-            type:'number',
-            trigger: 'change'
-          }]
+          // little:[{
+          //   //required: true,
+          //   //pattern:  /^[0-9]+$/,
+          //   message: '数量请填正整数',
+          //   type:'number',
+          //   trigger: 'change'
+          // }]
 				},
 				pic_hash_arr: [],
 				file_hash_arr: [],
@@ -355,7 +356,7 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
-					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1') {
+					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1'|| item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
 				// 	else {
