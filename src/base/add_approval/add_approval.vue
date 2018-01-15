@@ -84,7 +84,7 @@
 	import cpj from '@/base/exam_form/cpj'
 	import qkd from '@/base/exam_form/qkd'
 	import sqgz from '@/base/exam_form/sqgz'
-  //import bxd from '@/base/exam_form/bxd'
+  import bxd from '@/base/exam_form/bxd'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
@@ -227,7 +227,7 @@
 				this.qk_return = false
 				this.at_qingkuanShow = true
 			},
-      //请款单tab
+      //查看
 			qkView(item,index){
 				this.qk_return = true
 				this.at_qingkuanShow = false
@@ -242,6 +242,7 @@
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
+              console.log(this.form_Lista)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
@@ -264,9 +265,10 @@
 							this.form_Lista = create_qinggoudan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
-						} else if(item.type=== '报销单'){
-						  this.bxd_if=true
+						} else if(item.type === '报销单'){
+						  this.bxd_if =true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
+              console.log(this.form_Lista)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             }
@@ -298,6 +300,7 @@
 			},
 
 			qkUser(item,index){
+			  console.log(item)
 				this.request_money_basis_type = item.type
 				this.form_approval_id = ''
 				this.at_qingkuanShow = false
@@ -367,7 +370,7 @@
 					this.approval_id5 = item.approval_id
 					this.qkd_show = true
 				} else if(item.type === '报销单'){
-				  this.approval_id6 = item.approval_id6
+				  this.approval_id6 = item.approval_id
           this.bxd_show = true
         }
 			},
@@ -387,6 +390,7 @@
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
+              console.log(this.form_Lista)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
@@ -412,6 +416,7 @@
 						} else if(item.type === '报销单'){
 						  this.bxd_if = true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
+              console.log(this.form_Lista)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             }
@@ -515,7 +520,6 @@
 			},
       //tab 切換
 			handleClick(tab) {
-			  console.log(tab)
 				this.approval_id1 = ''
 				this.approval_id2 = ''
 				this.approval_id3 = ''
@@ -542,7 +546,6 @@
 					this.as_what_show = true
 					this.formShow = false
 					this.approval_type = 1001
-
 				} else if(this.navIndex === 3) {
 					this.sqgz_show = true
 					this.approval_type = 5
@@ -647,7 +650,7 @@
 			cpj,
 			qkd,
 			sqgz,
-      //bxd,
+      bxd,
 			addPsb,
 			addQgd,
 			addCpj,

@@ -66,9 +66,11 @@
 				this._getExamList()
 			},
 			viewInfo(item, index) {
+			  console.log(item)
 				this.$emit('viewInfo', item)
 			},
 			useInfo(item, index) {
+			  console.log(item)
 				this.$emit('useInfo', item)
 			},
 			returnForm() {
@@ -153,7 +155,7 @@
 						display: inline-block;
 						float: right;
 						margin-right: 20px;
-						margin-top: 15px;
+						margin-top: 1px;
 						cursor: pointer;
 						.el-button.is-round {
 							padding: 4px 12px;

@@ -27,12 +27,12 @@
 				</el-select>
 			</el-form-item>
 
-			<el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+			<el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure" accept="image/*,image/jpg,image/png,image/jpeg" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <i class="el-icon-plus"></i>
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
-      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure" accept="text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/rtf" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
@@ -130,7 +130,17 @@
 				this.fileList = fileList
 			},
 			handlePreview(file, fileList) {
-				this.fileList = fileList
+        this.fileList = fileList
+        // fileList.forEach((item)=>{
+        //   if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1'){
+        //     this.fileList = fileList
+        //   }else{
+        //     this.$message.error('只能上传jpg或png格式的图片');
+        //     file.abort
+        //     return false;
+        //
+        //   }
+        // })
 			},
       handleRemove_a(file, fileList_a) {
         this.fileList_a = fileList_a
@@ -139,6 +149,7 @@
         this.fileList_a = fileList_a
       },
 			initial_data() {
+			  console.log(this.approval_id)
 				if(!this.approval_id) {
 					return
 				}
@@ -280,9 +291,6 @@
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
-				// 	else {
-            // this.fileArr.push(item)
-				// 	}
 				})
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)

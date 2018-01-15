@@ -29,7 +29,6 @@ function get_data1(time){
 	${time.slice(11)}`
 }
 export function create_exam_list(item) {
-  //console.log(item)
   return new exam_list({
     approval_id: item.approval_id,
     name: item.name,

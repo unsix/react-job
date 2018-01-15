@@ -1,15 +1,9 @@
 <template>
   <div class="baoxiaodan">
     <el-form :model="bxd_ruleForm" :rules="bxd_rules" ref="bxd_ruleForm" label-width="150px" class="demo-bxd_ruleForm">
-      <el-form-item label="报销部门" prop="department_name">
-        <el-select v-model="bxd_ruleForm.department_name" placeholder="请选择报销部门">
-          <el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
-        </el-select>
+      <el-form-item label="标题" prop="title">
+        <el-input v-model="bxd_ruleForm.title"></el-input>
       </el-form-item>
-      <el-form-item label="报销人" prop="baoxiaoren">
-        <el-input v-model="bxd_ruleForm.baoxiaoren"></el-input>
-      </el-form-item>
-
       <el-form-item label="项目负责人(部门经理)">
         <el-select v-model="bxd_ruleForm.project_manager_name" placeholder="请选择" @change="bxdSelectOk">
           <el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
@@ -25,7 +19,7 @@
         <div class="close"><i class="fa fa-close" v-show="bxd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
         <el-form :inline="true" class="demo-form-inline">
           <el-form-item label="日期" prop="start_time">
-            <el-date-picker type="date" v-model="bxd_ruleForm.month_day" style="width: 200px"></el-date-picker>
+            <el-date-picker type="date" v-model="item.month_day" style="width: 200px"></el-date-picker>
           </el-form-item>
           <el-form-item label="报销内容">
             <el-input v-model="item.content"></el-input>
@@ -33,23 +27,30 @@
         </el-form>
         <el-form :inline="true" class="demo-form-inline">
           <el-form-item label="金额">
-            <el-input v-model="item.price"></el-input>
+            <!--<el-input v-model="item.price"></el-input>-->
+            <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
           </el-form-item>
           <el-form-item label="单据张数">
             <el-input v-model="item.amount"></el-input>
           </el-form-item>
         </el-form>
-        <el-form :inline="true" class="demo-form-inline">
-          <el-form-item label="备注">
-            <el-input v-model="item.remarks"></el-input>
+        <el-form :inline="false" class="demo-form-inline">
+          <el-form-item label="备注" label-width="50px">
+            <el-input v-model="item.remarks" style="width: 500px"></el-input>
           </el-form-item>
         </el-form>
       </div>
 
 
 
-      <el-upload class="upload-demo" v-model="bxd_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
-        <el-button size="small" type="info" plain>上传文件</el-button>
+      <el-upload class="upload-demo" id="picc" v-model="bxd_ruleForm.many_enclosure" accept="image/*,image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+        <i class="el-icon-plus"></i>
+        <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+      </el-upload>
+      <el-upload class="upload-demo_a" v-model="bxd_ruleForm.many_enclosure" accept="text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/rtf" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+        <el-button size="small" type="info" plain>上传文本</el-button>
+        <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
 
       <el-form-item>
@@ -71,11 +72,11 @@
         data(){
           return{
             fileList:[],
+            fileList_a:[],
             picArr:[],
             fileArr:[],
             bxd_ruleForm:{
-              department_id:'',
-              department_name:'',
+              title:'',
               project_manager: {},
               project_manager_name: '',
               add:[{
@@ -85,15 +86,14 @@
                 price:'',
                 remarks:''
               }]
-
             },
             bxd_rules:{
-              department_name:[{
+              title:[{
                 required: true,
-                message: '请填写报销部门',
+                message: '请填写标题',
                 trigger: 'change'
               }],
-              baoxiaoren:[{
+              title:[{
                 required: true,
                 message: '请填写报销人',
                 trigger: 'change'
@@ -140,27 +140,79 @@
           handlePreview(file,fileList){
             this.fileList=fileList
           },
+          handleRemove_a(file, fileList_a) {
+            this.fileList_a = fileList_a
+          },
+          handlePreview_a(file, fileList_a){
+            this.fileList_a = fileList_a
+          },
+          checkPrice:function (data) {
+            var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+            if(!priceReg.test(data.price)){
+              this.$message({
+                showClose: true,
+                message: '格式错误',
+                type: 'error'
+              })
+              data.price="";
+            }
+          },
           closeQd(index){
             this.bxd_ruleForm.add.splice(index,1)
           },
           initial_data(){
+            console.log(this.approval_id)
             if(!this.approval_id || this.approval_id === '') {
               return
             }
             let param = new URLSearchParams();
             param.append("uid",this.user.uid);
             param.append("approval_id",this.approval_id)
+            console.log(this.approval_id)
             this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
               .then((res)=>{
+                console.log(res)
                 this.form_Lista = create_baoxiaodan_list(res.data.data)
-                let department_name
-                setTimeout(()=>{
-                  this.comDepartList.forEach((item)=>{
-                    if(item.department_id === this.form_Lista.request_buy_department) {
-                      department_name = item.department_name
-                    }
-                  })
-                  this.bxd_ruleForm.department_id = department_id
+                this.bxd_ruleForm.add = this.form_Lista.content
+                this.bxd_ruleForm.title = this.form_Lista.title
+                this.bxd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
+                this.bxd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+                this.form_Lista.many_enclosure.forEach((item)=>{
+                  console.log(item)
+                  let img_name = item.name
+                  if (item.type === 3){
+                    let param = new URLSearchParams();
+                    param.append("enclosure_id", item.contract_id);
+                    this.$http.post("index.php/Mobile/approval/look_enclosure",param)
+                      .then((res)=>{
+                        console.log(res)
+                        res.data.data.picture.forEach((item) => {
+                          //item 就是hash
+                          let obj = {}
+                          let img_add = 'http://bbsf-file.hzxb.net/'+item
+                          console.log(img_add)
+                          obj.hash = item
+                          obj.name = img_name
+                          obj.url = img_add
+                          this.fileList.push(obj)
+                          console.log(this.fileList)
+                        })
+                      })
+                  }else if(item.type === 4){
+                    let param = new URLSearchParams();
+                    param.append("attachments_id", item.contract_id);
+                    this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+                      .then((res) => {
+                        console.log(res)
+                        let obj = {}
+                        let file_data = res.data.data
+                        let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                        obj.name = file_data.file_name+'.'+file_data.attribute
+                        obj.address = file_add
+                        obj.hash = file_data.attachments
+                        this.fileList_a.push(obj)
+                      })
+                  }
                 })
               })
           },
@@ -233,11 +285,22 @@
             this.bxd_ruleForm.add.push(obj)
           },
           submitForm_bxd(formName){
-            this.comDepartList.forEach((item) => {
-              if(item.department_name === this.bxd_ruleForm.department_name) {
-                this.bxd_ruleForm.department_id = item.department_id
-              }
+            this.returnOk = false
+            this.bxd_ruleForm.add.forEach((item)=>{
+             if(item.month_day===''||item.content===''||item.price===''||item.amount===''){
+               this.$message.error('请将清单条目填写完整');
+               this.returnOk = true
+             }
             })
+            var re = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/;
+            if(!re.test(item.price)) {
+              this.$message.error('金额请填数字');
+              this.returnOk = true
+            }
+            if(!re.test(item.amount)) {
+              this.$message.error('单据张数请填数字');
+              this.returnOk = true
+            }
             this.$refs[formName].validate((valid) => {
               if(valid) {
                 this.bxd_submit()
@@ -252,12 +315,26 @@
             this.picArr =[]
             this.fileArr = []
             this.fileList.forEach((item)=>{
-              if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1'){
+              if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1'|| item.name.indexOf("图像") != '-1'){
                 this.picArr.push(item)
-              } else {
-                this.fileArr.push(item)
               }
             })
+            this.fileList_a.forEach((item) =>{
+              this.fileArr.push(item)
+            })
+            let stuf = this.bxd_ruleForm.add
+            for(var i=0;i<stuf.length;i++){
+              let timestamp2 = Date.parse(new Date(stuf[i].month_day));
+              let date = new Date();
+              date.setTime(timestamp2);
+              let y = date.getFullYear();
+              let m = date.getMonth() + 1;
+              m = m < 10 ? ('0' + m) : m;
+              let d = date.getDate();
+              d = d < 10 ? ('0' + d) : d;
+              stuf[i].month_day = y + '-' + m + '-' + d
+            }
+
             if (this.bxd_ruleForm.project_manager_name != ''){
               this.comPersonList.forEach((item) => {
                 if(item.name === this.bxd_ruleForm.project_manager_name) {
@@ -273,17 +350,14 @@
             this.loadingShow = true
             setTimeout(()=>{
               if(this.picArr.length === 0 && this.fileArr.length === 0){
-                console.log("-----------ss----------")
                 let param = new URLSearchParams();
                 if (this.bxd_ruleForm.project_manager.uid){
                   param.append("project_manager", JSON.stringify(this.bxd_ruleForm.project_manager));
                 }
                 param.append("uid",this.user.uid)
                 param.append("company_id",this.nowCompanyId)
-                param.append("department_id",this.bxd_ruleForm.department_id)
-                param.append("baoxiaoren",this.bxd_ruleForm.baoxiaoren)
+                param.append("title",this.bxd_ruleForm.title)
                 param.append("content", JSON.stringify(this.bxd_ruleForm.add));
-
                 this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                   .then((res)=>{
                     this.loading_show = false
@@ -299,7 +373,6 @@
                   })
               }else{
                 if(this.picArr.length != 0) {
-                  console.log("-----------dd----------")
                   for(let i = 0; i < this.picArr.length; i++) {
                     let formData = new FormData();
                     formData.append('file', this.picArr[i].raw);
@@ -310,10 +383,30 @@
                       }
                     }
                     //就是这一段加上判断是上传过的还是没上传
-                    if(!this.picArr[i].size){
-                      //foreach一下
-                      this.pic_hash_arr.push(this.picArr[i].hash)
-                      console.log(this.picArr[i].hash)
+                    var upload_enclosure_new = (fn)=>{
+                      for(let i = 0; i < this.picArr.length; i++) {
+                        let formData = new FormData();
+                        formData.append('file', this.picArr[i].raw);
+                        formData.append('token', this.token);
+                        let config = {
+                          headers: {
+                            'Content-Type': 'multipart/form-data'
+                          }
+                        }
+                        if(!this.picArr[i].size){
+                          this.pic_hash_arr.push(this.picArr[i].hash);
+                          this.pic_hash_arr.length === this.picArr.length && fn(this.picArr[i].name);
+                        }else{
+                          this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                            this.pic_hash_arr.push(res.data.hash)
+                            if(this.pic_hash_arr.length === this.picArr.length) {
+                              fn(this.picArr[i].name);
+                            }
+                          })
+                        }
+                      }
+                    }
+                    upload_enclosure_new((name)=>{
                       let nparam = new URLSearchParams()
                       nparam.append("uid", this.user.uid);
                       nparam.append("picture", JSON.stringify(this.pic_hash_arr));
@@ -322,31 +415,12 @@
                           this.afile_hash_arr.push({
                             "type": 3,
                             "contract_id": res.data.data.enclosure_id,
-                            "name": this.picArr[i].name
+                            name,
                           })
                           let aDate = Date.parse(new Date())
                           this.pic_time = aDate
                         })
-                    }else{
-                      this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-                        this.pic_hash_arr.push(res.data.hash)
-                        if(this.pic_hash_arr.length === this.picArr.length) {
-                          let nparam = new URLSearchParams();
-                          nparam.append("uid", this.user.uid);
-                          nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                          this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-                            .then((res) => {
-                              this.afile_hash_arr.push({
-                                "type": 3,
-                                "contract_id": res.data.data.enclosure_id,
-                                "name": this.picArr[i].name
-                              })
-                              let aDate = Date.parse(new Date())
-                              this.pic_time = aDate
-                            })
-                        }
-                      })
-                    }
+                    })
                     //请求七牛
 
                   }
@@ -414,15 +488,13 @@
                           })
                       })
                     }
-                    //这里
-
                   }
                 }
 
 
               }
             },500)
-          },
+          }
         },
         watch:{
           file_time(){
@@ -438,13 +510,10 @@
               }
               param.append("uid",this.user.uid)
               param.append("company_id",this.nowCompanyId)
-              param.append("department_id",this.bxd_ruleForm.department_id)
-              param.append("content",this.bxd_ruleForm.content)
-              param.append("month_day",this.bxd_ruleForm.month_day)
-              param.append("amount",this.bxd_ruleForm.amount)
-              param.append("price",this.bxd_ruleForm.price)
-              param.append("remarks",this.bxd_ruleForm.remarks)
-              param.append("money",this.bxd_ruleForm.money)
+              param.append("title",this.bxd_ruleForm.title)
+              param.append("content", JSON.stringify(this.bxd_ruleForm.add));
+              param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
+              param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
               this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                 .then((res)=>{
                   this.loadingShow = false
@@ -473,13 +542,10 @@
               }
               param.append("uid",this.user.uid)
               param.append("company_id",this.nowCompanyId)
-              param.append("department_id",this.bxd_ruleForm.department_id)
-              param.append("content",this.bxd_ruleForm.content)
-              param.append("month_day",this.bxd_ruleForm.month_day)
-              param.append("amount",this.bxd_ruleForm.amount)
-              param.append("price",this.bxd_ruleForm.price)
-              param.append("remarks",this.bxd_ruleForm.remarks)
-              param.append("money",this.bxd_ruleForm.money)
+              param.append("title",this.bxd_ruleForm.title)
+              param.append("content", JSON.stringify(this.bxd_ruleForm.add));
+              param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
+              param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
               this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                 .then((res)=>{
                   this.loadingShow = false
@@ -501,7 +567,7 @@
 
 <style lang="scss">
   .el-form--inline .el-form-item{
-    margin-left: 10px;
+    margin-left: 10px !important;
   }
 
   .el-select {

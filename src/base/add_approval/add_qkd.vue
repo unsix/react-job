@@ -59,13 +59,13 @@
 				</el-select>
 			</el-form-item>
 
-			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card":file-list="fileList" :auto-upload="false">
+			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" accept="image/*,image/jpg,image/png,image/jpeg" :on-remove="handleRemove" list-type="picture-card":file-list="fileList" :auto-upload="false">
         <i class="el-icon-plus"></i>
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
 
-      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" accept="text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/rtf" :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>

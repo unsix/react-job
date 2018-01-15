@@ -38,7 +38,8 @@
 						<el-input v-model="item.contract_name"></el-input>
 					</el-form-item>
 					<el-form-item label="数量" prop="num">
-						<el-input v-model.number="item.num"></el-input>
+						<!--<el-input v-model.number="item.num"></el-input>-->
+            <input type="tel" class="el-input__inner" @change="checkNum(item)" v-model="item.num" id="num">
 					</el-form-item>
 					<el-form-item label="公司名称">
 						<el-input v-model="item.name_company"></el-input>
@@ -49,13 +50,13 @@
 				</el-form>
 			</div>
 
-			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" :file-list="fileList" list-type="picture-card"  :auto-upload="false">
+			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" accept="image/*,image/jpg,image/png,image/jpeg" :file-list="fileList" list-type="picture-card"  :auto-upload="false">
         <i class="el-icon-plus"></i>
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
 
-      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" accept="text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/rtf" :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
@@ -117,27 +118,11 @@
 						message: '请填写呈资料名称',
 						trigger: 'change'
 					}],
-				// 	num: [{
-				// 			required: true,
-				// 			message: '请填写数量'
-				// 		},
-				// 		{
-				// 			type: 'number',
-				// 			message: '数量必须为数字值'
-				// 		}
-				// 	],
 					name_company: [{
 						required: true,
 						message: '请填写公司名称',
 						trigger: 'change'
 					}],
-          // little:[{
-          //   //required: true,
-          //   //pattern:  /^[0-9]+$/,
-          //   message: '数量请填正整数',
-          //   type:'number',
-          //   trigger: 'change'
-          // }]
 				},
 				pic_hash_arr: [],
 				file_hash_arr: [],
@@ -183,6 +168,17 @@
       },
       handlePreview_a(file, fileList_a){
         this.fileList_a = fileList_a
+      },
+      checkNum:function (data) {
+        var numReg =  /^-?[1-9]\d*$/
+        if(!numReg.test(data.num)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          data.num = "";
+        }
       },
 			initial_data() {
 				if(!this.approval_id) {

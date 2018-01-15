@@ -10,11 +10,11 @@ export default class gongzhang_list {
 export function create_gongzhang_list(item) {
   console.log(item)
 	return new gongzhang_list({
-	    department_name: item.department_name,
-	    user_name: item.user_name,
-	    info: get_info(item.info),
-	    project_manager_name:get_manager_name(item),
-	    many_enclosure:item. many_enclosure
+    department_name: item.department_name,
+    user_name: item.user_name,
+    info: get_info(item.info),
+    project_manager_name:get_manager_name(item),
+    many_enclosure:item. many_enclosure
 	})
 }
 

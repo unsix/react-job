@@ -10,7 +10,6 @@ export default class cengpijian_list {
   }
 }
 export function create_cengpijian_list(item) {
-	console.log(item)
 	return new cengpijian_list({
 	    title: item.title,
 	    department_name: item.department_name,

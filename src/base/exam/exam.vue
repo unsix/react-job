@@ -610,17 +610,14 @@
         </div>
       </div>
       <!--报销单展示-->
-      <div class="form" name="申请公章" v-if="baoxiaodan_show">
+      <div class="form" name="报销单" v-if="baoxiaodan_show">
         <div>
-          <span>报销部门：</span><span>{{form_Lista.department_name}}</span>
-        </div>
-        <div>
-          <span>报销人：</span><span>{{form_Lista.user_name}}</span>
+          <span>标题：</span><span>{{form_Lista.title}}</span>
         </div>
         <div>
           <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
         </div>
-        <div v-for="item in form_Lista.info" class="qingdan">
+        <div v-for="item in form_Lista.content" class="qingdan">
           <h4>报销条目</h4>
           <p>日期:<span>{{item.month_day}}</span></p>
           <p>报销内容:<span>{{item.content}}</span></p>
@@ -1418,6 +1415,8 @@
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+					  console.log('-------- 22   ---------')
+					  console.log(res)
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1432,6 +1431,7 @@
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '申请公章') {
 							this.form_Lista = create_gongzhang_list(res.data.data)
+              console.log(this.form_Lista)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '请购单') {
@@ -1440,6 +1440,7 @@
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '报销单'){
               this.form_Lista = create_baoxiaodan_list(res.data.data)
+              console.log(this.form_Lista)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             }
@@ -1783,7 +1784,7 @@
 							display: inline-block;
 							float: right;
 							margin-right: 20px;
-							margin-top: 20px;
+							margin-top: 15px;
 							cursor: pointer;
 							.el-button.is-round {
 								padding: 4px 12px;

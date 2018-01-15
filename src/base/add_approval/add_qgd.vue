@@ -73,12 +73,6 @@
 					<el-form-item label="申报采购原因及用途">
 						<el-input v-model="item.purpose"></el-input>
 					</el-form-item>
-          <el-form-item label="规格">
-            <el-input v-model="item.spec"></el-input>
-          </el-form-item>
-          <el-form-item label="型号">
-            <el-input v-model="item.model"></el-input>
-          </el-form-item>
 				</el-form>
 				<el-form :inline="true" class="demo-form-inline">
 					<el-form-item label="规格">
@@ -90,7 +84,7 @@
 				</el-form>
 				<el-form :inline="true" :rules="rules" class="demo-form-inline">
 					<el-form-item label="数量" prop="add_num">
-						<el-input v-model="item.num" id="num"></el-input>
+            <input type="tel" class="el-input__inner" @change="checkNum(item)" v-model="item.num" id="num">
 					</el-form-item>
 					<el-form-item label="单位">
 						<el-input v-model="item.unit"></el-input>
@@ -103,10 +97,12 @@
 				</el-form>
 				<el-form :inline="true" :rules="rules" class="demo-form-inline">
 					<el-form-item label="单价" prop="add_price" id="price">
-						<el-input v-model="item.price"></el-input>
+						<!--<el-input v-model="item.price"></el-input>-->
+            <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
 					</el-form-item>
 					<el-form-item label="总额">
-						<el-input v-model="item.subtotal"></el-input>
+						<el-input v-model="item.subtotal" @change="subtotal(item)" :readonly="true" value="0"></el-input>
+            <!--<input type="tel" class="el-input__inner" v-model="item.subtotal" :readonly="true">-->
 					</el-form-item>
 				</el-form>
 			</div>
@@ -115,7 +111,6 @@
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
         <!--<el-button size="small" type="info" plain>上传文件</el-button>-->
       </el-upload>
-
 			<el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" :on-change="handlePreview_a" :on-remove="handleRemove_a" :file-list="fileList_a" :auto-upload="false">
 				<el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
@@ -239,20 +234,20 @@
 						trigger: 'blur'
 					}],
 				},
-        // rules:{
-        //   add_num:[{
-        //     //required: true,
-        //     pattern:  /^-?[1-9]\d*$/,
-        //     message: '数量请填入数字',
-        //     trigger: 'blur'
-        //   }],
-        //   add_price:[{
-        //     //required: true,
-        //     pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
-        //     message: '单价请填入数字',
-        //     trigger: 'blur'
-        //   }]
-        // },
+        rules:{
+          add_num:[{
+            //required: true,
+            pattern:  /^-?[1-9]\d*$/,
+            message: '数量请填入数字',
+            trigger: 'blur'
+          }],
+          add_price:[{
+            //required: true,
+            pattern:  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
+            message: '单价请填入数字',
+            trigger: 'blur'
+          }]
+        },
 				unit: ['个', '箱', '根', '斤', '吨', '米', '平方米'],
 				pic_hash_arr: [],
 				file_hash_arr: [],
@@ -283,7 +278,7 @@
 				'nowCompanyId',
 				'comDepartList',
 				'token'
-			])
+			]),
 		},
 		components: {
 			loading
@@ -300,6 +295,36 @@
       },
       handlePreview_a(file, fileList_a){
         this.fileList_a = fileList_a
+      },
+      checkNum:function (data) {
+        var numReg =  /^-?[1-9]\d*$/
+        if(!numReg.test(data.num)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          data.num = "";
+        }
+        var sub = this.qgd_ruleForm.add
+        sub.forEach((res)=>{
+          return res.subtotal = res.price * res.num
+        })
+      },
+      checkPrice:function (data) {
+        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+        if(!priceReg.test(data.price)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          data.price="";
+        }
+        var sub = this.qgd_ruleForm.add
+        sub.forEach((res)=>{
+          return res.subtotal = res.price * res.num
+        })
       },
 			closeQd(index) {
 				this.qgd_ruleForm.add.splice(index, 1)
@@ -539,6 +564,9 @@
 					return
 				}
 				this.$refs[formName].validate((valid) => {
+
+
+
 					if(valid) {
 						this.qgd_submit()
 						this.loading_show = true

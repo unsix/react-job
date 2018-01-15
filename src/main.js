@@ -11,11 +11,13 @@ import crypto from 'crypto'
 import md5 from 'js-md5';
 import Vuex from 'vuex'
 import store from './store'
+import Calendar from 'vue-calendar-component'
 Vue.use(Vuex)
 Vue.use(VueAxios, axios)
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.use(Calendar)
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 /* eslint-disable no-new */
 
