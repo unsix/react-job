@@ -73,11 +73,11 @@
       <loading v-show="loadingShow"></loading>
       <div class="reset" v-show="resetPassShow">
         <el-form :rules="resetRule" ref="res_ruleForm" :model="res_ruleForm">
-          <el-form-item prop="pass">
-            <el-input placeholder="请输入新密码" type="password" min="6" max="18" v-model="res_ruleForm.password"></el-input>
+          <el-form-item prop="password">
+            <el-input placeholder="请输入新密码" type="password" v-model="res_ruleForm.password"></el-input>
           </el-form-item>
-          <el-form-item prop="checkPass">
-            <el-input placeholder="请再次输入" type="password" @keyup.enter="_reset" min="6" max="18" v-model="res_ruleForm.check_password"></el-input>
+          <el-form-item prop="check_password">
+            <el-input placeholder="请再次输入" type="password" @keyup.enter="_reset" v-model="res_ruleForm.check_password"></el-input>
           </el-form-item>
         </el-form>
         <div class="btn">
@@ -155,7 +155,7 @@
         sender:'',
         code:'',
         resetPassShow:false,
-        str : '1111',
+        str : '',
         loadingShow:false,
         res_ruleForm:{
           password: '',
@@ -163,7 +163,7 @@
         },
         resetRule:{
           password: [
-            { validator: validatePass, trigger: 'blur' },
+            { validator: validatePass, trigger: 'blur',},
             { pattern:/^[a-zA-Z]\w{5,17}$/,message:'密码格式不正确'}
           ],
           check_password: [
@@ -227,20 +227,26 @@
 				this.isB = true
 			},
       _reset(){
-        let nparam = new URLSearchParams()
+        if(this.res_ruleForm.password != this.res_ruleForm.check_password){
+          this.$message.error('两次密码输入不一致')
+          return
+        }
+        this.loadingShow = true
         let password = md5(this.res_ruleForm.password)
+        let check = md5(this.res_ruleForm.check_password)
+        let nparam = new URLSearchParams()
         nparam.append('phone',this.sender)
         nparam.append('password',password)
-        nparam.append('check_password',this.res_ruleForm.check_password)
+        nparam.append('check_password',check)
         this.$http.post("index.php/Mobile/skey/setPassword",nparam)
           .then((res)=>{
-            console.log(res)
             if(res.data.code === 0 ){
               this.$message({
                 showClose: true,
                 message: '修改成功',
                 type:'success'
               })
+              this.loadingShow = false
               this.isA = true
               this.isB = false
               this.resetPassShow = false
@@ -268,13 +274,21 @@
         }
         let nparam = new URLSearchParams()
         nparam.append("sender",this.sender)
+        console.log(this.sender)
         this.$http.post('/index.php/Mobile/skey/sendValidate',nparam)
           .then((res)=>{
+            console.log(res)
             if(res.data.code === 0){
               this.$message({
                 showClose: true,
                 message: '验证码已发送,请注意查收',
                 type: 'success'
+              })
+            }else if(res.data.code = -5){
+              this.$message({
+                showClose: true,
+                message: '此用户未注册',
+                type: 'warning'
               })
             }
             this.str = res.data.data.code
@@ -695,6 +709,33 @@ $color3:#409EFF;
         button{
           width: 100%;
           margin-top: 20px;
+          height: 34px;
+          line-height: 9.5px;
+        }
+      }
+    }
+    .reset{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -180px;
+      margin-top: -120px;
+      width: 380px;
+      height: 240px;
+      background:rgba(222,228,247,0.8);
+      box-shadow: 0 0 0 4px rgb(222,228,247);
+      -moz-box-shadow: 10px 10px 5px #888888; /* 老的 Firefox */
+      box-shadow: 3px 3px 5px rgba(195,188,207,0.7);
+      .el-form{
+        width: 70%;
+        margin: 20px auto 0;
+      }
+      .btn{
+        width: 70%;
+        margin: 0 auto;
+        button{
+          width: 100%;
+          margin: 10px auto 0;
           height: 34px;
           line-height: 9.5px;
         }

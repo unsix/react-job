@@ -1177,10 +1177,6 @@
 						param.append("opinion", this.handle_txt);
 						this.$http.post("/index.php/Mobile/find/approval_process", param)
 							.then((res) => {
-                document.body.scrollTop = 324
-                console.log(document.body.scrollTop)
-                console.log(document.documentElement.scrollTop)
-                document.documentElement.scrollTop = 324
 								this.loading_show = false
 								this.handle_txt = ''
 								this.listShow = true
@@ -1192,8 +1188,6 @@
 										type: 'success'
 									});
                   document.body.scrollTop = 324
-                  console.log(document.body.scrollTop)
-                  console.log(document.documentElement.scrollTop)
                   document.documentElement.scrollTop = 324
 								} else {
 									this.$message.error('操作失败');
