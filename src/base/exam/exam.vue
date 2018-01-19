@@ -701,7 +701,7 @@
 				</div>
 				<div class="button">
 					<a @click="cancelDown">取消</a>
-  					<a @click="sureDown" :href="downUrl" target="_blank">确定</a>
+          <a @click="sureDown" :href="downUrl" target="_blank">确定</a>
 				</div>
 			</div>
 		</div>
@@ -1153,6 +1153,8 @@
 			},
       //审批
 			agree() {
+        document.body.scrollTop = 0
+        document.documentElement.scrollTop = 0
 				this.pic_hash_arr = []
         //同意情况下 如果当前输入框内容为空 提示‘请填写审批意见’ 反之 则同意
 				// if(this.handle_txt === '') {
@@ -1175,6 +1177,10 @@
 						param.append("opinion", this.handle_txt);
 						this.$http.post("/index.php/Mobile/find/approval_process", param)
 							.then((res) => {
+                document.body.scrollTop = 324
+                console.log(document.body.scrollTop)
+                console.log(document.documentElement.scrollTop)
+                document.documentElement.scrollTop = 324
 								this.loading_show = false
 								this.handle_txt = ''
 								this.listShow = true
@@ -1185,6 +1191,10 @@
 										message: '操作成功',
 										type: 'success'
 									});
+                  document.body.scrollTop = 324
+                  console.log(document.body.scrollTop)
+                  console.log(document.documentElement.scrollTop)
+                  document.documentElement.scrollTop = 324
 								} else {
 									this.$message.error('操作失败');
 								}
@@ -1415,8 +1425,6 @@
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-					  console.log('-------- 22   ---------')
-					  console.log(res)
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)

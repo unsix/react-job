@@ -1,37 +1,61 @@
 <template>
-	<div class="address_book">
-		<ul>
-			<li>
-				<div class="avatar lzz">
-					<span style="margin-left: 10px;">头像</span>
-				</div>
-				<div class="name lzz">
-					<span>名字</span>
-				</div>
+	<div class="address">
+    <div class="address_book" v-show="address_book_show">
+      <ul>
+        <li>
+          <div class="avatar lzz">
+            <span style="margin-left: 10px;">头像</span>
+          </div>
+          <div class="name lzz">
+            <span>名字</span>
+          </div>
 
-				<div class="tel lzz">
-					<span>联系方式</span>
-				</div>
-				<div class="operation lzz">
-					<span>操作</span>
-				</div>
-			</li>
-			<li v-for="item in comPersonList">
-				<div class="avatar">
-					<img :src="item.avatar" alt="" />
-				</div>
-				<div class="name">
-					<span>{{item.name}}</span>
-				</div>
-				<div class="tel">
-					<span>{{item.phone}}</span>
-				</div>
-				<div class="operation">
-					<el-button type="primary" round @click="view_info">查看</el-button>
-				</div>
-			</li>
-		</ul>
-	</div>
+          <div class="tel lzz">
+            <span>联系方式</span>
+          </div>
+          <div class="operation lzz">
+            <span>操作</span>
+          </div>
+        </li>
+        <li v-for="(item,index) in comPersonList">
+          <div class="avatar">
+            <img :src="item.avatar" alt="" />
+          </div>
+          <div class="name">
+            <span>{{item.name}}</span>
+          </div>
+          <div class="tel">
+            <span>{{item.phone}}</span>
+          </div>
+          <div class="operation">
+            <el-button type="primary" round @click="view_info(item.personnel_id)">查看</el-button>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="book_details"v-show="details_show">
+      <div class="top">
+        <el-button type="primary" class="btn" plain @click="return_">返回</el-button>
+        <span class="title">人员详情</span>
+      </div>
+      <div v-model="infoArr" >
+        <div class="main">
+          <img :src="infoArr.avatar" alt="">
+          <p>{{infoArr.name}}</p>
+        </div>
+        <div class="bottom">
+          <div class="tel">
+            <h4><p>电话</p><span>{{infoArr.phone}}</span></h4>
+            <h4><p>所属部门</p><span>{{infoArr.department_name}}</span></h4>
+          </div>
+          <div class="work">
+            <h4>工作记录<span>...</span></h4>
+            <h4>外勤签到<span>...</span></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -40,7 +64,12 @@
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
-			return {}
+			return {
+        address_book_show:true,
+			  details_show : false,
+        personnel_id: '',
+        infoArr :{}
+      }
 		},
 		computed: {
 			...mapGetters([
@@ -55,12 +84,16 @@
 			}
 		},
 		methods: {
-			view_info() {
-				this.$message({
-					message: '暂时还不能查看',
-					type: 'warning'
-				});
+			view_info(res) {
+        this.address_book_show=false
+        this.details_show = true
+        this.personnel_id = res
+        this._getCompanyUserInfo(this.personnel_id)
 			},
+      return_(){
+        this.address_book_show=true
+        this.details_show = false
+      },
 			_getComPersonList() {
 				let newparam = new URLSearchParams();
 				newparam.append("company_id", this.nowCompanyId);
@@ -78,7 +111,6 @@
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
-							
 							reaDa.push(item)
 						})
 						this.setComPersonList(reaDa)
@@ -101,6 +133,18 @@
 						this.setCompanyList(res.data.data)
 					})
 			},
+      _getCompanyUserInfo(){
+			  let nparam = new URLSearchParams()
+        nparam.append("personnel_id",this.personnel_id)
+        this.$http.post("/index.php/Mobile/user/get_company_user_info",nparam)
+          .then((res) =>{
+            let con = res.data.data
+            con.avatar = 'http://bbsf-file.hzxb.net/' + con.avatar
+            console.log(con.avatar)
+            this.infoArr = con
+            console.log(this.infoArr)
+          })
+      },
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
@@ -110,7 +154,7 @@
 				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
 				setToken: 'SET_TOKEN',
 				setUserState: 'SET_USERSTATE',
-				setCompanyList: 'SET_COMPANYLIST'
+				setCompanyList: 'SET_COMPANYLIST',
 			})
 		},
 		created() {
@@ -194,4 +238,74 @@
 			}
 		}
 	}
+  .book_details{
+    width: 100%;
+    background: #FFFFFF;
+    overflow: hidden;
+    .top{
+      .btn{
+        margin: 20px;
+      }
+     .title{
+        display: block;
+        text-align: center;
+        font-size: 20px;
+      }
+    }
+    .main{
+      img{
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: block;
+        margin: 20px auto;
+      }
+      p{
+        text-align: center;
+        font-size: 18px;
+      }
+    }
+    .bottom{
+      width: 50%;
+      margin: 0 auto;
+      .tel{
+        margin: 20px 0;
+        overflow: hidden;
+        h4{
+          margin-bottom: 10px;
+          overflow: hidden;
+
+          p{
+            width: 100px;
+            float: left;
+            text-align: left;
+          }
+          span{
+            float: right;
+            width: 200px;
+            text-align: right;
+          }
+        }
+      }
+      .work{
+        margin: 20px 0;
+        overflow: hidden;
+        h4{
+          margin-bottom: 10px;
+          overflow: hidden;
+          cursor: pointer;
+          p{
+            width: 100px;
+            float: left;
+            text-align: left;
+          }
+          span{
+            float: right;
+            width: 200px;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
 </style>

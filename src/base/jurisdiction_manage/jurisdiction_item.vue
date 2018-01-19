@@ -48,8 +48,8 @@
 					<span>您确定提交吗</span>
 				</div>
 				<div class="button">
+          <span @click="submit">确定</span>
 					<span @click="cancel">取消</span>
-					<span @click="submit">确定</span>
 				</div>
 			</div>
 		</div>
@@ -106,7 +106,7 @@
 				this.jurisdictionFormList.forEach((item, index) => {
 					this.arr.push(createOrder(item, index))
 				})
-
+        console.log(this.formType)
 				this.dialogVisible = false
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);

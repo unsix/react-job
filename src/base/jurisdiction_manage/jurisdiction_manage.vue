@@ -3,12 +3,14 @@
 		<div class="jurisdictionManage">
 			<div class="nav">
 				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="表单回执"></el-tab-pane>
+
 					<el-tab-pane label="合同评审"></el-tab-pane>
 					<el-tab-pane label="请购单"></el-tab-pane>
 					<el-tab-pane label="请款单"></el-tab-pane>
 					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="呈批件"></el-tab-pane>
+          <el-tab-pane label="表单回执"></el-tab-pane>
+
 				</el-tabs>
 			</div>
 			<div class="wrapper">
@@ -94,17 +96,17 @@
 				value6: '',
 				redactState: false,
         showMe:false,
-				setFormRePerShow: true,
+				setFormRePerShow: false,
 				listShow: true,
 				personShow: false,
 				formRePersonIndex: '',
 				jurisdictionFormList: [],
 				contractApproval: [],
-				jurisdictionItemShow: false,
+				jurisdictionItemShow: true,
 				submitAddPersonShow: false,
 				huizhiPersonList: [],
 				deleteIndex: '',
-				formType: -1,
+				formType: 1,
 				closeShow: false,
 				num: 0,
 				activeName: '',
@@ -123,23 +125,23 @@
 			handleClick(tab) {
 				let index = JSON.parse(tab.index)
 				switch(index) {
-					case 1:
+					case 0:
 						this.formType = 1
-						break;
-					case 2:
+            break;
+					case 1:
 						this.formType = 7
-						break;
-					case 3:
+            break;
+					case 2:
 						this.formType = 8
-						break;
-					case 4:
+            break;
+					case 3:
 						this.formType = 5
-						break;
-					case 5:
+            break;
+					case 4:
 						this.formType = 6
 						break;
 				}
-				if(index === 0) {
+				if(index === 5) {
 					this._getHuizhi()
 					this.setFormRePerShow = true
 					this.jurisdictionItemShow = false
@@ -148,7 +150,6 @@
 					this.setFormRePerShow = false
 					this.jurisdictionItemShow = true
 					this._getApproval()
-
 				}
 			},
 			close() {
@@ -180,7 +181,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/give_finance_new", param)
 					.then((res) => {
-
+            console.log(res)
 						if(res.data.code === 0) {
 							this._getHuizhi()
 							this.formRePersonIndex = -1
@@ -202,6 +203,7 @@
 				this.listShow = true
 			},
 			choosePerson(item, index) {
+			  console.log(item)
 				if(this.setFormRe[this.formRePersonIndex].groups.indexOf(item) != -1) {
 					this.$message({
 						message: '列表中已存在' + item.name,
@@ -212,6 +214,7 @@
 				this.setFormRe[this.formRePersonIndex].groups.push(item)
 			},
 			perShow(index) {
+			  console.log(index)
 			  this.showMe = true
 				this.formRePersonIndex = index
 				this.redactState = true
@@ -354,7 +357,7 @@
 			this.setUser(JSON.parse(localStorage.user))
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
-			this._getHuizhi()
+			this._getApproval()
 			this._getComPersonList()
 		},
 		watch: {

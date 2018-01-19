@@ -39,7 +39,7 @@
 							 	<span @click="addDepart">添加部门</span>
 							 </div>
 						</el-form>
-					</div>	
+					</div>
 					<div class="processThree" v-show="processThreeShow">
 						<div class="sec" v-for="(item,nowIn) in department" >
 							<div class="list" v-for="(group,inz) in item.type" :key="item.name">
@@ -86,7 +86,7 @@
 				<el-button  @click="next" ref="step" id="step">下一步</el-button>
 			</div>
 		</div>
-	</div>	
+	</div>
 </template>
 
 <script>
@@ -217,7 +217,7 @@
 	    },
 
 	    created(){
-			
+
 	   		this.getData()
 	    },
 	    computed:{
@@ -244,7 +244,7 @@
 		    },
 		    closePersonList(){
 		    	this.personShow=false
-		    	
+
 		    },
 		    choosePerson(item,index){
 		    	for(let i = 0; i<this.nperson.length;i++){
@@ -282,7 +282,7 @@
 		          this.$message({
 		            type: 'info',
 		            message: '取消输入'
-		          });       
+		          });
 		        });
 	    	},
 	    	addGroup(index) {
@@ -303,10 +303,10 @@
 		          this.$message({
 		            type: 'info',
 		            message: '取消输入'
-		          });       
+		          });
 		        });
       		},
-      		getData(){	
+      		getData(){
 			    this.workerInfo=this.comPersonList
 			    this.old_department = this.department
     		},
@@ -320,7 +320,7 @@
 			    .then((res)=>{
 			    	console.log(res)
 			    	if(res.data.code === '0'){
-			    		this.companyId=res.data.data.company_id	
+			    		this.companyId=res.data.data.company_id
 			    		let ret = []
 			         	for(var i in this.department) {
 						let str={}
@@ -331,15 +331,15 @@
 			         			for(var z in this.department[i].type[j].person){
 			         				if(this.department[i].type[j].person){
 			         					let newStrPerObj={}
-				         				newStr.person=[]    				
+				         				newStr.person=[]
 			         					newStrPerObj.name=this.department[i].type[j].person[z].name
-			         					newStrPerObj.uid=this.department[i].type[j].person[z].uid	
+			         					newStrPerObj.uid=this.department[i].type[j].person[z].uid
 			         					newStr.person.push(newStrPerObj)
 			         					str.positions=[]
 			         					str.positions.push(newStr)
 			         					str.name=this.department[i].name
 			         					ret.push(str)
-			         				}	
+			         				}
 				         			}
 				         		}
 				         	}
@@ -366,7 +366,7 @@
 			    		 return
 			    	}
 			    })
-    			
+
     		},
 	     	next() {
 	        if (this.active++ > 2) this.active = 0;
@@ -375,10 +375,10 @@
 				this.processOneShow = true
 				this.processTwoShow = false
 				this.processThreeShow = false
-				
-	        
+
+
 			}else if(this.active === 1){
-				
+
 				if(!this.companyName||!this.companyPhone||!this.companyAdd){
 					 this.$message({
 			          message: '请填写完整信息',
@@ -399,8 +399,8 @@
 					this.processTwoShow = true
 					this.processThreeShow = false
 				}
-				
-				
+
+
 			}else if(this.active === 2){
 				this.processOneShow = false
 				this.processTwoShow = false
@@ -438,28 +438,28 @@
   	 transform: translate3d(200px,0, 0)
   }
 	.createCompany_wrapper{
-		position: absolute;
+		/*position: absolute;*/
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 		background: rgba(0,0,0,0.5);
 		z-index: 20;
-		
+
 		.createCompany{
 			position: relative;
-			width: 600px;
+			width: 580px;
 			background: #FFFFFF;
-			margin: 75px auto;
+			margin: 0px auto;
 			overflow: hidden;
-			border-radius: 6px;
-			-moz-border-radius:  6px ;
-            -webkit-border-radius:  6px;
+			/*border-radius: 6px;*/
+			/*-moz-border-radius:  6px ;*/
+            /*-webkit-border-radius:  6px;*/
 			.step{
 				width: 100%;
 				.el-steps--horizontal{
-					padding: 10px;	
-				}		
+					padding: 10px;
+				}
 			}
 			.wrapper_close{
 				position: absolute;
@@ -477,7 +477,7 @@
 					float: right;
 					position: relative;
 					bottom: 10px;
-					right: 10px;	
+					right: 10px;
 				}
 			}
 			.process_wrapper{
@@ -487,7 +487,7 @@
 					.processThree{
 						width: 300px;
 						margin: 20px;
-						position: relative;	
+						position: relative;
 						min-height: 200px;
 						.person{
 							position: absolute;
@@ -498,7 +498,7 @@
 								position: absolute;
 								right: 2px;
 								top: 2px;
-								color:#999999; 
+								color:#999999;
 								&:hover{
 									color: #FA5555;
 								}
@@ -524,7 +524,7 @@
 											display: inline-block;
 											float: left;
 											margin-top: 2px;
-											
+
 										}
 										.content{
 											display: inline-block;
@@ -534,7 +534,7 @@
 												display: block;
 												font-size: 12px;
 												height: 17px;
-												line-height: 17px;	
+												line-height: 17px;
 											}
 										}
 										img{
@@ -544,11 +544,11 @@
 										}
 									}
 								}
-							}	
+							}
 						}
 						.sec{
 							.list{
-								
+
 								span{
 									width: 100%;
 									height: 20px;
@@ -563,7 +563,7 @@
 									i{
 										float: right;
 										font-size: 20px;
-										color:409EFF ;
+										color:#409EFF ;
 										&:hover{
 										color: #409EFF;
 									}
@@ -574,12 +574,12 @@
 										width: 100%;
 										height: 40px;
 										text-indent: 10px;
-										
+
 										background:transparent;
 										border-bottom: 1px solid #999999;
 										position: relative;
 										cursor: default;
-										
+
 										.close{
 											position: absolute;
 											top: 10px;
@@ -604,7 +604,7 @@
 											display: inline-block;
 											float: left;
 											margin-left: 4px;
-											
+
 											span{
 												display: block;
 												font-size: 12px;
@@ -614,7 +614,7 @@
 												border-bottom: none;
 											}
 										}
-										
+
 									}
 								}
 							}
@@ -681,7 +681,7 @@
 							margin: 0 auto;
 							height: 40px;
 							margin-bottom: 10px;
-							
+
 							.title{
 								height: 40px;
 								line-height: 40px;
@@ -689,7 +689,7 @@
 								padding: 0 10px ;
 							}
 							.exam{
-								
+
 								color: #FA5555;
 								font-size: 12px;
 							}
@@ -715,7 +715,7 @@
 				}
 			}
 		}
-		
+
 	}
 	.el-message-box{
 			.el-message-box__content{

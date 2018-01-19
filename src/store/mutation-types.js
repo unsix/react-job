@@ -15,4 +15,3 @@ export const SET_TOKEN = 'SET_TOKEN'
 export const SET_USERSTATE = 'SET_USERSTATE'
 
 export const SET_COMPANYLIST = 'SET_COMPANYLIST'
-

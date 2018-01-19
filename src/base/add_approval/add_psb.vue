@@ -70,7 +70,7 @@
 		</el-form>
 		<loading v-show="loadingShow"></loading>
 		<div class="hetongList" v-show="hetongListShow">
-			<el-button type="primary" plain>主要按钮</el-button>
+			<el-button type="primary" @click="_return" plain>返回</el-button>
 			<div class="list" v-for="(item,index) in hetongList">
 				<div class="content">
 					<span>{{item.add_time}}</span>
@@ -231,6 +231,10 @@
       },
       handlePreview_a(file, fileList_a){
         this.fileList_a = fileList_a
+      },
+      _return(){
+			  this.hetongListShow = false
+        this.psb_show = true
       },
 			viewHt() {
 				window.open('/index.php/Mobile/skey/look_draft?id=' + this.psb_ruleForm.contract_id)

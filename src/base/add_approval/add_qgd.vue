@@ -63,7 +63,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<div class="add_qgd">添加清单条目 <i class="el-icon-circle-plus" @click="add_qgd"></i></div>
+			<div class="add_qgd">添加清单条目 <i class="el-icon-circle-plus" @click="add_qgd"></i><span style="color: red;" v-model="qgd_ruleForm.total">总额:{{qgd_ruleForm.total}}</span></div>
 			<div v-for="(item,index) in qgd_ruleForm.add" class="new_qgd">
 				<div class="close"><i class="fa fa-close" v-show="qgd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
 				<el-form label-width="150px">
@@ -101,7 +101,7 @@
             <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
 					</el-form-item>
 					<el-form-item label="总额">
-						<el-input v-model="item.subtotal" @change="subtotal(item)" :readonly="true" value="0"></el-input>
+						<el-input v-model="item.subtotal" :readonly="true" value="0">0</el-input>
             <!--<input type="tel" class="el-input__inner" v-model="item.subtotal" :readonly="true">-->
 					</el-form-item>
 				</el-form>
@@ -259,7 +259,7 @@
 				img_arr: [],
 				pic_enclosure_id: '',
 				loadingShow: false,
-				returnOk: false,
+				returnOk: false
 			}
 		},
 		props: {
@@ -297,7 +297,7 @@
         this.fileList_a = fileList_a
       },
       checkNum:function (data) {
-        var numReg =  /^-?[1-9]\d*$/
+        var numReg =  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
         if(!numReg.test(data.num)){
           this.$message({
             showClose: true,
@@ -307,9 +307,14 @@
           data.num = "";
         }
         var sub = this.qgd_ruleForm.add
-        sub.forEach((res)=>{
-          return res.subtotal = res.price * res.num
-        })
+        var tato = 0
+        for (var i = 0;i<sub.length;i++){
+          sub[i].subtotal = sub[i].price * sub[i].num
+        }
+        for (var i = 0;i<sub.length;i++){
+          tato +=sub[i].subtotal
+        }
+        this.qgd_ruleForm.total =tato
       },
       checkPrice:function (data) {
         var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -322,9 +327,14 @@
           data.price="";
         }
         var sub = this.qgd_ruleForm.add
-        sub.forEach((res)=>{
-          return res.subtotal = res.price * res.num
-        })
+        var tato = 0
+        for (var i = 0;i<sub.length;i++){
+          sub[i].subtotal = sub[i].price * sub[i].num
+        }
+        for (var i = 0;i<sub.length;i++){
+          tato +=sub[i].subtotal
+        }
+        this.qgd_ruleForm.total =tato
       },
 			closeQd(index) {
 				this.qgd_ruleForm.add.splice(index, 1)
@@ -537,6 +547,7 @@
 					purpose: ""
 				}
 				this.qgd_ruleForm.add.push(obj)
+
 			},
 			submitForm_qgd(formName) {
 				this.returnOk = false
@@ -564,9 +575,6 @@
 					return
 				}
 				this.$refs[formName].validate((valid) => {
-
-
-
 					if(valid) {
 						this.qgd_submit()
 						this.loading_show = true

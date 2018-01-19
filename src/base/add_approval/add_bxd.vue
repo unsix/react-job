@@ -31,7 +31,7 @@
             <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
           </el-form-item>
           <el-form-item label="单据张数">
-            <el-input v-model="item.amount"></el-input>
+            <el-input v-model="item.amount" @change="checkAmount(item)"></el-input>
           </el-form-item>
         </el-form>
         <el-form :inline="false" class="demo-form-inline">
@@ -109,7 +109,7 @@
             loadingShow: false,
             pic_index: 0,
             img_arr: [],
-            pic_enclosure_id: ''
+            pic_enclosure_id: '',
           }
         },
         props: {
@@ -155,6 +155,17 @@
                 type: 'error'
               })
               data.price="";
+            }
+          },
+          checkAmount:function (data) {
+            var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+            if(!priceReg.test(data.price)){
+              this.$message({
+                showClose: true,
+                message: '格式错误',
+                type: 'error'
+              })
+              data.amount="";
             }
           },
           closeQd(index){
@@ -287,20 +298,12 @@
           submitForm_bxd(formName){
             this.returnOk = false
             this.bxd_ruleForm.add.forEach((item)=>{
+              console.log(item)
              if(item.month_day===''||item.content===''||item.price===''||item.amount===''){
                this.$message.error('请将清单条目填写完整');
                this.returnOk = true
              }
             })
-            var re = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/;
-            if(!re.test(item.price)) {
-              this.$message.error('金额请填数字');
-              this.returnOk = true
-            }
-            if(!re.test(item.amount)) {
-              this.$message.error('单据张数请填数字');
-              this.returnOk = true
-            }
             this.$refs[formName].validate((valid) => {
               if(valid) {
                 this.bxd_submit()
@@ -334,7 +337,6 @@
               d = d < 10 ? ('0' + d) : d;
               stuf[i].month_day = y + '-' + m + '-' + d
             }
-
             if (this.bxd_ruleForm.project_manager_name != ''){
               this.comPersonList.forEach((item) => {
                 if(item.name === this.bxd_ruleForm.project_manager_name) {
