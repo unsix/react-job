@@ -17,11 +17,11 @@
 				<el-button type="primary" plain @click="chooseTem">从模板选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
-				<addQkd v-if="qkd_show" :approval_id="approval_id5" @return_exam="return_Add" :form_approval_id="form_approval_id" :request_money_basis_type="request_money_basis_type"></addQkd>
+				<addQkd v-if="qkd_show" :approval_id="approval_id5" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
 				<addCpj v-if="cpj_show" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
 				<addPsb v-if="psb_show" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
 				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
-				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add" ></addSqgz>
+				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
         <addBxd v-if="bxd_show" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
 			</div>
 		</div>
@@ -106,6 +106,7 @@
 				asType: ['请购单', '合同评审表', '呈批件', '其他'],
 				form_Lista: {},
 				form_Listb: {},
+        qkd_ruleForm:{},
 				activeName: '',
 				psb_if: false,
 				qgd_if: false,
@@ -298,13 +299,23 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
-
+      //使用
 			qkUser(item,index){
-			  console.log(item)
-				this.request_money_basis_type = item.type
+
+        this.request_money_basis_type = item.type;
+
 				this.form_approval_id = ''
 				this.at_qingkuanShow = false
 				this.form_approval_id = item.approval_id
+        let nparam = new URLSearchParams()
+        nparam.append('approval_id',this.form_approval_id)
+        this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
+          .then((res)=>{
+            console.log(res)
+            let sore = res.data.data
+            this.balance_subtotal = sore.balance_subtotal
+
+          })
 				this.formShow = true
 				this.qkd_show = true
 			},
@@ -533,6 +544,12 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.psb_if = false
+        this.qgd_if= false
+        this.cpj_if= false
+        this.qkd_if= false
+        this.sqgz_if= false
+        this.bxd_if= false
 				this.chooseTemShow = false
 				this.formShow = true
 				if(this.navIndex === 0) {
@@ -704,7 +721,7 @@
 					display: inline-block;
 					float: right;
 					margin-right: 20px;
-					margin-top: 15px;
+					margin-top: 1px;
 					cursor: pointer;
 					.el-button.is-round {
 						padding: 4px 12px;

@@ -27,12 +27,12 @@
 				</el-select>
 			</el-form-item>
 
-			<el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure" accept="image/*,image/jpg,image/png,image/jpeg" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+			<el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <i class="el-icon-plus"></i>
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
-      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure" accept="text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/rtf" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
@@ -107,7 +107,7 @@
 		props: {
 			approval_id: {
 				type: String
-			}
+			},
 		},
 		created() {
 			this._getToken()
@@ -131,25 +131,29 @@
 			},
 			handlePreview(file, fileList) {
         this.fileList = fileList
-        // fileList.forEach((item)=>{
-        //   if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1'){
-        //     this.fileList = fileList
-        //   }else{
-        //     this.$message.error('只能上传jpg或png格式的图片');
-        //     file.abort
-        //     return false;
-        //
-        //   }
-        // })
 			},
       handleRemove_a(file, fileList_a) {
         this.fileList_a = fileList_a
       },
       handlePreview_a(file, fileList_a){
-        this.fileList_a = fileList_a
+        let index = file.name.lastIndexOf('.')
+        let attribute = file.name.slice(index)
+        if(attribute.substr(0,1)=='.'){
+          attribute=attribute.substr(1)
+        }
+        this.$http.post("/index.php/Mobile/find/file_info")
+          .then((res)=>{
+            let attr = res.data.data.attribute
+            if(attr.indexOf(attribute) !=-1){
+              this.fileList_a = fileList_a
+            }else{
+              this.fileList_a = fileList_a = ''
+              this.$message.error('上传文件格式错误')
+
+            }
+          })
       },
 			initial_data() {
-			  console.log(this.approval_id)
 				if(!this.approval_id) {
 					return
 				}
@@ -337,7 +341,6 @@
 					} else {
 					  //图片的判断
 						if(this.picArr.length != 0) {
-						  console.log('----------22---------')
               console.log(this.picArr.length)
               var upload_enclosure_new = (fn)=>{
                 for(let i = 0; i < this.picArr.length; i++) {

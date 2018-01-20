@@ -2,8 +2,9 @@
 	<div class="contractApproval" v-show="contractApprovalShow">
 		<div style="height: 30px;">
 			<div class="addPerson">
-				<el-button type="primary" round style="margin-right: 10px;" @click="save">保存修改</el-button>
-				<el-button type="primary" round @click="redact">编辑</el-button>
+				<el-button type="primary" round style="margin-right: 10px;" v-show="!btn_show" @click="save">保存修改</el-button>
+				<el-button type="primary" round @click="redact" v-show="btn_show">编辑</el-button>
+        <el-button type="primary" round @click="_return" v-show="!btn_show" >取消</el-button>
 			</div>
 		</div>
 		<div class="chooseApprovalPerson">
@@ -72,7 +73,8 @@
 				numOne: 0,
 				perIndex: -1,
 				arr: [],
-				activeNames: ['0']
+				activeNames: ['0'],
+        btn_show: true
 			}
 		},
 		props: {
@@ -108,6 +110,7 @@
 				})
         console.log(this.formType)
 				this.dialogVisible = false
+        this.btn_show=true
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("company_id", this.nowCompanyId);
@@ -129,9 +132,15 @@
 			},
 			redact() {
 				this.submitAddPersonShow = true
+        this.btn_show = false
 				this.activeNames = ['1']
 				this.originalJurisdictionFormList = this.jurisdictionFormList
 			},
+      _return(){
+			  this.btn_show=true
+        this.submitAddPersonShow = false
+        this.activeNames = ['0']
+      },
 			//			选择合同评审表人员
 			chooseContractApprovalPerson(item) {
 				for(let i = 0; i < this.jurisdictionFormList.length; i++) {
@@ -140,6 +149,7 @@
 						return
 					}
 				}
+        this.activeNames = ['1']
 				this.jurisdictionFormList.push(item)
 			},
 			//			删除合同评审表人员

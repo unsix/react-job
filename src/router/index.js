@@ -10,6 +10,7 @@ const exam = () => import('@/base/exam/exam')
 const addApproval = () => import('@/base/add_approval/add_approval')
 const manageCompany = () => import('@/base/manage_company/manage_company')
 const jurisdictionManage = () => import('@/base/jurisdiction_manage/jurisdiction_manage')
+const create_company = () => import('@/base/create_company/create_company')
 
 Vue.use(Router)
 
@@ -57,7 +58,11 @@ export default new Router({
 				{
 					path: 'jurisdictionManage',
 					component: jurisdictionManage
-				}
+				},
+        {
+          path: 'create_company',
+          component:create_company
+        }
 			]
 		},
 		{

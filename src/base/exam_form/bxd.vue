@@ -10,6 +10,9 @@
     <div>
       <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
     </div>
+    <div>
+      <span style="color: red;"><span>总额：</span>{{form_Lista.money}}</span>
+    </div>
     <div v-for="item in form_Lista.content" class="qingdan">
       <h4>报销条目</h4>
       <p>日期:<span>{{item.month_day}}</span></p>

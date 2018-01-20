@@ -170,11 +170,11 @@
         this.fileList_a = fileList_a
       },
       checkNum:function (data) {
-        var numReg =  /^-?[1-9]\d*$/
+        var numReg =  /^[1-9]\d*$/
         if(!numReg.test(data.num)){
           this.$message({
             showClose: true,
-            message: '格式错误',
+            message: '请输入正整数',
             type: 'error'
           })
           data.num = "";

@@ -6,7 +6,7 @@
 					<el-tab-pane label="人员列表" name='1'></el-tab-pane>
 					<el-tab-pane label="添加部门" name='2'></el-tab-pane>
 					<el-tab-pane label="工程项目" name='3'></el-tab-pane>
-          <el-tab-pane label="创建公司" name="4"></el-tab-pane>
+          <el-tab-pane label="公司解散" name="4"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="type">
@@ -92,7 +92,15 @@
             </div>
           </div>
         </div>
-        <addCompany v-if="addCom"></addCompany>
+
+        <div class="disBandAge" v-show="disBandAgeShow">
+          <div class="operation">
+            <span>您确定要解散此公司么，此操作不可逆</span>
+            <div class="btn">
+              <el-button type="danger" round @click="disBandAge">确认解散</el-button>
+            </div>
+          </div>
+        </div>
 			</div>
 
 		</div>
@@ -103,7 +111,6 @@
 	import { createPersonInfo } from 'common/js/person_info'
 	import { getPic } from '@/common/js/pic.js'
 	import { getAvatar } from '@/common/js/avatar.js'
-  import addCompany from '@/base/create_company/create_company'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -114,7 +121,6 @@
 				smObj: {},
 				navIndex: -1,
 				listShow: true,
-        addCom:false,
 				addDepartmentShow: false,
         addComProject:false,
         addProjectShow:false,
@@ -135,7 +141,10 @@
         comProjectList:[],
 				activeName2: '1',
 				returnOne: false,
-				ComPartPersonList: []
+				ComPartPersonList: [],
+        disBandAgeShow:false,
+        m:'',
+        personnel_id:''
 			}
 		},
 		created() {
@@ -184,6 +193,56 @@
         this.project = true
         this.addProjectShow = true
         this.addButton = true
+      },
+      disBandAge(){
+		    let param = new URLSearchParams()
+        param.append('uid',this.user.uid)
+        param.append('company_id',this.nowCompanyId)
+        this.$http.post("/index.php/Mobile/User/return_company_new",param)
+          .then((res)=>{
+            let item = res.data.data
+            this.m = item.is_manage
+            this.personnel_id = item.personnel_id
+            if(this.personnel_id != JSON.parse(localStorage.personnelId)){
+              if(this.m == 1){
+                let mparam = new URLSearchParams()
+                mparam.append('personnel_id',this.personnel_id)
+                mparam.append('uid',this.user.uid)
+                mparam.append('company_id',this.nowCompanyId)
+                this.$http.post("/index.php/Mobile/User/quit_company",mparam)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      this.$message({
+                        message: '操作成功',
+                        type: 'success'
+                      })
+                      let param = new URLSearchParams();
+                      param.append("uid", this.user.uid);
+                      this.$http.post("/index.php/Mobile/user/companies_list", param)
+                        .then((res)=>{
+                          this.setNowCompanyId(res.data.data[0].company_id)
+                          this.setNowCompanyName(res.data.data[0].company_name)
+                          localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
+                          localStorage.nowCompanyName = JSON.stringify(res.data.data[0].company_name);
+                          this.$router.push('/work');
+                        })
+                    }
+                  })
+              } else {
+                this.$message({
+                  message: '操作失败',
+                  type: 'error'
+                })
+                return
+              }
+            }else{
+              this.$message({
+                message: '请联系管理员',
+                type: 'error'
+              })
+              return
+            }
+          })
       },
 			addDepartment() {
 				this.$confirm('确认添加新部门吗?', '提示', {
@@ -260,8 +319,8 @@
         this.project = false
         this.addProjectShow = false
         this.addButton = false
-        this.addCom = false
         this.addPro = false
+        this.disBandAgeShow = false
 				if(tab.index === '0') {
 					this.listShow = true
 				} else if(tab.index === '1') {
@@ -273,7 +332,7 @@
           this.addComProject = false
           this.addPro = true
 				} else if(tab.index === '3'){
-				  this.addCom = true
+          this.disBandAgeShow = true
         }
 			},
 			setAdministrator(item) {
@@ -373,7 +432,6 @@
 				});
 			},
       delDepartment(res){
-			  console.log(res)
         this.$confirm("确定删除吗",'提示',{
           confirmButtonText: '确定',
           cancelButtonText: '取消'
@@ -504,7 +562,6 @@
 				setCompanyList: 'SET_COMPANYLIST'
 			})
 		},components:{
-		  addCompany
     }
 
 	}
@@ -682,6 +739,31 @@
               button {
                 margin-left: 40px;
                 margin-top: 20px;
+              }
+            }
+          }
+        }
+        .disBandAge{
+          width: 100%;
+          min-height: 200px;
+          .operation{
+            margin: 30px auto 0;
+            span{
+              display: block;
+              text-align: center;
+              font-size: 18px;
+              font-weight: 600;
+            }
+            .btn{
+              width: 104px;
+              margin: 30px auto 0;
+              button{
+                font-weight: normal;
+                margin: 0 auto;
+                span{
+                  font-weight: normal;
+                  font-size: 14px;
+                }
               }
             }
           }

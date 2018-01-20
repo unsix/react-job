@@ -14,10 +14,10 @@
         </el-select>
       </el-form-item>
 
-      <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i></div>
+      <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i><span style="color: red;" v-model="bxd_ruleForm.money">总额:{{bxd_ruleForm.money}}</span></div>
       <div v-for="(item,index) in bxd_ruleForm.add" class="new_bxd">
         <div class="close"><i class="fa fa-close" v-show="bxd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
-        <el-form :inline="true" class="demo-form-inline">
+        <el-form :inline="true" class="demo-form-inline zp">
           <el-form-item label="日期" prop="start_time">
             <el-date-picker type="date" v-model="item.month_day" style="width: 200px"></el-date-picker>
           </el-form-item>
@@ -25,8 +25,8 @@
             <el-input v-model="item.content"></el-input>
           </el-form-item>
         </el-form>
-        <el-form :inline="true" class="demo-form-inline">
-          <el-form-item label="金额">
+        <el-form :inline="true" class="demo-form-inline zp">
+          <el-form-item label="总额">
             <!--<el-input v-model="item.price"></el-input>-->
             <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
           </el-form-item>
@@ -36,7 +36,7 @@
         </el-form>
         <el-form :inline="false" class="demo-form-inline">
           <el-form-item label="备注" label-width="50px">
-            <el-input v-model="item.remarks" style="width: 500px"></el-input>
+            <el-input v-model="item.remarks" class="set" style="width: 500px"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -79,6 +79,7 @@
               title:'',
               project_manager: {},
               project_manager_name: '',
+              money:'',
               add:[{
                 month_day:'',
                 content:'',
@@ -156,6 +157,13 @@
               })
               data.price="";
             }
+            var sub = this.bxd_ruleForm.add
+            var tato = 0
+            for (var i = 0;i<sub.length;i++){
+              console.log(sub)
+              tato +=Number(sub[i].price)
+            }
+            this.bxd_ruleForm.money =tato
           },
           checkAmount:function (data) {
             var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -167,12 +175,12 @@
               })
               data.amount="";
             }
+
           },
           closeQd(index){
             this.bxd_ruleForm.add.splice(index,1)
           },
           initial_data(){
-            console.log(this.approval_id)
             if(!this.approval_id || this.approval_id === '') {
               return
             }
@@ -182,8 +190,13 @@
             console.log(this.approval_id)
             this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
               .then((res)=>{
-                console.log(res)
                 this.form_Lista = create_baoxiaodan_list(res.data.data)
+                var str = 0
+                var sub = this.form_Lista.content
+                for (var i = 0;i<sub.length;i++){
+                  str += Number(sub[i].price)
+                }
+                this.bxd_ruleForm.money = str
                 this.bxd_ruleForm.add = this.form_Lista.content
                 this.bxd_ruleForm.title = this.form_Lista.title
                 this.bxd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
@@ -304,10 +317,23 @@
                this.returnOk = true
              }
             })
+            if(this.returnOk === true) {
+              return
+            }
             this.$refs[formName].validate((valid) => {
               if(valid) {
-                this.bxd_submit()
-                this.loading_show = true
+                this.$confirm('确定总额为' + this.bxd_ruleForm.money + '吗', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消'
+                }).then(()=>{
+                  this.bxd_submit()
+                  this.loading_show = true
+                }).catch(()=>{
+                  this.$message({
+                    type: 'info',
+                    message: '已取消操作'
+                  });
+                })
               } else {
                 this.$message.error('请将表单填写完整');
                 return false;
@@ -606,7 +632,17 @@
       }
     }
   }
-
+  .set{
+    width: 500px;
+    .el-input__inner{
+      width: 490px;
+    }
+  }
+  .zp{
+    .el-input__inner{
+      width: 200px;
+    }
+  }
   .el-form-item[data-v-1e3f67aa]{
     &:nth-child(1) {
       margin-bottom: 10px;

@@ -228,6 +228,9 @@
 				<div>
 					<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 				</div>
+        <div>
+          <span style="color: red;"><span>总额：</span>{{form_Lista.total}}</span>
+        </div>
 				<div v-for="item in form_Lista.content" class="qingdan_qinggou">
 					<h4>请购清单</h4>
 					<p>请购名称：<span>{{item.name}}</span></p>
@@ -616,6 +619,9 @@
         </div>
         <div>
           <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+        </div>
+        <div>
+          <span style="color: red;"><span>总额：</span>{{form_Lista.money}}</span>
         </div>
         <div v-for="item in form_Lista.content" class="qingdan">
           <h4>报销条目</h4>

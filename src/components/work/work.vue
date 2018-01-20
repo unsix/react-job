@@ -153,13 +153,13 @@
 					this.workList = ['处理审批', '发起审批', '通讯录']
 				}
 				if(m === 1 && f === 0) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '通讯录']
 				}
 				if(m === 0 && f === 1) {
 					this.workList = ['处理审批', '发起审批', '表单回执', '邀请同事', '通讯录']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '邀请同事', '通讯录']
 				}
 			},
 			changeWorkIndex(num){
@@ -185,6 +185,7 @@
 				this.$refs.userIconLeft.style[transform] = `rotate(360deg)`
 				this.userOperationLeftShow = false
 			},
+      //更换公司
 			changeCompany(item, index) {
 				this.workIndex = 0
 				this.setNowCompanyName(item.company_name)
@@ -194,6 +195,7 @@
 				localStorage.nowCompanyName = JSON.stringify(item.company_name);
 				this.$router.push('/work');
 			},
+      //左侧导航切换
 			doList(item, index) {
 				this.workIndex = index
 				this.now_type_name = item
@@ -227,6 +229,9 @@
 					case '处理审批':
 						this.$router.push({ path: '/work/exam' })
 						break;
+          case '创建公司':
+            this.$router.push({ path: '/work/create_company'})
+            break;
 				}
 			},
       //获取当前用户状态
@@ -303,6 +308,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+					  console.log('---11---------')
+					  console.log(res)
 						if(res.data.code === 251){
 							localStorage.removeItem('nowCompanyId');
 							localStorage.removeItem('nowCompanyName');

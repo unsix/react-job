@@ -9,6 +9,7 @@
 					<el-tab-pane label="请款单"></el-tab-pane>
 					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="呈批件"></el-tab-pane>
+          <el-tab-pane label="报销单"></el-tab-pane>
           <el-tab-pane label="表单回执"></el-tab-pane>
 
 				</el-tabs>
@@ -35,10 +36,10 @@
 								</li>
 							</ul>
 						</div>
-
+            <!--表单回执-->
 						<div class="person" ref="person">
 							<div class="submit">
-								<el-button type="primary" round @click="submit" v-show="showMe">保存更改</el-button>
+								<el-button type="primary" round @click="submit" v-show="showMe">保存更改11</el-button>
 							</div>
 							<el-collapse v-model="activeNames">
 								<el-collapse-item title="人员列表" name="1">
@@ -140,8 +141,11 @@
 					case 4:
 						this.formType = 6
 						break;
+          case 5:
+            this.formType = 11
+            break;
 				}
-				if(index === 5) {
+				if(index === 6) {
 					this._getHuizhi()
 					this.setFormRePerShow = true
 					this.jurisdictionItemShow = false
@@ -376,14 +380,13 @@
 		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 		-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
 		>.jurisdictionManage {
-			width: 558px;
+			width: 600px;
 			overflow: hidden;
-			margin-left: 20px;
 			>.nav {
 				width: 100%;
 				margin: 4px 0;
 				.el-tabs__nav {
-					margin-left: 25px;
+					margin-left: 20px;
 				}
 				.el-tabs__item {
 					font-size: 15px;

@@ -46,6 +46,7 @@
         <div class="bottom">
           <div class="tel">
             <h4><p>电话</p><span>{{infoArr.phone}}</span></h4>
+            <H4><P>职称</P><span>{{infoArr.job_name}}</span></H4>
             <h4><p>所属部门</p><span>{{infoArr.department_name}}</span></h4>
           </div>
           <div class="work">
@@ -140,7 +141,6 @@
           .then((res) =>{
             let con = res.data.data
             con.avatar = 'http://bbsf-file.hzxb.net/' + con.avatar
-            console.log(con.avatar)
             this.infoArr = con
             console.log(this.infoArr)
           })

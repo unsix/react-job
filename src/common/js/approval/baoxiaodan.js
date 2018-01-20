@@ -1,6 +1,7 @@
 export  default class baoxiaodan_list{
-  constructor({title,content,many_enclosure,project_manager_name}){
+  constructor({title,content,many_enclosure,money,project_manager_name}){
     this.title = title
+    this.money = money
     this.content=content
     this.many_enclosure=many_enclosure
     this.project_manager_name=project_manager_name
@@ -9,6 +10,7 @@ export  default class baoxiaodan_list{
 export function create_baoxiaodan_list(item) {
   return new baoxiaodan_list({
     title:item.title,
+    money: item.money,
     content:item.content,
     many_enclosure:item.many_enclosure,
     project_manager_name:get_manager_name(item),

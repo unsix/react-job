@@ -41,6 +41,8 @@
 						</el-form>
 					</div>
 					<div class="processThree" v-show="processThreeShow">
+
+
 						<div class="sec" v-for="(item,nowIn) in department" >
 							<div class="list" v-for="(group,inz) in item.type" :key="item.name">
 								<span class="title">
@@ -78,6 +80,8 @@
 								</ul>
 							</div>
 						</div>
+
+
 						</transition>
 					</div>
 				</div>
@@ -95,6 +99,7 @@
 		data() {
 	      return {
 	      	old_department:{},
+          nowCompanyId:'',
 	      	department: {
 	          manager:{
 	          	name:'总经办',
@@ -215,7 +220,6 @@
 	        nperson:[]
 	      }
 	    },
-
 	    created(){
 
 	   		this.getData()
@@ -227,14 +231,17 @@
 	    	])
 	    },
 	    methods: {
+		  //下一步
 		    wrapperClose(){
 		    	this.$emit('companyClose')
-		    	this.companyName = false
-	       		this.companyPhone = false
-	        	this.companyAdd = false
+		    	  this.companyName = ''
+	       		this.companyPhone = ''
+	        	this.companyAdd = ''
 	        	this.processOneShow = true
 	       		this.processTwoShow = false
 	        	this.processThreeShow = false
+            this.active = 0
+            document.getElementById('step').innerText = '下一步'
 		    },
 		    addPerson(inz,nowIn){
 		    	this.personShow = true
@@ -264,6 +271,7 @@
 		    	this.nowIn = nowIn
 		    	this.$set(this.department[nowIn].type[inz].person,index,{})
 		    },
+        //添加部门
 	    	addDepart(){
 	    		 this.$prompt('请输入部门名称', '提示', {
 		          confirmButtonText: '确定',
@@ -285,6 +293,7 @@
 		          });
 		        });
 	    	},
+        //添加职位
 	    	addGroup(index) {
 		        this.$prompt('请输入职位', '提示', {
 		          confirmButtonText: '确定',
@@ -307,11 +316,20 @@
 		        });
       		},
       		getData(){
-			    this.workerInfo=this.comPersonList
+            this.nowCompanyId = JSON.parse(localStorage.nowCompanyId)
+            let newparam = new URLSearchParams();
+            newparam.append("company_id", this.nowCompanyId);
+            this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+              .then((res)=>{
+                this.workerInfo = res.data.data
+                console.log(this.workerInfo)
+              })
+			   // this.workerInfo=this.comPersonList
 			    this.old_department = this.department
     		},
+        //创建公司
     		creatOver(){
-      			let c_param = new URLSearchParams();
+          let c_param = new URLSearchParams();
 			    c_param.append("uid",this.user.uid);
 			    c_param.append("name",this.companyName);
 			    c_param.append("company_address",this.companyAdd);
@@ -339,7 +357,7 @@
 			         					str.positions.push(newStr)
 			         					str.name=this.department[i].name
 			         					ret.push(str)
-			         				}
+			         				  }
 				         			}
 				         		}
 				         	}
@@ -362,63 +380,61 @@
 					      })
 			    	}else{
 			    		this.$message.error(res.data.data.m);
-			    		 this.$message.error('创建公司失败');
-			    		 return
+              this.$message.error('创建公司失败');
+              return
 			    	}
 			    })
-
     		},
+        //点击下一步
 	     	next() {
 	        if (this.active++ > 2) this.active = 0;
-			if(this.active===0){
-				alert()
-				this.processOneShow = true
-				this.processTwoShow = false
-				this.processThreeShow = false
+            if(this.active===0){
+              alert()
+              this.processOneShow = true
+              this.processTwoShow = false
+              this.processThreeShow = false
+            }else if(this.active === 1){
 
+              if(!this.companyName||!this.companyPhone||!this.companyAdd){
+                 this.$message({
+                      message: '请填写完整信息',
+                      type: 'warning'
+                    });
+                 this.active = 0
+                return
+              }
+              let reg = /^1[0-9]{10}$/;
+              if(!reg.test(this.companyPhone)){
+                 this.$message({
+                      message: '请填写正确手机号码',
+                      type: 'warning'
+                    });
+                this.active = 0
+                  return
+              }else{
+                this.processOneShow = false
+                this.processTwoShow = true
+                this.processThreeShow = false
+              }
 
-			}else if(this.active === 1){
-
-				if(!this.companyName||!this.companyPhone||!this.companyAdd){
-					 this.$message({
-			          message: '请填写完整信息',
-			          type: 'warning'
-			        });
-					 this.active = 0
-					return
-				}
-				let reg = /^1[0-9]{10}$/;
-				if(!reg.test(this.companyPhone)){
-					 this.$message({
-			          message: '请填写正确手机号码',
-			          type: 'warning'
-			        });
-			        return
-				}else{
-					this.processOneShow = false
-					this.processTwoShow = true
-					this.processThreeShow = false
-				}
-
-
-			}else if(this.active === 2){
-				this.processOneShow = false
-				this.processTwoShow = false
-				this.processThreeShow = true
-				document.getElementById('step').innerText = '完成'
-			}else if(this.active === 3){
-				this.creatOver()
-				this.$emit('companyClose')
-				this.processOneShow = true
-				this.processTwoShow = false
-				this.processThreeShow = false
-				this.companyName=''
-		        this.companyPhone=''
-		        this.companyAdd=''
-				this.active = 0
-				document.getElementById('step').innerText = '下一步'
-				this.department = this.old_department
-			}
+            }else if(this.active === 2){
+              this.processOneShow = false
+              this.processTwoShow = false
+              this.processThreeShow = true
+              document.getElementById('step').innerText = '完成'
+            }else if(this.active === 3){
+              this.creatOver()
+              this.$emit('companyClose')
+              this.processOneShow = true
+              this.processTwoShow = false
+              this.processThreeShow = false
+              this.companyName=''
+                  this.companyPhone=''
+                  this.companyAdd=''
+              this.active = 0
+              document.getElementById('step').innerText = '下一步'
+              this.department = this.old_department
+            }
 	    }
 	}
 }
@@ -441,14 +457,13 @@
 		/*position: absolute;*/
 		top: 0;
 		left: 0;
-		width: 100%;
+		width: 600px;
 		height: 100%;
 		background: rgba(0,0,0,0.5);
 		z-index: 20;
 
 		.createCompany{
 			position: relative;
-			width: 580px;
 			background: #FFFFFF;
 			margin: 0px auto;
 			overflow: hidden;

@@ -66,7 +66,6 @@
 				this._getExamList()
 			},
 			viewInfo(item, index) {
-			  console.log(item)
 				this.$emit('viewInfo', item)
 			},
 			useInfo(item, index) {

@@ -274,10 +274,8 @@
         }
         let nparam = new URLSearchParams()
         nparam.append("sender",this.sender)
-        console.log(this.sender)
         this.$http.post('/index.php/Mobile/skey/sendValidate',nparam)
           .then((res)=>{
-            console.log(res)
             if(res.data.code === 0){
               this.$message({
                 showClose: true,
@@ -326,10 +324,8 @@
         }
         let mparam = new URLSearchParams()
         mparam.append('sender',this.ster_ruleForm.phone)
-        console.log(this.ster_ruleForm.phone)
         this.$http.post('/index.php/Mobile/skey/send_validate_code',mparam)
           .then((res)=>{
-            console.log(res)
             if(res.data.code === 0){
               this.$message({
                 showClose: true,
@@ -367,7 +363,6 @@
           param.append('check_password',check)
           this.$http.post('/index.php/Mobile/skey/register',param)
             .then((res)=>{
-              console.log(res)
               if(res.data.code === 0){
                 this.$message({
                   showClose: true,
@@ -425,7 +420,6 @@
 			    param.append("phone_type",'web');
 			    this.$http.post("/index.php/Mobile/skey/login",param)
 			    .then((res)=>{
-			    	console.log(res.data)
 					if(res.data.code === 0){
 						let avatar = getAvatar(res.data.data.avatar)
 						this.setUser({
@@ -763,7 +757,7 @@ $color3:#409EFF;
       }
       .pass{
         width: 100%;
-        margin: 10px auto;
+        margin: 0px auto 10px;
         input{
           width: 45%;
           height: 34px;
@@ -790,7 +784,6 @@ $color3:#409EFF;
         margin: 0 auto;
         button{
           width: 100%;
-          margin: 10px auto 0;
           height: 34px;
           line-height: 9.5px;
         }

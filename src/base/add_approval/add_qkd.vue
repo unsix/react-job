@@ -19,9 +19,11 @@
 			<el-form-item label="联系方式" prop="phone">
 				<el-input v-model="qkd_ruleForm.phone"></el-input>
 			</el-form-item>
+
 			<el-form-item label="开户行地址" prop="bank_address">
 				<el-input v-model="qkd_ruleForm.bank_address"></el-input>
 			</el-form-item>
+
 			<el-form-item label="银行账户名称" prop="account_name">
 				<el-input v-model="qkd_ruleForm.account_name"></el-input>
 			</el-form-item>
@@ -31,6 +33,7 @@
 			<el-form-item label="合同金额" prop="subtotal">
 				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
 			</el-form-item>
+
 			<el-form-item label="本次请款金额" prop="request_subtotal">
 				<el-input v-model="qkd_ruleForm.request_subtotal"></el-input>
 			</el-form-item>
@@ -46,9 +49,11 @@
 			<el-form-item label="请款次数" prop="request_num">
 				<el-input v-model="qkd_ruleForm.request_num"></el-input>
 			</el-form-item>
+
 			<el-form-item label="已领工程款" prop="balance_subtotal">
 				<el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
 			</el-form-item>
+
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
@@ -92,7 +97,7 @@
         fileList_a: [],
 				picArr: [],
 				fileArr: [],
-				qkd_ruleForm: {
+				qkd_ruleForm: {//
 					balance_subtotal: '',
 					gain_reduction_subtotal: '',
 					contract_name_new: '',
@@ -216,7 +221,8 @@
 		},
 		created() {
 			this._getToken()
-			this.initial_data()
+			this.initial_data();
+			console.log(this.qkd_ruleForm);//liulanqi
 		},
 		computed: {
 			...mapGetters([

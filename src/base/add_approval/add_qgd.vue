@@ -312,7 +312,7 @@
           sub[i].subtotal = sub[i].price * sub[i].num
         }
         for (var i = 0;i<sub.length;i++){
-          tato +=sub[i].subtotal
+          tato +=Number(sub[i].subtotal)
         }
         this.qgd_ruleForm.total =tato
       },
@@ -363,13 +363,17 @@
 							this.qgd_ruleForm.consignee = this.form_Lista.consignee
 							this.qgd_ruleForm.consignee_phone = this.form_Lista.consignee_phone
 							this.qgd_ruleForm.buy_person = this.form_Lista.buy_person
-							this.qgd_ruleForm.total = this.form_Lista.total
+              var str = 0
+              var sub = this.form_Lista.content
+              for (var i = 0;i<sub.length;i++){
+                str += Number(sub[i].subtotal)
+              }
+							this.qgd_ruleForm.total = str
 							this.qgd_ruleForm.buy_person_phone = this.form_Lista.buy_person_phone
 							this.qgd_ruleForm.receive_address = this.form_Lista.receive_address
 							this.qgd_ruleForm.request_contract_address = this.form_Lista.request_contract_address
 							this.qgd_ruleForm.add = this.form_Lista.content
               this.qgd_ruleForm.arrival_time = this.form_Lista.arrival_time
-              console.log(this.qgd_ruleForm.arrival_time)
               if(this.qgd_ruleForm.arrival_time){
                 let strDate = this.qgd_ruleForm.arrival_time
                 var time = new Date(strDate)
@@ -551,12 +555,14 @@
 			},
 			submitForm_qgd(formName) {
 				this.returnOk = false
+
 				this.qgd_ruleForm.add.forEach((item) => {
 					if(item.model === '' || item.name === '' || item.num === '' || item.price === '' ||
 						item.purpose === '' || item.spec === '' || item.subtotal === '' || item.unit === '') {
 						this.$message.error('请将清单条目填写完整');
 						this.returnOk = true
-					}
+
+          }
 					var re = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/;　　
 					if(!re.test(item.num)) {　　　　
 						this.$message.error('数量请填数字');　　　　
@@ -576,8 +582,18 @@
 				}
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-						this.qgd_submit()
-						this.loading_show = true
+            this.$confirm('确定总额为' + this.qgd_ruleForm.total + '吗', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消'
+            }).then(()=>{
+              this.qgd_submit()
+              this.loading_show = true
+            }).catch(()=>{
+              this.$message({
+                type: 'info',
+                message: '已取消操作'
+              });
+            })
 					} else {
 						this.$message.error('请将表单填写完整');
 						return false;
@@ -591,9 +607,6 @@
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
-				// 	else {
-				// 		this.fileArr.push(item)
-				// 	}
 				})
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
