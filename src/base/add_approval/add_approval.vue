@@ -89,7 +89,8 @@
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
 	import {getAvatar} from '@/common/js/avatar.js'
-	import { create_depart_list } from 'common/js/initial/depart.js'
+  import { getCro } from "@/common/js/crowd"
+  import { create_depart_list } from 'common/js/initial/depart.js'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
@@ -185,15 +186,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
-						 if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var judge = res.data.code
+            getCro(judge)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -240,6 +234,8 @@
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
@@ -269,7 +265,6 @@
 						} else if(item.type === '报销单'){
 						  this.bxd_if =true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
-              console.log(this.form_Lista)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             }
@@ -280,6 +275,8 @@
 				nparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
@@ -311,7 +308,6 @@
         nparam.append('approval_id',this.form_approval_id)
         this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
           .then((res)=>{
-            console.log(res)
             let sore = res.data.data
             this.balance_subtotal = sore.balance_subtotal
 
@@ -324,15 +320,8 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			           }
+            var judge = res.data.code
+            getCro(judge)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -626,6 +615,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/request_monry_basis", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_exam_list(item))
@@ -641,15 +632,8 @@
 				newparam.append("company_id",this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
 				.then((res)=>{
-					 if(res.data.code === 251){
-		              localStorage.removeItem('nowCompanyId');
-		              localStorage.removeItem('nowCompanyName');
-		              localStorage.removeItem('personnelId');
-		              localStorage.removeItem('token');
-		              localStorage.removeItem('user');
-		              this.$router.push({ path: '/login' })
-		              this.$message.error('您的帐号在别处登录，请重新登录');
-		            }
+          var judge = res.data.code
+          getCro(judge)
 				   	let reaDa=[]
 				    res.data.data.forEach((item)=>{
 				    	item.avatar = getAvatar(item.avatar)

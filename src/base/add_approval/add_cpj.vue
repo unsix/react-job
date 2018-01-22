@@ -147,9 +147,8 @@
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
             }else{
-              this.fileList_a = fileList_a = ''
               this.$message.error('上传文件格式错误')
-
+              return
             }
           })
       },

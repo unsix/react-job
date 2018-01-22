@@ -62,7 +62,8 @@
 <script>
 	import {getPic} from '@/common/js/pic.js'
 	import {getAvatar} from '@/common/js/avatar.js'
-	import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
+  import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -100,15 +101,8 @@
 				newparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var judge = res.data.code
+            getCro(judge)
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
@@ -122,15 +116,8 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var judge = res.data.code
+            getCro(judge)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -139,6 +126,8 @@
         nparam.append("personnel_id",this.personnel_id)
         this.$http.post("/index.php/Mobile/user/get_company_user_info",nparam)
           .then((res) =>{
+            var judge = res.data.code
+            getCro(judge)
             let con = res.data.data
             con.avatar = 'http://bbsf-file.hzxb.net/' + con.avatar
             this.infoArr = con

@@ -43,7 +43,8 @@
 	import { create_depart_list } from 'common/js/initial/depart.js'
 	import { createPersonInfo } from 'common/js/person_info'
 	import { prefixStyle } from '@/common/js/dom'
-	const transform = prefixStyle('transform')
+  import { getCro } from "@/common/js/crowd";
+  const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -121,6 +122,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/user/get_department_lest", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -133,6 +136,8 @@
 				newparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = 'http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
@@ -147,6 +152,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index/Mobile/user/get_department_lest", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -188,6 +195,8 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/User/return_company_new", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						let is_manage = parseInt(res.data.data.is_manage)
 						let is_finance = parseInt(res.data.data.is_finance)
 						this.setUserState({
@@ -220,6 +229,8 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/user/companies_list", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
 						this.setNowCompanyName(res.data.data[0].company_name)
@@ -232,6 +243,8 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index/Mobile/User/return_company_new", param)
 					.then((res) => {
+            var judge = res.data.code
+            getCro(judge)
 						let is_manage = parseInt(res.data.data.is_manage)
 						let is_finance = parseInt(res.data.data.is_finance)
 						this.setUserState({

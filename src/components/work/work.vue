@@ -69,6 +69,7 @@
 	import { createPersonInfo } from 'common/js/person_info'
 	import { mapMutations } from 'vuex'
 	import Date from '@/base/date/date'
+  import { getCro } from '@/common/js/crowd'
 	import { prefixStyle } from '@/common/js/dom'
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
@@ -241,15 +242,8 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/User/return_company_new", param)
 					.then((res) => {
-						if(res.data.code === 251){
-							localStorage.removeItem('nowCompanyId');
-							localStorage.removeItem('nowCompanyName');
-							localStorage.removeItem('personnelId');
-							localStorage.removeItem('token');
-							localStorage.removeItem('user');
-							this.$router.push({ path: '/login' })
-							this.$message.error('您的帐号在别处登录，请重新登录');
-						}
+					  var judge = res.data.code
+						getCro(judge)
 						this.setUserState({
 							'manage': parseInt(res.data.data.is_manage),
 							'finance': parseInt(res.data.data.is_finance),
@@ -270,15 +264,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var judge = res.data.code
+            getCro(judge)
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -308,17 +295,8 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
-					  console.log('---11---------')
-					  console.log(res)
-						if(res.data.code === 251){
-							localStorage.removeItem('nowCompanyId');
-							localStorage.removeItem('nowCompanyName');
-							localStorage.removeItem('personnelId');
-							localStorage.removeItem('token');
-							localStorage.removeItem('user');
-							this.$router.push({ path: '/login' });
-							this.$message.error('您的帐号在别处登录，请重新登录');
-						}
+            var judge = res.data.code
+            getCro(judge)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
