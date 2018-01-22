@@ -39,7 +39,8 @@
             <!--表单回执-->
 						<div class="person" ref="person">
 							<div class="submit">
-								<el-button type="primary" round @click="submit" v-show="showMe">保存更改11</el-button>
+								<el-button type="primary" round @click="submit" v-show="showMe">保存更改</el-button>
+                <el-button style="margin-top: 5px" type="info" @click="_ret" round v-show="showMe">取消</el-button>
 							</div>
 							<el-collapse v-model="activeNames">
 								<el-collapse-item title="人员列表" name="1">
@@ -221,12 +222,16 @@
 				this.setFormRe[this.formRePersonIndex].groups.push(item)
 			},
 			perShow(index) {
-			  console.log(index)
 			  this.showMe = true
 				this.formRePersonIndex = index
 				this.redactState = true
 				this.activeNames = ['1']
 			},
+      _ret(){
+        this.showMe = false
+        this.redactState = false
+        this.activeNames = ['0']
+      },
 			closePersonList() {
 				this.formRePersonIndex = -1
 				this.personShow = false

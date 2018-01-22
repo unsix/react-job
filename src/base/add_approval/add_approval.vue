@@ -17,7 +17,7 @@
 				<el-button type="primary" plain @click="chooseTem">从模板选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
-				<addQkd v-if="qkd_show" :approval_id="approval_id5" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
+				<addQkd v-if="qkd_show" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
 				<addCpj v-if="cpj_show" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
 				<addPsb v-if="psb_show" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
 				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
@@ -107,7 +107,7 @@
 				asType: ['请购单', '合同评审表', '呈批件', '其他'],
 				form_Lista: {},
 				form_Listb: {},
-        qkd_ruleForm:{},
+        main_show: {},
 				activeName: '',
 				psb_if: false,
 				qgd_if: false,
@@ -312,10 +312,11 @@
         nparam.append('approval_id',this.form_approval_id)
         this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
           .then((res)=>{
-            let sore = res.data.data
-            this.balance_subtotal = sore.balance_subtotal
-
+            this.main_show = res.data.data
+            console.log(this.main_show)
+            this.$refs.scse.showMe()
           })
+
 				this.formShow = true
 				this.qkd_show = true
 			},

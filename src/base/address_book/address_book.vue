@@ -56,6 +56,13 @@
         </div>
       </div>
     </div>
+
+    <div class="publish">
+      <div class="top">
+        <el-button type="primary" class="btn" plain @click="return_">返回</el-button>
+        <span class="title">人员详情</span>
+      </div>
+    </div>
   </div>
 </template>
 

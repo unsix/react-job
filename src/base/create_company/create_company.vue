@@ -346,7 +346,8 @@
 			    		this.companyId=res.data.data.company_id
 			    		let ret = []
 			         	for(var i in this.department) {
-						let str={}
+			    		  console.log(this.department)
+                let str={}
 			         	for(var j in this.department[i].type){
 			         		if(this.department[i].type[j]){
 			         			let newStr={}
@@ -367,12 +368,13 @@
 				         		}
 				         	}
 				      	}
+				      	console.log(ret)
 			         	let newRet =JSON.stringify(ret);
 			        	let param = new URLSearchParams();
-					    param.append("big_json",newRet);
-					    param.append("company_id",this.companyId);
-					    param.append("uid",this.user.uid);
-					    this.$http.post("/index.php/Mobile/company/entrance_company",param)
+                param.append("big_json",newRet);
+                param.append("company_id",this.companyId);
+                param.append("uid",this.user.uid);
+                this.$http.post("/index.php/Mobile/company/entrance_company",param)
 					      .then((res)=>{
 					      	if(res.data.code === 0){
 					      			this.$message({

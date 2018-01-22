@@ -74,7 +74,7 @@
       <div class="reset" v-show="resetPassShow">
         <el-form :rules="resetRule" ref="res_ruleForm" :model="res_ruleForm">
           <el-form-item prop="password">
-            <el-input placeholder="请输入新密码" type="password" v-model="res_ruleForm.password"></el-input>
+            <el-input placeholder="请输入新密码"  type="password" v-model="res_ruleForm.password"></el-input>
           </el-form-item>
           <el-form-item prop="check_password">
             <el-input placeholder="请再次输入" type="password" @keyup.enter="_reset" v-model="res_ruleForm.check_password"></el-input>
@@ -155,7 +155,7 @@
         sender:'',
         code:'',
         resetPassShow:false,
-        str : '',
+        str : '1111',
         loadingShow:false,
         res_ruleForm:{
           password: '',
@@ -182,7 +182,7 @@
             { pattern:/^[1][3,4,5,7,8][0-9]{9}$/,message:'手机号码格式不正确',trigger: 'blur'}
           ],
           password: [
-            { validator: validatePass3, trigger: 'blur' },
+            { validator: validatePass3, trigger: 'blur',},
             { pattern:/^[a-zA-Z]\w{5,17}$/,message:'密码格式不正确'}
           ],
           check_password: [
@@ -229,6 +229,15 @@
       _reset(){
         if(this.res_ruleForm.password != this.res_ruleForm.check_password){
           this.$message.error('两次密码输入不一致')
+          return
+        }
+        var re = /^[a-zA-Z]\w{5,17}$/
+        if(!re.test(this.res_ruleForm.password)){
+          this.$message.error('密码格式不正确')
+          return
+        }
+        if(!re.test(this.res_ruleForm.check_password)){
+          this.$message.error('密码格式不正确')
           return
         }
         this.loadingShow = true
@@ -353,23 +362,44 @@
           this.ster_ruleForm.password = ''
           this.ster_ruleForm.check_password = ''
         }
+        var re = /^[a-zA-Z]\w{5,17}$/
+        if(!re.test(this.ster_ruleForm.password)){
+          this.$message.error('密码格式不正确')
+          return
+        }
+        if(!re.test(this.ster_ruleForm.check_password)){
+          this.$message.error('密码格式不正确')
+          return
+        }
         if(this.ster_ruleForm.code_a == this.str){
           let password = md5(this.ster_ruleForm.password)
           let check = md5(this.ster_ruleForm.check_password)
           let param = new URLSearchParams()
           param.append('type',this.ster_ruleForm.type)
           param.append('phone',this.ster_ruleForm.phone)
+          console.log(this.ster_ruleForm.phone)
           param.append('password',password)
           param.append('check_password',check)
           this.$http.post('/index.php/Mobile/skey/register',param)
             .then((res)=>{
+              console.log(res)
               if(res.data.code === 0){
                 this.$message({
                   showClose: true,
                   message: '恭喜你 注册成功',
                   type: 'success'
                 })
+              }else if(res.data.code == 1){
+                this.$message({
+                  showClose: true,
+                  message: "用户已注册",
+                  type: 'error'
+                })
               }
+              this.ster_ruleForm.code_a = ''
+              this.ster_ruleForm.password = ''
+              this.ster_ruleForm.check_password = ''
+              this.ster_ruleForm.phone = ''
               this.isC = false
               this.isA = true
             })

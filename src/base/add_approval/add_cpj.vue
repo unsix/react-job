@@ -136,6 +136,7 @@
         this.fileList_a = fileList_a
       },
       handlePreview_a(file, fileList_a){
+			  //后缀
         let index = file.name.lastIndexOf('.')
         let attribute = file.name.slice(index)
         if(attribute.substr(0,1)=='.'){

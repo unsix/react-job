@@ -28,7 +28,7 @@
 				<el-input v-model="qkd_ruleForm.account_name"></el-input>
 			</el-form-item>
 			<el-form-item label="银行卡号" prop="bank_card">
-				<el-input v-model="qkd_ruleForm.bank_card"></el-input>
+				<el-input v-model="qkd_ruleForm.bank_card?qkd_ruleForm.bank_card:main_show.bank_card"></el-input>
 			</el-form-item>
 			<el-form-item label="合同金额" prop="subtotal">
 				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
@@ -97,7 +97,7 @@
         fileList_a: [],
 				picArr: [],
 				fileArr: [],
-				qkd_ruleForm: {//
+				qkd_ruleForm: {
 					balance_subtotal: '',
 					gain_reduction_subtotal: '',
 					contract_name_new: '',
@@ -115,7 +115,7 @@
 					phone: '',
 					contract_state: '',
 					project_manager_name: '',
-					project_manager: {}
+					project_manager: {},
 				},
 				rules: {
 					account_name: [{
@@ -217,12 +217,15 @@
 			},
 			request_money_basis_type: {
 				type: String
-			}
+			},
+      main_show:{
+
+      }
 		},
 		created() {
 			this._getToken()
 			this.initial_data();
-			console.log(this.qkd_ruleForm);//liulanqi
+			console.log("this.abc", this.main_show)
 		},
 		computed: {
 			...mapGetters([
@@ -256,6 +259,17 @@
 			fileAccordS() {
 				this.fileAccordShow = true
 			},
+      showMe(){
+        console.log('--------11------------')
+        console.log(this.main_show)
+        this.qkd_ruleForm.bank_card = this.main_show.bank_card
+        console.log(this.main_show.bank_card)
+        console.log(this.qkd_ruleForm.bank_card)
+        this.qkd_ruleForm.bank_address = this.main_show.bank_address
+        this.qkd_ruleForm.bank_name = this.main_show.bank_name
+        this.qkd_ruleForm.balance_subtotal = this.main_show.balance_subtotal
+        this.qkd_ruleForm.account_name = this.main_show.account_name
+      },
 			initial_data() {
 				if(!this.approval_id) {
 					return
