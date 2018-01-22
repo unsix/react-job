@@ -166,6 +166,8 @@
 							newparam.append("department_id", resData[j].department_id);
 							this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
 								.then((res) => {
+                  var judge = res.data.code
+                  getCro(judge)
 									let reaDa = []
 									res.data.data.forEach((item) => {
 										reaDa.push(createPersonInfo(item))

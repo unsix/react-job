@@ -719,7 +719,8 @@
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { getPic } from '@/common/js/pic.js'
-	import { getAvatar } from '@/common/js/avatar.js'
+  import {getCro} from "@/common/js/crowd";
+  import { getAvatar } from '@/common/js/avatar.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -847,9 +848,11 @@
 				  console.log(this.examComName)
 					param.append("company_id",this.examComName);
 				}
-        console.log(this.examComName)
 				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_exam_list(item))
@@ -978,6 +981,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -995,6 +1001,9 @@
 				}
 				this.$http.post("/index.php/Mobile/approval/select_approval", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(res.data.code === 0) {
 							let arr = []
 							res.data.data.forEach((item) => {
@@ -1038,6 +1047,9 @@
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index.php/Mobile/approval/add_tagging", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this._getExamList()
@@ -1055,6 +1067,9 @@
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index.php/Mobile/approval/add_tagging", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this._getExamList()
@@ -1072,6 +1087,9 @@
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index.php/Mobile/approval/add_tagging", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this._getExamList()
@@ -1089,6 +1107,9 @@
 				param.append("participation_id", item.participation_id);
 				this.$http.post("/index.php/Mobile/approval/add_tagging", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.colorIndex = -1
 						if(res.data.code === 0) {
 							this._getExamList()
@@ -1183,6 +1204,9 @@
 						param.append("opinion", this.handle_txt);
 						this.$http.post("/index.php/Mobile/find/approval_process", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								this.loading_show = false
 								this.handle_txt = ''
 								this.listShow = true
@@ -1231,6 +1255,9 @@
 									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
 									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
 										.then((res) => {
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
 											let param = new URLSearchParams();
 											param.append("uid", this.user.uid);
 											param.append("approval_id", this.untreated.approval_id);
@@ -1241,6 +1268,9 @@
 											param.append("opinion", this.handle_txt);
 											this.$http.post("/index.php/Mobile/find/approval_process", param)
 												.then((res) => {
+                          var current = this
+                          var judge = res.data.code
+                          getCro(judge,current)
 													this.loading_show = false
 													this.handle_txt = ''
 													this.listShow = true
@@ -1290,6 +1320,9 @@
 						param.append("opinion", this.handle_txt);
 						this.$http.post("/index.php/Mobile/find/approval_process", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								this.loading_show = false
 								this.handle_txt = ''
 								this.listShow = true
@@ -1336,6 +1369,9 @@
 									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
 									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
 										.then((res) => {
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
 											let param = new URLSearchParams();
 											param.append("uid", this.user.uid);
 											param.append("approval_id", this.untreated.approval_id);
@@ -1346,6 +1382,9 @@
 											param.append("opinion", this.handle_txt);
 											this.$http.post("/index.php/Mobile/find/approval_process", param)
 												.then((res) => {
+                          var current = this
+                          var judge = res.data.code
+                          getCro(judge,current)
 													this.loading_show = false
 													this.handle_txt = ''
 													this.listShow = true
@@ -1425,6 +1464,9 @@
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1459,6 +1501,9 @@
 				nparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
@@ -1466,6 +1511,9 @@
 								zparam.append("enclosure_id", item.picture);
 								this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
 									.then((res) => {
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
 												arr.push(getAvatar(item))
@@ -1500,7 +1548,9 @@
 						param.append("enclosure_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
-							  console.log(res)
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
@@ -1524,6 +1574,9 @@
 						param.append("attachments_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let obj = {}
 								let file_data = res.data.data
 								let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
@@ -1571,6 +1624,9 @@
         //让初始页的companyId为当前公司id 去掉变为全部
 				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_exam_list(item))

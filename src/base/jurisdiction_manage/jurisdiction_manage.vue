@@ -69,7 +69,8 @@
 <script>
 	import { getPic } from '@/common/js/pic.js'
 	import { getAvatar } from '@/common/js/avatar.js'
-	import { createJurisdictionList } from 'common/js/jurisdiction_list.js'
+  import {getCro} from "@/common/js/crowd";
+  import { createJurisdictionList } from 'common/js/jurisdiction_list.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	import { createPersonInfo } from 'common/js/person_info'
 	import jurisdictionItem from '@/base/jurisdiction_manage/jurisdiction_item'
@@ -185,7 +186,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/give_finance_new", param)
 					.then((res) => {
-            console.log(res)
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(res.data.code === 0) {
 							this._getHuizhi()
 							this.formRePersonIndex = -1
@@ -233,15 +236,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -250,15 +247,9 @@
 				newparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
@@ -273,15 +264,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/find/finance_personnel_list", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						res.data.data.forEach((item) => {
 							if(item.type === 1) {
 								let arr = []
@@ -311,15 +296,9 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_list", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						res.data.data.approval.forEach((item) => {
 							if(item.type === this.formType) {
 								if(item.list.length != 0) {
@@ -349,7 +328,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/jurisdictionManage') {
-				this.$emit('changeWorkIndex', 3)
+				this.$emit('changeWorkIndex', 4)
 			}
 		},
 		created() {

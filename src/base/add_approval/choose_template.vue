@@ -37,7 +37,9 @@
 <script>
 	import { create_exam_list } from '@/common/js/approval/exam'
 	import { mapGetters } from 'vuex'
-	export default {
+  import {getCro} from "@/common/js/crowd";
+
+  export default {
 		data() {
 			return {
 				untreated: [],
@@ -85,6 +87,9 @@
 				param.append("approval_type", this.approval_type);
 				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_exam_list(item))

@@ -60,7 +60,8 @@
 
 <script>
 	import {getPic} from '@/common/js/pic.js'
-	import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
+  import { mapGetters, mapMutations } from 'vuex'
 	import { createPersonInfo } from 'common/js/person_info'
 	import { createOrder } from 'common/js/order'
 	export default {
@@ -108,7 +109,6 @@
 				this.jurisdictionFormList.forEach((item, index) => {
 					this.arr.push(createOrder(item, index))
 				})
-        console.log(this.formType)
 				this.dialogVisible = false
         this.btn_show=true
 				let param = new URLSearchParams();
@@ -118,6 +118,9 @@
 				param.append("sequence", JSON.stringify(this.arr));
 				this.$http.post("/index.php/Mobile/approval/set_sequence", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.submitAddPersonShow = false
 						this.$emit('reload')
 						if(res.data.code === 0) {

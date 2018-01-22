@@ -53,9 +53,9 @@
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import qkd from '@/base/exam_form/qkd'
-	import picLeader from '@/common/js/pic.js'
 	import {getPic} from '@/common/js/pic.js'
-	import { create_exam_list } from '@/common/js/approval/exam'
+  import {getCro} from "@/common/js/crowd";
+  import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
@@ -97,7 +97,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/formReceipt') {
-				this.$emit('changeWorkIndex', 4)
+				this.$emit('changeWorkIndex', 5)
 			}
 		},
 		created() {
@@ -108,7 +108,7 @@
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._get_data()
 			this._getUserCompanyList()
-			
+
 		},
 		methods: {
 			handleClick(tab) {
@@ -146,16 +146,10 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
-					.then((res) => {	
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -168,15 +162,9 @@
 				param.append("each", 10);
 				this.$http.post("/index.php/Mobile/find/finance_list_formal", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_exam_list(item))
@@ -202,6 +190,9 @@
 				param.append("approval_id", item.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.img_list)
@@ -240,6 +231,9 @@
 				nparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.form_Listb = create_approval_list(res.data.data)
 						if(res.data.data.content) {
 							res.data.data.content.forEach((item) => {
@@ -248,6 +242,9 @@
 									zparam.append("enclosure_id", item.picture);
 									this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
 										.then((res) => {
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
 											let arr = []
 											res.data.data.picture.forEach((item) => {
 												if(item != '') {
@@ -269,7 +266,9 @@
 							zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
 							this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
 								.then((res) => {
-
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
 									let arr = []
 									res.data.data.picture.forEach((item) => {
 										if(item != '') {
@@ -303,6 +302,9 @@
 				param.append("enclosure_id", contract_id);
 				this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.picture.forEach((item) => {
 							if(item != '') {
@@ -323,6 +325,9 @@
 						param.append("enclosure_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
@@ -343,21 +348,15 @@
 				nparam.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						localStorage.token = JSON.stringify(res.data.data);
 						this.setToken(res.data.data)
 					})
 			}
 		},
-		
+
 		components: {
 			psb,
 			qgd,

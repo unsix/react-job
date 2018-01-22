@@ -110,7 +110,8 @@
 <script>
 	import { createPersonInfo } from 'common/js/person_info'
 	import { getPic } from '@/common/js/pic.js'
-	import { getAvatar } from '@/common/js/avatar.js'
+  import {getCro} from "@/common/js/crowd";
+  import { getAvatar } from '@/common/js/avatar.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -256,6 +257,9 @@
 					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/User/add_department", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this._getComPartPersonList()
 							if(res.data.code === 0) {
 								this.activeName = '1'
@@ -357,6 +361,9 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/User/give_manage", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.activeName1 = ['1']
 						this.activeName2 = '0'
 						if(res.data.code === 0) {
@@ -386,6 +393,9 @@
 						param.append("company_id", this.nowCompanyId);
 						this.$http.post("/index.php/Mobile/User/del_manage", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								if(res.data.code === 1) {
 									this.$message.error(res.data.message);
 								} else if(res.data.code === 0) {
@@ -412,6 +422,9 @@
 					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/user/del_company_personnel", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							if(res.data.code === 0) {
 								this._getComPartPersonList()
 								this._getAdmin()
@@ -446,15 +459,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -465,15 +472,9 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -487,6 +488,9 @@
 							newparam.append("department_id", resData[j].department_id);
 							this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 								.then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
 									let reaDa = []
 									res.data.data.forEach((item) => {
 										reaDa.push(createPersonInfo(item))
@@ -506,15 +510,8 @@
         mparam.append('company_id',this.nowCompanyId)
         this.$http.post("/index.php/Mobile/company/company_project_list",mparam)
           .then((res)=>{
-            if(res.data.code === 251){
-              localStorage.removeItem('nowCompanyId');
-              localStorage.removeItem('nowCompanyName');
-              localStorage.removeItem('personnelId');
-              localStorage.removeItem('token');
-              localStorage.removeItem('user');
-              this.$router.push({ path: '/login' })
-              this.$message.error('您的帐号在别处登录，请重新登录');
-            }
+            var judge = res.data.code
+            getCro(judge)
             res.data.data.forEach((item)=>{
               this.comProjectList.push(item)
             })
@@ -527,15 +524,9 @@
 				mparam.append("department_id", -1);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", mparam)
 					.then((res) => {
-						if(res.data.code === 251){
-			              localStorage.removeItem('nowCompanyId');
-			              localStorage.removeItem('nowCompanyName');
-			              localStorage.removeItem('personnelId');
-			              localStorage.removeItem('token');
-			              localStorage.removeItem('user');
-			              this.$router.push({ path: '/login' })
-			              this.$message.error('您的帐号在别处登录，请重新登录');
-			            }
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(res.data.data.length != 0) {
 							res.data.data.forEach((list) => {
 								let mewObj = {}

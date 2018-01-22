@@ -220,6 +220,11 @@
 	        nperson:[]
 	      }
 	    },
+      mounted() {
+        if(this.$route.path === '/work/exam') {
+          this.$emit('changeWorkIndex', 3)
+        }
+      },
 	    created(){
 
 	   		this.getData()

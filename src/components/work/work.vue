@@ -242,8 +242,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/User/return_company_new", param)
 					.then((res) => {
-					  var judge = res.data.code
-						getCro(judge)
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.setUserState({
 							'manage': parseInt(res.data.data.is_manage),
 							'finance': parseInt(res.data.data.is_finance),
@@ -264,8 +265,9 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+            var current = this
             var judge = res.data.code
-            getCro(judge)
+            getCro(judge,current)
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -295,8 +297,9 @@
 				param.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
 					.then((res) => {
+					  var current = this
             var judge = res.data.code
-            getCro(judge)
+            getCro(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -310,6 +313,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
 						this.setNowCompanyName(res.data.data[0].company_name)

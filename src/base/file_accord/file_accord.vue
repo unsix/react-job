@@ -308,7 +308,8 @@
 
 <script>
 	import {getPic} from '@/common/js/pic.js'
-	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
+  import { getCro } from "@/common/js/crowd";
+  import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
@@ -373,7 +374,9 @@
 				param.append("approval_id", this.form_approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(this.type === '呈批件') {
 							this.cpjShow = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
@@ -397,6 +400,9 @@
 				nparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
@@ -404,6 +410,9 @@
 								zparam.append("enclosure_id", item.picture);
 								this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
 									.then((res) => {
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
 												arr.push(getPic(item))
@@ -427,6 +436,9 @@
 						param.append("enclosure_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
@@ -451,6 +463,9 @@
 						param.append("attachments_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let obj = {}
 								let file_data = res.data.data
 								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute

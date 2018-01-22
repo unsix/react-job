@@ -101,8 +101,9 @@
 				newparam.append("company_id", this.nowCompanyId);
 				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
+            var current = this
             var judge = res.data.code
-            getCro(judge)
+            getCro(judge,current)
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
@@ -116,8 +117,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
+            var current = this
             var judge = res.data.code
-            getCro(judge)
+            getCro(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -126,8 +128,9 @@
         nparam.append("personnel_id",this.personnel_id)
         this.$http.post("/index.php/Mobile/user/get_company_user_info",nparam)
           .then((res) =>{
+            var current = this
             var judge = res.data.code
-            getCro(judge)
+            getCro(judge,current)
             let con = res.data.data
             con.avatar = 'http://bbsf-file.hzxb.net/' + con.avatar
             this.infoArr = con
