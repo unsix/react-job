@@ -32,7 +32,7 @@
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
-      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure" :on-error="sec"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
@@ -136,6 +136,9 @@
         this.fileList_a = fileList_a
 
       },
+      sec(err,file,fileList_a){
+        console.log(err)
+      },
       handlePreview_a(file, fileList_a){
 			  //后缀
         let size = file.size
@@ -170,7 +173,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
-        this.fileList=[]
+          this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 					  console.log(res)
@@ -307,6 +310,7 @@
 					}
 				})
         this.fileList_a.forEach((item) =>{
+          console.log(item)
           this.fileArr.push(item)
         })
 				if(this.cpj_ruleForm.project_manager_name != '') {

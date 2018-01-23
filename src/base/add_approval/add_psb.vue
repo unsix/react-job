@@ -42,7 +42,7 @@
 			<el-form-item label="合同主要内容" prop="remarks">
 				<el-input v-model="psb_ruleForm.remarks"></el-input>
 			</el-form-item>
-			<el-form-item label="项目负责人(部门经理)">
+			<el-form-item label="项目负责人" prop="project_manager_name">
 				<el-select v-model="psb_ruleForm.project_manager_name" placeholder="请选择" @change="psbSelectOk">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
@@ -181,7 +181,11 @@
 						required: true,
 						message: '请填写合同主要内容',
 						trigger: 'blur'
-					}]
+					}],
+          project_manager_name:[{
+            required: true,
+            trigger: 'blur'
+          }]
 				},
 				pic_hash_arr: [],
 				file_hash_arr: [],
@@ -425,10 +429,14 @@
 				// 		this.fileArr.push(item)
 				// 	}
 				})
+
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-
+        if(this.picArr.length === 0 && this.fileArr.length === 0){
+          this.$message.error('请上传附件')
+          return false
+        }
         let timestamp2 = Date.parse(new Date(this.psb_ruleForm.arrive_time));
 				let date = new Date();
 				date.setTime(timestamp2);

@@ -104,7 +104,7 @@
 		data() {
 			return {
 				navIndex: 0,
-				asType: ['请购单', '合同评审表', '呈批件', '其他'],
+				asType: ['请购单', '合同评审表', '呈批件'],
 				form_Lista: {},
 				form_Listb: {},
         main_show: {},

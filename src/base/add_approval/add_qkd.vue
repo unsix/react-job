@@ -33,6 +33,9 @@
 			<el-form-item label="合同金额" prop="subtotal">
 				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
 			</el-form-item>
+      <el-form-item label="已领工程款" prop="balance_subtotal">
+        <el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
+      </el-form-item>
 
 			<el-form-item label="本次请款金额" prop="request_subtotal">
 				<el-input v-model="qkd_ruleForm.request_subtotal"></el-input>
@@ -43,18 +46,14 @@
 			<el-form-item label="合同执行进度" prop="contract_state">
 				<el-input v-model="qkd_ruleForm.contract_state"></el-input>
 			</el-form-item>
-			<el-form-item label="增减金额">
+			<el-form-item label="增减金额" prop="gain_reduction_subtotal">
 				<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
 			</el-form-item>
 			<el-form-item label="请款次数" prop="request_num">
 				<el-input v-model="qkd_ruleForm.request_num"></el-input>
 			</el-form-item>
 
-			<el-form-item label="已领工程款" prop="balance_subtotal">
-				<el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
-			</el-form-item>
-
-			<el-form-item label="项目负责人(部门经理)">
+			<el-form-item label="项目负责人" prop="project_manager_name">
 				<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
@@ -118,10 +117,15 @@
 					project_manager: {},
 				},
 				rules: {
+          gain_reduction_subtotal:[{
+            required: true,
+            message: '请填写	增减金额',
+            trigger: 'blur'
+          }],
 					account_name: [{
-						required: true,
-						message: '请填写	银行账户名称',
-						trigger: 'blur'
+            required: true,
+            message: '请填写	银行账户名称',
+            trigger: 'blur'
 					}],
 					contract_name_new: [{
 						required: true,
@@ -181,17 +185,22 @@
 					contract_state: [{
 						required: true,
 						message: '请填写请款进程',
-						trigger: 'blur'
+						trigger: 'blur',
 					}],
           request_num:[{
             pattern:/^[0-9]+$/,
             message: '请款次数请填正整数',
-            trigger: 'blur'
+            trigger: 'blur',
+            required: true,
           }],
           balance_subtotal:[{
             pattern:/^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/,
             message: '已领工程款请填数字',
-            trigger: 'blur'
+            trigger: 'blur',
+            required: true,
+          }],
+          project_manager_name:[{
+            required:true
           }]
 				},
 				pic_hash_arr: [],
@@ -281,7 +290,7 @@
       showMe(){
         this.qkd_ruleForm.bank_card = this.main_show.bank_card
         this.qkd_ruleForm.bank_address = this.main_show.bank_address
-        this.qkd_ruleForm.bank_name = this.main_show.bank_name
+        this.qkd_ruleForm.subtotal = this.main_show.subtotal
         this.qkd_ruleForm.balance_subtotal = this.main_show.balance_subtotal
         this.qkd_ruleForm.account_name = this.main_show.account_name
       },
@@ -450,6 +459,10 @@
 						return false;
 					}
 				});
+        // if(this.picArr.length === 0 && this.fileArr.length === 0){
+        //   this.$message.error('请上传附件')
+        //   return false
+        // }
 			},
 			qkd_submit() {
 				this.picArr = []
@@ -458,14 +471,14 @@
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
-				// 	else {
-				// 		this.fileArr.push(item)
-				// 	}
 				})
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-
+        if(this.picArr.length === 0 && this.fileArr.length === 0){
+          this.$message.error('请上传附件')
+          return false
+        }
 				var re = /^[0-9]+$/;
 				if(!re.test(this.qkd_ruleForm.request_num)) {
 					this.$message.error('请求次数请填正整数');

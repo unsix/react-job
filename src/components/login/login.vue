@@ -155,7 +155,7 @@
         sender:'',
         code:'',
         resetPassShow:false,
-        str : '1111',
+        str : '',
         loadingShow:false,
         res_ruleForm:{
           password: '',
@@ -164,7 +164,7 @@
         resetRule:{
           password: [
             { validator: validatePass, trigger: 'blur',},
-            { pattern:/^[a-zA-Z]\w{5,17}$/,message:'密码格式不正确'}
+            { pattern:/^[a-zA-Z0-9]\w{5,17}$/,message:'密码格式不正确'}
           ],
           check_password: [
             { validator: validatePass2, trigger: 'blur' }
@@ -183,7 +183,7 @@
           ],
           password: [
             { validator: validatePass3, trigger: 'blur',},
-            { pattern:/^[a-zA-Z]\w{5,17}$/,message:'密码格式不正确'}
+            { pattern:/^[a-zA-Z0-9]\w{5,17}$/,message:'密码格式不正确'}
           ],
           check_password: [
             { validator: validatePass4, trigger: 'blur' }
@@ -231,7 +231,7 @@
           this.$message.error('两次密码输入不一致')
           return
         }
-        var re = /^[a-zA-Z]\w{5,17}$/
+        var re = /^[a-zA-Z0-9]\w{5,17}$/
         if(!re.test(this.res_ruleForm.password)){
           this.$message.error('密码格式不正确')
           return
@@ -362,7 +362,7 @@
           this.ster_ruleForm.password = ''
           this.ster_ruleForm.check_password = ''
         }
-        var re = /^[a-zA-Z]\w{5,17}$/
+        var re = /^[a-zA-Z0-9]\w{5,17}$/
         if(!re.test(this.ster_ruleForm.password)){
           this.$message.error('密码格式不正确')
           return

@@ -50,17 +50,17 @@
             <h4><p>所属部门</p><span>{{infoArr.department_name}}</span></h4>
           </div>
           <div class="work">
-            <h4>工作记录<span>...</span></h4>
+            <h4 @click="look(infoArr.personnel_id)">工作记录<span>...</span></h4>
             <h4>外勤签到<span>...</span></h4>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="publish">
+    <div class="publish" v-show="look_show">
       <div class="top">
         <el-button type="primary" class="btn" plain @click="return_">返回</el-button>
-        <span class="title">人员详情</span>
+        <span class="title">工作记录</span>
       </div>
     </div>
   </div>
@@ -74,6 +74,7 @@
 	export default {
 		data() {
 			return {
+			  look_show:false,
         address_book_show:true,
 			  details_show : false,
         personnel_id: '',
@@ -93,6 +94,11 @@
 			}
 		},
 		methods: {
+		  look(res){
+		    this.look_show = true
+        this.address_book_show = false
+        this.details_show = false
+      },
 			view_info(res) {
         this.address_book_show=false
         this.details_show = true
@@ -306,5 +312,8 @@
         }
       }
     }
+  }
+  .publish{
+
   }
 </style>
