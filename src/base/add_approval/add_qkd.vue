@@ -28,7 +28,7 @@
 				<el-input v-model="qkd_ruleForm.account_name"></el-input>
 			</el-form-item>
 			<el-form-item label="银行卡号" prop="bank_card">
-				<el-input v-model="qkd_ruleForm.bank_card?qkd_ruleForm.bank_card:main_show.bank_card"></el-input>
+				<el-input v-model="qkd_ruleForm.bank_card"></el-input>
 			</el-form-item>
 			<el-form-item label="合同金额" prop="subtotal">
 				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
@@ -222,11 +222,7 @@
 
       }
 		},
-		created() {
-			this._getToken()
-			this.initial_data();
-			console.log("this.abc", this.main_show)
-		},
+
 		computed: {
 			...mapGetters([
 				'comPersonList',
@@ -251,7 +247,30 @@
         this.fileList_a = fileList_a
       },
       handlePreview_a(file, fileList_a){
-        this.fileList_a = fileList_a
+        let size = file.size
+        let index = file.name.lastIndexOf('.')
+        let attribute = file.name.slice(index)
+        if(attribute.substr(0,1)=='.'){
+          attribute=attribute.substr(1)
+        }
+        this.$http.post("/index.php/Mobile/find/file_info")
+          .then((res)=>{
+            let maxSize = res.data.data.max
+            let attr = res.data.data.attribute
+            if(attr.indexOf(attribute) !=-1){
+              if(size < maxSize){
+                this.fileList_a = fileList_a
+              }else{
+                // maxSize = maxSize/1024/1024
+                // this.$message.error('附件不能大于'+maxSize +'M')
+                this.$message.error('上传文件过大 请删除')
+              }
+            }else{
+              this.$message.error('上传文件格式错误 请删除')
+              return
+            }
+
+          })
       },
 			closeAcc() {
 				this.fileAccordShow = false
@@ -260,11 +279,7 @@
 				this.fileAccordShow = true
 			},
       showMe(){
-        console.log('--------11------------')
-        console.log(this.main_show)
         this.qkd_ruleForm.bank_card = this.main_show.bank_card
-        console.log(this.main_show.bank_card)
-        console.log(this.qkd_ruleForm.bank_card)
         this.qkd_ruleForm.bank_address = this.main_show.bank_address
         this.qkd_ruleForm.bank_name = this.main_show.bank_name
         this.qkd_ruleForm.balance_subtotal = this.main_show.balance_subtotal
@@ -621,6 +636,10 @@
 				}, 500)
 			}
 		},
+    created() {
+      this._getToken()
+      this.initial_data();
+    },
 		watch: {
 			file_time() {
 				if(this.picArr.length != 0) {

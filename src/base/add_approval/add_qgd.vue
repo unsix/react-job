@@ -311,10 +311,12 @@
         for (var i = 0;i<sub.length;i++){
           sub[i].subtotal = sub[i].price * sub[i].num
         }
+        let val = ''
         for (var i = 0;i<sub.length;i++){
           tato +=Number(sub[i].subtotal)
+          val=Math.floor(tato * 100) / 100
         }
-        this.qgd_ruleForm.total =tato
+        this.qgd_ruleForm.total =val
       },
       checkPrice:function (data) {
         var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -328,13 +330,15 @@
         }
         var sub = this.qgd_ruleForm.add
         var tato = 0
+        let val = ''
         for (var i = 0;i<sub.length;i++){
           sub[i].subtotal = sub[i].price * sub[i].num
         }
         for (var i = 0;i<sub.length;i++){
           tato +=sub[i].subtotal
+          val=Math.floor(tato * 100) / 100
         }
-        this.qgd_ruleForm.total =tato
+        this.qgd_ruleForm.total =val
       },
 			closeQd(index) {
 				this.qgd_ruleForm.add.splice(index, 1)

@@ -145,7 +145,30 @@
             this.fileList_a = fileList_a
           },
           handlePreview_a(file, fileList_a){
-            this.fileList_a = fileList_a
+            let size = file.size
+            let index = file.name.lastIndexOf('.')
+            let attribute = file.name.slice(index)
+            if(attribute.substr(0,1)=='.'){
+              attribute=attribute.substr(1)
+            }
+            this.$http.post("/index.php/Mobile/find/file_info")
+              .then((res)=>{
+                let maxSize = res.data.data.max
+                let attr = res.data.data.attribute
+                if(attr.indexOf(attribute) !=-1){
+                  if(size < maxSize){
+                    this.fileList_a = fileList_a
+                  }else{
+                    // maxSize = maxSize/1024/1024
+                    // this.$message.error('附件不能大于'+maxSize +'M')
+                    this.$message.error('上传文件过大 请删除')
+                  }
+                }else{
+                  this.$message.error('上传文件格式错误 请删除')
+                  return
+                }
+
+              })
           },
           checkPrice:function (data) {
             var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -159,11 +182,12 @@
             }
             var sub = this.bxd_ruleForm.add
             var tato = 0
+            let val = ''
             for (var i = 0;i<sub.length;i++){
-              console.log(sub)
               tato +=Number(sub[i].price)
+              val=Math.floor(tato * 100) / 100
             }
-            this.bxd_ruleForm.money =tato
+            this.bxd_ruleForm.money =val
           },
           checkAmount:function (data) {
             var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/

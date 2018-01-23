@@ -167,7 +167,30 @@
         this.fileList_a = fileList_a
       },
       handlePreview_a(file, fileList_a){
-        this.fileList_a = fileList_a
+        let size = file.size
+        let index = file.name.lastIndexOf('.')
+        let attribute = file.name.slice(index)
+        if(attribute.substr(0,1)=='.'){
+          attribute=attribute.substr(1)
+        }
+        this.$http.post("/index.php/Mobile/find/file_info")
+          .then((res)=>{
+            let maxSize = res.data.data.max
+            let attr = res.data.data.attribute
+            if(attr.indexOf(attribute) !=-1){
+              if(size < maxSize){
+                this.fileList_a = fileList_a
+              }else{
+                // maxSize = maxSize/1024/1024
+                // this.$message.error('附件不能大于'+maxSize +'M')
+                this.$message.error('上传文件过大 请删除')
+              }
+            }else{
+              this.$message.error('上传文件格式错误 请删除')
+              return
+            }
+
+          })
       },
       checkNum:function (data) {
         var numReg =  /^[1-9]\d*$/

@@ -94,7 +94,7 @@
 </template>
 
 <script>
-	import {mapGetters} from 'vuex'
+	import {mapGetters, mapMutations } from 'vuex'
 	export default{
 		data() {
 	      return {
@@ -237,6 +237,10 @@
 	    },
 	    methods: {
 		  //下一步
+        ...mapMutations({
+          setNowCompanyId: 'SET_NOWCOMPANY_ID',
+          setNowCompanyName: 'SET_NOWCOMPANY_NAME'
+        }),
 		    wrapperClose(){
 		    	this.$emit('companyClose')
 		    	  this.companyName = ''
@@ -327,13 +331,13 @@
             this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
               .then((res)=>{
                 this.workerInfo = res.data.data
-                console.log(this.workerInfo)
               })
 			   // this.workerInfo=this.comPersonList
 			    this.old_department = this.department
     		},
         //创建公司
     		creatOver(){
+		      let str = this.companyName
           let c_param = new URLSearchParams();
 			    c_param.append("uid",this.user.uid);
 			    c_param.append("name",this.companyName);
@@ -342,7 +346,7 @@
 			    this.$http.post("/index.php/Mobile/User/add_company",c_param)
 			    .then((res)=>{
 			    	console.log(res)
-			    	if(res.data.code === '0'){
+			    	if(res.data.code === 0){
 			    		this.companyId=res.data.data.company_id
 			    		let ret = []
 			         	for(var i in this.department) {
@@ -381,6 +385,11 @@
 						        	message: '创建公司成功',
 						        	type: 'success'
 						        });
+                    this.setNowCompanyId(this.companyId)
+                    this.setNowCompanyName(str)
+                    localStorage.nowCompanyId = JSON.stringify(this.companyId)
+                    localStorage.nowCompanyName = JSON.stringify(str)
+                    this.$router.push('/work')
 					      	}else{
 					      		this.$message.error('创建公司失败');
 					      	}
