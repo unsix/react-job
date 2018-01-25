@@ -32,7 +32,7 @@
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
-      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure" :on-error="sec"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
@@ -41,6 +41,11 @@
 				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
+    <ul>
+      <li v-for="item in todo">
+        <sec v-bind="item"></sec>
+      </li>
+    </ul>
 		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
@@ -48,6 +53,7 @@
 <script>
 	import loading from '@/base/loading/loading'
   import { getPic } from '@/common/js/pic.js'
+  import sec from '@/base/unit/sec'
   import { getAvatar } from '@/common/js/avatar.js'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { mapGetters, mapMutations } from 'vuex'
@@ -57,8 +63,29 @@
 				fileList: [],
         fileList_a:[],
 				picArr: [],
+        todo:[{
+          tit:'wode',
+          hint:'请输入数字',
+          input_type:'tel',
+          form_element_id:'1',
+          version:'2',
+          max_length:'33'
+        },{
+          tit:'ww',
+          hint:'请输入sd数字',
+          input_type:'text',
+          form_element_id:'2',
+          version:'2',
+          max_length:'33'
+        },{
+          tit:'wsdw',
+          hint:'请输入sd数字',
+          input_type:'text',
+          form_element_id:'2',
+          version:'2',
+          max_length:'33'
+        }],
 				fileArr: [],
-        //添加
 				cpj_ruleForm: {
 					department_id: '',
 					department_name: '',
@@ -101,7 +128,6 @@
 				pic_index: 0,
 				img_arr: [],
 				pic_enclosure_id: ''
-
 			}
 		},
 		props: {
@@ -123,7 +149,8 @@
 			])
 		},
 		components: {
-			loading
+			loading,
+      sec
 		},
 		methods: {
 			handleRemove(file, fileList) {
@@ -136,12 +163,8 @@
         this.fileList_a = fileList_a
 
       },
-      sec(err,file,fileList_a){
-        console.log(err)
-      },
       handlePreview_a(file, fileList_a){
 			  //后缀
-        let size = file.size
         let index = file.name.lastIndexOf('.')
         let attribute = file.name.slice(index)
         if(attribute.substr(0,1)=='.'){
@@ -149,19 +172,12 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
-            let maxSize = res.data.data.max
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
-              if(size < maxSize){
-                this.fileList_a = fileList_a
-              }else{
-                // maxSize = maxSize/1024/1024
-                // this.$message.error('附件不能大于'+maxSize +'M')
-                this.$message.error('上传文件过大 请删除')
-              }
+              this.fileList_a = fileList_a
             }else{
               this.$message.error('上传文件格式错误 请删除')
-              return
+              this.fileList_a = fileList_a
             }
 
           })
@@ -176,7 +192,6 @@
           this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
-					  console.log(res)
 						this.form_Lista = create_cengpijian_list(res.data.data)
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
 						this.cpj_ruleForm.department_name = this.form_Lista.department_name
@@ -310,9 +325,9 @@
 					}
 				})
         this.fileList_a.forEach((item) =>{
-          console.log(item)
           this.fileArr.push(item)
         })
+
 				if(this.cpj_ruleForm.project_manager_name != '') {
 					this.comPersonList.forEach((item) => {
 						if(item.name === this.cpj_ruleForm.project_manager_name) {
@@ -465,34 +480,50 @@
                       }
                     })
                 }else{
-                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-                    let index = this.fileArr[i].name.lastIndexOf('.')
-                    let attribute = this.fileArr[i].name.slice(index)
-                    if(attribute.substr(0,1)=='.'){
-                      attribute=attribute.substr(1)
-                    }
-                    let file_name = this.fileArr[i].name.slice(0, index)
-                    let param = new URLSearchParams();
-                    param.append("uid", this.user.uid);
-                    param.append("attribute", attribute);
-                    param.append("attachments", res.data.hash);
-                    param.append("file_name", file_name);
-                    this.$http.post("/index.php/Mobile/approval/add_attachments", param)
-                      .then((res) => {
-                        this.file_hash_arr.push({
-                          "type": 4,
-                          "contract_id": res.data.data.attachments_id,
-                          "name": this.fileArr[i].name
-                        })
-                        if(this.file_hash_arr.length === this.fileArr.length) {
-                          let bDate = Date.parse(new Date())
-                          this.file_time = bDate
+								  let size = this.fileArr[i].size
+                  let index = this.fileArr[i].name.lastIndexOf('.')
+                  let attribute = this.fileArr[i].name.slice(index)
+                  if(attribute.substr(0,1)=='.'){
+                    attribute=attribute.substr(1)
+                  }
+                  this.$http.post("/index.php/Mobile/find/file_info")
+                    .then((res)=>{
+                      let maxSize = res.data.data.size
+                      let attr = res.data.data.attribute
+                      if(attr.indexOf(attribute) !=-1){
+                        if(size<maxSize){
+                          this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                            let file_name = this.fileArr[i].name.slice(0, index)
+                            let param = new URLSearchParams();
+                            param.append("uid", this.user.uid);
+                            param.append("attribute", attribute);
+                            param.append("attachments", res.data.hash);
+                            param.append("file_name", file_name);
+                            this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                              .then((res) => {
+                                this.file_hash_arr.push({
+                                  "type": 4,
+                                  "contract_id": res.data.data.attachments_id,
+                                  "name": this.fileArr[i].name
+                                })
+                                if(this.file_hash_arr.length === this.fileArr.length) {
+                                  let bDate = Date.parse(new Date())
+                                  this.file_time = bDate
+                                }
+                              })
+                          })
+                        }else{
+                          this.$message.error('上传文件过大 请删除')
+                          this.loadingShow = false
+                          return false
                         }
-                      })
-                  })
+                      }else{
+                        this.$message.error('请删除'+this.fileArr[i].name)
+                        this.loadingShow = false
+                        return false
+                      }
+                    })
                 }
-								//这里
-
 							}
 						}
 					}

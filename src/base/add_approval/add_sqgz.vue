@@ -50,13 +50,13 @@
 				</el-form>
 			</div>
 
-			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" accept="image/*,image/jpg,image/png,image/jpeg" :file-list="fileList" list-type="picture-card"  :auto-upload="false">
+			<el-upload class="upload-demo" id="picc" multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" accept="image/jpg,image/png,image/jpeg" :file-list="fileList" list-type="picture-card"  :auto-upload="false">
         <i class="el-icon-plus"></i>
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
 
-      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" accept="text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/rtf" :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+      <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
@@ -167,7 +167,6 @@
         this.fileList_a = fileList_a
       },
       handlePreview_a(file, fileList_a){
-        let size = file.size
         let index = file.name.lastIndexOf('.')
         let attribute = file.name.slice(index)
         if(attribute.substr(0,1)=='.'){
@@ -175,19 +174,12 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
-            let maxSize = res.data.data.max
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
-              if(size < maxSize){
-                this.fileList_a = fileList_a
-              }else{
-                // maxSize = maxSize/1024/1024
-                // this.$message.error('附件不能大于'+maxSize +'M')
-                this.$message.error('上传文件过大 请删除')
-              }
+              this.fileList_a = fileList_a
             }else{
               this.$message.error('上传文件格式错误 请删除')
-              return
+              this.fileList_a = fileList_a
             }
 
           })
@@ -496,31 +488,49 @@
                       }
                     })
                 }else{
-                  this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-                    let index = this.fileArr[i].name.indexOf('.')
-                    let attribute = this.fileArr[i].name.slice(index)
-                    if(attribute.substr(0,1)=='.'){
-                      attribute=attribute.substr(1)
-                    }
-                    let file_name = this.fileArr[i].name.slice(0, index)
-                    let param = new URLSearchParams();
-                    param.append("uid", this.user.uid);
-                    param.append("attribute", attribute);
-                    param.append("attachments", res.data.hash);
-                    param.append("file_name", file_name);
-                    this.$http.post("/index.php/Mobile/approval/add_attachments", param)
-                      .then((res) => {
-                        this.file_hash_arr.push({
-                          "type": 4,
-                          "contract_id": res.data.data.attachments_id,
-                          "name": this.fileArr[i].name
-                        })
-                        if(this.file_hash_arr.length === this.fileArr.length) {
-                          let bDate = Date.parse(new Date())
-                          this.file_time = bDate
+                  let size = this.fileArr[i].size
+                  let index = this.fileArr[i].name.lastIndexOf('.')
+                  let attribute = this.fileArr[i].name.slice(index)
+                  if(attribute.substr(0,1)=='.'){
+                    attribute=attribute.substr(1)
+                  }
+                  this.$http.post("/index.php/Mobile/find/file_info")
+                    .then((res)=>{
+                      let maxSize = res.data.data.size
+                      let attr = res.data.data.attribute
+                      if(attr.indexOf(attribute) !=-1){
+                        if(size<maxSize){
+                          this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+                            let file_name = this.fileArr[i].name.slice(0, index)
+                            let param = new URLSearchParams();
+                            param.append("uid", this.user.uid);
+                            param.append("attribute", attribute);
+                            param.append("attachments", res.data.hash);
+                            param.append("file_name", file_name);
+                            this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                              .then((res) => {
+                                this.file_hash_arr.push({
+                                  "type": 4,
+                                  "contract_id": res.data.data.attachments_id,
+                                  "name": this.fileArr[i].name
+                                })
+                                if(this.file_hash_arr.length === this.fileArr.length) {
+                                  let bDate = Date.parse(new Date())
+                                  this.file_time = bDate
+                                }
+                              })
+                          })
+                        }else{
+                          this.$message.error('上传文件过大 请删除')
+                          this.loadingShow = false
+                          return false
                         }
-                      })
-                  })
+                      }else{
+                        this.$message.error('请删除'+this.fileArr[i].name)
+                        this.loadingShow = false
+                        return false
+                      }
+                    })
                 }
 							}
 						}

@@ -50,7 +50,7 @@
             <h4><p>所属部门</p><span>{{infoArr.department_name}}</span></h4>
           </div>
           <div class="work">
-            <h4 @click="look(infoArr.personnel_id)">工作记录<span>...</span></h4>
+            <h4 @click="look(infoArr.uid)">工作记录<span>...</span></h4>
             <h4>外勤签到<span>...</span></h4>
           </div>
         </div>
@@ -61,6 +61,48 @@
       <div class="top">
         <el-button type="primary" class="btn" plain @click="return_">返回</el-button>
         <span class="title">工作记录</span>
+      </div>
+      <div class="list">
+        <ul>
+          <li v-for="(item,index) in untreated">
+            <div class="main">
+              <div class="avatar">
+                <img :src="item.avatar">
+              </div>
+              <div class="name">
+                <span>{{item.name}}</span>
+                <span class="add_time">{{item.add_time}}</span>
+              </div>
+              <div class="stauts">
+                <span>日志 未点评</span>
+                <div class="btn">
+                  <el-button round type="primary">回复</el-button>
+                  <el-button round type="warning">删除</el-button>
+                  <el-button round type="success">赞</el-button>
+                </div>
+              </div>
+            </div>
+            <div class="cc">
+              <span>全公司</span>
+            </div>
+            <div class="bottom">
+              <div class="time">
+                <span>{{item.start_time}} 由{{item.reviewer_name}}点评</span>
+              </div>
+               <ul>
+                 <li v-for="ti in item.custom_form_elements">
+                   <p>{{ti.title}}</p>
+                   <span style="margin-left: 20px">sssssssssasdasda</span>
+                 </li>
+               </ul>
+            </div>
+          </li>
+          <div class="page">
+            <span @click="first_page">首页</span>
+            <span @click="last_page" v-show="pageIndex > 1">上一页</span>
+            <span @click="next_page" v-show="nextPageShow">下一页</span>
+          </div>
+        </ul>
       </div>
     </div>
   </div>
@@ -74,11 +116,14 @@
 	export default {
 		data() {
 			return {
-			  look_show:false,
+        untreated:[],
+        look_show:false,
         address_book_show:true,
 			  details_show : false,
         personnel_id: '',
-        infoArr :{}
+        infoArr :{},
+        nextPageShow: true,
+        pageIndex:1
       }
 		},
 		computed: {
@@ -94,13 +139,27 @@
 			}
 		},
 		methods: {
+      first_page() {
+        this.nextPageShow = true
+        this.pageIndex = 1
+      },
+      last_page() {
+        this.nextPageShow = true
+        --this.pageIndex
+      },
+      next_page() {
+        ++this.pageIndex
+      },
 		  look(res){
 		    this.look_show = true
         this.address_book_show = false
         this.details_show = false
+        this.look_uid = res
+        this._getPublishList(this.look_uid)
       },
 			view_info(res) {
         this.address_book_show=false
+        this.look_show = false
         this.details_show = true
         this.personnel_id = res
         this._getCompanyUserInfo(this.personnel_id)
@@ -108,6 +167,42 @@
       return_(){
         this.address_book_show=true
         this.details_show = false
+      },
+      _getPublishList(){
+		    let param = new URLSearchParams()
+        param.append("uid",this.user.uid)
+        param.append("company_id",this.nowCompanyId)
+        param.append("look_uid",this.look_uid)
+        param.append("p",this.pageIndex)
+        param.append("each",'10')
+        param.append("type","1")
+        this.$http.post("/index.php/Mobile/company/personnel_publish_list",param)
+          .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            let arr = []
+            res.data.data.forEach((item) => {
+              item.avatar='http://bbsf-file.hzxb.net/' + item.avatar
+              let time = item.start_time
+              var date = new Date();
+              var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
+              date.setTime(time * 1000);
+              var y = date.getFullYear();
+              var m = date.getMonth() + 1;
+              m = m < 10 ? ('0' + m) : m;
+              var d = date.getDate();
+              var day=date.getDay();
+              d = d < 10 ? ('0' + d) : d;
+              item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+              arr.push(item)
+            })
+            this.untreated = arr
+            console.log(this.untreated)
+            if(arr.length < 10) {
+              this.nextPageShow = false
+            }
+          })
       },
 			_getComPersonList() {
 				let newparam = new URLSearchParams();
@@ -170,6 +265,9 @@
 		mounted() {
 		},
 		watch: {
+      pageIndex() {
+        this._getPublishList()
+      },
 			nowCompanyId() {
 				this._getComPersonList()
 			}
@@ -314,6 +412,108 @@
     }
   }
   .publish{
+    width: 100%;
+    background: #FFFFFF;
+    overflow: hidden;
+    .top{
+      .btn{
+        margin: 20px;
+      }
+      .title{
+        display: block;
+        text-align: center;
+        font-size: 20px;
+      }
+    }
+    .list{
+      width: 100%;
+      ul{
+        list-style: none;
+        margin-top: 20px;
+        background: #D8D8D8;
+        overflow: hidden;
+        li{
+          background: #ffffff;
+          margin-bottom: 10px;
+          margin-top: 10px;
+          box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+          -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+          .main{
+            overflow: hidden;
+            .avatar{
+              width: 80px;
+              height: 80px;
+              border: 1px solid red;
+              margin-left: 15px;
+              margin-top: 15px;
+              float: left;
+            }
+            .name{
+              float: left;
+              span{
+                display: block;
+                font-size: 20px;
+                margin-top: 15px;
+                margin-left: 15px;
+              }
+              .add_time{
+                font-size: 18px;
+              }
+            }
+            .stauts{
+              width: 130px;
+              float: right;
+              overflow: hidden;
+              margin-top: 15px;
+              span{
 
+              }
+              .btn{
+                overflow: hidden;
+                button{
+                  padding: 4px 12px;
+                  margin-left: 18px;
+                  margin-top: 5px;
+                }
+              }
+            }
+          }
+          .cc{
+            overflow: hidden;
+            span{
+              display: block;
+              margin-left: 15px;
+              padding: 4px 0;
+            }
+          }
+          .bottom{
+            .time{
+              font-size: 18px;
+              margin-left: 20px;
+              padding: 5px 0;
+              color: #686868;
+            }
+            p{
+              color: #686868;
+              margin-left: 15px;
+              span{
+                margin-top: 5px;
+                display: block;
+                font-size: 16px;
+              }
+            }
+            ul{
+              margin-top: 0;
+              background: #ffffff;
+              li{
+                margin-top: 5px;
+                box-shadow: none;
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 </style>
