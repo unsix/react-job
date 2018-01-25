@@ -42,8 +42,8 @@
 			</el-form-item>
 		</el-form>
     <ul>
-      <li v-for="item in todo">
-        <sec v-bind="item"></sec>
+      <li v-for="(item,idx) in todo">
+        <sec v-bind="item" :key="idx"></sec>
       </li>
     </ul>
 		<loading v-show="loadingShow"></loading>
@@ -64,23 +64,37 @@
         fileList_a:[],
 				picArr: [],
         todo:[{
-          tit:'wode',
-          hint:'请输入数字',
-          input_type:'tel',
+          tit:'文本',
+          hint:'请输入文本',
+          input_type:'text',
           form_element_id:'1',
           version:'2',
           max_length:'33'
         },{
-          tit:'ww',
-          hint:'请输入sd数字',
-          input_type:'text',
+          tit:'整数',
+          hint:'请输入非负整数',
+          input_type:'number',
           form_element_id:'2',
           version:'2',
           max_length:'33'
         },{
-          tit:'wsdw',
-          hint:'请输入sd数字',
-          input_type:'text',
+          tit:'小数',
+          hint:'请输入数字 包含小数',
+          input_type:'number_decimal',
+          form_element_id:'2',
+          version:'2',
+          max_length:'33'
+        },{
+          tit:'文本密码',
+          hint:'任何形式',
+          input_type:'text_password',
+          form_element_id:'2',
+          version:'2',
+          max_length:'33'
+        },{
+          tit:'数字密码',
+          hint:'请输入数字密码',
+          input_type:'number_password',
           form_element_id:'2',
           version:'2',
           max_length:'33'
@@ -153,6 +167,7 @@
       sec
 		},
 		methods: {
+
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
