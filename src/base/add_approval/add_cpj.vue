@@ -41,11 +41,19 @@
 				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
-    <ul>
+    <ul v-show="false">
+      <li>
+        <fuchose ></fuchose>
+      </li>
+    </ul>
+
+    <chose v-bind="todo" v-show="false"></chose>
+    <ul v-show="false">
       <li v-for="(item,idx) in todo">
         <sec v-bind="item" :key="idx"></sec>
       </li>
     </ul>
+    <datas :sdsd="false"></datas>
 		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
@@ -53,6 +61,9 @@
 <script>
 	import loading from '@/base/loading/loading'
   import { getPic } from '@/common/js/pic.js'
+  import chose from '@/base/unit/chose'
+  import fuchose from '@/base/unit/fuchose'
+  import datas from '@/base/unit/datas'
   import sec from '@/base/unit/sec'
   import { getAvatar } from '@/common/js/avatar.js'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
@@ -63,42 +74,24 @@
 				fileList: [],
         fileList_a:[],
 				picArr: [],
-        todo:[{
-          tit:'文本',
-          hint:'请输入文本',
-          input_type:'text',
-          form_element_id:'1',
-          version:'2',
-          max_length:'33'
-        },{
-          tit:'整数',
-          hint:'请输入非负整数',
-          input_type:'number',
-          form_element_id:'2',
-          version:'2',
-          max_length:'33'
-        },{
-          tit:'小数',
-          hint:'请输入数字 包含小数',
-          input_type:'number_decimal',
-          form_element_id:'2',
-          version:'2',
-          max_length:'33'
-        },{
-          tit:'文本密码',
-          hint:'任何形式',
-          input_type:'text_password',
-          form_element_id:'2',
-          version:'2',
-          max_length:'33'
-        },{
-          tit:'数字密码',
-          hint:'请输入数字密码',
-          input_type:'number_password',
-          form_element_id:'2',
-          version:'2',
-          max_length:'33'
-        }],
+        todo:[
+          {
+            tit:'测试1-1',
+            hint:'数字',
+            input_type:'number_signed',
+            form_element_id:'1',
+            str:'1',
+            max_length:'33'
+          },
+          {
+            tit:'测试1-2',
+            hint:'请输入密码',
+            input_type:'text_password',
+            form_element_id:'1',
+            str:'1',
+            max_length:'32'
+          }
+        ],
 				fileArr: [],
 				cpj_ruleForm: {
 					department_id: '',
@@ -164,7 +157,10 @@
 		},
 		components: {
 			loading,
-      sec
+      chose,
+      fuchose,
+      sec,
+      datas
 		},
 		methods: {
 
@@ -204,7 +200,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
-          this.fileList=[]
+      			this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						this.form_Lista = create_cengpijian_list(res.data.data)
