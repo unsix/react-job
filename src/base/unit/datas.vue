@@ -1,5 +1,6 @@
 <template>
-  <div class="data">
+  <div class="data" >
+    <p :form_element_id="form_element_id" :version="str">{{tit}}</p>
     <span class="sd" :is_fill_local_time="sdsd" @click="showData">{{data}}</span>
     <Calendar v-show="dax" :mark_array=[20,21] :is_hide_otherday=false @chose_day="clickday"></Calendar>
   </div>
@@ -10,7 +11,8 @@
     data() {
       return {
         dax:false,
-        data:''
+        data:'',
+        result:''
       };
     },
     methods: {
@@ -18,26 +20,26 @@
         this.dax = true
       },
       clickday(data) {
-        console.log(data);
-        this.data = data
-        let sr = this.data
-        let str = (new Date(sr)).getTime()/1000
-        if(str < more){
-          this.$message({
-            showClose: true,
-            message: '错误',
-            type: 'error'
-          })
-          return
-        }else if(str > less){
-          this.$message({
-            showClose: true,
-            message: '错误',
-            type: 'error'
-          })
-          return
+        let sr = data
+        this.dax = false
+        this.result = parseInt((new Date(sr)).getTime()/1000)
+        if(more !=''){
+          if(this.result < more){
+            this.$message({
+              showClose: true,
+              message: '错误',
+              type: 'error'
+            })
+            return
+          }else if(this.result > less){
+            this.$message({
+              showClose: true,
+              message: '错误',
+              type: 'error'
+            })
+            return
+          }
         }
-
       },
 
       _fill(){
@@ -46,16 +48,18 @@
           var y = data.getFullYear()
           var m = data.getMonth() + 1
           var d = data.getDate()
-          this.data = y +'-'+ m+'-' +d
+          this.data = y +'/'+ m+'/' +d
+          this.result = parseInt(new Date(this.data).getTime()/1000)
         }else{
-          this.data = ''
+          this.data = '-1';
+          this.result = '-1'
         }
       }
 
 
     },
     created(){
-     this._fill()
+      this._fill()
     },
     props:{
       sdsd:{
@@ -66,7 +70,16 @@
       },
       less:{
 
-      }
+      },
+      tit:{
+
+      },
+      form_element_id:{
+
+      },
+      str:{
+
+      },
     }
   };
 </script>
@@ -81,13 +94,13 @@
   .wh_content_all{
     width: 310px;
     background-color: white;
-  .wh_content_item{
-    height: 32px;
-    width: 42px;
-    line-height: 32px;
-    color: #000;
-    cursor: pointer;
-  }
+    .wh_content_item{
+      height: 32px;
+      width: 42px;
+      line-height: 32px;
+      color: #000;
+      cursor: pointer;
+    }
   }
   .wh_jiantou1{
     border-top: 2px solid #409eff;

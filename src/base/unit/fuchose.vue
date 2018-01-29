@@ -1,86 +1,78 @@
 <template>
 
   <div class="check-area" v-show="items.length!=0">
-    <h3>多选按钮</h3>
+    <p :form_element_id="form_element_id" :version="str">{{tit}}</p>
     <ul>
       <li class="border-1px" v-for="(item,index) in items">
         <input class="self-checkbox" type="checkbox"
-               :id="item.id"
-               :data-id="item.id" name="radio"
-               :value="item.value"
+               :id="item.choice_id"
+               :data-id="item.choice_id"
+               name="radio"
+               :value="item.choice_title"
                v-model="checkValues"
                @click="setCheckValue($event,item)">
-        <label :for="item.id"></label>
-        <span>{{item.value}}</span>
+        <span>{{item.choice_title}}</span>
       </li>
     </ul>
-    <p>您选择了：<span v-show="checkValues.length">{{filterCheckValues}}</span></p>
-    <div class="btn">
-      <button @click="showCheck(checkIds)">按钮</button>
-      <span v-show="checkIds.length">{{checkIds}}</span>
-    </div>
   </div>
 </template>
 
 <script>
-  var itemData = [
-    {id: '20170811001', value: '香蕉'},
-    {id: '20170811002', value: '苹果'},
-    {id: '20170811003', value: '梨子'},
-    {id: '20170811004', value: '葡萄'}]
   export default {
     data:function () {
       return{
         items: '',
         checkValues: [],
-        checkIds: []
+        result: []
+      }
+    },
+    props:{
+      tit:{
+
+      },
+      form_element_id:{
+
+      },
+      str:{
+
+      },
+      options:{
+
+      },
+      default_select:{
+
       }
     },
     computed: {
-      filterCheckValues: function () {
-        var value = this.checkValues;
-        var reValue = '';
-        for (var i = 0; i < value.length; i++) {
-          reValue += value[i] + '、'
-        }
-        reValue = reValue.substring(0, reValue.length - 1)
-        return reValue;
-      }
+
     },
     methods:{
       initData: function () {
         var self = this;
-        self.items = itemData;
-        if (itemData.length != 0) {
-        //self.checkValues[0] = self.items[0].value;
-        //self.checkIds[0] = 'food-' + self.items[0].id;
+        self.items = this.options;
+        if (this.options.length != 0) {
+          var st = this.default_select
+          for(var i=0;i<st.length;i++){
+            self.checkValues[i] = self.items[st[i]-1].choice_title;
+            self.result[i] = self.items[st[i]-1].choice_id;
+          }
         }
       },
       setCheckValue: function (ev, item) {
-        var id = item.id;
+        var id = item.choice_id;
         if (ev.target.checked) {
-          this.checkIds.push(id);
-        } else if (this.checkIds.indexOf(id) > -1) {
-          this.checkIds.remove(id);
+          this.result.push(id);
+        } else if (this.result.indexOf(id) > -1) {
+          let i = this.result.indexOf(id)
+          this.result.splice(i,1);
         }
       },
-      showCheck: function () {
-        console.log(this.checkIds)
-      }
-
-
     },
     filter: {},
     mounted: function () {
       this.initData();
     }
   }
-  Array.prototype.remove = function(val) {
-    var index = this.indexOf(val);
-    if(index > -1) {
-      this.splice(index, 1);
-    }
-  };
 </script>
 
 <style scoped>

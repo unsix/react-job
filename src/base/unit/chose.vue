@@ -1,60 +1,68 @@
 <template>
-  <div class="check">
-    <p>单选</p>
-    <p :choiceId="choiceId">{{tit}}</p>
+  <div class="check"  :version="str">
+    <p>{{tit}}</p>
     <ul>
-      <li v-for="(item,index) in items">
-        <input type="radio" :select_id="item.id" name="radio" @click="setCheck(item)" :checked="index==0" :value="item.value" v-model="checkValue">
-        <label :for="item.id" ></label>
-        <span>{{item.value}}</span>
+      <li v-for="(item,index) in items" >
+        <input type="radio"
+               :select_id="item.choice_id"
+               :name="form_element_id"
+               @click="setCheck(item)"
+               :checked="index==0"
+               :value="item.choice_title"
+               v-model="checkValue">
+        <span>{{item.choice_title}}</span>
       </li>
     </ul>
-    <button @click="showCheck(checkId)">提交</button>
+    <!--<button @click="showCheck(checkId)">提交</button>-->
   </div>
 </template>
 
 <script>
-  var itemData = [
-    {id:'201801',value:'是'},
-    {id:'201802',value:'否'}
-  ]
   export default {
     data:function () {
       return{
         items:'',
         checkValue:'',
-        checkId:''
+        result:'',
+
       }
     },
     props:{
       tit:{
 
       },
-      choiceId:{
+      form_element_id:{
 
-      }
+      },
+      str:{
+
+      },
+      options:{
+
+      },
+      default_select:{
+
+      },
+
     },
     methods:{
       initData: function() {
         var self = this;
-        self.items = itemData;
-        if(itemData.length != 0) {
-          self.checkValue = self.items[0].value;
-          self.checkId = self.items[0].id
+        self.items = this.options;
+        if(this.options.length != 0) {
+          this.checkValue =this.options[this.default_select-1].choice_title;
+          this.result = this.options[this.default_select-1].choice_id
         }
       },
       setCheck:function (item) {
-        this.checkId =item.id
+        this.result =item.choice_id
       },
-      showCheck: function () {
-        console.log(this.checkId)
-      }
     },
     created(){
-
+      this.initData();
     },
     mounted(){
-      this.initData();
+
     }
 
   }

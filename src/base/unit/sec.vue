@@ -1,8 +1,13 @@
 <template>
   <div class="input_type" :id="form_element_id" :version="str" >
-    <label >
+    <label>
       <p>{{tit}}</p>
-      <input :type="stype" @focus="look(result)"  :placeholder="hint" v-model="result" :maxlength="max_length" ><!--@change="check(result)"-->
+      <input  :type="stype"
+              @focus="look(result)"
+              :placeholder="hint"
+              v-model="result"
+              :maxlength="max_length" >
+      <!--:max_lines="lines"-->
     </label>
   </div>
 </template>
@@ -13,6 +18,8 @@
       return{
         result:'',
         stype:'',
+        id:'',
+
       }
     },
     props:{
@@ -22,7 +29,7 @@
       hint:{
         type:String
       },
-      input_type:{
+      type:{
         type:String
       },
       form_element_id:{
@@ -37,10 +44,10 @@
     },
     methods:{
       look:function (sor) {
-        if(this.input_type == 'text'){
+        if(this.type == 'input_text'){
           this.stype = 'text'
         }
-        if(this.input_type == 'number'){
+        if(this.type == 'number'){
           this.stype = 'tel'
           // let re = /^\d+$/
           // if(sor != ''){
@@ -54,7 +61,7 @@
           //   }
           // }
         }
-        if(this.input_type == 'number_decimal') {
+        if(this.type == 'number_decimal') {
           this.stype = 'tel'
           // let re =  /^d+.{0,1}d{0,}$/
           // if(sor != ''){
@@ -68,7 +75,7 @@
           //   }
           // }
         }
-        if(this.input_type == 'number_signed'){
+        if(this.type == 'number_signed'){
           this.stype = 'tel'
           // let re =  /^-{0,1}d+$/
           // if(sor != ''){
@@ -82,10 +89,10 @@
           //   }
           // }
         }
-        if(this.input_type == 'text_password'){
+        if(this.type == 'text_password'){
           this.stype = 'password'
         }
-        if(this.input_type == 'number_password'){
+        if(this.type == 'number_password'){
           this.stype = 'password'
           // let re = /^\d+$/
           // if(sor != ''){
@@ -99,21 +106,12 @@
           //   }
           // }
         }
-      }
-      // check:function (res) {
-      //   var re = /^\d+$/
-      //   if(!re.test(res)){
-      //     this.$message({
-      //       showClose: true,
-      //       message: '格式错误',
-      //       type: 'error'
-      //     })
-      //     this.result = ''
-      //   }
-      // }
+      },
+
+
     },
     created(){
-      console.log(this.input_type)
+      // console.log(this.input_type)
     },
     mounted(){
 

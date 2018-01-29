@@ -1,6 +1,6 @@
 <template>
 	<div class="chengpijian">
-		<el-form :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
+		<el-form  :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
 			<el-form-item label="呈批部门" prop="department_name">
 				<el-select v-model="cpj_ruleForm.department_name" placeholder="请选择呈批部门">
 					<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
@@ -41,19 +41,21 @@
 				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
-    <ul v-show="false">
-      <li>
-        <fuchose ></fuchose>
-      </li>
-    </ul>
-
-    <chose v-bind="todo" v-show="false"></chose>
-    <ul v-show="false">
-      <li v-for="(item,idx) in todo">
-        <sec v-bind="item" :key="idx"></sec>
-      </li>
-    </ul>
-    <datas :sdsd="false"></datas>
+    <!--<button @click="msms()">展示</button>-->
+    <!--<components :is="item.component"-->
+                <!--:tit="item.tit"-->
+                <!--:key="idx"-->
+                <!--:ref="item.cc"-->
+                <!--:str="item.version"-->
+                <!--:hint="item.place"-->
+                <!--:sdsd="item.fill"-->
+                <!--:type="item.input_type"-->
+                <!--:options="item.meta_data"-->
+                <!--:default_select="item.default_select"-->
+                <!--:form_element_id="item.form_element_id"-->
+                <!--v-for="(item,idx) in conpents"></components>-->
+    <!--<button @click="wode">提交</button>-->
+    <!--<button @click="mtmt">填充</button>-->
 		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
@@ -72,24 +74,52 @@
 		data() {
 			return {
 				fileList: [],
+        shuju:[],
+        conpents:[],
         fileList_a:[],
 				picArr: [],
-        todo:[
+        ts:[{"result":"1","form_element_id":1},{"result":"[2,3]","form_element_id":2},{"result":"1517191955","form_element_id":3},{"result":"是","form_element_id":76},{"result":"2 ","form_element_id":77},{"result":"2","form_element_id":73}],
+        todo:[{
+          "form_element_id": "1",
+          "type": "single_choice",
+          "version": "0",
+          "title": "测试单选框",
+          "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":\"3\"}"
+        },
           {
-            tit:'测试1-1',
-            hint:'数字',
-            input_type:'number_signed',
-            form_element_id:'1',
-            str:'1',
-            max_length:'33'
+            "form_element_id": "2",
+            "type": "multi_choice",
+            "version": "0",
+            "title": "测试多选框",
+            "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":[\"1\", \"3\"]}"
           },
           {
-            tit:'测试1-2',
-            hint:'请输入密码',
-            input_type:'text_password',
-            form_element_id:'1',
-            str:'1',
-            max_length:'32'
+            "form_element_id": "3",
+            "type": "date_select",
+            "version": "0",
+            "title": "测试选择日期",
+            "meta_data": "{\"is_fill_local_time\": true}"
+          },
+          {
+            "form_element_id": "76",
+            "title": "今日完成",
+            "type": "input_text",
+            "version": "0",
+            "meta_data": "{\"hint\": \"请输入今日完成\"}\n"
+          },
+          {
+            "form_element_id": "77",
+            "title": "明日计划",
+            "type": "input_text",
+            "version": "0",
+            "meta_data": "{\"hint\": \"请输入明日计划\"}\n"
+          },
+          {
+            "form_element_id": "73",
+            "title": "工作心得",
+            "type": "input_text",
+            "version": "0",
+            "meta_data": "{\"hint\": \"请输入工作心得\"}\n"
           }
         ],
 				fileArr: [],
@@ -163,7 +193,76 @@
       datas
 		},
 		methods: {
-
+      msms:function () {
+        let str = eval(this.todo)
+        str.forEach((item)=>{
+          item.meta_data = JSON.parse(item.meta_data)
+          if(item.type == "input_text"){
+            this.conpents.push({
+              component:sec,
+              tit: item.title,
+              form_element_id: item.form_element_id,
+              version:item.version,
+              place:item.meta_data.hint,
+              input_type:item.type,
+              cc: 'ceshi'
+            })
+          }
+          if(item.type == "single_choice"){
+            this.conpents.push({
+              component:chose,
+              form_element_id: item.form_element_id,
+              version:item.version,
+              tit: item.title,
+              meta_data:item.meta_data.options,
+              default_select:item.meta_data.default_select,
+              cc: 'ceshi'
+            })
+            //四个组件的ref名字改一下
+          }
+          if(item.type == "multi_choice"){
+            this.conpents.push({
+              component:fuchose,
+              form_element_id: item.form_element_id,
+              version:item.version,
+              tit: item.title,
+              meta_data:item.meta_data.options,
+              default_select:item.meta_data.default_select,
+              cc: 'ceshi'
+            })
+          }
+          if(item.type == "date_select"){
+            this.conpents.push({
+              component:datas,
+              form_element_id: item.form_element_id,
+              version:item.version,
+              tit: item.title,
+              fill:item.meta_data.is_fill_local_time,
+              cc: 'ceshi'
+            })
+          }
+        })
+      },
+      wode:function () {
+        var geo = this.$refs.ceshi
+        geo.forEach((item)=>{
+          this.shuju.push({
+            result:item.result,
+            form_element_id:item.form_element_id
+          })
+        })
+      },
+      mtmt:function () {
+        var geo = this.$refs.ceshi
+        let sr = eval(this.ts)
+        for(var i=0;i<sr.length;i++){
+          for(var j = 0;j<geo.length;j++){
+            if(sr[i].form_element_id == geo[j].form_element_id){
+              geo[j].result = sr[i].result
+            }
+          }
+        }
+      },
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
