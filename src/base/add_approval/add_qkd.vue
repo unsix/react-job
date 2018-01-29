@@ -783,6 +783,9 @@
 				left: 450px;
 			}
 		}
+    .el-select {
+      width: 100%;
+    }
 		.content {
 			font-size: 14px;
 			border-bottom: 1px solid #666666;
