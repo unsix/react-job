@@ -13,7 +13,6 @@
         <span>{{item.choice_title}}</span>
       </li>
     </ul>
-    <!--<button @click="showCheck(checkId)">提交</button>-->
   </div>
 </template>
 
@@ -24,7 +23,7 @@
         items:'',
         checkValue:'',
         result:'',
-
+        checkId:''
       }
     },
     props:{
@@ -51,11 +50,13 @@
         self.items = this.options;
         if(this.options.length != 0) {
           this.checkValue =this.options[this.default_select-1].choice_title;
-          this.result = this.options[this.default_select-1].choice_id
+          this.checkId = this.options[this.default_select-1].choice_id
         }
+        this.result = this.checkId
       },
       setCheck:function (item) {
-        this.result =item.choice_id
+        this.checkId =item.choice_id
+        this.result = this.checkId
       },
     },
     created(){

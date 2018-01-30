@@ -14,7 +14,7 @@
         </el-select>
       </el-form-item>
 
-      <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i><span style="color: red;" v-model="bxd_ruleForm.money">总额:{{bxd_ruleForm.money}}</span></div>
+      <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i><span style="color: red;display: inline-block" v-model="bxd_ruleForm.money">总额:{{bxd_ruleForm.money}}</span> <span style="color: red;display: block;margin-left: 135px" v-model="bxd_ruleForm.big_money">{{bxd_ruleForm.big_money}}</span></div>
       <div v-for="(item,index) in bxd_ruleForm.add" class="new_bxd">
         <div class="close"><i class="fa fa-close" v-show="bxd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
         <el-form :inline="true" class="demo-form-inline zp">
@@ -26,17 +26,20 @@
           </el-form-item>
         </el-form>
         <el-form :inline="true" class="demo-form-inline zp">
-          <el-form-item label="总额">
-            <!--<el-input v-model="item.price"></el-input>-->
-            <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
+          <el-form-item label="备注">
+            <el-input v-model="item.remarks"></el-input>
           </el-form-item>
           <el-form-item label="单据张数">
             <el-input v-model="item.amount" @change="checkAmount(item)"></el-input>
           </el-form-item>
         </el-form>
-        <el-form :inline="false" class="demo-form-inline">
-          <el-form-item label="备注" label-width="50px">
-            <el-input v-model="item.remarks" class="set" style="width: 500px"></el-input>
+        <el-form :inline="true" class="demo-form-inline zp">
+          <el-form-item label="总额">
+            <!--<el-input v-model="item.price"></el-input>-->
+            <input type="tel" class="el-input__inner" @change="checkPrice(item)" v-model="item.price">
+          </el-form-item>
+          <el-form-item label="大写金额" >
+            <el-input v-model="item.big_price" :readonly="true"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -80,12 +83,14 @@
               project_manager: {},
               project_manager_name: '',
               money:'',
+              big_money:'',
               add:[{
                 month_day:'',
                 content:'',
                 amount:'',
                 price:'',
-                remarks:''
+                remarks:'',
+                big_price:''
               }]
             },
             bxd_rules:{
@@ -94,12 +99,6 @@
                 message: '请填写标题',
                 trigger: 'change'
               }],
-              title:[{
-                required: true,
-                message: '请填写报销人',
-                trigger: 'change'
-              }]
-
             },
             pic_hash_arr: [],
             file_hash_arr: [],
@@ -159,7 +158,6 @@
                   this.$message.error('上传文件格式错误 请删除')
                   this.fileList_a = fileList_a
                 }
-
               })
           },
           checkPrice:function (data) {
@@ -172,6 +170,8 @@
               })
               data.price="";
             }
+            var str = this.dx(data.price)+'整'
+            data.big_price = str
             var sub = this.bxd_ruleForm.add
             var tato = 0
             let val = ''
@@ -180,10 +180,23 @@
               val=Math.floor(tato * 100) / 100
             }
             this.bxd_ruleForm.money =val
+            this.bxd_ruleForm.big_money = this.dx(val)+'整'
           },
+          dx:function (n) {
+            var unit = "京亿万仟佰拾兆万仟佰拾亿仟佰拾万仟佰拾元角分",
+              str = "";
+            n += "00";
+            var p = n.indexOf('.');
+            if(p >= 0){
+              n = n.substring(0, p) + n.substr(p + 1, 2);
+            }
+            unit = unit.substr(unit.length - n.length);
+            for(var i = 0; i < n.length; i++) str += '零壹贰叁肆伍陆柒捌玖'.charAt(n.charAt(i)) + unit.charAt(i);
+            return str.replace(/零(仟|佰|拾|角)/g, "零").replace(/(零)+/g, "零").replace(/零(兆|万|亿|元)/g, "$1").replace(/(兆|亿)万/g, "$1").replace(/(京|兆)亿/g, "$1").replace(/(京)兆/g, "$1").replace(/(京|兆|亿|仟|佰|拾)(万?)(.)仟/g, "$1$2零$3仟").replace(/(^元零?|零分)$/g, "").replace(/(元|角)$/g, "$1");
+            },
           checkAmount:function (data) {
             var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
-            if(!priceReg.test(data.price)){
+            if(!priceReg.test(data.amount)){
               this.$message({
                 showClose: true,
                 message: '格式错误',
@@ -191,7 +204,6 @@
               })
               data.amount="";
             }
-
           },
           closeQd(index){
             this.bxd_ruleForm.add.splice(index,1)
@@ -327,7 +339,6 @@
           submitForm_bxd(formName){
             this.returnOk = false
             this.bxd_ruleForm.add.forEach((item)=>{
-              console.log(item)
              if(item.month_day===''||item.content===''||item.price===''||item.amount===''){
                this.$message.error('请将清单条目填写完整');
                this.returnOk = true
@@ -401,6 +412,8 @@
                 param.append("uid",this.user.uid)
                 param.append("company_id",this.nowCompanyId)
                 param.append("title",this.bxd_ruleForm.title)
+                param.append("money",this.bxd_ruleForm.money)
+                param.append("big_money",this.bxd_ruleForm.big_money)
                 param.append("content", JSON.stringify(this.bxd_ruleForm.add));
                 this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
                   .then((res)=>{
@@ -572,6 +585,8 @@
               param.append("uid",this.user.uid)
               param.append("company_id",this.nowCompanyId)
               param.append("title",this.bxd_ruleForm.title)
+              param.append("money",this.bxd_ruleForm.money)
+              param.append("big_money",this.bxd_ruleForm.big_money)
               param.append("content", JSON.stringify(this.bxd_ruleForm.add));
               param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
               param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
@@ -604,6 +619,8 @@
               param.append("uid",this.user.uid)
               param.append("company_id",this.nowCompanyId)
               param.append("title",this.bxd_ruleForm.title)
+              param.append("money",this.bxd_ruleForm.money)
+              param.append("big_money",this.bxd_ruleForm.big_money)
               param.append("content", JSON.stringify(this.bxd_ruleForm.add));
               param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
               param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
@@ -663,12 +680,6 @@
       &:hover {
         color: #FA5555;
       }
-    }
-  }
-  .set{
-    width: 500px;
-    .el-input__inner{
-      width: 490px;
     }
   }
   .zp{

@@ -1,6 +1,6 @@
 <template>
-	<div class="chengpijian">
-		<el-form  :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
+	<div class="chengpijian" >
+		<el-form v-show="true" :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
 			<el-form-item label="呈批部门" prop="department_name">
 				<el-select v-model="cpj_ruleForm.department_name" placeholder="请选择呈批部门">
 					<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
@@ -41,6 +41,7 @@
 				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
+    <!--<textarea v-model="todo" id="" cols="30" rows="10"></textarea>-->
     <!--<button @click="msms()">展示</button>-->
     <!--<components :is="item.component"-->
                 <!--:tit="item.tit"-->
@@ -54,7 +55,9 @@
                 <!--:default_select="item.default_select"-->
                 <!--:form_element_id="item.form_element_id"-->
                 <!--v-for="(item,idx) in conpents"></components>-->
+    <!--<textarea v-model="shuju" cols="30" rows="10"></textarea>-->
     <!--<button @click="wode">提交</button>-->
+    <!--<textarea v-model="ts"  cols="30" rows="10"></textarea>-->
     <!--<button @click="mtmt">填充</button>-->
 		<loading v-show="loadingShow"></loading>
 	</div>
@@ -73,12 +76,14 @@
 	export default {
 		data() {
 			return {
+			  todo:[],
+        // ts:[],
 				fileList: [],
         shuju:[],
         conpents:[],
         fileList_a:[],
 				picArr: [],
-        ts:[{"result":"1","form_element_id":1},{"result":"[2,3]","form_element_id":2},{"result":"1517191955","form_element_id":3},{"result":"是","form_element_id":76},{"result":"2 ","form_element_id":77},{"result":"2","form_element_id":73}],
+        ts:[{"result":"1","form_element_id":1},{"result":['2','3'],"form_element_id":2},{"result":"1514476800","form_element_id":3},{"result":"是","form_element_id":76},{"result":"2 ","form_element_id":77},{"result":"2","form_element_id":73}],
         todo:[{
           "form_element_id": "1",
           "type": "single_choice",
@@ -194,6 +199,7 @@
 		},
 		methods: {
       msms:function () {
+        console.log(this.todo)
         let str = eval(this.todo)
         str.forEach((item)=>{
           item.meta_data = JSON.parse(item.meta_data)
@@ -204,7 +210,7 @@
               form_element_id: item.form_element_id,
               version:item.version,
               place:item.meta_data.hint,
-              input_type:item.type,
+              input_type:item.meta_data.input_type,
               cc: 'ceshi'
             })
           }
@@ -251,15 +257,16 @@
             form_element_id:item.form_element_id
           })
         })
+        console.log(this.shuju)
+        this.shuju = JSON.stringify(this.shuju)
       },
       mtmt:function () {
         var geo = this.$refs.ceshi
+        console.log(geo)
         let sr = eval(this.ts)
         for(var i=0;i<sr.length;i++){
-          for(var j = 0;j<geo.length;j++){
-            if(sr[i].form_element_id == geo[j].form_element_id){
-              geo[j].result = sr[i].result
-            }
+          if(sr[i].form_element_id == geo[i].form_element_id){
+            geo[i].result = sr[i].result
           }
         }
       },

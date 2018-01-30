@@ -21,25 +21,26 @@
       },
       clickday(data) {
         let sr = data
+        this.data = data
         this.dax = false
         this.result = parseInt((new Date(sr)).getTime()/1000)
-        if(more !=''){
-          if(this.result < more){
-            this.$message({
-              showClose: true,
-              message: '错误',
-              type: 'error'
-            })
-            return
-          }else if(this.result > less){
-            this.$message({
-              showClose: true,
-              message: '错误',
-              type: 'error'
-            })
-            return
-          }
-        }
+        // if(more !=''){
+        //   if(this.result < more){
+        //     this.$message({
+        //       showClose: true,
+        //       message: '错误',
+        //       type: 'error'
+        //     })
+        //     return
+        //   }else if(this.result > less){
+        //     this.$message({
+        //       showClose: true,
+        //       message: '错误',
+        //       type: 'error'
+        //     })
+        //     return
+        //   }
+        // }
       },
 
       _fill(){

@@ -283,6 +283,9 @@
           this.qkd_ruleForm.account_name = this.main_show.account_name
           this.qkd_ruleForm.balance_subtotal = this.main_show.balance_subtotal
           this.qkd_ruleForm.bank_address = this.main_show.bank_address
+          this.qkd_ruleForm.contract_name = this.main_show.contract_name
+          this.qkd_ruleForm.contract_name_new = this.main_show.contract_name_new
+          this.qkd_ruleForm.worker_type = this.main_show.worker_type
         }).catch(()=>{
           this.$message({
             type: 'info',

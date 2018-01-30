@@ -23,7 +23,8 @@
       return{
         items: '',
         checkValues: [],
-        result: []
+        result: '',
+        checkId:[]
       }
     },
     props:{
@@ -54,18 +55,23 @@
           var st = this.default_select
           for(var i=0;i<st.length;i++){
             self.checkValues[i] = self.items[st[i]-1].choice_title;
-            self.result[i] = self.items[st[i]-1].choice_id;
+            self.checkId[i] = self.items[st[i]-1].choice_id;
           }
         }
+        this.result = JSON.stringify(this.checkId)
       },
       setCheckValue: function (ev, item) {
         var id = item.choice_id;
         if (ev.target.checked) {
-          this.result.push(id);
-        } else if (this.result.indexOf(id) > -1) {
-          let i = this.result.indexOf(id)
-          this.result.splice(i,1);
+          this.checkId.push(id);
+        } else if (this.checkId.indexOf(id) > -1) {
+          let i = this.checkId.indexOf(id)
+          this.checkId.splice(i,1);
         }
+        this.checkId.sort(function (x,y) {
+          return x - y
+        })
+        this.result = JSON.stringify(this.checkId)
       },
     },
     filter: {},

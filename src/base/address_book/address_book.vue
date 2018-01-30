@@ -64,26 +64,26 @@
       </div>
       <div class="list">
         <ul>
-          <li v-for="(item,index) in untreated">
+          <li v-for="(item,idx) in untreated">
             <div class="main">
               <div class="avatar">
-                <img :src="item.avatar">
+                <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291395461&di=4bc6c5d43de28a4b3a9b6868af66589a&imgtype=0&src=http%3A%2F%2Fhimg2.huanqiu.com%2Fattachment2010%2F2017%2F0208%2F20170208024259671.jpg">
               </div>
               <div class="name">
                 <span>{{item.name}}</span>
                 <span class="add_time">{{item.add_time}}</span>
               </div>
               <div class="stauts">
-                <span>日志 未点评</span>
-                <div class="btn">
-                  <el-button round type="primary">回复</el-button>
-                  <el-button round type="warning">删除</el-button>
-                  <el-button round type="success">赞</el-button>
-                </div>
+                <p>日志
+                  <span v-show="item.reviewer_fraction == 0">未点评</span>
+                  <span v-show="item.reviewer_fraction != 0">已点评{{item.reviewer_fraction}}分</span>
+                  </p>
               </div>
             </div>
             <div class="cc">
-              <span>全公司</span>
+              <div class="cs">
+               <span> <i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>全公司</span>
+              </div>
             </div>
             <div class="bottom">
               <div class="time">
@@ -92,9 +92,17 @@
                <ul>
                  <li v-for="ti in item.custom_form_elements">
                    <p>{{ti.title}}</p>
-                   <span style="margin-left: 20px">sssssssssasdasda</span>
+                   <span style="margin-left: 20px">{{ti.result}}</span>
                  </li>
                </ul>
+            </div>
+            <div class="share">
+              <div class="right">
+                <span @click="lookMore(item.publish_id)"><i class="iconfont icon-more"></i>显示更多</span>
+                <span><i class="iconfont icon-danzan"></i>点赞</span>
+                <span><i class="iconfont icon-shanchu"></i>删除</span>
+                <span class="nonebo"><i class="iconfont icon-xiaoxi"></i>消息</span>
+              </div>
             </div>
           </li>
           <div class="page">
@@ -103,6 +111,54 @@
             <span @click="next_page" v-show="nextPageShow">下一页</span>
           </div>
         </ul>
+      </div>
+    </div>
+
+    <div class="more" v-show="moreShow">
+      <div class="top">
+        <el-button type="primary" class="btn" plain >返回</el-button>
+        <span class="title">日志</span>
+      </div>
+      <div class="main">
+        <div class="avatar">
+          <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291395461&di=4bc6c5d43de28a4b3a9b6868af66589a&imgtype=0&src=http%3A%2F%2Fhimg2.huanqiu.com%2Fattachment2010%2F2017%2F0208%2F20170208024259671.jpg">
+        </div>
+        <div class="name">
+          <span>{{moreInfo.name}}</span>
+          <span class="add_time">{{moreInfo.add_time}}</span>
+        </div>
+        <div class="stauts">
+          <p>日志
+            <span v-show="star.reviewer_fraction == 0">未点评</span>
+            <span v-show="star.reviewer_fraction != 0">已点评{{star.reviewer_fraction}}分</span>
+          </p>
+        </div>
+      </div>
+      <div class="cc">
+        <div class="cs">
+          <span> <i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>全公司</span>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="time">
+          <span>{{star.start_time}} 由{{star.reviewer_name}}点评</span>
+        </div>
+        <ul>
+          <li v-for="ti in star.custom_form_elements">
+            <p>{{ti.title}}</p>
+            <span style="margin-left: 20px">{{ti.result}}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="imgList">
+        <span>图片附件：</span>
+        <a v-for="(item,index) in star.img_list" v-if="star.img_list">
+          <img :src="item" alt="" @click="ctrl_pic_show(star.img_list,index)" />
+        </a>
+      </div>
+      <div class="file">
+        <span>附件列表：</span>
+        <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
       </div>
     </div>
   </div>
@@ -119,9 +175,14 @@
         untreated:[],
         look_show:false,
         address_book_show:true,
+        moreShow:false,
 			  details_show : false,
         personnel_id: '',
         infoArr :{},
+        moreInfo:{},
+        star:{},
+        img_arr: [],
+        file_arr: [],
         nextPageShow: true,
         pageIndex:1
       }
@@ -150,6 +211,14 @@
       next_page() {
         ++this.pageIndex
       },
+      lookMore(det){
+        this.look_show = false
+        this.address_book_show = false
+        this.details_show = false
+        this.moreShow = true
+        this.publish_id = det
+        this._getMoreInfo(this.publish_id)
+      },
 		  look(res){
 		    this.look_show = true
         this.address_book_show = false
@@ -167,6 +236,83 @@
       return_(){
         this.address_book_show=true
         this.details_show = false
+        this.look_show = false
+      },
+      _getMoreInfo(){
+        let param = new URLSearchParams()
+        param.append('uid',this.user.uid)
+        param.append('publish_id',this.publish_id)
+        param.append('company_id',this.nowCompanyId)
+        this.$http.post('/index.php/Mobile/company/get_public_content',param)
+          .then((res)=>{
+            res.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+            let ss = res.data.data
+            this.moreInfo = ss
+            this.star = ss.form_data
+            let time = this.star.start_time
+            var date = new Date();
+            var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
+            date.setTime(time * 1000);
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? ('0' + m) : m;
+            var d = date.getDate();
+            var day=date.getDay();
+            d = d < 10 ? ('0' + d) : d;
+            this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+            this.getImg(this.star.enclosure)
+            this.getFiles(this.star.enclosure)
+          })
+      },
+      getImg(enclosure){
+        if(!enclosure){
+          return
+        }
+        enclosure.forEach((item)=>{
+          if(item.type === 3) {
+            let param = new URLSearchParams();
+            param.append("enclosure_id", item.contract_id);
+            this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+              .then((res) => {
+                console.log(res)
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
+                let arr = []
+                res.data.data.picture.forEach((item) => {
+                  if(item != '') {
+                    arr.push(getAvatar(item))
+                  }
+                })
+                this.img_arr = arr
+                this.$set(this.star, 'img_list', arr)
+              })
+          }
+        })
+      },
+      getFiles(enclosure){
+        this.file_arr = []
+        if(!enclosure){
+          return
+        }
+        enclosure.forEach((item)=>{
+          if(item.type === 4) {
+            let param = new URLSearchParams();
+            param.append("attachments_id", item.contract_id);
+            this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+              .then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
+                let obj = {}
+                let file_data = res.data.data
+                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                this.file_arr.push(obj)
+              })
+          }
+        })
       },
       _getPublishList(){
 		    let param = new URLSearchParams()
@@ -182,6 +328,7 @@
             var judge = res.data.code
             getCro(judge,current)
             let arr = []
+            console.log(res)
             res.data.data.forEach((item) => {
               item.avatar='http://bbsf-file.hzxb.net/' + item.avatar
               let time = item.start_time
@@ -195,6 +342,7 @@
               var day=date.getDay();
               d = d < 10 ? ('0' + d) : d;
               item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+              item.reviewer_fraction=item.reviewer_fraction.toString()
               arr.push(item)
             })
             this.untreated = arr
@@ -436,6 +584,7 @@
           background: #ffffff;
           margin-bottom: 10px;
           margin-top: 10px;
+          overflow: hidden;
           box-shadow: 0 0 2px rgba(0, 0, 0, .2);
           -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
           .main{
@@ -443,10 +592,13 @@
             .avatar{
               width: 80px;
               height: 80px;
-              border: 1px solid red;
               margin-left: 15px;
               margin-top: 15px;
               float: left;
+             img{
+               width: 80px;
+               height: 80px;
+             }
             }
             .name{
               float: left;
@@ -461,29 +613,29 @@
               }
             }
             .stauts{
-              width: 130px;
+              width: 150px;
               float: right;
               overflow: hidden;
               margin-top: 15px;
               span{
 
               }
-              .btn{
-                overflow: hidden;
-                button{
-                  padding: 4px 12px;
-                  margin-left: 18px;
-                  margin-top: 5px;
-                }
-              }
             }
           }
           .cc{
             overflow: hidden;
-            span{
-              display: block;
-              margin-left: 15px;
-              padding: 4px 0;
+            .cs{
+              display: inline-block;
+              border: 1px solid blue;
+              border-radius: 15px;
+              padding: 8px 0;
+              margin: 5px 0px 5px 15px;
+              cursor: pointer;
+              span{
+                text-align: center;
+                padding: 0 15px;
+                color: blue;
+              }
             }
           }
           .bottom{
@@ -512,6 +664,131 @@
               }
             }
           }
+          .share{
+            margin-top: 15px;
+            background: #f5f7fd;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            overflow: hidden;
+            .right{
+              width: 350px;
+              float: right;
+              span{
+                display: inline-block;
+                padding: 0 10px;
+                border-right: 1px solid #707070;
+                cursor: pointer;
+              }
+              .nonebo{
+                border-right: none;
+              }
+            }
+          }
+        }
+      }
+      .page{
+        padding: 4px;
+        text-align: center;
+        background: #FFFFFF;
+        margin-bottom: 10px;
+        span {
+          cursor: pointer;
+          font-size: 12px;
+          &:hover {
+            color: #409EFF;
+          }
+        }
+      }
+    }
+  }
+  .more{
+    width: 100%;
+    background: #FFFFFF;
+    overflow: hidden;
+    .top{
+      .btn{
+        margin: 20px;
+      }
+      .title{
+        display: block;
+        text-align: center;
+        font-size: 20px;
+      }
+    }
+    .main{
+      overflow: hidden;
+      .avatar {
+        width: 80px;
+        height: 80px;
+        margin-left: 15px;
+        margin-top: 15px;
+        float: left;
+        img {
+          width: 80px;
+          height: 80px;
+        }
+      }
+      .name{
+        float: left;
+        span{
+          display: block;
+          font-size: 20px;
+          margin-top: 15px;
+          margin-left: 15px;
+        }
+        .add_time{
+          font-size: 18px;
+        }
+      }
+      .stauts{
+        width: 150px;
+        float: right;
+        overflow: hidden;
+        margin-top: 15px;
+        span{
+
+        }
+      }
+    }
+    .cc{
+      overflow: hidden;
+      .cs{
+        display: inline-block;
+        border: 1px solid blue;
+        border-radius: 15px;
+        padding: 8px 0;
+        margin: 5px 0px 5px 15px;
+        cursor: pointer;
+        span{
+          text-align: center;
+          padding: 0 15px;
+          color: blue;
+        }
+      }
+    }
+    .bottom{
+      .time{
+        font-size: 18px;
+        margin-left: 20px;
+        padding: 5px 0;
+        color: #686868;
+      }
+      p{
+        color: #686868;
+        margin-left: 15px;
+        span{
+          margin-top: 5px;
+          display: block;
+          font-size: 16px;
+        }
+      }
+      ul{
+        margin-top: 0;
+        background: #ffffff;
+        li{
+          margin-top: 5px;
+          box-shadow: none;
+          margin-bottom: 0;
         }
       }
     }

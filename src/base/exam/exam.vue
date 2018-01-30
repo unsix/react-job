@@ -621,7 +621,7 @@
           <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
         </div>
         <div>
-          <span style="color: red;"><span>总额：</span>{{form_Lista.money}}</span>
+          <span style="color: red;"><span>总额：</span>{{form_Lista.money}}</span><span style="display: block">{{form_Lista.big_money}}</span>
         </div>
         <div v-for="item in form_Lista.content" class="qingdan">
           <h4>报销条目</h4>
@@ -630,6 +630,7 @@
           <p>金额:<span>{{item.price}}</span></p>
           <p>单据张数:<span>{{item.amount}}</span></p>
           <p>备注:<span>{{item.remarks}}</span></p>
+          <p>大写总额<span>{{item.big_price}}</span></p>
         </div>
         <div>
           <span>附件列表：</span>
