@@ -580,7 +580,7 @@
                   }
                   this.$http.post("/index.php/Mobile/find/file_info")
                     .then((res)=>{
-                      let maxSize = res.data.data.size
+                      let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) !=-1){
                         if(size<maxSize){

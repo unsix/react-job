@@ -67,7 +67,7 @@
           <li v-for="(item,idx) in untreated">
             <div class="main">
               <div class="avatar">
-                <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291395461&di=4bc6c5d43de28a4b3a9b6868af66589a&imgtype=0&src=http%3A%2F%2Fhimg2.huanqiu.com%2Fattachment2010%2F2017%2F0208%2F20170208024259671.jpg">
+                <img :src="item.avatar">
               </div>
               <div class="name">
                 <span>{{item.name}}</span>
@@ -116,12 +116,12 @@
 
     <div class="more" v-show="moreShow">
       <div class="top">
-        <el-button type="primary" class="btn" plain >返回</el-button>
+        <el-button type="primary" class="btn" plain @click="reinfo">返回</el-button>
         <span class="title">日志</span>
       </div>
       <div class="main">
         <div class="avatar">
-          <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291395461&di=4bc6c5d43de28a4b3a9b6868af66589a&imgtype=0&src=http%3A%2F%2Fhimg2.huanqiu.com%2Fattachment2010%2F2017%2F0208%2F20170208024259671.jpg">
+          <img :src="moreInfo.avatar">
         </div>
         <div class="name">
           <span>{{moreInfo.name}}</span>
@@ -150,6 +150,13 @@
           </li>
         </ul>
       </div>
+      <div class="ques" v-show="star.reviewer_fraction !=0">
+       <div>
+         <p>以下为点评人的点评：</p>
+         <p>{{star.reviewer_name}}:{{star.reviewer_fraction}}分 {{star.reviewer_content}}</p>
+         <p>{{star.reciewer_time}}</p>
+       </div>
+      </div>
       <div class="imgList">
         <span>图片附件：</span>
         <a v-for="(item,index) in star.img_list" v-if="star.img_list">
@@ -160,7 +167,41 @@
         <span>附件列表：</span>
         <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
       </div>
+      <div class="tab">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="回复" name="first"></el-tab-pane>
+          <el-tab-pane label="赞" name="second"></el-tab-pane>
+        </el-tabs>
+      </div>
+      <div class="comment" v-show="comShow">
+        <ul>
+          <li v-for="(item,index) in comArr">
+            <div class="avatar">
+              <img :src="item.avatar">
+            </div>
+            <div class="name">
+              <span>{{item.name}}</span>
+              <span class="add_time">{{item.add_time}}</span>
+              <span>{{item.content}}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="like" v-show="likeShow">
+        <ul>
+          <li v-for="item in likeArr">
+            <p>
+              <img :src="item.avatar">
+              <span>{{item.name}}</span>
+            </p>
+            <span class="add_time">
+              {{item.add_time}}
+            </span>
+          </li>
+        </ul>
+      </div>
     </div>
+    <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
   </div>
 </template>
 
@@ -168,6 +209,7 @@
 	import {getPic} from '@/common/js/pic.js'
 	import {getAvatar} from '@/common/js/avatar.js'
   import {getCro} from "@/common/js/crowd";
+  import browsePic from '@/base/browse_pic/browse_pic'
   import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
@@ -181,10 +223,17 @@
         infoArr :{},
         moreInfo:{},
         star:{},
+        comShow:true,
+        comArr:[],
+        activeName:'first',
+        pic_index: 0,
+        pic_show: false,
         img_arr: [],
         file_arr: [],
         nextPageShow: true,
-        pageIndex:1
+        pageIndex:1,
+        likeShow:false,
+        likeArr:[]
       }
 		},
 		computed: {
@@ -211,13 +260,83 @@
       next_page() {
         ++this.pageIndex
       },
+      close_pic() {
+        this.pic_show = false
+      },
+      last_one() {
+        if(this.pic_index === 0) {
+          return
+        }
+        --this.pic_index
+      },
+      next_one() {
+        if(this.pic_index === this.img_arr.length - 1) {
+          return
+        }
+        ++this.pic_index
+      },
+      ctrl_pic_show(item, index) {
+        this.img_arr = item
+        this.pic_index = index
+        this.pic_show = true
+      },
       lookMore(det){
         this.look_show = false
         this.address_book_show = false
         this.details_show = false
         this.moreShow = true
         this.publish_id = det
+        this.activeName = 'first'
+        this.likeShow = false
+        this.comShow = true
         this._getMoreInfo(this.publish_id)
+        this._getComment(this.publish_id)
+        this._likeList(this.publish_id)
+      },
+      handleClick(tab){
+        let index = parseInt(tab.index)
+        console.log(index)
+        if(index == 0){
+          this.likeShow = false
+          this.comShow = true
+        }
+        if(index == 1){
+          this.likeShow = true
+          this.comShow = false
+        }
+      },
+      _getComment(){
+        let param = new URLSearchParams()
+        param.append('uid',this.user.uid)
+        param.append('company_id',this.nowCompanyId)
+        param.append('publish_id',this.publish_id)
+        this.$http.post('/index.php/Mobile/company/get_publish_comment',param)
+          .then((res)=>{
+            if(res.data.code != 0){
+              this.comShow = false
+            }else{
+              res.data.data.forEach((item)=>{
+                item.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+                this.comArr.push(item)
+              })
+            }
+          })
+      },
+      _likeList(){
+        let param = new URLSearchParams()
+        param.append('company_id',this.nowCompanyId)
+        param.append('publish_id',this.publish_id)
+        this.$http.post('/index.php/Mobile/company/like_list',param)
+          .then((res)=>{
+            if(res.data.code != 0){
+              this.likeShow = false
+            }else{
+              res.data.data.forEach((item)=>{
+                item.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+                this.likeArr.push(item)
+              })
+            }
+          })
       },
 		  look(res){
 		    this.look_show = true
@@ -238,6 +357,14 @@
         this.details_show = false
         this.look_show = false
       },
+      reinfo(){
+        this.moreShow = false
+        this.look_show = true
+        this.details_show= false
+        this.address_book_show = false
+        this.likeArr.splice(0,this.likeArr.length)
+        this.comArr.splice(0,this.comarr.length)
+      },
       _getMoreInfo(){
         let param = new URLSearchParams()
         param.append('uid',this.user.uid)
@@ -249,6 +376,7 @@
             let ss = res.data.data
             this.moreInfo = ss
             this.star = ss.form_data
+            console.log(this.star)
             let time = this.star.start_time
             var date = new Date();
             var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
@@ -274,7 +402,6 @@
             param.append("enclosure_id", item.contract_id);
             this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
               .then((res) => {
-                console.log(res)
                 var current = this
                 var judge = res.data.code
                 getCro(judge,current)
@@ -409,7 +536,11 @@
 			this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
 			this._getUserCompanyList()
 			this._getComPersonList()
+      this._getComment()
 		},
+    components:{
+      browsePic
+    },
 		mounted() {
 		},
 		watch: {
@@ -418,7 +549,8 @@
       },
 			nowCompanyId() {
 				this._getComPersonList()
-			}
+			},
+
 		}
 	}
 </script>
@@ -745,9 +877,6 @@
         float: right;
         overflow: hidden;
         margin-top: 15px;
-        span{
-
-        }
       }
     }
     .cc{
@@ -789,6 +918,122 @@
           margin-top: 5px;
           box-shadow: none;
           margin-bottom: 0;
+        }
+      }
+    }
+    .ques{
+      text-align: center;
+      background: #eeeeee;
+      width: 95%;
+      margin: 10px auto;
+      line-height: 23px;
+      overflow: hidden;
+      border-radius: 10px;
+      >div{
+        margin: 10px 0;
+        p{
+          color: #686868;
+        }
+      }
+    }
+    .imgList{
+      margin-left: 15px;
+      margin-top: 15px;
+      span{
+        color: #686868;
+        display: block;
+        float: left;
+      }
+      a{
+        display: inline-block;
+        margin-left: 5px;
+      }
+    }
+    .file{
+      margin-left: 15px;
+      margin-top: 15px;
+      overflow: hidden;
+      span{
+        color: #686868;
+        display: block;
+        float: left;
+      }
+      a{
+        font-size: 14px;
+        margin: 4px auto;
+        display: block;
+        height: 24px;
+        width: 80%;
+        line-height: 24px;
+        color: #5A5E66;
+        border: 1px solid #F9F9F9;
+        border-radius: 4px;
+        background: #DDDDDD;
+        text-align: center;
+        margin-left: 80px;
+      }
+    }
+    .tab{
+      margin-top: 5px;
+      .el-tabs__nav{
+        margin-left: 15px;
+      }
+      .el-tab-pane{
+        margin-left: 15px;
+      }
+    }
+    .comment{
+      li{
+        overflow: hidden;
+        .avatar {
+          width: 80px;
+          height: 80px;
+          margin-left: 15px;
+          margin-top: 15px;
+          float: left;
+          img {
+            width: 80px;
+            height: 80px;
+          }
+        }
+        .name{
+          float: left;
+          margin-top: 5px;
+          span{
+            display: block;
+            font-size: 20px;
+            margin-top: 10px;
+            margin-left: 15px;
+          }
+          .add_time{
+            font-size: 18px;
+          }
+        }
+      }
+    }
+    .like{
+      li{
+        overflow: hidden;
+        p{
+          margin-left: 15px;
+          overflow: hidden;
+          width: 400px;
+          float: left;
+          img{
+            width: 45px;
+            height: 45px;
+            border-radius: 100%;
+            float: left;
+          }
+          span{
+            display: inline-block;
+            margin-left: 10px;
+            margin-top: 13px;
+          }
+        }
+        .add_time{
+          display: inline-block;
+          margin-top: 13px;
         }
       }
     }

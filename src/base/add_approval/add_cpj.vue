@@ -76,57 +76,57 @@
 	export default {
 		data() {
 			return {
-			  todo:[],
+			  // todo:[],
         // ts:[],
 				fileList: [],
         shuju:[],
         conpents:[],
         fileList_a:[],
 				picArr: [],
-        ts:[{"result":"1","form_element_id":1},{"result":['2','3'],"form_element_id":2},{"result":"1514476800","form_element_id":3},{"result":"是","form_element_id":76},{"result":"2 ","form_element_id":77},{"result":"2","form_element_id":73}],
-        todo:[{
-          "form_element_id": "1",
-          "type": "single_choice",
-          "version": "0",
-          "title": "测试单选框",
-          "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":\"3\"}"
-        },
-          {
-            "form_element_id": "2",
-            "type": "multi_choice",
-            "version": "0",
-            "title": "测试多选框",
-            "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":[\"1\", \"3\"]}"
-          },
-          {
-            "form_element_id": "3",
-            "type": "date_select",
-            "version": "0",
-            "title": "测试选择日期",
-            "meta_data": "{\"is_fill_local_time\": true}"
-          },
-          {
-            "form_element_id": "76",
-            "title": "今日完成",
-            "type": "input_text",
-            "version": "0",
-            "meta_data": "{\"hint\": \"请输入今日完成\"}\n"
-          },
-          {
-            "form_element_id": "77",
-            "title": "明日计划",
-            "type": "input_text",
-            "version": "0",
-            "meta_data": "{\"hint\": \"请输入明日计划\"}\n"
-          },
-          {
-            "form_element_id": "73",
-            "title": "工作心得",
-            "type": "input_text",
-            "version": "0",
-            "meta_data": "{\"hint\": \"请输入工作心得\"}\n"
-          }
-        ],
+        // ts:[{"result":"1","form_element_id":1},{"result":['2','3'],"form_element_id":2},{"result":"1514476800","form_element_id":3},{"result":"是","form_element_id":76},{"result":"2 ","form_element_id":77},{"result":"2","form_element_id":73}],
+        // todo:[{
+        //   "form_element_id": "1",
+        //   "type": "single_choice",
+        //   "version": "0",
+        //   "title": "测试单选框",
+        //   "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":\"3\"}"
+        // },
+        //   {
+        //     "form_element_id": "2",
+        //     "type": "multi_choice",
+        //     "version": "0",
+        //     "title": "测试多选框",
+        //     "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":[\"1\", \"3\"]}"
+        //   },
+        //   {
+        //     "form_element_id": "3",
+        //     "type": "date_select",
+        //     "version": "0",
+        //     "title": "测试选择日期",
+        //     "meta_data": "{\"is_fill_local_time\": true}"
+        //   },
+        //   {
+        //     "form_element_id": "76",
+        //     "title": "今日完成",
+        //     "type": "input_text",
+        //     "version": "0",
+        //     "meta_data": "{\"hint\": \"请输入今日完成\"}\n"
+        //   },
+        //   {
+        //     "form_element_id": "77",
+        //     "title": "明日计划",
+        //     "type": "input_text",
+        //     "version": "0",
+        //     "meta_data": "{\"hint\": \"请输入明日计划\"}\n"
+        //   },
+        //   {
+        //     "form_element_id": "73",
+        //     "title": "工作心得",
+        //     "type": "input_text",
+        //     "version": "0",
+        //     "meta_data": "{\"hint\": \"请输入工作心得\"}\n"
+        //   }
+        // ],
 				fileArr: [],
 				cpj_ruleForm: {
 					department_id: '',
@@ -459,7 +459,6 @@
 				this.pic_time = 0
 				this.loadingShow = true
 				setTimeout(() => {
-          console.log(this.picArr.length)
           if(this.picArr.length === 0 && this.fileArr.length === 0) {
 						let param = new URLSearchParams();
 						if(this.cpj_ruleForm.project_manager.uid) {
@@ -605,7 +604,7 @@
                   }
                   this.$http.post("/index.php/Mobile/find/file_info")
                     .then((res)=>{
-                      let maxSize = res.data.data.size
+                      let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) !=-1){
                         if(size<maxSize){
