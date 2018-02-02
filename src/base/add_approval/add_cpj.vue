@@ -670,10 +670,8 @@
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
-								this.loading_show = false
-								this.$router.push({
-									path: '/work/exam'
-								})
+                this.sendShow = false
+                this.look_show = true
 							} else {
 								this.add_fail()
 							}
@@ -703,9 +701,8 @@
 							if(res.data.code === 0) {
 								this.add_ok()
 								this.loading_show = false
-								this.$router.push({
-									path: '/work/exam'
-								})
+                this.sendShow = false
+                this.look_show = true
 							} else {
 								this.add_fail()
 							}

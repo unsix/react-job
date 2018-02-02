@@ -12,6 +12,7 @@ const manageCompany = () => import('@/base/manage_company/manage_company')
 const jurisdictionManage = () => import('@/base/jurisdiction_manage/jurisdiction_manage')
 const create_company = () => import('@/base/create_company/create_company')
 
+
 Vue.use(Router)
 
 export default new Router({

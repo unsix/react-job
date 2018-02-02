@@ -881,8 +881,7 @@
 					.then((res)=>{
 						if(res.data.code === 0){
 							this.$message({
-					          message: '删除成功',
-					          type: 'success'
+
 					        });
 					        this._getExamList()
 						}else{
