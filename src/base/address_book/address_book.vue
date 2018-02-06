@@ -33,6 +33,7 @@
         </li>
       </ul>
     </div>
+
     <div class="book_details"v-show="details_show">
       <div class="top">
         <el-button type="primary" class="btn" plain @click="return_">返回</el-button>
@@ -102,9 +103,8 @@
                 <span @click="likeLog(item.publish_id)" v-show="tips < 10"><i class="iconfont icon-danzan"></i>点赞</span>
                 <span @click="likeLogs(item.publish_id)" style="color: red;" v-show="tips > 10"><i class="iconfont icon-danzan"></i>点赞</span>
                 <span @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
-                <span @click="judge(item.name,item.publish_id)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
+                <span @click="judge(item.name,item.publish_id,item.reviewer)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
               </div>
-
             </div>
           </li>
           <div class="page">
@@ -115,6 +115,7 @@
         </ul>
       </div>
     </div>
+
     <div class="send" v-show="sendShow">
       <span class="close"><span>回复{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
       <el-input type="textarea" v-model="content"></el-input>
@@ -128,6 +129,7 @@
         </el-upload>
       </span>
     </div>
+
     <div class="more" v-show="moreShow">
       <div class="top">
         <el-button type="primary" class="btn" plain @click="reinfo">返回</el-button>
@@ -250,6 +252,7 @@
 	export default {
 		data() {
 			return {
+			  value1:null,
         untreated:[],
         look_show:false,
         address_book_show:true,
@@ -788,10 +791,13 @@
             }
           })
       },
-      judge(res,pub){
+      judge(res,pub,re){
         this.sendName = res
         this.sendShow = true
         this.pub = pub
+        if(re == this.user.uid){
+
+        }
       },
       judges(pub,res,par){
         this.pub = pub
@@ -995,6 +1001,11 @@
 			this._getComPersonList()
       this._getComment()
 		},
+    mounted(){
+      if(this.$route.path === '/work/addressBook') {
+        this.$emit('changeWorkIndex', 8)
+      }
+    },
     components:{
       browsePic,
       loading,

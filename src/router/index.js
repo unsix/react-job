@@ -11,7 +11,7 @@ const addApproval = () => import('@/base/add_approval/add_approval')
 const manageCompany = () => import('@/base/manage_company/manage_company')
 const jurisdictionManage = () => import('@/base/jurisdiction_manage/jurisdiction_manage')
 const create_company = () => import('@/base/create_company/create_company')
-
+const record = () => import('@/base/work_record/record')
 
 Vue.use(Router)
 
@@ -63,6 +63,10 @@ export default new Router({
         {
           path: 'create_company',
           component:create_company
+        },
+        {
+          path:'record',
+          component:record
         }
 			]
 		},
