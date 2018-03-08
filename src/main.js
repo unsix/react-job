@@ -12,6 +12,8 @@ import md5 from 'js-md5';
 import Vuex from 'vuex'
 import store from './store'
 import Calendar from 'vue-calendar-component'
+import $ from 'jquery'
+
 Vue.use(Vuex)
 Vue.use(VueAxios, axios)
 Vue.prototype.$axios = axios

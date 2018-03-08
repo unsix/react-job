@@ -134,7 +134,7 @@
 			_getComPersonList() {
 				let newparam = new URLSearchParams();
 				newparam.append("company_id", this.nowCompanyId);
-				this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
+				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 					.then((res) => {
             var judge = res.data.code
             getCro(judge)
@@ -164,7 +164,7 @@
 							let newparam = new URLSearchParams();
 							newparam.append("company_id", this.nowCompanyId);
 							newparam.append("department_id", resData[j].department_id);
-							this.$http.post("/index/Mobile/user/get_company_personnel", newparam)
+							this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
 								.then((res) => {
                   var judge = res.data.code
                   getCro(judge)

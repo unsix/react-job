@@ -1136,10 +1136,14 @@
 			},
 			last_page() {
 				this.nextPageShow = true
-					--this.pageIndex
+        --this.pageIndex
+        document.body.scrollTop = 0
+        document.documentElement.scrollTop = 0
 			},
 			next_page() {
 				++this.pageIndex
+        document.body.scrollTop = 0
+        document.documentElement.scrollTop = 0
 			},
 			cl_pic(item, index) {
 				this.img_arr = item.picture

@@ -247,7 +247,7 @@
         nparam.append('phone',this.sender)
         nparam.append('password',password)
         nparam.append('check_password',check)
-        this.$http.post("index.php/Mobile/skey/setPassword",nparam)
+        this.$http.post("/index.php/Mobile/skey/setPassword",nparam)
           .then((res)=>{
             if(res.data.code === 0 ){
               this.$message({

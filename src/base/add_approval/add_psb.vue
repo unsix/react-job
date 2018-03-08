@@ -293,6 +293,7 @@
             this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
             if(this.psb_ruleForm.arrive_time){
               let strDate = this.psb_ruleForm.arrive_time
+              console.log(strDate)
               var time = new Date(strDate)
               this.psb_ruleForm.arrive_time = time
             }
@@ -317,7 +318,7 @@
               if (item.type === 3){
                 let param = new URLSearchParams();
                 param.append("enclosure_id", item.contract_id);
-                this.$http.post("index.php/Mobile/approval/look_enclosure",param)
+                this.$http.post("/index.php/Mobile/approval/look_enclosure",param)
                   .then((res)=>{
                     res.data.data.picture.forEach((item) => {
                       console.log(item)

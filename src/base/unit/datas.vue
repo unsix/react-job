@@ -50,7 +50,7 @@
           var m = data.getMonth() + 1
           var d = data.getDate()
           this.data = y +'/'+ m+'/' +d
-          this.result = parseInt(new Date(this.data).getTime()/1000)
+          this.result = parseInt(new Date(this.n).getTime()/1000)
         }else{
           this.data = '-1';
           this.result = '-1'

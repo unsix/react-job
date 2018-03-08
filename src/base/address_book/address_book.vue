@@ -83,7 +83,8 @@
             </div>
             <div class="cc">
               <div class="cs">
-               <span> <i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>全公司</span>
+                <span @click="mask(item.publish_id)"><i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>{{item.cc_detail}}</span>
+                <cc_per class="cc_per" ref="cc_pers" :pub="item.publish_id" ></cc_per>
               </div>
             </div>
             <div class="bottom">
@@ -99,11 +100,11 @@
             </div>
             <div class="share">
               <div class="right">
-                <span @click="lookMore(item.publish_id)"><i class="iconfont icon-more"></i>显示更多</span>
-                <span @click="likeLog(item.publish_id)" v-show="tips < 10"><i class="iconfont icon-danzan"></i>点赞</span>
-                <span @click="likeLogs(item.publish_id)" style="color: red;" v-show="tips > 10"><i class="iconfont icon-danzan"></i>点赞</span>
-                <span @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
-                <span @click="judge(item.name,item.publish_id,item.reviewer)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
+                <span @click="lookMore(item.publish_id,item.cc_detail)"><i class="iconfont icon-more"></i>显示更多</span>
+                <span @click="likeLog(item.publish_id)" v-show=" tips < 10 "><i class="iconfont icon-danzan"></i>点赞</span>
+                <span @click="likeLogs(item.publish_id)" style="color: red;" v-show="tips > 10 "><i class="iconfont icon-danzan"></i>点赞</span>
+                <span v-show="item.uid == item.del" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
+                <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
               </div>
             </div>
           </li>
@@ -117,7 +118,7 @@
     </div>
 
     <div class="send" v-show="sendShow">
-      <span class="close"><span>回复{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
+      <span class="close"><span class="huifu">回复{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
       <el-input type="textarea" v-model="content"></el-input>
       <span class="sr">
         <el-button type="primary" round @click="submitCom">确定</el-button>
@@ -129,7 +130,19 @@
         </el-upload>
       </span>
     </div>
-
+    <div class="sended" v-show="sendedShow">
+      <span class="close"><span><el-rate v-model="ras"></el-rate></span><span class="huifu">点评{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
+      <el-input type="textarea" v-model="content"></el-input>
+      <span class="sr">
+          <el-button type="primary" round @click="submitCom">确定</el-button>
+          <el-upload class="upload-demo" id="picc" multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+            <i class="iconfont icon-zhaopian"></i>
+          </el-upload>
+          <el-upload class="upload-demo_a" id="file" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+            <i class="iconfont icon-fujian"></i>
+          </el-upload>
+        </span>
+    </div>
     <div class="more" v-show="moreShow">
       <div class="top">
         <el-button type="primary" class="btn" plain @click="reinfo">返回</el-button>
@@ -152,7 +165,8 @@
       </div>
       <div class="cc">
         <div class="cs">
-          <span> <i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>全公司</span>
+          <span @click="masked(moreInfo.publish_id)"><i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>{{this.c_detail}}</span>
+          <cc_per class="cc_pers" ref="cc_persd" :pub="moreInfo.publish_id" ></cc_per>
         </div>
       </div>
       <div class="bottom">
@@ -192,27 +206,36 @@
       <div class="comment" v-show="comShow">
         <ul>
           <li v-for="(item,index) in comArr">
-            <div class="avatar">
-              <img :src="item.avatar">
-            </div>
-            <div class="name">
-              <span><span class="reply" style="display: inline-block" v-if="item.reply_uid > 0">{{item.reply_name}}回复</span>{{item.name}}</span>
-              <span class="add_time">{{item.add_time}}</span>
-              <span>{{item.content}}</span>
-            </div>
-            <span class="huihui" @click="judges(item.publish_id,item.name,item.uid)"><i class="iconfont icon-xiaoxi"></i></span>
-            <div class="fuj" v-if="item.enclosure">
-              <div>
-                <span>图片附件：</span>
-                <a v-for="(res,idx) in item.fujImg_list">
-                  <img :src="res"  @click="picShow(item.fujImg_list,idx)"/>
-                </a>
+            <div style="overflow: hidden">
+              <div class="avatar">
+                <img :src="item.avatar">
               </div>
-              <div>
-                <span>附件列表：</span>
-                <a :href="sr.address" v-for="(sr,ind) in item.fujFile" target="_blank" class="filess">{{sr.name}}</a>
+              <div class="name">
+                <span>{{item.name}}</span>
+                <span class="add_time">{{item.add_time}}</span>
+                <span>{{item.content}}</span>
+              </div>
+              <span class="huihui" @click="judges(item.publish_id,item.name,item.comment_id)"><i class="iconfont icon-xiaoxi"></i></span>
+              <div class="fuj" v-if="item.enclosure">
+                <div>
+                  <span>图片附件：</span>
+                  <a v-for="(res,idx) in item.fujImg_list">
+                    <img :src="res"  @click="picShow(item.fujImg_list,idx)"/>
+                  </a>
+                </div>
+                <div>
+                  <span>附件列表：</span>
+                  <a :href="sr.address" v-for="(sr,ind) in item.fujFile" target="_blank" class="filess">{{sr.name}}</a>
+                </div>
               </div>
             </div>
+            <ul v-show="item.reply" style="margin-left: 35px;margin-top: 15px;background: #D9D9D9;width: 505px;">
+              <li v-for="res in item.reply" style="border-bottom: none;padding: 8px !important;">
+                <p>{{res.reply_name}}回复{{item.name}}</p>
+                <p>{{res.content}}</p>
+                <p>{{res.add_time  }}</p>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>
@@ -230,19 +253,27 @@
         </ul>
       </div>
       <div class="menu">
-        <span @click="judge(moreInfo.name,moreInfo.publish_id)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
+        <span @click="judge(moreInfo.name,moreInfo.publish_id,star.reviewer,star.log_id,star.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
         <span @click="logLike(moreInfo.publish_id)" v-show="tips < 10"><i class="iconfont icon-danzan"></i>点赞</span>
         <span @click="logLikes(moreInfo.publish_id)" style="color: red;" v-show="tips > 10"><i class="iconfont icon-danzan"></i>点赞</span>
-        <span @click="delDate(moreInfo.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
+        <span @click="delDate(moreInfo.publish_id)" v-show="star.uid == this.user.uid"><i class="iconfont icon-shanchu"></i>删除</span>
       </div>
     </div>
     <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
     <!--<browe :pic_index="pic_index" :img_arr="fujArr" :pic_show="pic_show_now" @left="last" @right="nextP" @close_pic="closeP"></browe>-->
+    <div class="wide" ref="wide" v-show="wideShow"></div>
+    <div class="add" v-show="addShow" style="z-index: 9999">
+      <ul v-show="this.inde == 20" style="position: fixed">
+        <i class="el-icon-close" @click="asShowed"></i>
+        <li v-for="item in as_type" @click="asWhat(item)">{{item}}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-	import {getPic} from '@/common/js/pic.js'
+  import cc_per from '@/base/work_record/cc_per'
+  import {getPic} from '@/common/js/pic.js'
 	import {getAvatar} from '@/common/js/avatar.js'
   import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
@@ -291,7 +322,16 @@
         pic_time: 0,
         afile_hash_arr: [],
         pub:'',
-        parent_id:''
+        parent_id:'',
+        wideShow:false,
+        c_detail:'',
+        as_type:['点评','回复'],
+        view:'',
+        ras:null,
+        sendedShow : false,
+        log_id :'',
+        addShow:false,
+        inde:''
       }
 		},
 		computed: {
@@ -366,23 +406,49 @@
         setTimeout(()=>{
           if(this.picArr.length === 0 && this.fileArr.length === 0){
             let param = new URLSearchParams();
-            if(this.parent_id){
-              param.append("parent_id",this.parent_id)
+            if(this.sendShow == true){
+              param.append('uid',this.user.uid)
+              param.append('publish_id',this.pub)
+              param.append('content',this.content)
+              if(this.parent_id){
+                param.append('parent_id',this.parent_id)
+              }
+              this.$http.post('/index.php/Mobile/company/user_comment',param)
+                .then((res)=>{
+                  this.loadingShow = false
+                  if(res.data.code === 0) {
+                    this.add_ok()
+                    this.loading_show = false
+                    this.sendShow = false
+                    this.look_show = false
+                    this.wideShow = false
+                    this.address_book_show = true
+                    document.body.style.overflow = 'visible'
+                  } else {
+                    this.add_fail()
+                  }
+                })
+            }else{
+              param.append('uid',this.user.uid)
+              param.append('reviewer_fraction',this.ras)
+              param.append('remarks',this.content)
+              param.append('log_id',this.log_id)
+              this.$http.post('/index.php/Mobile/company/user_reviewer',param)
+                .then((res)=>{
+                  this.loadingShow = false
+                  if(res.data.code === 0) {
+                    this.add_ok()
+                    this.loading_show = false
+                    this.sendedShow = false
+                    this.look_show = false
+                    this.wideShow = false
+                    this.address_book_show = true
+                    document.body.style.overflow = 'visible'
+                  } else {
+                    this.add_fail()
+                  }
+                })
             }
-            param.append("publish_id",this.pub)
-            param.append("content",this.content)
-            this.$http.post("/index.php/Mobile/company/user_comment",param)
-              .then((res)=>{
-                this.loadingShow = false
-                if(res.data.code === 0) {
-                  this.add_ok()
-                  this.loading_show = false
-                  this.sendShow = false
-                  this.look_show = true
-                } else {
-                  this.add_fail()
-                }
-              })
           }else{
             if(this.picArr.length != 0){
               var upload_enclosure_new = (fn)=>{
@@ -558,7 +624,7 @@
         this.pic_index = index
         this.pic_show_now = true
       },
-      lookMore(det){
+      lookMore(det,re){
         this.look_show = false
         this.address_book_show = false
         this.details_show = false
@@ -567,6 +633,7 @@
         this.activeName = 'first'
         this.likeShow = false
         this.comShow = true
+        this.c_detail = re
         this._getMoreInfo(this.publish_id)
         this._getComment(this.publish_id)
         this._likeList(this.publish_id)
@@ -695,9 +762,11 @@
                 item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
                 this.$set(item,'fujImg_list')
                 this.$set(item,'fujFile')
+                let arr = []
+                this.$set(item,'reply',arr)
                 this.comArr.push(item)
                 if(!item.enclosure){
-                  return
+                  return false
                 }else{
                   item.enclosure.forEach((irt)=>{
                     if(irt.type == 3){
@@ -736,8 +805,28 @@
                         })
                     }
                   })
+
                 }
               })
+              let se = this.comArr
+              let sd = []
+              let as = []
+              for(var i =0;i<se.length;i++){
+                if(se[i].reply_uid){
+                  as.push(se[i])
+                }
+                if(se[i].reply_uid == null){
+                  sd.push(se[i])
+                }
+              }
+              for(var i = 0;i<sd.length;i++){
+                for(var j = 0;j<as.length;j++){
+                  if(as[j].categary_id == sd[i].comment_id){
+                    sd[i].reply.push(as[j])
+                  }
+                }
+              }
+              this.comArr = sd
             }
           })
       },
@@ -791,23 +880,42 @@
             }
           })
       },
-      judge(res,pub,re){
+      judge(res,pub,re,es,de){
+        this.content = ''
         this.sendName = res
-        this.sendShow = true
+        this.sendShow = false
+        this.wideShow = true
         this.pub = pub
+        this.log_id = es
+        document.body.style.overflow = 'hidden'
         if(re == this.user.uid){
-
+          if(de>0){
+            this.sendShow = true
+          }else{
+            this.inde = 20
+            this.addShow = true
+          }
+        }else{
+          this.sendShow = true
         }
       },
       judges(pub,res,par){
         this.pub = pub
         this.sendName = res
         this.parent_id = par
+        document.body.style.overflow = 'hidden'
+        this.wideShow = true
         this.sendShow = true
       },
       closeSend(){
         this.sendShow = false
+        this.sendedShow = false
+        this.wideShow = false
         this.parent_id = ''
+        this.content = ''
+        this.pub = ''
+        this.log_id = ''
+        document.body.style.overflow = 'visible'
       },
 			view_info(res) {
         this.address_book_show=false
@@ -820,6 +928,9 @@
         this.address_book_show=true
         this.details_show = false
         this.look_show = false
+        if(this.view >0 ){
+          this.mask(this.view)
+        }
       },
       reinfo(){
         this.moreShow = false
@@ -932,9 +1043,43 @@
               d = d < 10 ? ('0' + d) : d;
               item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
               item.reviewer_fraction=item.reviewer_fraction.toString()
-              //抄送
               item.cc = JSON.parse(item.cc)
-              // console.log(item)
+              let sdf = item.cc
+              var str = ''
+              var acv = []
+              var acb = []
+              sdf.forEach((sr)=>{
+                if(sr.type == 3){
+                  str = '全公司'
+                }
+                if(sr.type == 2){
+                  acv.push(sr.id)
+                }
+                if(sr.type == 1){
+                  acb.push(sr.id)
+                }
+              })
+              if(str == ''){
+                this.c_all = ''
+              }else{
+                this.c_all = str
+              }
+              if(acv.length == 0){
+                this.c_department = ''
+              }else{
+                this.c_department = acv.length + '个部门'
+              }
+              if(acb.length == 0){
+                this.c_person = ''
+              }else{
+                this.c_person = acb.length + '个同事'
+              }
+              this.$set(item,'cc_detail')
+              this.$set(item,'del')
+              this.$set(item,'cc_per')
+              item.del = this.user.uid
+              let ss = this.c_all + this.c_department + this.c_person
+              item.cc_detail = ss
               arr.push(item)
             })
             this.untreated = arr
@@ -983,6 +1128,55 @@
             this.infoArr = con
           })
       },
+      mask(se){
+        let box = this.$refs.cc_pers
+        box.forEach((res)=>{
+          if(res.pub == se){
+            if(res.happen == false){
+              res.happen = true
+              res.ts()
+              this.view = se
+            }else{
+              res.happen = false
+              this.view = ''
+            }
+          }else{
+            res.happen = false
+          }
+        })
+      },
+      masked(se){
+        let box = this.$refs.cc_persd
+        if(box.happen == false){
+          box.happen = true
+          box.ts()
+          this.view = se
+        }else{
+          box.happen = false
+          this.view = ''
+        }
+      },
+      asShow(){
+        this.addShow = false
+        this.wideShow = false
+        this.inde = 10
+        this.plan = []
+      },
+      asShowed(){
+        this.addShow = false
+        this.wideShow = false
+        this.inde = 0
+        document.body.style.overflow = 'visible'
+      },
+      asWhat(pr){
+        this.addShow = false
+        if(pr == '点评'){
+          this.sendedShow = true
+        }
+        if(pr == '回复'){
+          this.sendShow = true
+        }
+      },
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
@@ -1004,15 +1198,17 @@
     mounted(){
       if(this.$route.path === '/work/addressBook') {
         this.$emit('changeWorkIndex', 8)
+        let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+        this.$refs.wide.style.height = h + 'px'
       }
     },
     components:{
       browsePic,
       loading,
-      browe
+      browe,
+      cc_per
     },
-		mounted() {
-		},
+
 		watch: {
       pageIndex() {
         this._getPublishList()
@@ -1028,24 +1224,51 @@
         }
         if(this.file_time != 0 || this.pic_time != 0) {
           let param = new URLSearchParams();
-          if(this.parent_id){
-            param.append("parent_id",this.parent_id)
+          if(this.sendShow == true){
+            param.append('uid',this.user.uid)
+            param.append('publish_id',this.pub)
+            param.append('content',this.content)
+            param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+            if(this.parent_id){
+              param.append('parent_id',this.parent_id)
+            }
+            this.$http.post('/index.php/Mobile/company/user_comment',param)
+              .then((res)=>{
+                this.loadingShow = false
+                if(res.data.code === 0) {
+                  this.add_ok()
+                  this.loading_show = false
+                  this.sendShow = false
+                  this.look_show = false
+                  this.wideShow = false
+                  this.address_book_show = true
+                  document.body.style.overflow = 'visible'
+                } else {
+                  this.add_fail()
+                }
+              })
+          }else{
+            param.append('uid',this.user.uid)
+            param.append('reviewer_fraction',this.ras)
+            param.append('remarks',this.content)
+            param.append('log_id',this.log_id)
+            param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+            this.$http.post('/index.php/Mobile/company/user_reviewer',param)
+              .then((res)=>{
+                this.loadingShow = false
+                if(res.data.code === 0) {
+                  this.add_ok()
+                  this.loading_show = false
+                  this.sendedShow = false
+                  this.look_show = false
+                  this.wideShow = false
+                  this.address_book_show = true
+                  document.body.style.overflow = 'visible'
+                } else {
+                  this.add_fail()
+                }
+              })
           }
-          param.append("publish_id",this.pub)
-          param.append("content",this.content)
-          param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-          this.$http.post("/index.php/Mobile/company/user_comment", param)
-            .then((res) => {
-              this.loadingShow = false
-              if(res.data.code === 0) {
-                this.add_ok()
-                this.loading_show = false
-                this.sendShow = false
-                this.look_show = true
-              } else {
-                this.add_fail()
-              }
-            })
         }
       },
       pic_time(){
@@ -1056,23 +1279,51 @@
         }
         if(this.file_time != 0 || this.pic_time != 0) {
           let param = new URLSearchParams();
-          if(this.parent_id){
-            param.append("parent_id",this.parent_id)
+          if(this.sendShow == true){
+            param.append('uid',this.user.uid)
+            param.append('publish_id',this.pub)
+            param.append('content',this.content)
+            param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+            if(this.parent_id){
+              param.append('parent_id',this.parent_id)
+            }
+            this.$http.post('/index.php/Mobile/company/user_comment',param)
+              .then((res)=>{
+                this.loadingShow = false
+                if(res.data.code === 0) {
+                  this.add_ok()
+                  this.loading_show = false
+                  this.sendShow = false
+                  this.look_show = false
+                  this.wideShow = false
+                  this.address_book_show = true
+                  document.body.style.overflow = 'visible'
+                } else {
+                  this.add_fail()
+                }
+              })
+          }else{
+            param.append('uid',this.user.uid)
+            param.append('reviewer_fraction',this.ras)
+            param.append('remarks',this.content)
+            param.append('log_id',this.log_id)
+            param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+            this.$http.post('/index.php/Mobile/company/user_reviewer',param)
+              .then((res)=>{
+                this.loadingShow = false
+                if(res.data.code === 0) {
+                  this.add_ok()
+                  this.loading_show = false
+                  this.sendedShow = false
+                  this.look_show = false
+                  this.wideShow = false
+                  this.address_book_show = true
+                  document.body.style.overflow = 'visible'
+                } else {
+                  this.add_fail()
+                }
+              })
           }
-          param.append("publish_id",this.pub)
-          param.append("content",this.content)
-          param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-          this.$http.post("/index.php/Mobile/company/user_comment", param)
-            .then((res) => {
-              if(res.data.code === 0) {
-                this.add_ok()
-                this.loading_show = false
-                this.sendShow = false
-                this.look_show = true
-              } else {
-                this.add_fail()
-              }
-            })
         }
       }
 		}
@@ -1217,9 +1468,9 @@
   }
   .publish{
     width: 100%;
-    background: #FFFFFF;
     overflow: hidden;
     .top{
+      background: #FFFFFF;
       .btn{
         margin: 20px;
       }
@@ -1227,19 +1478,20 @@
         display: block;
         text-align: center;
         font-size: 20px;
+        padding-bottom: 10px;
       }
     }
     .list{
       width: 100%;
       ul{
         list-style: none;
-        margin-top: 20px;
+        margin-top: 5px;
         background: #D8D8D8;
         overflow: hidden;
         li{
           background: #ffffff;
-          margin-bottom: 10px;
-          margin-top: 10px;
+          margin-bottom: 5px;
+          /*margin-top: 10px;*/
           overflow: hidden;
           box-shadow: 0 0 2px rgba(0, 0, 0, .2);
           -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
@@ -1281,18 +1533,74 @@
             }
           }
           .cc{
-            overflow: hidden;
-            .cs{
+            .cs {
               display: inline-block;
-              border: 1px solid blue;
-              border-radius: 15px;
+              border: 1px solid #74c3ff;
+              border-radius: 10px;
               padding: 8px 0;
               margin: 5px 0px 5px 15px;
               cursor: pointer;
-              span{
+              position: relative;
+              span {
                 text-align: center;
-                padding: 0 15px;
-                color: blue;
+                padding: 0 9px;
+                color: #74c3ff;
+              }
+              .cc_per{
+                position: absolute;
+                width: 250px;
+                height: 200px;
+                left: 95px;
+                top: -40px;
+                z-index: 9999;
+                overflow: auto;
+                border: 1px solid #DDDDDD;
+                background: #DDDDDD;
+                ul{
+                  margin-top: 0px !important;
+                  >li{
+                    cursor: default;
+                    display: block;
+                    border-bottom: 1px solid #DDDDDD;
+                    font-size: 14px;
+                    transition: .3s;
+                    box-shadow: none !important;
+                    margin-bottom: 0px !important;
+                    &:first-child {
+                      border-bottom: 1px solid transparent;
+                      &:hover {
+                        background: none;
+                      }
+                    }
+                    &:nth-child(even) {
+                      background: rgb(245, 247, 250);
+                    }
+                    &:hover {
+                      background: #EEEEEE;
+                    }
+                    .avatar {
+                      vertical-align: top;
+                      width: 40px;
+                      float: left;
+                      margin-left: 10px;
+                      img {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                      }
+                    }
+                    .name {
+                      float: left;
+                      width: 150px;
+                      height: 40px;
+                      text-align: center;
+                      line-height: 40px;
+                      span{
+                        color: black;
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -1322,23 +1630,22 @@
               }
             }
           }
-          .share{
+          .share {
             margin-top: 15px;
             background: #f5f7fd;
             padding-top: 10px;
             padding-bottom: 10px;
             overflow: hidden;
-            .right{
+            .right {
               width: 350px;
               float: right;
-              span{
+              display: flex;
+              display: -webkit-flex;
+              span {
+                flex-grow: 1;
                 display: inline-block;
-                padding: 0 10px;
-                border-right: 1px solid #707070;
                 cursor: pointer;
-              }
-              .nonebo{
-                border-right: none;
+                text-align: center;
               }
             }
           }
@@ -1408,18 +1715,74 @@
       }
     }
     .cc{
-      overflow: hidden;
-      .cs{
+      .cs {
         display: inline-block;
-        border: 1px solid blue;
-        border-radius: 15px;
+        border: 1px solid #74c3ff;
+        border-radius: 10px;
         padding: 8px 0;
         margin: 5px 0px 5px 15px;
         cursor: pointer;
-        span{
+        position: relative;
+        span {
           text-align: center;
-          padding: 0 15px;
-          color: blue;
+          padding: 0 9px;
+          color: #74c3ff;
+        }
+        .cc_pers{
+          position: absolute;
+          width: 250px;
+          height: 200px;
+          left: 95px;
+          top: -40px;
+          z-index: 9999;
+          overflow: auto;
+          border: 1px solid #DDDDDD;
+          background: #DDDDDD;
+          ul{
+            margin-top: 0px !important;
+            >li{
+              cursor: default;
+              display: block;
+              border-bottom: 1px solid #DDDDDD;
+              font-size: 14px;
+              transition: .3s;
+              box-shadow: none !important;
+              overflow: hidden;
+              &:first-child {
+                border-bottom: 1px solid transparent;
+                &:hover {
+                  background: none;
+                }
+              }
+              &:nth-child(even) {
+                background: rgb(245, 247, 250);
+              }
+              &:hover {
+                background: #EEEEEE;
+              }
+              .avatar {
+                vertical-align: top;
+                width: 40px;
+                float: left;
+                margin-left: 10px;
+                img {
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                }
+              }
+              .name {
+                float: left;
+                width: 150px;
+                height: 40px;
+                text-align: center;
+                line-height: 40px;
+                span{
+                  color: black;
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -1612,8 +1975,10 @@
     .menu{
       background: #f5f7fd;
       border-top: 1px solid #ffffff;
+      display: flex;
+      display: -webkit-flex;
       span{
-        width: 32%;
+        flex-grow: 1;
         padding: 10px 0;
         display: inline-block;
         text-align: center;
@@ -1630,23 +1995,190 @@
     left: 50%;
     margin-left: -270px;
     margin-top: -75px;
-    z-index: 99;
+    z-index: 999;
     .close{
       display: block;
       width: 100%;
       overflow: hidden;
       text-align: center;
-      span{
+      .huifu{
         line-height: 53px;
-        font-size: 18px;
+        font-size: 16px;
       }
       i{
         float: right;
-        font-size: 23px;
-        margin: 10px;
+        font-size: 16px;
+        margin: 20px 10px 0;
+        cursor: pointer;
         border-radius: 100%;
         border: 1px solid black;
         color: #000;
+      }
+    }
+    .el-textarea{
+      display: block;
+      width: 90%;
+      margin: 0 auto;
+    }
+    .sr{
+      overflow: hidden;
+      display: block;
+      margin-top: 10px;
+      padding-bottom: 10px;
+      #picc{
+        position: relative;
+        width: 70%;
+        .el-upload-list__item{
+          position: relative;
+          top: 30px;
+          left: 15px;
+          width: 50px;
+          height: 50px;
+        }
+        .el-upload{
+          display: block;
+        }
+        .el-upload--picture-card{
+          z-index: 999;
+          position: absolute;
+          left: 3px;
+          top: 0px;
+          width: 0px;
+          height: 0px;
+          margin-top: 12px;
+          margin-left: 27px;
+          outline: none;
+          background: none;
+          border: none;
+          border-radius: 0;
+          line-height: 0;
+          i{
+            font-size: 20px;
+            z-index: 999;
+          }
+        }
+      }
+      #file{
+        width: 70%;
+        position: relative;
+        .el-upload-list--text{
+          position: relative;
+          top: 0px;
+          left: 15px;
+          width: 100%;
+        }
+        .el-upload--text{
+          width: 0px;
+          height: 0px;
+          margin-top: 40px;
+          margin-left: 30px;
+          outline: none;
+          background: none;
+          border: none;
+          border-radius: 0;
+          line-height: 0;
+          i{
+            font-size: 20px;
+          }
+        }
+      }
+      .el-button{
+        padding: 4px 10px;
+        float: right;
+        margin-right: 20px;
+        margin-top: 14px;
+      }
+    }
+  }
+  .wide{
+    width: 100%;
+    z-index: 99;
+    /*height: 3000px;*/
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.5);
+  }
+  .add{
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -100px;
+    ul {
+      width: 200px;
+      background: #FFFFFF;
+      margin: 200px auto;
+      padding: 10px;
+      border-radius: 4px;
+      h2 {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: #409EFF;
+      }
+      i {
+        font-size: 20px;
+        float: right;
+        cursor: pointer;
+        &:hover {
+          color: #FA5555
+        }
+      }
+      li {
+        cursor: pointer;
+        display: block;
+        height: 24px;
+        line-height: 24px;
+        font-size: 15px;
+        &:hover {
+          color: #5A5E66;
+        }
+      }
+    }
+  }
+  .sended{
+    width: 450px;
+    background: #ffffff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -270px;
+    margin-top: -75px;
+    z-index: 999;
+    .close{
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      .huifu{
+        line-height: 53px;
+        font-size: 16px;
+        margin-left: 50px;
+      }
+      i{
+        float: right;
+        font-size: 16px;
+        margin: 20px 10px 0;
+        cursor: pointer;
+        border-radius: 100%;
+        border: 1px solid black;
+        color: #000;
+      }
+      .el-rate{
+        width: 150px;
+        float: left;
+        line-height: 53px;
+        text-align: center;
+        .el-rate__item{
+          line-height: 0px;
+          margin: 0;
+          i{
+            margin: 3px;
+            border: none;
+            font-size: 18px;
+          }
+        }
       }
     }
     .el-textarea{

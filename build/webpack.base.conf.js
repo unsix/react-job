@@ -3,7 +3,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
-
+const webpack = require('webpack')
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -26,7 +26,8 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       'components':resolve('src/components'),
-      'common':resolve('src/common')
+      'common':resolve('src/common'),
+      'jquery':'jquery',
     }
   },
   module: {
@@ -70,6 +71,13 @@ module.exports = {
 			  loaders: ['style', 'css', 'sass']
 			}
     ]
-  }
-  
+  },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.ProvidePlugin({
+      jQuery:'jquery',
+      $:'jquery'
+    })
+  ]
+
 }

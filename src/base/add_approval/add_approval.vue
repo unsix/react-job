@@ -833,4 +833,38 @@
 	.el-form-item {
 		margin-bottom: 30px;
 	}
+  .add{
+    ul {
+      width: 200px;
+      background: #FFFFFF;
+      margin: 200px auto;
+      padding: 10px;
+      border-radius: 4px;
+      h2 {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-size: 16px;
+        color: #409EFF;
+      }
+      i {
+        font-size: 20px;
+        float: right;
+        cursor: pointer;
+        &:hover {
+          color: #FA5555
+        }
+      }
+      li {
+        cursor: pointer;
+        display: block;
+        height: 24px;
+        line-height: 24px;
+        font-size: 15px;
+        &:hover {
+          color: #5A5E66;
+        }
+      }
+    }
+  }
 </style>

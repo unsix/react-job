@@ -76,57 +76,11 @@
 	export default {
 		data() {
 			return {
-			  // todo:[],
-        // ts:[],
 				fileList: [],
         shuju:[],
         conpents:[],
         fileList_a:[],
 				picArr: [],
-        // ts:[{"result":"1","form_element_id":1},{"result":['2','3'],"form_element_id":2},{"result":"1514476800","form_element_id":3},{"result":"是","form_element_id":76},{"result":"2 ","form_element_id":77},{"result":"2","form_element_id":73}],
-        // todo:[{
-        //   "form_element_id": "1",
-        //   "type": "single_choice",
-        //   "version": "0",
-        //   "title": "测试单选框",
-        //   "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":\"3\"}"
-        // },
-        //   {
-        //     "form_element_id": "2",
-        //     "type": "multi_choice",
-        //     "version": "0",
-        //     "title": "测试多选框",
-        //     "meta_data": "{\"options\":[{\"choice_id\":\"1\",\"choice_title\":\"今天\"},{\"choice_id\":\"2\",\"choice_title\":\"明天\"},{\"choice_id\":\"3\",\"choice_title\":\"后天\"}],\"default_select\":[\"1\", \"3\"]}"
-        //   },
-        //   {
-        //     "form_element_id": "3",
-        //     "type": "date_select",
-        //     "version": "0",
-        //     "title": "测试选择日期",
-        //     "meta_data": "{\"is_fill_local_time\": true}"
-        //   },
-        //   {
-        //     "form_element_id": "76",
-        //     "title": "今日完成",
-        //     "type": "input_text",
-        //     "version": "0",
-        //     "meta_data": "{\"hint\": \"请输入今日完成\"}\n"
-        //   },
-        //   {
-        //     "form_element_id": "77",
-        //     "title": "明日计划",
-        //     "type": "input_text",
-        //     "version": "0",
-        //     "meta_data": "{\"hint\": \"请输入明日计划\"}\n"
-        //   },
-        //   {
-        //     "form_element_id": "73",
-        //     "title": "工作心得",
-        //     "type": "input_text",
-        //     "version": "0",
-        //     "meta_data": "{\"hint\": \"请输入工作心得\"}\n"
-        //   }
-        // ],
 				fileArr: [],
 				cpj_ruleForm: {
 					department_id: '',
@@ -486,7 +440,6 @@
 					} else {
 					  //图片的判断
 						if(this.picArr.length != 0) {
-              console.log(this.picArr.length)
               var upload_enclosure_new = (fn)=>{
                 for(let i = 0; i < this.picArr.length; i++) {
                   let formData = new FormData();
@@ -562,7 +515,6 @@
 						//文档的判断
 						if(this.fileArr.length != 0) {
 							for(let i = 0; i < this.fileArr.length; i++) {
-                console.log(this.fileArr[i])
 								let formData = new FormData();
 								formData.append('file', this.fileArr[i].raw);
 								formData.append('token', this.token);
@@ -670,8 +622,10 @@
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
-                this.sendShow = false
-                this.look_show = true
+                this.loading_show = false
+                this.$router.push({
+                  path: '/work/exam'
+                })
 							} else {
 								this.add_fail()
 							}
@@ -700,9 +654,10 @@
 						.then((res) => {
 							if(res.data.code === 0) {
 								this.add_ok()
-								this.loading_show = false
-                this.sendShow = false
-                this.look_show = true
+                this.loading_show = false
+                this.$router.push({
+                  path: '/work/exam'
+                })
 							} else {
 								this.add_fail()
 							}

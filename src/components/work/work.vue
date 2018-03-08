@@ -4,8 +4,8 @@
 			<div class="top">
 				<div class="title">
 					<span>{{nowCompanyName}}</span>
-					<span class="changeCompany">更换公司
-					<ul @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" v-show="userOperationLeftShow">
+					<span class="changeCompany" @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft">更换公司
+					<ul v-show="userOperationLeftShow">
 						<li v-for="(item,index) in companyList" @click="changeCompany(item,index)">{{item.company_name}}</li>
 					</ul>
 					<img src="../../assets/down.svg" @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" ref="userIconLeft"/>
