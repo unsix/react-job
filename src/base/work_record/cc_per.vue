@@ -30,7 +30,7 @@
         this.cc_range = []
         let param = new URLSearchParams()
         param.append('publish_id',this.pub)
-        this.$http.post('index.php/Mobile/company/look_cc_user_name',param)
+        this.$http.post('/index.php/Mobile/company/look_cc_user_name',param)
           .then((res)=>{
             res.data.data.forEach((item)=>{
               item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar +'?imageView2/1/w/50/h/50'

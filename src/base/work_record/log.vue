@@ -71,7 +71,7 @@
         <el-radio :label="item.uid">{{item.name}}</el-radio>
       </el-radio-group>
     </div>
-    <loading v-show="loadingShow"></loading>
+    <loading v-show="loadingShow" style="z-index: 9999999"></loading>
   </div>
 </template>
 
@@ -318,6 +318,8 @@
         this.$refs.ceshi.forEach((item)=>{
           item.result = ''
         })
+        this.fileList_a = []
+        this.fileList = []
       },
       add_fail() {
         this.$message({
@@ -685,6 +687,7 @@
           }
         }
         if(this.file_time != 0 || this.pic_time != 0){
+
           let param = new URLSearchParams();
           param.append('uid',this.user.uid)
           param.append('company_id',this.nowCompanyId)
@@ -692,7 +695,7 @@
           param.append('log_type',this.log_type)
           this.logs.user_save_time = Date.parse(new Date(this.logs.user_save_time))/1000
           param.append('user_save_time',this.logs.user_save_time)
-          param.append('enclosure',this.logs.enclosure)
+          param.append('enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.logs.json = JSON.stringify(this.logs.json)
           param.append('json',this.logs.json)
           param.append('custom_form_type',this.log_type_id)
@@ -725,7 +728,7 @@
           param.append('log_type',this.log_type)
           this.logs.user_save_time = Date.parse(new Date(this.logs.user_save_time))/1000
           param.append('user_save_time',this.logs.user_save_time)
-          param.append('enclosure',this.logs.enclosure)
+          param.append('enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.logs.json = JSON.stringify(this.logs.json)
           param.append('json',this.logs.json)
           param.append('custom_form_type',this.log_type_id)
@@ -818,9 +821,9 @@
       .el-tabs__active-bar {
         width: 50%;
       }
-     .el-tabs__nav {
+      .el-tabs__nav {
        width: 100%;
-     }
+      }
       .el-tabs__item {
         font-size: 15px;
         font-weight: 700;

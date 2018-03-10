@@ -23,7 +23,7 @@
                 <span class="add_time">{{item.add_time}}</span>
               </div>
               <div class="stauts">
-                <p v-show="item.form_type == 1">日志-
+                <p v-show="item.form_type == 1">{{item.log_form}}-
                   <span v-show="item.reviewer_fraction == 0">未点评</span>
                   <span v-show="item.reviewer_fraction != 0">已点评{{item.reviewer_fraction}}分</span>
                 </p>
@@ -38,7 +38,7 @@
             </div>
             <div class="bottom" v-show="item.form_type == 1">
               <div class="time">
-                <span>{{item.start_time}} 由{{item.reviewer_name}}点评</span>
+                <span>{{item.start_time}} {{item.log_form}} 由 {{item.reviewer_name}} 点评</span>
               </div>
               <ul>
                 <li v-for="ti in item.custom_form_elements">
@@ -58,9 +58,9 @@
             </div>
             <div class="share">
               <div class="right">
-                <span @click="lookMore(item.publish_id,item.cc_detail)" ><i class="iconfont icon-more"></i>显示更多</span>
-                <span @click="likeLog(item.publish_id)" v-if=" item.like_id < 1  && tips < 10 "><i class="iconfont icon-danzan"></i>点赞</span>
-                <span @click="likeLogs(item.publish_id)" style="color: red;" v-show="tips > 10 || item.like_id >1"><i class="iconfont icon-danzan"></i>点赞</span>
+                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>显示更多</span>
+                <span @click="likeLog(item.publish_id)" v-if=" item.like_id < 1 "><i class="iconfont icon-danzan"></i>点赞</span>
+                <span @click="likeLogs(item.publish_id)" style="color: red;" v-show=" item.like_id >1"><i class="iconfont icon-danzan"></i>点赞</span>
                 <span v-show="item.uid == item.del" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
                 <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
               </div>
@@ -88,7 +88,7 @@
             <span class="add_time">{{moreInfo.add_time}}</span>
           </div>
           <div class="stauts">
-            <p v-show="star.form_type == 1">日志
+            <p v-show="star.form_type == 1">{{log_form}}
               <span v-show="star.reviewer_fraction == 0">未点评</span>
               <span v-show="star.reviewer_fraction != 0">已点评{{star.reviewer_fraction}}分</span>
             </p>
@@ -104,7 +104,7 @@
           </div>
           <div class="bottom">
             <div class="time">
-              <span>{{star.start_time}} 由{{star.reviewer_name}}点评</span>
+              <span>{{star.start_time}} {{log_form}} 由 {{star.reviewer_name}}点评</span>
             </div>
             <ul>
               <li v-for="ti in star.custom_form_elements">
@@ -163,7 +163,7 @@
                   <div>
                     <span>图片附件：</span>
                     <a v-for="(res,idx) in item.fujImg_list">
-                      <img :src="res"  @click="picShow(item.fujImg_list,idx)"/>
+                      <img :src="res"  @click="picShow(res)"/>
                     </a>
                   </div>
                   <div>
@@ -197,8 +197,8 @@
         </div>
         <div class="menu">
           <span @click="judge(moreInfo.name,moreInfo.publish_id,star.reviewer,star.log_id,star.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
-          <span @click="logLike(moreInfo.publish_id)" v-show="tips < 10 && moreInfo.like_id< 1 "><i class="iconfont icon-danzan"></i>点赞</span>
-          <span @click="logLikes(moreInfo.publish_id)" style="color: red;" v-show="tips > 10 || moreInfo.like_id > 1"><i class="iconfont icon-danzan"></i>点赞</span>
+          <span @click="logLike(moreInfo.publish_id)" v-show="moreInfo.like_id< 1 "><i class="iconfont icon-danzan"></i>点赞</span>
+          <span @click="logLikes(moreInfo.publish_id)" style="color: red;" v-show="moreInfo.like_id > 1"><i class="iconfont icon-danzan"></i>点赞</span>
           <span @click="delDate(moreInfo.publish_id)" v-show="star.uid == this.user.uid"><i class="iconfont icon-shanchu"></i>删除</span>
         </div>
       </div>
@@ -250,10 +250,16 @@
 
     <log v-show="logShow" :log_type_id="this.custom_form_type" :log_type="this.log_type" :das="this.das" ref="logo" :todo="this.tode"></log>
 
-    <!--<work v-show="idx == 3"></work>-->
+    <work ref="work" v-show="idx == 3"></work>
 
     <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 
+    <loading v-show="loadingShow" style="z-index: 9999999"></loading>
+
+    <div class="pic" ref="pic" v-show="show_pic">
+      <i class="el-icon-close" @click="close_pp"></i>
+      <img ref="img" :src="linked">
+    </div>
   </div>
 </template>
 
@@ -265,6 +271,8 @@
   import { mapGetters, mapMutations } from 'vuex'
   import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
+  import moment from 'moment'
+  import loading from '@/base/loading/loading'
   export default {
     data(){
       return{
@@ -318,7 +326,15 @@
         log_id :'',
         pic_index: 0,
         pic_show: false,
-        c_detail : ''
+        c_detail : '',
+        log_form:'',
+        loadingShow:false,
+        picArr: [],
+        fileArr: [],
+        file_time: 0,
+        pic_time: 0,
+        linked:'',
+        show_pic: false,
       }
     },
     watch: {
@@ -341,6 +357,7 @@
             if(this.parent_id){
               param.append('parent_id',this.parent_id)
             }
+
             this.$http.post('/index.php/Mobile/company/user_comment',param)
               .then((res)=>{
                 this.loadingShow = false
@@ -348,12 +365,16 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendShow = false
-                  this.look_show = true
                   this.wideShow = false
-                  this.moreShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._getMoreInfo()
+                    this._likeList()
+                  }
                   this._getPublishLook()
+                  document.body.style.overflow = 'visible'
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
@@ -372,11 +393,14 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendedShow = false
-                  this.look_show = true
                   this.wideShow = false
-                  this.moreShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._getMoreInfo()
+                    this._likeList()
+                  }
                   this._getPublishLook()
                   document.body.style.overflow = 'visible'
                 } else {
@@ -409,9 +433,15 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendShow = false
-                  this.look_show = false
                   this.wideShow = false
-                  this.address_book_show = true
+                  this.likeArr.splice(0,this.likeArr.length)
+                  this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._getMoreInfo()
+                    this._likeList()
+                  }
+                  this._getPublishLook()
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
@@ -430,9 +460,15 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendedShow = false
-                  this.look_show = false
                   this.wideShow = false
-                  this.address_book_show = true
+                  this.likeArr.splice(0,this.likeArr.length)
+                  this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._getMoreInfo()
+                    this._likeList()
+                  }
+                  this._getPublishLook()
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
@@ -455,9 +491,15 @@
         setCompanyList: 'SET_COMPANYLIST',
       }),
       handleClick(tab){
+        this.logShow = false
         let index = parseInt(tab.index)
         this.idx = index
         this.$refs.logo.ccShow = false
+        this.$refs.work.mainShow = true
+        this.$refs.work.replymeShow = false
+        this.$refs.work.mindShow = false
+        this.$refs.work.remyShow = false
+        this.$refs.work.like_show = false
         if(index == 2){
           this.look_show = true
           this.pageShow = true
@@ -465,6 +507,9 @@
             this.mask(this.view)
           }
           this._getPublishLook()
+        }
+        if(index == 3){
+          this.$refs.work._get_notification_list()
         }
         if(index == 4){
           this.wideShow = true
@@ -498,17 +543,6 @@
             let arr = []
             res.data.data.forEach((item) => {
               item.avatar='http://bbsf-file.hzxb.net/' + item.avatar
-              let time = item.start_time
-              var date = new Date();
-              var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
-              date.setTime(time * 1000);
-              var y = date.getFullYear();
-              var m = date.getMonth() + 1;
-              m = m < 10 ? ('0' + m) : m;
-              var d = date.getDate();
-              var day=date.getDay();
-              d = d < 10 ? ('0' + d) : d;
-              item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
               item.cc = JSON.parse(item.cc)
               let sdf = item.cc
               var str = ''
@@ -543,9 +577,35 @@
               this.$set(item,'cc_detail')
               this.$set(item,'del')
               this.$set(item,'cc_per')
+              this.$set(item,'log_form')
               item.del = this.user.uid
               let ss = this.c_all + this.c_department + this.c_person
               item.cc_detail = ss
+              let time = item.start_time
+              var date = new Date();
+              date.setTime(time * 1000);
+              var y = date.getFullYear();
+              var m = date.getMonth() + 1;
+              m = m < 10 ? ('0' + m) : m;
+              var d = date.getDate();
+              var day=date.getDay();
+              d = d < 10 ? ('0' + d) : d;
+              if(item.log_type == '1'){
+                item.log_form = '日志'
+                var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
+                item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+              }
+              if(item.log_type == '2'){
+                item.log_form = '周志'
+                item.start_time = y+'年'+m+'月'+d+'日'
+                let str = y+'-'+m+'-'+d
+                str = moment(str).add(6,'days').format('YYYY年MM月DD号')
+                item.start_time = item.start_time +'-'+ str
+              }
+              if(item.log_type == '3'){
+                item.log_form = '月志'
+                item.start_time = y+'年'+m+'月'
+              }
               arr.push(item)
             })
             arr.sort(compare)
@@ -579,7 +639,7 @@
         document.body.scrollTop = 0
         document.documentElement.scrollTop = 0
       },
-      lookMore(det,re){
+      lookMore(det,re,es){
         this.look_show = false
         this.pageShow = false
         this.moreShow = true
@@ -589,6 +649,7 @@
         this.likeShow = false
         this.comShow = true
         this.c_detail = re
+        this.log_form = es
         this._getMoreInfo(this.publish_id)
         this._getComment(this.publish_id)
         this._likeList(this.publish_id)
@@ -607,7 +668,7 @@
                 message: '点赞成功',
                 type: 'success'
               })
-              this.tips = 1 + 15
+              this._getPublishLook()
             }else{
               this.$message({
                 message: '点赞失败',
@@ -630,7 +691,7 @@
                 message: '取消点赞',
                 type: 'success'
               })
-              this.tips = Number(this.tips) - '15'
+              this._getPublishLook()
               this._likeList()
             }else{
               this.$message({
@@ -654,7 +715,7 @@
               })
               this.loading_show = true
               setTimeout(()=>{
-                this._getPublishList(this.looks)
+                this._getPublishLook()
                 this.loading_show = false
               },1000)
             }else{
@@ -667,6 +728,8 @@
       },
       judge(res,pub,re,es,de){
         this.content = ''
+        this.fileList_a = []
+        this.fileList = []
         this.sendName = res
         this.sendShow = false
         this.wideShow = true
@@ -694,11 +757,10 @@
             let ss = res.data.data
             ss.avatar = 'http://bbsf-file.hzxb.net/' + ss.avatar
             this.moreInfo = ss
-            console.log(this.moreInfo)
             this.star = ss.form_data
             let time = this.star.start_time
+            let type = this.star.log_type
             var date = new Date();
-            var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
             date.setTime(time * 1000);
             var y = date.getFullYear();
             var m = date.getMonth() + 1;
@@ -706,7 +768,19 @@
             var d = date.getDate();
             var day=date.getDay();
             d = d < 10 ? ('0' + d) : d;
-            this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+            if(type == '1'){
+              var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
+              this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+            }
+            if(type == '2'){
+              tithis.star.start_timeme = y+'年'+m+'月'+d+'日'
+              let str = y+'-'+m+'-'+d
+              str = moment(str).add(6,'days').format('YYYY年MM月DD号')
+              this.star.start_time = item.start_time +'-'+ str
+            }
+            if(type == '3'){
+              this.star.start_time = y+'年'+m+'月'
+            }
             this.getImg(this.star.enclosure)
             this.getFiles(this.star.enclosure)
           })
@@ -866,8 +940,9 @@
         this.likeArr.splice(0,this.likeArr.length)
         this.comArr.splice(0,this.comArr.length)
         if(this.view >0 ){
-          this.mask(this.view)
+          this.masked(this.view)
         }
+        this._getPublishLook()
       },
       logLike(res){
         this.publish_id = res
@@ -883,7 +958,7 @@
                 message: '点赞成功',
                 type: 'success'
               })
-              this.tips = 1 + 15
+              this._getMoreInfo(this.publish_id)
               setTimeout(()=>{
                 this._likeList()
               },500)
@@ -909,7 +984,7 @@
                 message: '取消点赞',
                 type: 'success'
               })
-              this.tips = Number(this.tips) - '15'
+              this._getMoreInfo(this.publish_id)
               setTimeout(()=>{
                 this._likeList()
               },500)
@@ -927,6 +1002,9 @@
         this.parent_id = par
         this.sendShow = true
         this.wideShow = true
+        this.content = ''
+        this.fileList_a = []
+        this.fileList = []
       },
       closeSend(){
         this.sendShow = false
@@ -1029,11 +1107,14 @@
                     this.add_ok()
                     this.loading_show = false
                     this.sendShow = false
-                    this.look_show = true
                     this.wideShow = false
-                    this.moreShow = false
                     this.likeArr.splice(0,this.likeArr.length)
                     this.comArr.splice(0,this.comArr.length)
+                    if(this.moreShow == true){
+                      this._getComment()
+                      this._getMoreInfo()
+                      this._likeList()
+                    }
                     this._getPublishLook()
                     document.body.style.overflow = 'visible'
                   } else {
@@ -1052,12 +1133,15 @@
                     this.add_ok()
                     this.loading_show = false
                     this.sendedShow = false
-                    this.moreShow= false
+                    this.wideShow = false
                     this.likeArr.splice(0,this.likeArr.length)
                     this.comArr.splice(0,this.comArr.length)
+                    if(this.moreShow == true){
+                      this._getComment()
+                      this._getMoreInfo()
+                      this._likeList()
+                    }
                     this._getPublishLook()
-                    this.look_show = true
-                    this.wideShow = false
                     document.body.style.overflow = 'visible'
                   } else {
                     this.add_fail()
@@ -1276,7 +1360,7 @@
       },
       masked(se){
         let box = this.$refs.cc_persd
-        box.happen = false
+        // box.happen = false
         if(box.happen == false){
           box.happen = true
           box.ts()
@@ -1315,6 +1399,23 @@
       close_pic() {
         this.pic_show = false
       },
+      picShow(es){
+        let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+        this.$refs.wide.style.height = h + 'px'
+        this.$refs.pic.style.height = h + 'px'
+        this.wideShow = true
+        this.show_pic = true
+        var str = ''
+        str = es.split('?')
+        this.$refs.img.src = str[0]
+        document.body.style.overflow = 'hidden'
+      },
+      close_pp(){
+        this.wideShow = false
+        this.show_pic = false
+        this.$refs.img.src = ''
+        document.body.style.overflow = 'visible'
+      }
     },
     mounted(){
       if(this.$route.path === '/work/record') {
@@ -1338,7 +1439,8 @@
       log,
       work,
       cc_per,
-      browsePic
+      browsePic,
+      loading
     }
   }
 </script>
@@ -2179,5 +2281,25 @@
       }
     }
   }
-
+  .pic{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    i{
+      font-size: 58px;
+      color: white;
+      float: right;
+      margin: 50px;
+      cursor: pointer;
+      &:hover{
+        color: red;
+      }
+    }
+    img{
+      display: block;
+      margin: 250px auto;
+    }
+  }
 </style>

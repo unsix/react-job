@@ -16,6 +16,7 @@
     "element-ui": "^2.0.2",
     "jquery": "^3.3.1",
     "js-md5": "^0.7.2",
+    "moment": "^2.21.0",
     "vee-validate": "^2.0.0-rc.21",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.4",
