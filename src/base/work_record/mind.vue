@@ -58,7 +58,7 @@
             </div>
             <div class="share">
               <div class="right">
-                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>显示更多</span>
+                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>查看详情</span>
                 <span @click="likeLog(item.publish_id)" :title="item.publish_id" ref="zan" style="color: black"><i class="iconfont icon-danzan"></i>点赞</span>
                 <span v-show="item.uid == item.del" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
                 <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
@@ -114,7 +114,7 @@
             </div>
             <div class="share">
               <div class="right">
-                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>显示更多</span>
+                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>查看详情</span>
                 <span @click="likeLogs(item.publish_id)" :title="item.publish_id" ref="zans" style="color: black"><i class="iconfont icon-danzan"></i>点赞</span>
                 <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
               </div>
@@ -720,29 +720,45 @@
         })
       },
       delDate(res){
-        this.publish_id = res
-        let param = new  URLSearchParams()
-        param.append("publish_id",this.publish_id)
-        param.append("uid",this.user.uid)
-        this.$http.post("/index.php/Mobile/company/del_publish",param)
-          .then((res)=>{
-            if(res.data.code == 0){
-              this.$message({
-                message: '删除成功',
-                type: 'success'
-              })
-              this.loading_show = true
-              setTimeout(()=>{
-                this._get_mind(this.looks)
-                this.loading_show = false
-              },1000)
-            }else{
-              this.$message({
-                message: '删除失败',
-                type: 'error'
-              })
-            }
+        this.$confirm('您确定删除此日志？','提示',{
+          confirmButtonText:'确定',
+          cancelButtonText:'取消',
+          type:'warning'
+        }).then(()=>{
+          this.publish_id = res
+          let param = new  URLSearchParams()
+          param.append("publish_id",this.publish_id)
+          param.append("uid",this.user.uid)
+          this.$http.post("/index.php/Mobile/company/del_publish",param)
+            .then((res)=>{
+              if(res.data.code == 0){
+                this.$message({
+                  message:'删除成功',
+                  type:'success'
+                })
+                this.loading_show = true
+                setTimeout(()=>{
+                  this._get_mind()
+                  if(this.moreShow == true){
+                    this.moreShow = false
+                    this.pageShow = true
+                    this.mindShow = true
+                  }
+                  this.loading_show = false
+                },1000)
+              }else{
+                this.$message({
+                  message:'删除失败',
+                  type:'error'
+                })
+              }
+            })
+        }).catch(()=>{
+          this.$message({
+            type:'info',
+            message:'已取消操作'
           })
+        })
       },
       judge(res,pub,re,es,de){
         this.content = ''

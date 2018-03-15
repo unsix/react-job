@@ -2,14 +2,19 @@
   <div class="log" ref="logs">
     <div v-show="logShow">
       <div class="block">
-        <el-date-picker
-          v-model="logs.user_save_time"
-          :type="das"
-          placeholder="选择日期"
-          :clearable="false"
-          @change="getdate">
-        </el-date-picker>
-        <span v-show="dates" style="font-size: 14px;position: relative;left: 50%;padding: 5px;background: #FF7A4C;color: white;border-radius: 4px">补发</span>
+        <div class="date">
+          <div v-show="das != 'week'" class="day">
+            <el-date-picker v-model="logs.user_save_time" :type="das" placeholder="选择日期" :clearable="false" @change="getdate"></el-date-picker>
+          </div>
+          <div v-show="das == 'week'" class="week">
+            <div class="wel">
+              <el-date-picker v-model="logs.user_save_time" type="date" placeholder="选择日期" :clearable="false" @change="getWeek"></el-date-picker>
+              <span>-</span>
+              <el-date-picker v-model="set_week" type="date" :disabled="true" :clearable="false" ></el-date-picker>
+            </div>
+          </div>
+        </div>
+        <span v-show="dates" class="zz">补发</span>
       </div>
       <div class="shu">
         <components :is="item.component"
@@ -82,9 +87,11 @@
   import { create_depart_list } from 'common/js/initial/depart.js'
   import { mapGetters, mapMutations } from 'vuex'
   import loading from '@/base/loading/loading'
+  import moment from 'moment'
   export default {
     data(){
       return{
+        set_week:'',
         conpents:[],
         fileList: [],
         fileList_a:[],
@@ -191,11 +198,14 @@
           var date = new Date()
           var y = date.getFullYear()
           var m = date.getMonth()+1
-          m= m < 10 ? '0' + m: m;
           var sd = date.getDay()
-          var d = date.getDate()-sd
+          var d = date.getDate()-sd+1
+          var s = date.getDate()-sd+7
           var str = y+'-'+m+'-'+d
+          var strd = y+'-'+m+'-'+s
           var time = new Date(str)
+          var sd = new Date(strd)
+          this.set_week = sd
           this.logs.user_save_time = time
           this.time = time
         }
@@ -397,21 +407,11 @@
         }
       },
       getdate(val){
-        console.log('11111')
         let str = this.time
         if(this.das == 'date'){
           if(val >= str){
             this.logs.user_save_time = str
             this.dates= false
-          }else{
-            this.logs.user_save_time = val
-            this.dates = true
-          }
-        }
-        if(this.das == 'week'){
-          if(val >= str){
-            this.logs.user_save_time = str
-            this.dates = false
           }else{
             this.logs.user_save_time = val
             this.dates = true
@@ -425,6 +425,24 @@
             this.logs.user_save_time = val
             this.dates = true
           }
+        }
+      },
+      getWeek(val){
+        let str = this.time
+        var weekOfday = moment(val).format('E')
+        var last_sunday = moment(val).subtract(weekOfday, 'days').format()
+        var last_monday = moment(last_sunday).add(1,'days').format()
+        last_sunday = moment(last_sunday).add(7,'days').format()
+        var src = new Date(last_monday)
+        console.log(str)
+        console.log(src)
+        if(src >= str){
+          this.logs.user_save_time = str
+          this.dates = false
+        }else{
+          this.logs.user_save_time = src
+          this.set_week = new Date(last_sunday)
+          this.dates = true
         }
       },
       log_submit(){
@@ -513,7 +531,7 @@
                 if(res.data.code === 0) {
                   this.add_ok()
                   this.loading_show = false
-                  this.actions = '2'
+                  this.actions = '0'
                   this.$parent.actions()
                 } else {
                   this.add_fail()
@@ -659,7 +677,8 @@
     components: {
       sec,
       datas,
-      loading
+      loading,
+      moment
     },
     props:{
       todo:{
@@ -706,7 +725,7 @@
               if(res.data.code === 0) {
                 this.add_ok()
                 this.loading_show = false
-                this.actions = '2'
+                this.actions = '0'
                 this.$parent.actions()
               } else {
                 this.add_fail()
@@ -739,7 +758,7 @@
               if(res.data.code === 0) {
                 this.add_ok()
                 this.loading_show = false
-                this.actions = '2'
+                this.actions = '0'
                 this.$parent.actions()
               } else {
                 this.add_fail()
@@ -766,12 +785,42 @@
     overflow: hidden;
     background: #ffffff;
     margin-top: 3px;
-    .el-date-editor{
-      margin: 20px 0 30px -110px;
-      position: relative;
-      top: 0;
-      left: 50%;
+    .block{
+      width: 100%;
+      overflow: hidden;
+      .date{
+        width: 80%;
+        float: left;
+      }
+      .day{
+        width: 200px;
+        margin: 0 auto;
+        .el-date-editor{
+          margin-top: 20px;
+          margin-bottom: 20px;
+        }
+      }
+      .week{
+        .wel{
+          margin: 0 auto;
+          width: 300px;
+          .el-date-editor{
+            width: 140px;
+            margin: 20px auto;
+          }
+        }
+      }
     }
+  }
+  .zz{
+    display: block;
+    float: left;
+    margin-top: 25px;
+    font-size: 14px;
+    padding: 5px;
+    background: #FF7A4C;
+    color: white;
+    border-radius: 4px
   }
   #pic{
     width: 95%;

@@ -51,7 +51,7 @@
           </div>
           <div class="share">
             <div class="right">
-              <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>显示更多</span>
+              <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>查看详情</span>
               <span @click="likeLog(item.publish_id)" :title="item.publish_id" ref="zan" style="color: black"><i class="iconfont icon-danzan"></i>点赞</span>
               <span v-show="item.reviewer_fraction  == 0" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
               <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
@@ -240,6 +240,9 @@
       <i class="el-icon-close" @click="close_pp"></i>
       <img ref="img" :src="linked">
     </div>
+
+    <loading v-show="loadingShow" style="z-index: 9999999"></loading>
+
   </div>
 </template>
 
@@ -294,6 +297,7 @@ export default {
       pic_show: false,
       linked:'',
       show_pic: false,
+      loadingShow:false
     }
   },
   methods:{
@@ -499,29 +503,45 @@ export default {
       })
     },
     delDate(res){
-      this.publish_id = res
-      let param = new  URLSearchParams()
-      param.append("publish_id",this.publish_id)
-      param.append("uid",this.user.uid)
-      this.$http.post("/index.php/Mobile/company/del_publish",param)
-        .then((res)=>{
-          if(res.data.code == 0){
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.loading_show = true
-            setTimeout(()=>{
-              this._get_mind(this.looks)
-              this.loading_show = false
-            },1000)
-          }else{
-            this.$message({
-              message: '删除失败',
-              type: 'error'
-            })
-          }
+      this.$confirm('您确定删除此日志？','提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      }).then(()=>{
+        this.publish_id = res
+        let param = new  URLSearchParams()
+        param.append("publish_id",this.publish_id)
+        param.append("uid",this.user.uid)
+        this.$http.post("/index.php/Mobile/company/del_publish",param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.$message({
+                message:'删除成功',
+                type:'success'
+              })
+              this.loading_show = true
+              setTimeout(()=>{
+                this._get_return()
+                if(this.moreShow == true){
+                  this.moreShow = false
+                  this.pageShow = true
+                  this.myRecord = true
+                }
+                this.loading_show = false
+              },1000)
+            }else{
+              this.$message({
+                message:'删除失败',
+                type:'error'
+              })
+            }
+          })
+      }).catch(()=>{
+        this.$message({
+          type:'info',
+          message:'已取消操作'
         })
+      })
     },
     judge(res,pub,re,es,de){
       this.content = ''
@@ -925,7 +945,7 @@ export default {
             this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
           }
           if(type == '2'){
-            tithis.star.start_timeme = y+'年'+m+'月'+d+'日'
+            this.star.start_timeme = y+'年'+m+'月'+d+'日'
             let str = y+'-'+m+'-'+d
             str = moment(str).add(6,'days').format('YYYY年MM月DD号')
             this.star.start_time = item.start_time +'-'+ str

@@ -16,11 +16,11 @@
         <span>({{list.reply_me.name}} 回复: {{list.reply_me.description}})</span>
       </li>
       <li @click="like_me">
-        <el-badge :value="2" class="item">
+        <el-badge :value="list.liked_me.unread_num" class="item">
           <span><i class="iconfont icon-danzan"></i></span>
         </el-badge>
         我收到的赞
-        <!--<span>({{list.liked_me.name}} {{list.liked_me.description}})</span>-->
+        <span>({{list.liked_me.name}} 赞了我的工作)</span>
       </li>
       <li @click="my_record">
         <el-badge :value="list.reviewed_me.unread_num" class="item">
@@ -96,7 +96,9 @@
       like_me(){
         this.mainShow = false
         this.like_show = true
-        this.$refs.like.likeShow = true
+        this.$refs.like.likedShow = true
+        this.$refs.like.pageShow = true
+        this.$refs.like._get_like_list()
       },
       _get_notification_list(){
         let param = new URLSearchParams()

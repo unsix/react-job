@@ -198,6 +198,9 @@
       <i class="el-icon-close" @click="close_pp"></i>
       <img ref="img" :src="linked">
     </div>
+
+    <loading v-show="loadingShow" style="z-index: 9999999"></loading>
+
   </div>
 </template>
 
@@ -213,8 +216,8 @@ export default {
   data(){
     return{
       re_list:[],
-      replyShow:true,
-      pageShow:true,
+      replyShow:false,
+      pageShow:false,
       pageIndex:1,
       nextPageShow: true,
       sendShow : false,
@@ -251,6 +254,7 @@ export default {
       pic_show: false,
       linked:'',
       show_pic: false,
+      loadingShow:false
     }
   },
   methods:{
@@ -722,15 +726,18 @@ export default {
           if(type == '1'){
             var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
             this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+            this.log_form = '日志'
           }
           if(type == '2'){
             tithis.star.start_timeme = y+'年'+m+'月'+d+'日'
             let str = y+'-'+m+'-'+d
             str = moment(str).add(6,'days').format('YYYY年MM月DD号')
             this.star.start_time = item.start_time +'-'+ str
+            this.log_form = '周志'
           }
           if(type == '3'){
             this.star.start_time = y+'年'+m+'月'
+            this.log_form = '月志'
           }
           this.getImg(this.star.enclosure)
           this.getFiles(this.star.enclosure)
@@ -971,34 +978,45 @@ export default {
         })
     },
     delDate(res){
-      this.publish_id = res
-      let param = new  URLSearchParams()
-      param.append("publish_id",this.publish_id)
-      param.append("uid",this.user.uid)
-      this.$http.post("/index.php/Mobile/company/del_publish",param)
-        .then((res)=>{
-          if(res.data.code == 0){
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.loading_show = true
-            setTimeout(()=>{
-              this._get_reply()
-              if(this.moreShow == true){
-                this.moreShow = false
-                this.pageShow = true
-                this.replyShow = true
-              }
-              this.loading_show = false
-            },1000)
-          }else{
-            this.$message({
-              message: '删除失败',
-              type: 'error'
-            })
-          }
+      this.$confirm('您确定删除此日志？','提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      }).then(()=>{
+        this.publish_id = res
+        let param = new  URLSearchParams()
+        param.append("publish_id",this.publish_id)
+        param.append("uid",this.user.uid)
+        this.$http.post("/index.php/Mobile/company/del_publish",param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.$message({
+                message:'删除成功',
+                type:'success'
+              })
+              this.loading_show = true
+              setTimeout(()=>{
+                this._get_reply()
+                if(this.moreShow == true){
+                  this.moreShow = false
+                  this.pageShow = true
+                  this.replyShow = true
+                }
+                this.loading_show = false
+              },1000)
+            }else{
+              this.$message({
+                message:'删除失败',
+                type:'error'
+              })
+            }
+          })
+      }).catch(()=>{
+        this.$message({
+          type:'info',
+          message:'已取消操作'
         })
+      })
     },
     ctrl_pic_show(item, index) {
       this.img_arr = item

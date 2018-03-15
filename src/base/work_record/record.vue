@@ -2,15 +2,13 @@
   <div class="record">
     <div class="tab">
       <el-tabs v-model="activeNames" @tab-click="handleClick">
-        <el-tab-pane label="合同模板" name="1"></el-tab-pane>
-        <el-tab-pane label="拟呈批合同" name="2"></el-tab-pane>
-        <el-tab-pane label="工作记录" name="3"></el-tab-pane>
-        <el-tab-pane label="工作提醒" name="4"></el-tab-pane>
-        <el-tab-pane label="新建日志" name="5"></el-tab-pane>
+        <el-tab-pane label="工作记录" name="1"></el-tab-pane>
+        <el-tab-pane label="工作提醒" name="2"></el-tab-pane>
+        <el-tab-pane label="新建日志" name="3"></el-tab-pane>
       </el-tabs>
     </div>
 
-    <div class="workList" v-show="idx == 2">
+    <div class="workList" v-show="idx == 0">
       <div class="list" v-show="look_show">
         <ul>
           <li v-for="item in untreated">
@@ -58,10 +56,10 @@
             </div>
             <div class="share">
               <div class="right">
-                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>显示更多</span>
+                <span @click="lookMore(item.publish_id,item.cc_detail,item.log_form)" ><i class="iconfont icon-more"></i>查看详情</span>
                 <span @click="likeLog(item.publish_id)" v-if=" item.like_id < 1 "><i class="iconfont icon-danzan"></i>点赞</span>
                 <span @click="likeLogs(item.publish_id)" style="color: red;" v-show=" item.like_id >1"><i class="iconfont icon-danzan"></i>点赞</span>
-                <span v-show="item.uid == item.del" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
+                <span v-show="item.uid == item.del && item.reviewer_fraction == 0" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
                 <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
               </div>
             </div>
@@ -250,11 +248,12 @@
 
     <log v-show="logShow" :log_type_id="this.custom_form_type" :log_type="this.log_type" :das="this.das" ref="logo" :todo="this.tode"></log>
 
-    <work ref="work" v-show="idx == 3"></work>
+    <work ref="work" v-show="idx == 1"></work>
 
     <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
 
     <loading v-show="loadingShow" style="z-index: 9999999"></loading>
+
 
     <div class="pic" ref="pic" v-show="show_pic">
       <i class="el-icon-close" @click="close_pp"></i>
@@ -495,12 +494,12 @@
         let index = parseInt(tab.index)
         this.idx = index
         this.$refs.logo.ccShow = false
-        this.$refs.work.mainShow = true
+        this.$refs.work.mainShow = false
         this.$refs.work.replymeShow = false
         this.$refs.work.mindShow = false
         this.$refs.work.remyShow = false
         this.$refs.work.like_show = false
-        if(index == 2){
+        if(index == 0){
           this.look_show = true
           this.pageShow = true
           if(this.view >0 ){
@@ -508,10 +507,11 @@
           }
           this._getPublishLook()
         }
-        if(index == 3){
+        if(index == 1){
           this.$refs.work._get_notification_list()
+          this.$refs.work.mainShow = true
         }
-        if(index == 4){
+        if(index == 2){
           this.wideShow = true
           this.addShow = true
           this.tode.splice(0,this.tode.length)
@@ -645,7 +645,7 @@
         this.moreShow = true
         this.publish_id = det
         this.activeName = 'first'
-        this.activeNames = '3'
+        this.activeNames = '1'
         this.likeShow = false
         this.comShow = true
         this.c_detail = re
@@ -702,29 +702,45 @@
           })
       },
       delDate(res){
-        this.publish_id = res
-        let param = new  URLSearchParams()
-        param.append("publish_id",this.publish_id)
-        param.append("uid",this.user.uid)
-        this.$http.post("/index.php/Mobile/company/del_publish",param)
-          .then((res)=>{
-            if(res.data.code == 0){
-              this.$message({
-                message: '删除成功',
-                type: 'success'
-              })
-              this.loading_show = true
-              setTimeout(()=>{
-                this._getPublishLook()
-                this.loading_show = false
-              },1000)
-            }else{
-              this.$message({
-                message: '删除失败',
-                type: 'error'
-              })
-            }
+        this.$confirm('您确定删除此日志？','提示',{
+          confirmButtonText:'确定',
+          cancelButtonText:'取消',
+          type:'warning'
+        }).then(()=>{
+          this.publish_id = res
+          let param = new  URLSearchParams()
+          param.append("publish_id",this.publish_id)
+          param.append("uid",this.user.uid)
+          this.$http.post("/index.php/Mobile/company/del_publish",param)
+            .then((res)=>{
+              if(res.data.code == 0){
+                this.$message({
+                  message:'删除成功',
+                  type:'success'
+                })
+                this.loading_show = true
+                setTimeout(()=>{
+                  this._getPublishLook()
+                  if(this.moreShow == true){
+                    this.moreShow = false
+                    this.pageShow = true
+                    this.look_show = true
+                  }
+                  this.loading_show = false
+                },1000)
+              }else{
+                this.$message({
+                  message:'删除失败',
+                  type:'error'
+                })
+              }
+            })
+        }).catch(()=>{
+          this.$message({
+            type:'info',
+            message:'已取消操作'
           })
+        })
       },
       judge(res,pub,re,es,de){
         this.content = ''
@@ -1286,6 +1302,7 @@
         document.body.style.overflow = 'visible'
       },
       as_click(ps,es){
+        this.$refs.logo.dates = false
         if(ps == '日志'){
           this.log_type = es +1
           this.das = 'date'
@@ -1331,14 +1348,16 @@
             })
             this.$refs.logo.msms()
             this.$refs.logo.fill()
+
             this.inde = 10
             this.plan = []
           })
       },
       actions(){
         this.logShow = false
-        this.activeNames = '3'
-        this.idx = '2'
+        this.activeNames = '1'
+        this.idx = '0'
+
         this._getPublishLook()
       },
       mask(se){
@@ -1418,6 +1437,7 @@
       }
     },
     mounted(){
+
       if(this.$route.path === '/work/record') {
         this.$emit('changeWorkIndex', 6)
       }
@@ -1425,6 +1445,10 @@
       this.$refs.wide.style.height = h + 'px'
     },
     created(){
+      this._getPublishLook()
+      if(!localStorage.user){
+        this.$router.push({ path: '/login' })
+      }
     },
     computed:{
       ...mapGetters([
@@ -1440,7 +1464,7 @@
       work,
       cc_per,
       browsePic,
-      loading
+      loading,
     }
   }
 </script>
@@ -1460,7 +1484,7 @@
         margin-bottom: 5px;
       }
       .el-tabs__active-bar {
-        width: 20%;
+        width: 33.3%;
       }
       .el-tabs__nav {
         width: 100%;
@@ -1468,7 +1492,7 @@
       .el-tabs__item {
         font-size: 15px;
         font-weight: 700;
-        width: 20%;
+        width: 33.3%;
         text-align: center;
       }
     }

@@ -151,16 +151,16 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-					this.workList = ['处理审批', '发起审批','创建公司', '合同日志','通讯录']
+					this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录']
 				}
 				if(m === 1 && f === 0) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '合同日志', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录']
 				}
 				if(m === 0 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '合同日志', '通讯录']
+					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '合同日志', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录']
 				}
 			},
 			changeWorkIndex(num){
@@ -233,7 +233,7 @@
           case '创建公司':
             this.$router.push({ path: '/work/create_company'})
             break;
-          case '合同日志':
+          case '工作记录':
             this.$router.push({ path:'/work/record'})
             break;
 				}

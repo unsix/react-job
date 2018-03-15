@@ -100,7 +100,7 @@
             </div>
             <div class="share">
               <div class="right">
-                <span @click="lookMore(item.publish_id,item.cc_detail)"><i class="iconfont icon-more"></i>显示更多</span>
+                <span @click="lookMore(item.publish_id,item.cc_detail)"><i class="iconfont icon-more"></i>查看详情</span>
                 <span @click="likeLog(item.publish_id)" v-show=" tips < 10 "><i class="iconfont icon-danzan"></i>点赞</span>
                 <span @click="likeLogs(item.publish_id)" style="color: red;" v-show="tips > 10 "><i class="iconfont icon-danzan"></i>点赞</span>
                 <span v-show="item.uid == item.del" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
