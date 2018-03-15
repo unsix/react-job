@@ -2,32 +2,32 @@
   <div class="work_mind">
     <ul class="zhuti" v-show="mainShow">
       <li @click="record_mind">
-        <el-badge :value="list.wait_reviewed.unread_num" class="item">
+        <el-badge :value="obj1.unread_num" class="item">
           <span><i class="el-icon-edit"></i></span>
         </el-badge>
         <span>日志提醒</span>
-        <span>您有{{list.wait_reviewed.unread_num}}篇日志需要点评</span>
+        <span v-show="rec">您有{{obj1.unread_num}}篇日志需要点评</span>
       </li>
       <li @click="reply" >
-        <el-badge :value="list.reply_me.unread_num" class="item">
+        <el-badge :value="obj2.unread_num" class="item">
           <span><i class="iconfont icon-xiaoxi"></i></span>
         </el-badge>
         回复我的
-        <span>({{list.reply_me.name}} 回复: {{list.reply_me.description}})</span>
+        <span v-show="sce">({{obj2.name}} 回复: {{obj2.description}})</span>
       </li>
       <li @click="like_me">
-        <el-badge :value="list.liked_me.unread_num" class="item">
+        <el-badge :value="obj3.unread_num" class="item">
           <span><i class="iconfont icon-danzan"></i></span>
         </el-badge>
         我收到的赞
-        <span>({{list.liked_me.name}} 赞了我的工作)</span>
+        <span v-show="scd">({{obj3.name}} 赞了我的工作)</span>
       </li>
       <li @click="my_record">
-        <el-badge :value="list.reviewed_me.unread_num" class="item">
+        <el-badge :value="obj4.unread_num" class="item">
           <span><i class="el-icon-edit-outline"></i></span>
         </el-badge>
         我发出的工作
-        <span>({{list.reviewed_me.name}}点评了我的日志:{{list.reviewed_me.description}})</span>
+        <span v-show="scf">({{obj4.name}}点评了我的日志:{{obj4.description}})</span>
       </li>
     </ul>
 
@@ -58,6 +58,30 @@
         mindShow:false,
         remyShow: false,
         like_show: false,
+        obj1:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
+        obj2:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
+        obj3:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
+        obj4:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
+        rec:true,
+        sce:true,
+        scd:true,
+        scf:true
       }
     },
     methods:{
@@ -106,11 +130,43 @@
         this.$http.post('index.php/Mobile/company/message_notification_list',param)
           .then((res)=>{
             this.list = res.data.data
+            if(this.list.wait_reviewed == null){
+              this.rec = false
+              this.list.wait_reviewed = this.obj1
+              this.obj1.unread_num = '0'
+            }else{
+              this.obj1.name = this.list.wait_reviewed.name
+              this.obj1.unread_num = this.list.wait_reviewed.unread_num
+              this.obj1.description = this.list.wait_reviewed.description
+            }
+            if(this.list.reply_me == null){
+              this.sce = false
+              this.list.reply_me = this.obj2
+              this.obj2.unread_num = '0'
+            }else{
+              this.obj2.name = this.list.wait_reviewed.name
+              this.obj2.unread_num = this.list.wait_reviewed.unread_num
+              this.obj2.description = this.list.wait_reviewed.description
+            }
+
             if(this.list.liked_me == null){
-              let obj = new Object()
-              obj.name = ''
-              obj.description = ''
-              this.list.liked = obj
+              this.scd = false
+              this.list.liked_me = this.obj3
+              this.obj3.unread_num = '0'
+            }else{
+              this.obj3.name = this.list.wait_reviewed.name
+              this.obj3.unread_num = this.list.wait_reviewed.unread_num
+              this.obj3.description = this.list.wait_reviewed.description
+            }
+
+            if(this.list.reviewed_me == null){
+              this.scf = false
+              this.list.reviewed_me = this.obj4
+              this.obj4.unread_num = '0'
+            }else{
+              this.obj4.name = this.list.wait_reviewed.name
+              this.obj4.unread_num = this.list.wait_reviewed.unread_num
+              this.obj4.description = this.list.wait_reviewed.description
             }
           })
       },
