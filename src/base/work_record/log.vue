@@ -21,6 +21,8 @@
                     :tit="item.tit"
                     :key="idx"
                     :ref="item.cc"
+                    :line="item.line"
+                    :length="item.length"
                     :str="item.version"
                     :hint="item.place"
                     :sdsd="item.fill"
@@ -142,6 +144,8 @@
             this.conpents.push({
               component:sec,
               tit: item.title,
+              line:item.max_lines,
+              length:item.max_length,
               form_element_id: item.form_element_id,
               version:item.version,
               place:item.meta_data.hint,

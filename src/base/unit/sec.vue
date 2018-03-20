@@ -4,11 +4,19 @@
       <p>{{tit}}</p>
       <input  :type="stype"
               @focus="look()"
+              v-show="low"
               v-model="result"
               :placeholder="hint"
-              :maxlength="max_length"
+              :maxlength="length"
               >
-      <!--:max_lines="lines"-->
+
+      <textarea :type="stype"
+                @focus="look()"
+                v-show="nolow"
+                v-model="result"
+                :placeholder="hint"
+                :maxlength="length"
+                ></textarea>
     </label>
   </div>
 </template>
@@ -20,7 +28,8 @@
         result:'',
         stype:'',
         id:'',
-
+        low:false,
+        nolow:false
       }
     },
     props:{
@@ -39,17 +48,25 @@
       str:{
 
       },
-      max_length:{
+      length:{
+
+      },
+      line:{
 
       }
     },
     methods:{
       look:function () {
-        //写验证
 
       },
     },
     created(){
+      if(this.line == undefined || this.line > 2){
+        this.nolow = true
+      }else{
+        this.low = true
+      }
+
       if(this.type == 'input_text'){
         this.stype = 'text'
       }
@@ -91,6 +108,22 @@
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
     }
+    textarea{
+      min-height: 33px;
+      display: inline-block;
+      resize: none;
+      padding: 5px 15px;
+      line-height: 1.5;
+      box-sizing: border-box;
+      width: 75%;
+      font-size: 14px;
+      color: #606266;
+      background-color: #FFf;
+      background-image: none;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    }
     input{
       -webkit-appearance: none;
       background-color: #fff;
@@ -101,7 +134,6 @@
       box-sizing: border-box;
       color: #5a5e66;
       display: inline-block;
-      font-size: inherit;
       height: 40px;
       line-height: 1;
       outline: 0;
