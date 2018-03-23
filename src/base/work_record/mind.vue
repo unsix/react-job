@@ -865,7 +865,7 @@
                     this.wideShow = false
                     this.likeArr.splice(0,this.likeArr.length)
                     this.comArr.splice(0,this.comArr.length)
-                    if(this.moreShow = true){
+                    if(this.moreShow == true){
                       this._getComment()
                       this._likeList()
                       this._getMoreInfo()
@@ -896,7 +896,7 @@
                     this.wideShow = false
                     this.likeArr.splice(0,this.likeArr.length)
                     this.comArr.splice(0,this.comArr.length)
-                    if(this.moreShow = true){
+                    if(this.moreShow == true){
                       this._getComment()
                       this._likeList()
                       this._getMoreInfo()
@@ -1339,7 +1339,7 @@
               this.likeArr.splice(0,this.likeArr.length)
             }else{
               res.data.data.forEach((item)=>{
-                item.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+                item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
                 this.likeArr.push(item)
               })
             }
@@ -1513,7 +1513,7 @@
                   this.wideShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -1545,7 +1545,7 @@
                   this.wideShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -1588,7 +1588,7 @@
                   this.loading_show = false
                   this.sendShow = false
                   this.wideShow = false
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -1619,7 +1619,7 @@
                   this.loading_show = false
                   this.sendedShow = false
                   this.wideShow = false
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
