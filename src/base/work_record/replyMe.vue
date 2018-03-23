@@ -98,7 +98,7 @@
           <ul>
             <li v-for="ti in star.custom_form_elements">
               <p>{{ti.title}}</p>
-              <span style="margin-left: 20px">{{ti.result}}</span>
+              <span style="margin-left: 20px;display: block" v-html="ti.result"></span>
             </li>
           </ul>
         </div>
@@ -680,6 +680,9 @@ export default {
           ss.avatar = 'http://bbsf-file.hzxb.net/' + ss.avatar
           this.moreInfo = ss
           this.star = ss.form_data
+          this.star.custom_form_elements.forEach((item)=>{
+            item.result = item.result.replace("\n","<br />")
+          })
           this.star.cc = JSON.parse(this.star.cc)
           let sdf = this.star.cc
           var str = ''
