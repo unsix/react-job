@@ -405,7 +405,7 @@ export default {
                   this.wideShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -431,7 +431,7 @@ export default {
                   this.wideShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -1099,7 +1099,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()
@@ -1126,7 +1126,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()
@@ -1166,7 +1166,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()
@@ -1193,7 +1193,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()

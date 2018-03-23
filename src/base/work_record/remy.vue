@@ -659,7 +659,7 @@ export default {
                   this.wideShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -685,7 +685,7 @@ export default {
                   this.wideShow = false
                   this.likeArr.splice(0,this.likeArr.length)
                   this.comArr.splice(0,this.comArr.length)
-                  if(this.moreShow = true){
+                  if(this.moreShow == true){
                     this._getComment()
                     this._likeList()
                     this._getMoreInfo()
@@ -1107,7 +1107,7 @@ export default {
             this.likeArr.splice(0,this.likeArr.length)
           }else{
             res.data.data.forEach((item)=>{
-              item.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+              item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
               this.likeArr.push(item)
             })
           }
@@ -1278,7 +1278,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()
@@ -1305,7 +1305,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()
@@ -1345,7 +1345,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()
@@ -1372,7 +1372,7 @@ export default {
                 this.wideShow = false
                 this.likeArr.splice(0,this.likeArr.length)
                 this.comArr.splice(0,this.comArr.length)
-                if(this.moreShow = true){
+                if(this.moreShow == true){
                   this._getComment()
                   this._likeList()
                   this._getMoreInfo()

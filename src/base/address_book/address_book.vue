@@ -94,15 +94,14 @@
                <ul>
                  <li v-for="ti in item.custom_form_elements">
                    <p>{{ti.title}}</p>
-                   <span style="margin-left: 20px">{{ti.result}}</span>
+                   <span style="margin-left: 20px;display: block" v-html="ti.result"></span>
                  </li>
                </ul>
             </div>
             <div class="share">
               <div class="right">
                 <span @click="lookMore(item.publish_id,item.cc_detail)"><i class="iconfont icon-more"></i>查看详情</span>
-                <span @click="likeLog(item.publish_id)" v-show=" tips < 10 "><i class="iconfont icon-danzan"></i>点赞</span>
-                <span @click="likeLogs(item.publish_id)" style="color: red;" v-show="tips > 10 "><i class="iconfont icon-danzan"></i>点赞</span>
+                <span @click="likeLog(item.publish_id)" :title="item.publish_id" ref="zan" style="color: black"><i class="iconfont icon-danzan"></i>点赞</span>
                 <span v-show="item.uid == item.del" @click="delDate(item.publish_id)"><i class="iconfont icon-shanchu"></i>删除</span>
                 <span @click="judge(item.name,item.publish_id,item.reviewer,item.log_id,item.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
               </div>
@@ -176,7 +175,7 @@
         <ul>
           <li v-for="ti in star.custom_form_elements">
             <p>{{ti.title}}</p>
-            <span style="margin-left: 20px">{{ti.result}}</span>
+            <span style="margin-left: 20px;display: block" v-html="ti.result"></span>
           </li>
         </ul>
       </div>
@@ -220,7 +219,7 @@
                 <div>
                   <span>图片附件：</span>
                   <a v-for="(res,idx) in item.fujImg_list">
-                    <img :src="res"  @click="picShow(item.fujImg_list,idx)"/>
+                    <img :src="res"   @click="picShow(res,idx)"/>
                   </a>
                 </div>
                 <div>
@@ -254,19 +253,24 @@
       </div>
       <div class="menu">
         <span @click="judge(moreInfo.name,moreInfo.publish_id,star.reviewer,star.log_id,star.reviewer_fraction)" class="nonebo"><i class="iconfont icon-xiaoxi"></i>回复</span>
-        <span @click="logLike(moreInfo.publish_id)" v-show="tips < 10"><i class="iconfont icon-danzan"></i>点赞</span>
-        <span @click="logLikes(moreInfo.publish_id)" style="color: red;" v-show="tips > 10"><i class="iconfont icon-danzan"></i>点赞</span>
+        <span @click="logLike(moreInfo.publish_id)" v-show="moreInfo.like_id< 1 "><i class="iconfont icon-danzan"></i>点赞</span>
+        <span @click="logLikes(moreInfo.publish_id)" style="color: red;" v-show="moreInfo.like_id > 1"><i class="iconfont icon-danzan"></i>点赞</span>
         <span @click="delDate(moreInfo.publish_id)" v-show="star.uid == this.user.uid"><i class="iconfont icon-shanchu"></i>删除</span>
       </div>
     </div>
     <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
-    <!--<browe :pic_index="pic_index" :img_arr="fujArr" :pic_show="pic_show_now" @left="last" @right="nextP" @close_pic="closeP"></browe>-->
     <div class="wide" ref="wide" v-show="wideShow"></div>
     <div class="add" v-show="addShow" style="z-index: 9999">
       <ul v-show="this.inde == 20" style="position: fixed">
         <i class="el-icon-close" @click="asShowed"></i>
         <li v-for="item in as_type" @click="asWhat(item)">{{item}}</li>
       </ul>
+    </div>
+    <loading v-show="loading_show" style="z-index: 9999999"></loading>
+
+    <div class="pic" ref="pic" v-show="show_pic">
+      <i class="el-icon-close" @click="close_pp"></i>
+      <img ref="img" :src="linked">
     </div>
   </div>
 </template>
@@ -305,7 +309,6 @@
         pageIndex:1,
         likeShow:false,
         likeArr:[],
-        tips:'1',
         tip:'',
         looks:'',
         sendShow:false,
@@ -331,7 +334,9 @@
         sendedShow : false,
         log_id :'',
         addShow:false,
-        inde:''
+        inde:'',
+        show_pic:false,
+        linked:'',
       }
 		},
 		computed: {
@@ -379,7 +384,6 @@
       },
       submitCom(){
         if(this.content == ''){
-          console.log(this.parent_id)
           this.$message.error('请输入评论内容');
         }else{
           this.com_submit()
@@ -420,9 +424,14 @@
                     this.add_ok()
                     this.loading_show = false
                     this.sendShow = false
-                    this.look_show = false
                     this.wideShow = false
-                    this.address_book_show = true
+                    this.likeArr.splice(0,this.likeArr.length)
+                    this.comArr.splice(0,this.comArr.length)
+                    if(this.moreShow == true){
+                      this._getComment()
+                      this._likeList()
+                      this._getMoreInfo()
+                    }
                     document.body.style.overflow = 'visible'
                   } else {
                     this.add_fail()
@@ -440,9 +449,14 @@
                     this.add_ok()
                     this.loading_show = false
                     this.sendedShow = false
-                    this.look_show = false
                     this.wideShow = false
-                    this.address_book_show = true
+                    this.likeArr.splice(0,this.likeArr.length)
+                    this.comArr.splice(0,this.comArr.length)
+                    if(this.moreShow == true){
+                      this._getComment()
+                      this._likeList()
+                      this._getMoreInfo()
+                    }
                     document.body.style.overflow = 'visible'
                   } else {
                     this.add_fail()
@@ -619,11 +633,6 @@
         this.pic_index = index
         this.pic_show = true
       },
-      picShow(item, index) {
-        this.fujArr = item
-        this.pic_index = index
-        this.pic_show_now = true
-      },
       lookMore(det,re){
         this.look_show = false
         this.address_book_show = false
@@ -638,52 +647,56 @@
         this._getComment(this.publish_id)
         this._likeList(this.publish_id)
       },
-      likeLog(res){
-        this.publish_id = res
-        let param = new  URLSearchParams()
-        param.append('uid',this.user.uid)
-        param.append('type',1)
-        param.append('publish_id',this.publish_id)
-        param.append('company_id',this.nowCompanyId)
-        this.$http.post('/index.php/Mobile/company/like_company_log',param)
-          .then((res)=>{
-            if(res.data.code == '0'){
-              this.$message({
-                message: '点赞成功',
-                type: 'success'
-              })
-              this.tips = 1 + 15
+      likeLog(es){
+        let box = this.$refs.zan
+        let str = es
+        box.forEach((item)=>{
+          if(str == item.title){
+            if(item.style.color == 'black'){
+              let param = new  URLSearchParams()
+              param.append('uid',this.user.uid)
+              param.append('type',1)
+              param.append('publish_id',str)
+              param.append('company_id',this.nowCompanyId)
+              this.$http.post('/index.php/Mobile/company/like_company_log',param)
+                .then((res)=>{
+                  if(res.data.code == '0'){
+                    this.$message({
+                      message: '点赞成功',
+                      type: 'success'
+                    })
+                    item.style.color = 'red'
+                  }else{
+                    this.$message({
+                      message: '点赞失败',
+                      type: 'error'
+                    })
+                  }
+                })
             }else{
-              this.$message({
-                message: '点赞失败',
-                type: 'error'
-              })
+              let param = new  URLSearchParams()
+              param.append('uid',this.user.uid)
+              param.append('type',2)
+              param.append('publish_id',str)
+              param.append('company_id',this.nowCompanyId)
+              this.$http.post('/index.php/Mobile/company/like_company_log',param)
+                .then((res)=>{
+                  if(res.data.code == '0'){
+                    this.$message({
+                      message: '取消点赞',
+                      type: 'success'
+                    })
+                    item.style.color = 'black'
+                  }else{
+                    this.$message({
+                      message: '取消失败',
+                      type: 'error'
+                    })
+                  }
+                })
             }
-          })
-      },
-      likeLogs(res){
-        this.publish_id = res
-        let param = new  URLSearchParams()
-        param.append('uid',this.user.uid)
-        param.append('type',2)
-        param.append('publish_id',this.publish_id)
-        param.append('company_id',this.nowCompanyId)
-        this.$http.post('/index.php/Mobile/company/like_company_log',param)
-          .then((res)=>{
-            if(res.data.code == '0'){
-              this.$message({
-                message: '取消点赞',
-                type: 'success'
-              })
-              this.tips = Number(this.tips) - '15'
-              this._likeList()
-            }else{
-              this.$message({
-                message: '取消失败',
-                type: 'error'
-              })
-            }
-          })
+          }
+        })
       },
       logLike(res){
         this.publish_id = res
@@ -699,7 +712,7 @@
                 message: '点赞成功',
                 type: 'success'
               })
-              this.tips = 1 + 15
+              this._getMoreInfo(this.publish_id)
               setTimeout(()=>{
                 this._likeList()
               },500)
@@ -725,7 +738,7 @@
                 message: '取消点赞',
                 type: 'success'
               })
-              this.tips = Number(this.tips) - '15'
+              this._getMoreInfo(this.publish_id)
               setTimeout(()=>{
                 this._likeList()
               },500)
@@ -841,9 +854,10 @@
               this.likeArr.splice(0,this.likeArr.length)
             }else{
               res.data.data.forEach((item)=>{
-                item.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+                item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
                 this.likeArr.push(item)
               })
+              console.log(this.likeArr)
             }
           })
       },
@@ -856,29 +870,45 @@
         this._getPublishList(this.look_uid)
       },
       delDate(res){
-        this.publish_id = res
-        let param = new  URLSearchParams()
-        param.append("publish_id",this.publish_id)
-        param.append("uid",this.user.uid)
-        this.$http.post("/index.php/Mobile/company/del_publish",param)
-          .then((res)=>{
-            if(res.data.code == 0){
+        this.$confirm('您确定删除此日志?','提示',{
+          confirmButtonText:'确定',
+          cancelButtonText:'取消',
+          type:'warning'
+        }).then(()=>{
+          this.publish_id = res
+          let param = new URLSearchParams()
+          param.append('publish_id',this.publish_id)
+          param.append('uid',this.user.uid)
+          this.$http.post("/index.php/Mobile/company/del_publish",param)
+            .then((res)=>{
+              if(res.data.code == 0){
+                this.$message({
+                  message:'删除成功',
+                  type:'success'
+                })
+                this.loading_show = true
+                setTimeout(()=>{
+                  this._getPublishList(this.looks)
+                  if(this.moreShow == true){
+                    this.moreShow = false
+                    this.pageShow = true
+                    this.look_show = true
+                  }
+                  this.loading_show = false
+                },1000)
+              }else{
+                this.$message({
+                  message:'删除失败',
+                  type:'error'
+                })
+              }
+            }).catch(()=>{
               this.$message({
-                message: '删除成功',
-                type: 'success'
+                type:'info',
+                message:'已取消操作'
               })
-              this.loading_show = true
-              setTimeout(()=>{
-                this._getPublishList(this.looks)
-                this.loading_show = false
-              },1000)
-            }else{
-              this.$message({
-                message: '删除失败',
-                type: 'error'
-              })
-            }
           })
+        })
       },
       judge(res,pub,re,es,de){
         this.content = ''
@@ -939,6 +969,9 @@
         this.address_book_show = false
         this.likeArr.splice(0,this.likeArr.length)
         this.comArr.splice(0,this.comArr.length)
+        if(this.view >0 ){
+          this.maskded(this.view)
+        }
       },
       _getMoreInfo(){
         let param = new URLSearchParams()
@@ -951,6 +984,9 @@
             ss.avatar = 'http://bbsf-file.hzxb.net/' + ss.avatar
             this.moreInfo = ss
             this.star = ss.form_data
+            this.star.custom_form_elements.forEach((item)=>{
+              item.result = item.result.replace(/[\n]/g,"<br />")
+            })
             let time = this.star.start_time
             var date = new Date();
             var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
@@ -1083,6 +1119,12 @@
               arr.push(item)
             })
             this.untreated = arr
+            this.untreated.forEach((item)=>{
+              var ins = item.custom_form_elements
+              ins.forEach((item)=>{
+                item.result = item.result.replace(/[\n]/g,"<br />")
+              })
+            })
             if(arr.length < 10) {
               this.nextPageShow = false
             }
@@ -1177,6 +1219,23 @@
           this.sendShow = true
         }
       },
+      close_pp(){
+        this.wideShow = false
+        this.show_pic = false
+        this.$refs.img.src = ''
+        document.body.style.overflow = 'visible'
+      },
+      picShow(es){
+        let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+        this.$refs.wide.style.height = h + 'px'
+        this.$refs.pic.style.height = h + 'px'
+        this.wideShow = true
+        this.show_pic = true
+        var str = ''
+        str = es.split('?')
+        this.$refs.img.src = str[0]
+        document.body.style.overflow = 'hidden'
+      },
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
@@ -1239,9 +1298,14 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendShow = false
-                  this.look_show = false
                   this.wideShow = false
-                  this.address_book_show = true
+                  this.likeArr.splice(0,this.likeArr.length)
+                  this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._likeList()
+                    this._getMoreInfo()
+                  }
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
@@ -1260,9 +1324,14 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendedShow = false
-                  this.look_show = false
                   this.wideShow = false
-                  this.address_book_show = true
+                  this.likeArr.splice(0,this.likeArr.length)
+                  this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._likeList()
+                    this._getMoreInfo()
+                  }
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
@@ -1294,9 +1363,14 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendShow = false
-                  this.look_show = false
                   this.wideShow = false
-                  this.address_book_show = true
+                  this.likeArr.splice(0,this.likeArr.length)
+                  this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._likeList()
+                    this._getMoreInfo()
+                  }
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
@@ -1315,9 +1389,14 @@
                   this.add_ok()
                   this.loading_show = false
                   this.sendedShow = false
-                  this.look_show = false
                   this.wideShow = false
-                  this.address_book_show = true
+                  this.likeArr.splice(0,this.likeArr.length)
+                  this.comArr.splice(0,this.comArr.length)
+                  if(this.moreShow == true){
+                    this._getComment()
+                    this._likeList()
+                    this._getMoreInfo()
+                  }
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()

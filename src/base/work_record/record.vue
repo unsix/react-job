@@ -952,7 +952,7 @@
               this.likeArr.splice(0,this.likeArr.length)
             }else{
               res.data.data.forEach((item)=>{
-                item.avatar = 'http://bbsf-file.hzxb.net/' + res.avatar
+                item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
                 this.likeArr.push(item)
               })
             }
