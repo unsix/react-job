@@ -41,7 +41,7 @@
               <ul>
                 <li v-for="ti in item.custom_form_elements">
                   <p>{{ti.title}}</p>
-                  <span style="margin-left: 20px">{{ti.result}}</span>
+                  <span style="margin-left: 20px;display: block" v-html="ti.result"></span>
                 </li>
               </ul>
             </div>
@@ -107,7 +107,7 @@
             <ul>
               <li v-for="ti in star.custom_form_elements">
                 <p>{{ti.title}}</p>
-                <span style="margin-left: 20px">{{ti.result}}</span>
+                <span style="margin-left: 20px;display: block" v-html="ti.result" ></span>
               </li>
             </ul>
           </div>
@@ -613,6 +613,12 @@
             if(arr.length < 10) {
               this.nextPageShow = false
             }
+            this.untreated.forEach((item)=>{
+              var ins = item.custom_form_elements
+              ins.forEach((item)=>{
+                item.result = item.result.replace("\n","<br />")
+              })
+            })
           })
           function compare(value1,value2) {
             if (value1.add_time < value2.add_time) {
@@ -774,6 +780,9 @@
             ss.avatar = 'http://bbsf-file.hzxb.net/' + ss.avatar
             this.moreInfo = ss
             this.star = ss.form_data
+            this.star.custom_form_elements.forEach((item)=>{
+              item.result = item.result.replace("\n","<br />")
+            })
             let time = this.star.start_time
             let type = this.star.log_type
             var date = new Date();
@@ -1437,7 +1446,6 @@
       }
     },
     mounted(){
-
       if(this.$route.path === '/work/record') {
         this.$emit('changeWorkIndex', 6)
       }
