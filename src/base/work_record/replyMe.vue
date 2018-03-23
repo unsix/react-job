@@ -681,7 +681,7 @@ export default {
           this.moreInfo = ss
           this.star = ss.form_data
           this.star.custom_form_elements.forEach((item)=>{
-            item.result = item.result.replace("\n","<br />")
+            item.result = item.result.replace(/[\n]/g,"<br />")
           })
           this.star.cc = JSON.parse(this.star.cc)
           let sdf = this.star.cc
