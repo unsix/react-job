@@ -93,13 +93,14 @@
             <p v-show="star.form_type == 2">外勤签到</p>
           </div>
         </div>
-        <div v-show="star.form_type == 1">
-          <div class="cc">
-            <div class="cs">
-              <span @click="masked(moreInfo.publish_id)"><i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>{{this.c_detail}}</span>
-              <cc_per class="cc_pers" ref="cc_persd" :pub="moreInfo.publish_id" ></cc_per>
-            </div>
+        <div class="cc">
+          <div class="cs">
+            <span @click="masked(moreInfo.publish_id)"><i class="iconfont icon-shixindiqiu" style="margin-right: 5px"></i>{{this.c_detail}}</span>
+            <cc_per class="cc_pers" ref="cc_persd" :pub="moreInfo.publish_id" ></cc_per>
           </div>
+        </div>
+        <div v-show="star.form_type == 1">
+
           <div class="bottom">
             <div class="time">
               <span>{{star.start_time}} {{log_form}} 由 {{star.reviewer_name}}点评</span>
@@ -373,7 +374,6 @@
                     this._likeList()
                   }
                   this._getPublishLook()
-                  document.body.style.overflow = 'visible'
                   document.body.style.overflow = 'visible'
                 } else {
                   this.add_fail()
