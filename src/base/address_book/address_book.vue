@@ -36,7 +36,7 @@
 
     <div class="book_details"v-show="details_show">
       <div class="top">
-        <el-button type="primary" class="btn" plain @click="return_">返回</el-button>
+        <el-button type="primary" class="btn" plain @click="_return">返回</el-button>
         <span class="title">人员详情</span>
       </div>
       <div v-model="infoArr" >
@@ -52,7 +52,7 @@
           </div>
           <div class="work">
             <h4 @click="look(infoArr.uid)">工作记录<span>...</span></h4>
-            <h4>外勤签到<span>...</span></h4>
+            <h4 @click="sign(infoArr.uid)">外勤签到<span>...</span></h4>
           </div>
         </div>
       </div>
@@ -272,6 +272,8 @@
       <i class="el-icon-close" @click="close_pp"></i>
       <img ref="img" :src="linked">
     </div>
+
+    <sign v-show="signShow" ref="sign"></sign>
   </div>
 </template>
 
@@ -284,6 +286,7 @@
   import browsePic from '@/base/browse_pic/browse_pic'
   import browe from '@/base/browse_pic/browse_pic'
   import { mapGetters, mapMutations } from 'vuex'
+  import sign from '@/base/address_book/sign'
 	export default {
 		data() {
 			return {
@@ -337,6 +340,7 @@
         inde:'',
         show_pic:false,
         linked:'',
+        signShow:false
       }
 		},
 		computed: {
@@ -955,8 +959,8 @@
         this._getCompanyUserInfo(this.personnel_id)
 			},
       return_(){
-        this.address_book_show=true
-        this.details_show = false
+        this.address_book_show=false
+        this.details_show = true
         this.look_show = false
         if(this.view >0 ){
           this.mask(this.view)
@@ -1236,6 +1240,16 @@
         this.$refs.img.src = str[0]
         document.body.style.overflow = 'hidden'
       },
+      sign(per){
+        this.address_book_show = false
+        this.details_show = false
+        this.signShow = true
+        this.$refs.sign._getSign(per)
+      },
+      _return(){
+        this.address_book_show = true
+        this.details_show = false
+      },
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
@@ -1261,12 +1275,13 @@
         this.$refs.wide.style.height = h + 'px'
       }
     },
-    components:{
-      browsePic,
-      loading,
-      browe,
-      cc_per
-    },
+      components:{
+        browsePic,
+        loading,
+        browe,
+        cc_per,
+        sign
+      },
 
 		watch: {
       pageIndex() {
