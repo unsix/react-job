@@ -3,9 +3,16 @@
 		<div class="log">
 
 		</div>
+      <div class="choose" v-show="isD">
+        <div class="btn">
+          <el-button @click="aShow" type="primary">我是工人</el-button>
+          <el-button @click="aFalse" type="success">我是雇主</el-button>
+        </div>
+      </div>
 		  <div class="login" v-show="isA">
 				<div class="title">
-					请登录
+					<span style="line-height: 40px">请登录</span>
+          <el-button type="info" @click="_onre" size="small" style="font-size: 13px;float: right;margin-top: 5px">返回</el-button>
 				</div>
 				<div class="signIn">
 					<div class="username">
@@ -139,9 +146,10 @@
         }
       };
 			return{
-				isA:true,
+				isA:false,
 				isB:false,
         isC:false,
+        isD:true,
 				account_num:'',
 				password_num:'',
 				uncreatedCompanyShow:false,
@@ -189,6 +197,7 @@
             { validator: validatePass4, trigger: 'blur' }
           ]
         },
+        perType:''
 			}
 		},
 		computed:{
@@ -463,6 +472,8 @@
 						this.loadingShow=true
 						setTimeout(()=>{
 							this.$router.push('/work');
+							this.isA = false
+              this.isD = true
 							this.loadingShow=false
 							this.account_num = ''
 				 			this.password_num = ''
@@ -498,6 +509,18 @@
 			    	})
 			    })
 			},
+      aShow(){
+        this.isA = true
+        this.isD = false
+      },
+      aFalse(){
+        this.isA = true
+        this.isD = false
+      },
+      _onre(){
+        this.isA = false
+        this.isD = true
+      },
       //获取创建的公司
 			_getUserCompanyList(uid){
 				let param = new URLSearchParams();
@@ -564,9 +587,9 @@ $color3:#409EFF;
 			.title{
 				width: 70%;
 				margin: 0 auto;
+        padding-bottom: 10px;
 				font-size: 13px;
 				color: #878D99;
-				margin-top: 20px;
 				cursor: default;
 			}
 			.forget{
@@ -574,7 +597,6 @@ $color3:#409EFF;
 				margin: 0 auto;
 				font-size: 13px;
 				color: #878D99;
-				margin-top: 20px;
 				display: flex;
 				span{
 					flex: 1;
@@ -608,7 +630,7 @@ $color3:#409EFF;
 					height: 34px;
 					border: 1px solid #94aac7;
 					outline: none;
-					margin-top: 20px;
+					margin-bottom: 20px;
 					-moz-border-radius: 4px;
 					-webkit-border-radius: 4px;
 					border-radius: 4px;
@@ -618,7 +640,7 @@ $color3:#409EFF;
 					width: 100%;
 					a {
 						position: relative;
-						margin-top: 20px;
+						margin-bottom: 20px;
 						display: inline-block;
 						width: 100%;
 						height: 34px;
@@ -816,6 +838,29 @@ $color3:#409EFF;
           width: 100%;
           height: 34px;
           line-height: 9.5px;
+        }
+      }
+    }
+    .choose{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      -webkit-transform: translateX(-50%) translateY(-50%);
+      -moz-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
+      -o-transform: translateX(-50%) translateY(-50%);
+      transform: translateX(-50%) translateY(-50%);
+      width: 380px;
+      height: 240px;
+      background:rgba(222,228,247,0.8);
+      box-shadow: 0 0 0 4px rgb(222,228,247);
+      -moz-box-shadow: 10px 10px 5px #888888; /* 老的 Firefox */
+      box-shadow: 3px 3px 5px rgba(195,188,207,0.7);
+      .btn{
+        width: 250px;
+        margin: 95px auto;
+        .el-button--success{
+          margin-left: 35px;
         }
       }
     }

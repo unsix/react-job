@@ -13,8 +13,10 @@ import Vuex from 'vuex'
 import store from './store'
 import Calendar from 'vue-calendar-component'
 import $ from 'jquery'
+import VueJsonp from 'vue-jsonp'
 
 Vue.use(Vuex)
+Vue.use(VueJsonp)
 Vue.use(VueAxios, axios)
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false

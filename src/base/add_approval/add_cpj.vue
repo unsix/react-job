@@ -38,27 +38,8 @@
       </el-upload>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_cpj('cpj_ruleForm')">立即添加</el-button>
-				<!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
-    <!--<textarea v-model="todo" id="" cols="30" rows="10"></textarea>-->
-    <!--<button @click="msms()">展示</button>-->
-    <!--<components :is="item.component"-->
-                <!--:tit="item.tit"-->
-                <!--:key="idx"-->
-                <!--:ref="item.cc"-->
-                <!--:str="item.version"-->
-                <!--:hint="item.place"-->
-                <!--:sdsd="item.fill"-->
-                <!--:type="item.input_type"-->
-                <!--:options="item.meta_data"-->
-                <!--:default_select="item.default_select"-->
-                <!--:form_element_id="item.form_element_id"-->
-                <!--v-for="(item,idx) in conpents"></components>-->
-    <!--<textarea v-model="shuju" cols="30" rows="10"></textarea>-->
-    <!--<button @click="wode">提交</button>-->
-    <!--<textarea v-model="ts"  cols="30" rows="10"></textarea>-->
-    <!--<button @click="mtmt">填充</button>-->
 		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
@@ -123,7 +104,8 @@
 				loadingShow: false,
 				pic_index: 0,
 				img_arr: [],
-				pic_enclosure_id: ''
+				pic_enclosure_id: '',
+        res:''
 			}
 		},
 		props: {
@@ -228,6 +210,19 @@
 				this.fileList = fileList
 			},
 			handlePreview(file, fileList) {
+        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+          this.$message.error('上传文件格式错误')
+          this.str = file
+        }
+        function remove(arr,val) {
+          for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+              arr.splice(i, 1);
+              break;
+            }
+          }
+        }
+        remove(fileList,this.str)
         this.fileList = fileList
 			},
       handleRemove_a(file, fileList_a) {
@@ -391,6 +386,7 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
+				  console.log(item)
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
@@ -406,6 +402,7 @@
 						}
 					})
 				}
+				return false
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

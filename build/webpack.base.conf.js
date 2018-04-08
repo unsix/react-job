@@ -12,6 +12,9 @@ module.exports = {
   entry: {
     app: './src/main.js'   //入口
   },
+  externals: {
+    "BMap": "BMap"
+  },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].[hash].bundle.js',

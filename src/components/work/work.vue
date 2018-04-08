@@ -215,9 +215,6 @@
 						this._getComPersonList()
 						this.$router.push({ path: '/work/addressBook' })
 						break;
-					case '日常':
-						this.$router.push({ path: '/work/everyday' })
-						break;
 					case '发起审批':
 						this._getComPersonList()
 						this._getComDepart()
@@ -236,6 +233,8 @@
           case '工作记录':
             this.$router.push({ path:'/work/record'})
             break;
+          case '工人列表':
+            this.$router.push({path:'/work/list'})
 				}
 			},
       //获取当前用户状态
