@@ -12,6 +12,7 @@ const manageCompany = () => import('@/base/manage_company/manage_company')
 const jurisdictionManage = () => import('@/base/jurisdiction_manage/jurisdiction_manage')
 const create_company = () => import('@/base/create_company/create_company')
 const record = () => import('@/base/work_record/record')
+const list = () => import('@/base/list/list')
 
 Vue.use(Router)
 
@@ -67,6 +68,10 @@ export default new Router({
         {
           path:'record',
           component:record
+        },
+        {
+          path:'list',
+          component:list
         }
 			]
 		},

@@ -361,6 +361,7 @@
         pic_show: false,
         linked:'',
         show_pic: false,
+        str:''
       }
     },
     methods:{
@@ -1058,6 +1059,19 @@
         this.fileList = fileList
       },
       handlePreview(file, fileList) {
+        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+          this.$message.error('上传文件格式错误')
+          this.str = file
+        }
+        function remove(arr,val) {
+          for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+              arr.splice(i, 1);
+              break;
+            }
+          }
+        }
+        remove(fileList,this.str)
         this.fileList = fileList
       },
       handleRemove_a(file, fileList_a) {

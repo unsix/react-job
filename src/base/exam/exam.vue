@@ -896,15 +896,17 @@
 		        });
 			},
 			repeal(){
-				this.$confirm('您确定撤销文件？', '提示', {
+				this.$prompt('请输入撤销原因', '提示', {
 		        	confirmButtonText: '确定',
 		        	cancelButtonText: '取消',
-		        	type: 'warning'
-		       }).then(() => {
+              inputPattern:/.+/,
+              inputErrorMessage:'撤销原因不能不空'
+		       }).then(({ value }) => {
 		        	let param = new URLSearchParams();
 					param.append("uid", this.user.uid);
 					param.append("approval_id", this.downApproId);
 					param.append("company_id", this.nowCompanyId);
+					param.append("withdrawal_reason",value)
 					this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
 					.then((res)=>{
 					  //撤销审批
@@ -1949,7 +1951,6 @@
 			}
 			.form {
 				padding: 10px;
-				color: #999999;
 				.exam_info {
 					cursor: default;
 					display: block;
