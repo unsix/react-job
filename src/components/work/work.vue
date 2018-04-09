@@ -9,24 +9,23 @@
 						<li v-for="(item,index) in companyList" @click="changeCompany(item,index)">{{item.company_name}}</li>
 					</ul>
 					<img src="../../assets/down.svg" @mouseover ="userIconOverLeft" @mouseout="userIconOutLeft" ref="userIconLeft"/>
-				</span>
-
+				  </span>
 				</div>
-				<div class="nav">
-					<!--<div class="nav_main">
-						<a v-for="(item,index) in typeArr" @click="changeType(item,index)">{{item.title}}</a>
-					</div>-->
-				</div>
-				<div class="search">
-					<!--<input type="text" placeholder="暂不能使用" />
-					<img src="../../assets/find.svg" alt="" />-->
-				</div>
+				<!--<div class="nav">-->
+					<!--&lt;!&ndash;<div class="nav_main">&ndash;&gt;-->
+						<!--&lt;!&ndash;<a v-for="(item,index) in typeArr" @click="changeType(item,index)">{{item.title}}</a>&ndash;&gt;-->
+					<!--&lt;!&ndash;</div>&ndash;&gt;-->
+				<!--</div>-->
+				<!--<div class="search">-->
+					<!--<input type="text" placeholder="暂不能使用" />-->
+					<!--<img src="../../assets/find.svg" alt="" />-->
+				<!--</div>-->
 				<div class="personInfo">
 					<div class="person_main">
 						<a>{{user.name}}</a>
 						<img src="../../assets/down.svg" alt="" @mouseover="userIconOver" @mouseout="userIconOut" ref="userIcon" />
 						<div class="userOperation" v-show="userOperationShow" @mouseover="userIconOver" @mouseout="userIconOut">
-							<router-link to="">个人设置</router-link>
+							<router-link to="" >个人设置</router-link>
 							<!--<a>创建公司</a>-->
 							<a @click="logOut">退出登录</a>
 						</div>
@@ -160,7 +159,7 @@
 					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录',]
 				}
 			},
 			changeWorkIndex(num){
@@ -235,6 +234,7 @@
             break;
           case '工人列表':
             this.$router.push({path:'/work/list'})
+            break;
 				}
 			},
       //获取当前用户状态

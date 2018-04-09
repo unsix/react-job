@@ -9,6 +9,12 @@
     </div>
 
     <div class="workList" v-show="idx == 0">
+      <div class="tabs">
+        <el-tabs v-model="activeCard" @tab-click="handle">
+          <el-tab-pane label="未点评" name="1"></el-tab-pane>
+          <el-tab-pane label="已点评" name="2"></el-tab-pane>
+        </el-tabs>
+      </div>
       <div class="list" v-show="look_show">
         <ul>
           <li v-for="item in untreated">
@@ -278,6 +284,7 @@
       return{
         activeName:'',
         activeNames:'1',
+        activeCard:'1',
         idx:'0',
         pageIndex:1,
         nextPageShow: true,
@@ -519,6 +526,9 @@
           this.ccShow = false
         }
       },
+      handle(){
+        this._getPublishLook()
+      },
       handClick(tab){
         let index = parseInt(tab.index)
         if(index == 0){
@@ -536,6 +546,7 @@
         param.append("company_id",this.nowCompanyId)
         param.append('p',this.pageIndex)
         param.append('each',10)
+        param.append('type',this.activeCard)
         this.$http.post('/index.php/Mobile/company/publish_look_two',param)
           .then((res)=>{
             var current = this
@@ -615,10 +626,12 @@
               this.nextPageShow = false
             }
             this.untreated.forEach((item)=>{
-              var ins = item.custom_form_elements
-              ins.forEach((item)=>{
-                item.result = item.result.replace(/[\n]/g,"<br />")
-              })
+              if(item.custom_form_elements){
+                var ins = item.custom_form_elements
+                ins.forEach((item)=>{
+                  item.result = item.result.replace(/[\n]/g,"<br />")
+                })
+              }
             })
           })
           function compare(value1,value2) {
@@ -1522,6 +1535,27 @@
   .workList{
     margin-top: 3px;
     overflow: hidden;
+    .tabs{
+      width: 100%;
+      height: 40px;
+      overflow: hidden;
+      background: #ffffff;
+      .el-tabs__header{
+        margin-bottom: 5px;
+      }
+      .el-tabs__active-bar {
+        width: 50%;
+      }
+      .el-tabs__nav {
+        width: 100%;
+      }
+      .el-tabs__item {
+        font-size: 15px;
+        font-weight: 700;
+        width: 50%;
+        text-align: center;
+      }
+    }
     .list {
       width: 100%;
       ul {
