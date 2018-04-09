@@ -473,7 +473,7 @@
 						setTimeout(()=>{
 							this.$router.push('/work');
 							this.isA = false
-              this.isD = true
+              this.isD = false
 							this.loadingShow=false
 							this.account_num = ''
 				 			this.password_num = ''
