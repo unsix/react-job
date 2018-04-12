@@ -881,7 +881,8 @@
 					.then((res)=>{
 						if(res.data.code === 0){
 							this.$message({
-
+                message: '删除成功',
+                type: 'success'
 					        });
 					        this._getExamList()
 						}else{
@@ -900,7 +901,7 @@
 		        	confirmButtonText: '确定',
 		        	cancelButtonText: '取消',
               inputPattern:/.+/,
-              inputErrorMessage:'撤销原因不能不空'
+              inputErrorMessage:'撤销原因不能为空'
 		       }).then(({ value }) => {
 		        	let param = new URLSearchParams();
 					param.append("uid", this.user.uid);

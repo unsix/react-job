@@ -464,7 +464,8 @@
 						this.setUser({
 							'uid':res.data.data.uid,
 							'name':res.data.data.name,
-							'avatar':avatar
+							'avatar':avatar,
+              'phone':this.account_num
 						})
 						localStorage.user = JSON.stringify(this.user);
 						this._getUserCompanyList(res.data.data.uid)

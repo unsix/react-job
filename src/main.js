@@ -14,7 +14,9 @@ import store from './store'
 import Calendar from 'vue-calendar-component'
 import $ from 'jquery'
 import VueJsonp from 'vue-jsonp'
-
+import 'vue-croppa/dist/vue-croppa.css'
+import croppa from 'vue-croppa'
+Vue.use(croppa)
 Vue.use(Vuex)
 Vue.use(VueJsonp)
 Vue.use(VueAxios, axios)
