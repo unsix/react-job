@@ -28,8 +28,8 @@
 		</div>
 		<div>
 			<span>图片附件：</span>
-			<a v-for="item in form_Lista.img_list" v-if="form_Lista.img_list">
-				<img :src="item" alt="" @click="ctrl_pic_show" />
+			<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+				<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 			</a>
 		</div>
 		<div>
@@ -85,7 +85,10 @@
 				<el-button type="danger" round @click="refuse">拒绝</el-button>
 			</div>
 		</div>
-	</div>
+
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
+
+  </div>
 </template>
 
 <script>
@@ -104,7 +107,7 @@
 				pic_hash: '',
 				now_personnel_id: 0,
 				pic_hash_arr: [],
-				img_arr: []
+        arr_list: []
 			}
 		},
 		props: {
@@ -138,35 +141,29 @@
 				this.$emit('return_psb')
 				this.handle_txt === ''
 			},
-			close_pic() {
-				this.pic_show = false
-			},
-			last_one() {
-				if(this.pic_index === 0) {
-					return
-				}
-				--this.pic_index
-			},
-			next_one() {
-				if(this.pic_index === this.img_arr.length - 1) {
-					return
-				}
-				++this.pic_index
-			},
 			rec_pic(item, index) {
-				this.img_arr = item
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
 			cl_pic(item, index) {
-				this.img_arr = item.picture
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
 			ctrl_pic_show(item, index) {
-				this.img_arr = item
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
 			handle() {
 				this.menuShow = true

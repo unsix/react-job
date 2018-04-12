@@ -1,12 +1,12 @@
 <template>
-	<div class="pic" v-if="pic_show">
+	<div class="pic">
 		<div>
 			<div>
 				<i class="el-icon-arrow-left" @click="left"></i>
 			</div>
-			<transition name="slide">
-				<img :src="imgArr[pic_index]" alt="" />
-			</transition>
+				<li v-for="(item,index) in img_arr" v-show="index == pic_index">
+          <img :src="item"  alt="" />
+        </li>
 			<div>
 				<i class="el-icon-arrow-right" @click="right"></i>
 			</div>
@@ -28,47 +28,35 @@ export default {
 		img_arr: {
 			type: Array
 		},
-		pic_show: {
-			type: Boolean,
-			default: false
-		},
 		pic_index: {
 			type: Number,
 			default: 0
 		}
 	},
-	watch:{
-		img_arr(){
-			this.img_arr.forEach((res)=>{
-				let current = res.indexOf('?')
-				this.imgArr.push(res.slice(0,current) + '?imageslim' )
-			})
-		}
-	},
 	methods: {
 		close(){
-			this.$emit('close_pic')
+			this.$parent.pic_show = false
+      this.img_arr.splice(0,this.img_arr.length)
 		},
 		left() {
-			this.$emit('left')
+      if(this.pic_index === 0) {
+        return
+      }
+      --this.pic_index
 		},
 		right() {
-			this.$emit('right')
+      if(this.pic_index === this.img_arr.length - 1) {
+        return
+      }
+      ++this.pic_index
 		},
-		pic_showImgView() {
-			this.pic_show = true
-		},
-		hideImageView() {
-			this.pic_show = false
-		},
-		selectImg(index) {
-			this.pic_show = true
-			this.imageIndex = index
-		}
 	}
 }</script>
 
 <style lang="scss" scoped>
+  *{
+    list-style: none;
+  }
 .slide-fade-enter-active {
   transition: all .3s ease;
 }
@@ -102,7 +90,7 @@ export default {
 					float: left;
 				}
 			}
-			
+
 		}
 		img{
 			width: 100%;

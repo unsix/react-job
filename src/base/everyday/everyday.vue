@@ -233,7 +233,7 @@
 				</ul>
 			</div>
 		</div>
-		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loadingShow"></loading>
 	</div>
 </template>
@@ -292,7 +292,7 @@
 				nowpublishId: 0,
 				nowDoWhat: '发布日志',
 				file_arr: [],
-				img_arr: [],
+        arr_list: [],
 				pic_show: false,
 				loadingShow: false,
 				pageIndex: 1,
@@ -371,21 +371,14 @@
 			next_page() {
 				++this.pageIndex
 			},
-			close_pic() {
-				this.pic_show = false
-			},
-			last_one() {
-				if(this.pic_index === 0) {
-					return
-				}
-				--this.pic_index
-			},
-			next_one() {
-				if(this.pic_index === this.img_arr.length - 1) {
-					return
-				}
-				++this.pic_index
-			},
+      ctrl_pic_show(item, index) {
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
 			getFile(enclosure, index) {
 				if(!enclosure) {
 					return

@@ -118,7 +118,8 @@
 				<el-button type="danger" round @click="refuse">拒绝</el-button>
 			</div>
 		</div>
-		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
+
 		<loading v-show="loading_show"></loading>
 	</div>
 </template>
@@ -139,7 +140,7 @@
 				pic_hash: '',
 				now_personnel_id: 0,
 				pic_hash_arr: [],
-				img_arr: []
+        arr_list: []
 			}
 		},
 		props: {
@@ -171,39 +172,33 @@
 		},
 		methods: {
 			rec_pic(item, index) {
-				this.img_arr = item
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
 			ctrl_pic_show(item, index) {
-				this.img_arr = item
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
 			cl_pic(item, index) {
-				this.img_arr = item.picture
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
 			return_() {
 				this.$emit('return_psb')
 				this.handle_txt = ''
 				this.pic_hash_arr = []
-			},
-			close_pic() {
-				this.pic_show = false
-			},
-			last_one() {
-				if(this.pic_index === 0) {
-					return
-				}
-				--this.pic_index
-			},
-			next_one() {
-				if(this.pic_index === this.img_arr.length - 1) {
-					return
-				}
-				++this.pic_index
 			},
 			handle() {
 				this.menuShow = true

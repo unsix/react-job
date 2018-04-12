@@ -284,8 +284,14 @@
     mounted(){
       this._getType()
       this._getNearWork()
+      if(this.$route.path === '/work/list') {
+        this.$emit('changeWorkIndex', 9)
+      }
     },
     created(){
+      if(!localStorage.user){
+        this.$router.push({ path: '/login' })
+      }
     },
     watch:{
       pageIndex() {
