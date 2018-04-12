@@ -299,7 +299,7 @@
 
     <loading v-show="loadingShow" style="z-index: 9999999"></loading>
 
-    <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 
     <div class="pic" ref="pic" v-show="show_pic">
       <i class="el-icon-close" @click="close_pp"></i>
@@ -343,7 +343,7 @@
         moreShow:false,
         star:{},
         moreInfo:{},
-        img_arr: [],
+        arr_list: [],
         file_arr: [],
         comShow:true,
         likeShow:false,
@@ -361,7 +361,7 @@
         pic_show: false,
         linked:'',
         show_pic: false,
-        str:''
+        str:'',
       }
     },
     methods:{
@@ -1437,24 +1437,12 @@
           })
       },
       ctrl_pic_show(item, index) {
-        this.img_arr = item
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
         this.pic_index = index
         this.pic_show = true
-      },
-      last_one() {
-        if(this.pic_index === 0) {
-          return
-        }
-        --this.pic_index
-      },
-      next_one() {
-        if(this.pic_index === this.img_arr.length - 1) {
-          return
-        }
-        ++this.pic_index
-      },
-      close_pic() {
-        this.pic_show = false
       },
       picShow(es){
         let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight

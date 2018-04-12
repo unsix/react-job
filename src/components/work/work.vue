@@ -61,7 +61,7 @@
 			</div>
 		</div>
     <div class="info" v-show="infoShow">
-      <el-form :model="myInfo" :rules="rules2"  ref="myInfo" label-width="150px" class="demo-ruleForm">
+      <el-form :model="myInfo" :rules="rules2"  ref="myInfo" label-width="150px" class="demo-ruleForm"  >
         <div class="top">
           <el-button type="primary" size="small" @click="_reinfo">返回</el-button>
           <div>
@@ -335,7 +335,6 @@
 				this.$refs.userIconLeft.style[transform] = `rotate(360deg)`
 				this.userOperationLeftShow = false
 			},
-      //更换公司
 			changeCompany(item, index) {
 				this.workIndex = 0
 				this.setNowCompanyName(item.company_name)
@@ -345,7 +344,6 @@
 				localStorage.nowCompanyName = JSON.stringify(item.company_name);
 				this.$router.push('/work');
 			},
-      //左侧导航切换
 			doList(item, index) {
 				this.workIndex = index
 				this.now_type_name = item
@@ -387,7 +385,6 @@
             break;
 				}
 			},
-      //获取当前用户状态
 			_getUserState() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
@@ -459,7 +456,6 @@
 						this.setComDepartList(arr)
 					})
 			},
-      //獲取所有公司
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -499,7 +495,7 @@
         this.$http.post('/index.php/Mobile/worker/get_info_phone',param)
           .then((res)=>{
             let arr = res.data.data
-            this.linked = 'http://bbsf-test-file.hzxb.net/'+arr.avatar
+            this.linked = 'http://bbsf-file.hzxb.net/'+arr.avatar
             this.myInfo.name = arr.name
             this.myInfo.idCard = arr.idcard
             this.myInfo.type = arr.type_id
@@ -514,9 +510,9 @@
             this.myInfo.self_evaluation = arr.self_evaluation
             this.myInfo.bank_point = arr.bank_address
             this.myInfo.bank_account = arr.bank_name
-            arr.idcard_p = 'http://bbsf-test-file.hzxb.net/'+arr.idcard_p
+            arr.idcard_p = 'http://bbsf-file.hzxb.net/'+arr.idcard_p
             this.pic_id = arr.idcard_p
-            this.home_id = 'http://bbsf-test-file.hzxb.net/' + arr.idcard_n
+            this.home_id = 'http://bbsf-file.hzxb.net/' + arr.idcard_n
           })
       },
       _getType(){
@@ -720,7 +716,6 @@
 			this.setNowCompanyName(JSON.parse(localStorage.nowCompanyName))
 			this._getToken()
 			this._getUserState()
-
 		},
 		watch: {
 			nowCompanyId() {

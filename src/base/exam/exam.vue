@@ -698,7 +698,7 @@
       </div>
 
 		</div>
-		<browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
 		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
 		<div class="ifDown" v-show="ifDownShow">
@@ -768,7 +768,6 @@
 				pic_hash: '',
 				activeName: '',
 				classRadio: '1',
-				img_arr: [],
 				fileList: [],
 				file_arr: [],
 				pic_hash_arr: [],
@@ -786,7 +785,8 @@
 				downPartId:'',
 				downAddress:'',
 				examComName:'',
-				downUrl:''
+				downUrl:'',
+        arr_list:[]
 			}
 		},
 		computed: {
@@ -1148,34 +1148,25 @@
         document.body.scrollTop = 0
         document.documentElement.scrollTop = 0
 			},
+      getPic(event) {
+        this.pic = event.target.files;
+      },
 			cl_pic(item, index) {
-				this.img_arr = item.picture
-				this.pic_index = index
-				this.pic_show = true
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
 			},
-			getPic(event) {
-				this.pic = event.target.files;
-			},
-			close_pic() {
-				this.pic_show = false
-			},
-			last_one() {
-				if(this.pic_index === 0) {
-					return
-				}
-				--this.pic_index
-			},
-			next_one() {
-				if(this.pic_index === this.img_arr.length - 1) {
-					return
-				}
-				++this.pic_index
-			},
-			ctrl_pic_show(item, index) {
-				this.img_arr = item
-				this.pic_index = index
-				this.pic_show = true
-			},
+      ctrl_pic_show(item, index) {
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
 			handle() {
 				this.menuShow = true
 				let param = new URLSearchParams();
@@ -1564,7 +1555,7 @@
 										arr.push(getAvatar(item))
 									}
 								})
-								this.img_arr = arr
+								// this.img_arr = arr
 								this.$set(this.form_Lista, 'img_list', arr)
 							})
 					}

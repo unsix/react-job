@@ -258,7 +258,7 @@
         <span @click="delDate(moreInfo.publish_id)" v-show="star.uid == this.user.uid"><i class="iconfont icon-shanchu"></i>删除</span>
       </div>
     </div>
-    <browsePic :pic_index="pic_index" :img_arr="img_arr" :pic_show="pic_show" @left="last_one" @right="next_one" @close_pic="close_pic"></browsePic>
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
     <div class="wide" ref="wide" v-show="wideShow"></div>
     <div class="add" v-show="addShow" style="z-index: 9999">
       <ul v-show="this.inde == 20" style="position: fixed">
@@ -306,7 +306,7 @@
         activeName:'first',
         pic_index: 0,
         pic_show: false,
-        img_arr: [],
+        arr_list: [],
         file_arr: [],
         nextPageShow: true,
         pageIndex:1,
@@ -631,23 +631,11 @@
       next_page() {
         ++this.pageIndex
       },
-      close_pic() {
-        this.pic_show = false
-      },
-      last_one() {
-        if(this.pic_index === 0) {
-          return
-        }
-        --this.pic_index
-      },
-      next_one() {
-        if(this.pic_index === this.img_arr.length - 1) {
-          return
-        }
-        ++this.pic_index
-      },
       ctrl_pic_show(item, index) {
-        this.img_arr = item
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
         this.pic_index = index
         this.pic_show = true
       },
