@@ -9,12 +9,12 @@
     </div>
 
     <div class="workList" v-show="idx == 0">
-      <div class="tabs">
-        <el-tabs v-model="activeCard" @tab-click="handle">
-          <el-tab-pane label="未点评" name="1"></el-tab-pane>
-          <el-tab-pane label="已点评" name="2"></el-tab-pane>
-        </el-tabs>
-      </div>
+      <!--<div class="tabs">-->
+        <!--<el-tabs v-model="activeCard" @tab-click="handle">-->
+          <!--<el-tab-pane label="工作记录" name="1"></el-tab-pane>-->
+          <!--<el-tab-pane label="外勤签到" name="2"></el-tab-pane>-->
+        <!--</el-tabs>-->
+      <!--</div>-->
       <div class="list" v-show="look_show">
         <ul>
           <li v-for="item in untreated">
@@ -527,6 +527,7 @@
         }
       },
       handle(){
+        this.untreated.splice(0,this.untreated.length)
         this._getPublishLook()
       },
       handClick(tab){
@@ -546,7 +547,7 @@
         param.append("company_id",this.nowCompanyId)
         param.append('p',this.pageIndex)
         param.append('each',10)
-        param.append('type',this.activeCard)
+        // param.append('type',this.activeCard)
         this.$http.post('/index.php/Mobile/company/publish_look_two',param)
           .then((res)=>{
             var current = this

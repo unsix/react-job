@@ -13,7 +13,6 @@ const jurisdictionManage = () => import('@/base/jurisdiction_manage/jurisdiction
 const create_company = () => import('@/base/create_company/create_company')
 const record = () => import('@/base/work_record/record')
 const list = () => import('@/base/list/list')
-
 Vue.use(Router)
 
 export default new Router({

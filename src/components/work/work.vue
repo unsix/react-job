@@ -25,7 +25,7 @@
 						<a>{{user.name}}</a>
 						<img src="../../assets/down.svg" alt="" @mouseover="userIconOver" @mouseout="userIconOut" ref="userIcon" />
 						<div class="userOperation" v-show="userOperationShow" @mouseover="userIconOver" @mouseout="userIconOut">
-							<router-link to="" >个人设置</router-link>
+							<li @click="change_status" style="list-style: none"><router-link to="" >个人设置</router-link></li>
 							<!--<a>创建公司</a>-->
 							<a @click="logOut">退出登录</a>
 						</div>
@@ -33,7 +33,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="work">
+		<div class="work" v-show="workShow">
 			<div class="side_left">
 				<div class="info_wrapper">
 					<a class="info">
@@ -60,6 +60,79 @@
 				<Date></Date>
 			</div>
 		</div>
+    <div class="info" v-show="infoShow">
+      <el-form :model="myInfo" :rules="rules2"  ref="myInfo" label-width="150px" class="demo-ruleForm">
+        <div class="top">
+          <el-button type="primary" size="small" @click="_reinfo">返回</el-button>
+          <div>
+            <croppa v-model="cros" :width="100" disable-click-to-choose   :height="100" placeholder="" :quality="2" :prevent-white-space="true">
+              <img crossOrigin="anonymous" :src="this.linked" slot="initial">
+            </croppa>
+            <p @click="cros.chooseFile()">编辑图片</p>
+          </div>
+        </div>
+        <el-form-item label="真实姓名" prop="name">
+          <el-input v-model="myInfo.name" placeholder="请输入您的名字"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证号" prop="idCard">
+          <el-input v-model="myInfo.idCard"  placeholder="请输入您的身份证号"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="工种" prop="type">
+          <el-select v-model="myInfo.type" placeholder="请选择工种">
+            <el-option-group v-for="group in work_type" :key="group.label" :label="group.label">
+              <el-option v-for="item in group.options" :key="item.wid" :label="item.type_name" :value="item.wid"></el-option>
+            </el-option-group>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="籍贯" prop="area">
+          <el-select v-model="myInfo.area" placeholder="请选择籍贯">
+            <el-option v-for="item in list" :label="item.label" :value="item.value" :key="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工龄" prop="work_year">
+          <el-select v-model="myInfo.work_year" placeholder="请选择工龄">
+            <el-option v-for="(item,index) in kong" :label="item.label" :value="item.label" :key="index+1" ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="期望薪资" prop="salary">
+          <el-input v-model="myInfo.salary" placeholder="请输入期望薪资"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="QQ" prop="qq">
+          <el-input v-model="myInfo.qq" placeholder="请输入QQ号" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="微信" prop="weChat">
+          <el-input v-model="myInfo.weChat" placeholder="请输入微信号" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="支付宝" prop="clipay">
+          <el-input v-model="myInfo.clipay" placeholder="请输入支付宝"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="银行卡号" prop="bank_card">
+          <el-input v-model="myInfo.bank_card" placeholder="请输入银行卡号"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="开户银行" prop="bank_account">
+          <el-input v-model="myInfo.bank_account"  placeholder="请输入银行卡开户行名称"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="开户银行网点" prop="bank_point">
+          <el-input v-model="myInfo.bank_point" placeholder="如：XX银行XX分行XX支行"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="暂住地址" prop="address">
+          <el-input v-model="myInfo.address" placeholder="请输入您的暂住地址"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="个人评价" prop="self_evaluation">
+          <el-input v-model="myInfo.self_evaluation" placeholder="请输入您对自己的评价"  auto-complete="off"></el-input>
+        </el-form-item>
+        <div class="card" style="width: 80%;margin: 0 auto">
+          <croppa v-model="croe" :width="300" placeholder="上传身份证正面照" :height="140" :quality="2" :prevent-white-space="true">
+            <img crossOrigin="anonymous" :src="this.pic_id" slot="initial">
+          </croppa>
+          <croppa v-model="crod" :width="300" :height="140" placeholder="上传暂住证照片" :quality="2" :prevent-white-space="true">
+            <img crossOrigin="anonymous" :src="this.home_id" slot="initial">
+          </croppa>
+        </div>
+      </el-form>
+      <el-button type="warning" size="small" style="margin: 30px 0 0 30px" @click="twiter('myInfo')">保存</el-button>
+    </div>
+    <loading v-show="loadingShow"></loading>
 	</div>
 </template>
 <script>
@@ -68,16 +141,23 @@
 	import { createPersonInfo } from 'common/js/person_info'
 	import { mapMutations } from 'vuex'
 	import Date from '@/base/date/date'
+  import {getAvatar} from '@/common/js/avatar.js'
   import { getCro } from '@/common/js/crowd'
 	import { prefixStyle } from '@/common/js/dom'
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
 	import { mapGetters } from 'vuex'
+  import crop from 'vue-core-image-upload'
+  import loading from '@/base/loading/loading'
 	export default {
 		data() {
 			return {
 				examNav: ['日常', '审批'],
+        workShow:true,
+        infoShow:false,
 				pStr: '',
+        pic_id:'',
+        home_id:'',
 				currentIndex: 0,
 				now_type_name: '日常',
 				pickerOptions0: {
@@ -122,10 +202,80 @@
 				userOperationLeftShow: false,
 				ComPartPersonList: [],
 				workList:[],
-				workIndex:0
-			}
+				workIndex:0,
+        myInfo: {
+          name: '',
+          idCard: '',
+          type:'',
+          area:'',
+          work_year:'',
+          salary:'',
+          qq:'',
+          weChat:'',
+          clipay:'',
+          bank_card:'',
+          bank_account:'',
+          bank_point:'',
+          address:'',
+          self_evaluation:''
+        },
+        work_typies:[],
+        rules2:{
+				  name:[{
+            required: true,
+            message: '请填写您的名字',
+            trigger: 'blur'
+          }],
+          idCard:[{
+            required: true,
+            message: '请填写您的身份证号',
+            trigger: 'blur'
+          },{
+            pattern:/^\d{17}[\d|X]|\d{15}$/,
+            message:'身份证号格式不正确'
+          }],
+          type:[{
+            required: true,
+            message: '请选择工种',
+            trigger: 'change'
+          }],
+          area:[{
+            required: true,
+            message: '请选择籍贯',
+            trigger: 'change'
+          }],
+          work_year:[{
+            required: true,
+            message: '请选择工龄',
+            trigger: 'change'
+          }],
+        },
+        work_type:[],
+        province:["北京市","天津市","上海市","重庆市","河北省","山西省","辽宁省","吉林省","黑龙江省","江苏省","浙江省","安徽省","福建省","江西省","山东省","河南省","湖北省","湖南省","广东省","海南省","四川省","贵州省","云南省","陕西省","甘肃省","青海省","台湾省","内蒙古自治区","广西壮族自治区","西藏自治区","宁夏回族自治区","新疆维吾尔自治区","香港特别行政区","澳门特别行政区"],
+        list:[],
+        years:['1年','2年','3年','4年','5年','6年','7年','8年','9年','10年','10年以上'],
+        kong:[],
+        linked:'',
+        cros:{},
+        croe:{},
+        crod:{},
+        pic_hash:'',
+        loadingShow:false,
+        asd_hash:''
+      }
 		},
 		methods: {
+      ...mapMutations({
+        setUser: 'SET_USER',
+        setNowCompanyId: 'SET_NOWCOMPANY_ID',
+        setComPersonList: 'SET_COM_PERSON_LIST',
+        setComDepartList: 'SET_COM_DEPART_LIST',
+        setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+        setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+        setToken: 'SET_TOKEN',
+        setUserState: 'SET_USERSTATE',
+        setCompanyList: 'SET_COMPANYLIST'
+      }),
 			logOut(){
 				this.workIndex = 0
 				this.userOperationShow = false
@@ -337,17 +487,211 @@
 						this.setComPersonList(reaDa)
 					})
 			},
-			...mapMutations({
-				setUser: 'SET_USER',
-				setNowCompanyId: 'SET_NOWCOMPANY_ID',
-				setComPersonList: 'SET_COM_PERSON_LIST',
-				setComDepartList: 'SET_COM_DEPART_LIST',
-				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
-				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
-				setToken: 'SET_TOKEN',
-				setUserState: 'SET_USERSTATE',
-				setCompanyList: 'SET_COMPANYLIST'
-			})
+      change_status(){
+        // this.$message.error('功能尚未完善')
+        this.workShow = false
+        this.infoShow = true
+        this._inited()
+      },
+      _inited(){
+        let param = new URLSearchParams()
+        param.append('phone',this.user.phone)
+        this.$http.post('/index.php/Mobile/worker/get_info_phone',param)
+          .then((res)=>{
+            let arr = res.data.data
+            this.linked = 'http://bbsf-test-file.hzxb.net/'+arr.avatar
+            this.myInfo.name = arr.name
+            this.myInfo.idCard = arr.idcard
+            this.myInfo.type = arr.type_id
+            this.myInfo.area = arr.hometown
+            this.myInfo.work_year = arr.work_years
+            this.myInfo.salary = arr.salary
+            this.myInfo.qq = arr.qq
+            this.myInfo.weChat = arr.wechat
+            this.myInfo.address = arr.address
+            this.myInfo.clipay = arr.clipay
+            this.myInfo.bank_card = arr.bank_card
+            this.myInfo.self_evaluation = arr.self_evaluation
+            this.myInfo.bank_point = arr.bank_address
+            this.myInfo.bank_account = arr.bank_name
+            arr.idcard_p = 'http://bbsf-test-file.hzxb.net/'+arr.idcard_p
+            this.pic_id = arr.idcard_p
+            this.home_id = 'http://bbsf-test-file.hzxb.net/' + arr.idcard_n
+          })
+      },
+      _getType(){
+        this.$http.post('/index.php/Mobile/find/worker_type_list')
+          .then((res)=>{
+            var obj1 = new Object()
+            obj1.label = '工人类'
+            obj1.options = res.data.data.no_manage
+            var obj2 = new Object()
+            obj2.label = '管理类'
+            obj2.options = res.data.data.is_manage
+            this.work_type.push(obj1,obj2)
+          })
+        this.list = this.province.map(item=>{
+          return { value: item, label: item };
+        })
+        this.kong = this.years.map(item=>{
+          return { value: item, label: item };
+        })
+      },
+      _reinfo(){
+        this.workShow = true
+        this.infoShow = false
+        this.linked = ''
+        this.myInfo.name = ''
+        this.myInfo.type = ''
+        this.myInfo.area = ''
+        this.myInfo.work_year = ''
+        this.myInfo.salary = ''
+        this.myInfo.qq = ''
+        this.myInfo.weChat = ''
+        this.myInfo.address = ''
+        this.myInfo.clipay = ''
+        this.myInfo.bank_card = ''
+        this.myInfo.self_evaluation = ''
+        this.myInfo.bank_point = ''
+        this.myInfo.bank_account = ''
+        this.pic_id = ''
+        this.home_id = ''
+      },
+      upload(){
+        this.cros.generateBlob((blob)=>{
+          let formData = new FormData();
+          formData.append('file', blob);
+          formData.append('token', this.token);
+          let config = {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+          this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
+            this.pic_hash.push(res.data.hash)
+            console.log(JSON.stringify(this.pic_hash))
+            let param = new URLSearchParams()
+            param.append('uid',this.user.uid)
+            param.append('picture',JSON.stringify(this.pic_hash))
+            this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',param)
+              .then((res)=>{
+                console.log(res)
+              })
+          })
+        })
+      },
+      twiter(formName){
+        if (!this.cros.hasImage()) {
+          this.$message.error('请传入头像')
+          return
+        }
+        this.$refs[formName].validate((valid) => {
+          if(valid) {
+            this.submit()
+            this.loadingShow = true
+          } else {
+            this.$message.error('请将表单填写完整');
+            return false;
+          }
+        })
+      },
+      submit(){
+        this.cros.generateBlob((blob)=>{
+          let formData = new FormData();
+          formData.append('file', blob);
+          formData.append('token', this.token);
+          let config = {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+          this.$http.post('http://up.qbox.me/',formData,config)
+            .then((res)=>{
+              this.Id_hash()
+              setTimeout(()=>{
+                let param = new URLSearchParams()
+                param.append('avatar',res.data.hash)
+                param.append('name',this.myInfo.name)
+                param.append('uid',this.user.uid)
+                param.append('idcard',this.myInfo.idCard)
+                param.append('qq',this.myInfo.qq)
+                param.append('work_years',this.myInfo.work_year)
+                param.append('wechat',this.myInfo.weChat)
+                param.append('work_type',this.myInfo.type)
+                param.append('salary',this.myInfo.salary)
+                param.append('clipay',this.myInfo.clipay)
+                param.append('bank_card',this.myInfo.bank_card)
+                param.append('address',this.myInfo.address)
+                param.append('hometown',this.myInfo.area)
+                param.append('self_evaluation',this.myInfo.self_evaluation)
+                param.append('bank_address',this.myInfo.bank_point)
+                param.append('bank_name',this.myInfo.bank_account)
+                param.append('idcard_p',this.pic_hash)
+                param.append('idcard_n',this.asd_hash)
+                this.$http.post('/index.php/Mobile/User/update_user_info_new',param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      this.loadingShow = false
+                      this.$message({
+                        type:'success',
+                        message:'修改成功'
+                      })
+                      this.workShow = true
+                      this.infoShow = false
+                      let avatar = getAvatar(res.data.data.avatar)
+                      this.setUser({
+                        'uid':res.data.data.uid,
+                        'name':res.data.data.name,
+                        'avatar':avatar,
+                        'phone':res.data.data.phone
+                      })
+                      localStorage.user = JSON.stringify(this.user);
+                    }else{
+                      this.loadingShow = false
+                      this.$message({
+                        type:'success',
+                        message:'修改失败'
+                      })
+                    }
+                  })
+              },2000)
+            })
+        })
+      },
+      Id_hash(){
+        if(this.croe.hasImage()){
+          this.croe.generateBlob((blob)=>{
+            let formData = new FormData();
+            formData.append('file', blob);
+            formData.append('token', this.token);
+            let config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            this.$http.post('http://up.qbox.me/',formData,config)
+              .then((res)=>{
+                this.pic_hash = res.data.hash
+              })
+          })
+        }
+        if(this.crod.hasImage()){
+          this.crod.generateBlob((blob)=>{
+            let formData = new FormData();
+            formData.append('file', blob);
+            formData.append('token', this.token);
+            let config = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+            this.$http.post('http://up.qbox.me/',formData,config)
+              .then((res)=>{
+                this.asd_hash = res.data.hash
+              })
+          })
+        }
+      }
 		},
 		computed: {
 			...mapGetters([
@@ -361,9 +705,13 @@
 			])
 		},
 		components: {
-			Date
+			Date,
+      crop,
+      loading
 		},
-		mounted() {},
+		mounted() {
+      this._getType()
+    },
 		created() {
 			this.setUser(JSON.parse(localStorage.user))
 			this._getUserCompanyList(this.user.uid)
@@ -389,6 +737,7 @@
 		width: 100%;
 		height: 100%;
 		background: rgb(227, 228, 233);
+    padding-bottom: 50px;
 		.index {
 			.top {
 				width: 100%;
@@ -648,4 +997,59 @@
 			right: 14px;
 		}
 	}
+  .info{
+    width: 800px;
+    overflow: hidden;
+    margin: 0 auto;
+    background: #FFf;
+    padding-bottom: 50px;
+    .top{
+      width: 100px;
+      margin: 0 auto;
+      position: relative;
+      .el-button{
+        position: absolute;
+        top: 10px;
+        left: -340px;
+      }
+      img{
+        margin: 20px 20px 10px 25px;
+        display: inline-block;
+      }
+      p{
+        font-size: 12px;
+        color: #A3D7FF;
+        text-align: center;
+        padding-bottom: 10px;
+        cursor: pointer;
+        position: relative;
+        input{
+          outline: none;
+          position: absolute;
+          opacity: 0;
+          top: -5px;
+          left: 0;
+          cursor: pointer;
+        }
+      }
+    }
+    .el-form-item{
+      .el-input{
+        width: 90%;
+        float: right;
+      }
+      .el-select{
+        width: 90%;
+        float: right;
+        right: 14px;
+      }
+    }
+  }
+  .card{
+    display: flex;
+    justify-content:center;
+    div{
+      margin: 0 10px;
+    }
+  }
 </style>

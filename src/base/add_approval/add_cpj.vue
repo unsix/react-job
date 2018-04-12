@@ -255,7 +255,7 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.approval_id);
-      			this.fileList=[]
+        this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
 						this.form_Lista = create_cengpijian_list(res.data.data)
@@ -267,14 +267,12 @@
 						this.cpj_ruleForm.project_manager_name = this.form_Lista.project_manager_name
             this.cpj_ruleForm.many_enclosure = this.form_Lista.many_enclosure
             this.form_Lista.many_enclosure.forEach((item)=>{
-              console.log(item)
               let img_name = item.name
               if (item.type === 3){
                 let param = new URLSearchParams();
                 param.append("enclosure_id", item.contract_id);
                 this.$http.post("index.php/Mobile/approval/look_enclosure",param)
                   .then((res)=>{
-                    console.log(res)
                     res.data.data.picture.forEach((item) => {
                       //item 就是hash
                       let obj = {}
@@ -386,7 +384,6 @@
 				this.picArr = []
 				this.fileArr = []
 				this.fileList.forEach((item) => {
-				  console.log(item)
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
@@ -402,7 +399,6 @@
 						}
 					})
 				}
-				return false
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
