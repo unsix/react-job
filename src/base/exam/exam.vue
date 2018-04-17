@@ -45,7 +45,7 @@
 							<img :src="item.avatar" alt="" />
 						</div>
 						<div class="edit">
-							<el-button type="primary" round @click="listCli(item,index)">查看</el-button>
+							<el-button type="primary" round @click="listCli(item,item.approval_state)">查看</el-button>
 							<el-button type="danger" round v-show="item.approval_state_num === '3'" @click="deleteForm(item)">删除</el-button>
 
 							<div class="process" v-if="approval_process">
@@ -158,7 +158,7 @@
 							<span>回复</span>
 						</div>
 					</div>
-					<div v-for="item in form_Listb.content">
+					<div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
 						<div class="exam_info">
 							<div class="avatar">
 								<span>{{item.is_agree}}</span>
@@ -172,10 +172,26 @@
 							<div class="operation">
 								<span>{{item.opinion}}</span>
 							</div>
+              <div>
+                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
+              </div>
 						</div>
 						<div>
-							<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+							<img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
 						</div>
+            <div style="width: 530px;float: right;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+              </div>
+            </div>
 					</div>
 				</div>
 				<div class="menu" v-show="handle_show">
@@ -259,42 +275,58 @@
 					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
 						</span>
 				</div>
-				<div>
-					<span>审批：</span>
-					<div class="exam_info">
-						<div class="avatar lzz">
-							<span style="margin-left: 5px;">状态</span>
-						</div>
-						<div class="name lzz">
-							<span>姓名</span>
-						</div>
-						<div class="tel lzz">
-							<span>时间</span>
-						</div>
-						<div class="operation lzz">
-							<span>回复</span>
-						</div>
-					</div>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar">
-								<span>{{item.is_agree}}</span>
-							</div>
-							<div class="name">
-								<span>{{item.name}}</span>
-							</div>
-							<div class="tel">
-								<span>{{item.add_time}}</span>
-							</div>
-							<div class="operation">
-								<span>{{item.opinion}}</span>
-							</div>
-						</div>
-						<div>
-							<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
-						</div>
-					</div>
-				</div>
+        <div>
+          <span>审批：</span>
+          <div class="exam_info">
+            <div class="avatar lzz">
+              <span style="margin-left: 5px;">状态</span>
+            </div>
+            <div class="name lzz">
+              <span>姓名</span>
+            </div>
+            <div class="tel lzz">
+              <span>时间</span>
+            </div>
+            <div class="operation lzz">
+              <span>回复</span>
+            </div>
+          </div>
+          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
+            <div class="exam_info">
+              <div class="avatar">
+                <span>{{item.is_agree}}</span>
+              </div>
+              <div class="name">
+                <span>{{item.name}}</span>
+              </div>
+              <div class="tel">
+                <span>{{item.add_time}}</span>
+              </div>
+              <div class="operation">
+                <span>{{item.opinion}}</span>
+              </div>
+              <div>
+                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
+              </div>
+            </div>
+            <div>
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+            <div style="width: 530px;float: right;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
@@ -373,42 +405,58 @@
 				<div>
 					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
 				</div>
-				<div>
-					<span>审批：</span>
-					<div class="exam_info">
-						<div class="avatar lzz">
-							<span style="margin-left: 5px;">状态</span>
-						</div>
-						<div class="name lzz">
-							<span>姓名</span>
-						</div>
-						<div class="tel lzz">
-							<span>时间</span>
-						</div>
-						<div class="operation lzz">
-							<span>回复</span>
-						</div>
-					</div>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar">
-								<span>{{item.is_agree}}</span>
-							</div>
-							<div class="name">
-								<span>{{item.name}}</span>
-							</div>
-							<div class="tel">
-								<span>{{item.add_time}}</span>
-							</div>
-							<div class="operation">
-								<span>{{item.opinion}}</span>
-							</div>
-						</div>
-						<div>
-							<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
-						</div>
-					</div>
-				</div>
+        <div>
+          <span>审批：</span>
+          <div class="exam_info">
+            <div class="avatar lzz">
+              <span style="margin-left: 5px;">状态</span>
+            </div>
+            <div class="name lzz">
+              <span>姓名</span>
+            </div>
+            <div class="tel lzz">
+              <span>时间</span>
+            </div>
+            <div class="operation lzz">
+              <span>回复</span>
+            </div>
+          </div>
+          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
+            <div class="exam_info">
+              <div class="avatar">
+                <span>{{item.is_agree}}</span>
+              </div>
+              <div class="name">
+                <span>{{item.name}}</span>
+              </div>
+              <div class="tel">
+                <span>{{item.add_time}}</span>
+              </div>
+              <div class="operation">
+                <span>{{item.opinion}}</span>
+              </div>
+              <div>
+                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
+              </div>
+            </div>
+            <div>
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+            <div style="width: 530px;float: right;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
@@ -481,42 +529,58 @@
 				<div>
 					<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
 				</div>
-				<div>
-					<span>审批：</span>
-					<div class="exam_info">
-						<div class="avatar lzz">
-							<span style="margin-left: 5px;">状态</span>
-						</div>
-						<div class="name lzz">
-							<span>姓名</span>
-						</div>
-						<div class="tel lzz">
-							<span>时间</span>
-						</div>
-						<div class="operation lzz">
-							<span>回复</span>
-						</div>
-					</div>
-					<div v-for="item in form_Listb.content">
-						<div class="exam_info">
-							<div class="avatar">
-								<span>{{item.is_agree}}</span>
-							</div>
-							<div class="name">
-								<span>{{item.name}}</span>
-							</div>
-							<div class="tel">
-								<span>{{item.add_time}}</span>
-							</div>
-							<div class="operation">
-								<span>{{item.opinion}}</span>
-							</div>
-						</div>
-						<div>
-							<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
-						</div>
-					</div>
-				</div>
+        <div>
+          <span>审批：</span>
+          <div class="exam_info">
+            <div class="avatar lzz">
+              <span style="margin-left: 5px;">状态</span>
+            </div>
+            <div class="name lzz">
+              <span>姓名</span>
+            </div>
+            <div class="tel lzz">
+              <span>时间</span>
+            </div>
+            <div class="operation lzz">
+              <span>回复</span>
+            </div>
+          </div>
+          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
+            <div class="exam_info">
+              <div class="avatar">
+                <span>{{item.is_agree}}</span>
+              </div>
+              <div class="name">
+                <span>{{item.name}}</span>
+              </div>
+              <div class="tel">
+                <span>{{item.add_time}}</span>
+              </div>
+              <div class="operation">
+                <span>{{item.opinion}}</span>
+              </div>
+              <div>
+                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
+              </div>
+            </div>
+            <div>
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+            <div style="width: 530px;float: right;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
@@ -581,7 +645,7 @@
               <span>回复</span>
             </div>
           </div>
-          <div v-for="item in form_Listb.content">
+          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
             <div class="exam_info">
               <div class="avatar">
                 <span>{{item.is_agree}}</span>
@@ -595,9 +659,25 @@
               <div class="operation">
                 <span>{{item.opinion}}</span>
               </div>
+              <div>
+                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
+              </div>
             </div>
             <div>
-              <img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+            <div style="width: 530px;float: right;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -665,7 +745,7 @@
               <span>回复</span>
             </div>
           </div>
-          <div v-for="item in form_Listb.content">
+          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
             <div class="exam_info">
               <div class="avatar">
                 <span>{{item.is_agree}}</span>
@@ -679,9 +759,25 @@
               <div class="operation">
                 <span>{{item.opinion}}</span>
               </div>
+              <div>
+                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
+              </div>
             </div>
             <div>
-              <img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+            </div>
+            <div style="width: 530px;float: right;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -696,7 +792,6 @@
           </div>
         </div>
       </div>
-
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
@@ -712,6 +807,16 @@
 				</div>
 			</div>
 		</div>
+
+    <div class="send" v-show="sendShow">
+      <span class="close"><span class="huifu">回复{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
+      <el-input type="textarea" v-model="content"></el-input>
+      <span class="sr">
+          <el-button type="primary" round @click="submitCom">确定</el-button>
+      </span>
+    </div>
+
+    <div class="wide" ref="wide" v-show="wideShow"></div>
 	</div>
 </template>
 
@@ -734,6 +839,7 @@
 	export default {
 		data() {
 			return {
+        sendShow:false,
 				ifDownShow:false,
 				untreated: [],
 				now_type_name: '',
@@ -786,7 +892,15 @@
 				downAddress:'',
 				examComName:'',
 				downUrl:'',
-        arr_list:[]
+        arr_list:[],
+        reply:'',
+        wideShow:false,
+        content:'',
+        sendName:'',
+        usd:'',
+        info:'',
+        list:'',
+        status:''
 			}
 		},
 		computed: {
@@ -814,6 +928,8 @@
 			if(this.$route.path === '/work/exam') {
 				this.$emit('changeWorkIndex', 0)
 			}
+      let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+      this.$refs.wide.style.height = h + 'px'
 		},
 		created() {
 			if(!localStorage.user){
@@ -1421,8 +1537,18 @@
 				this.pingshenbiao_show = false
         this.baoxiaodan_show = false
 				this.gongzhang_show = false
+        this.reply = ''
+        this.list = ''
 			},
-			listCli(item) {
+			listCli(item,sta) {
+			  this.list = item
+        console.log(sta)
+        if(sta.indexOf('已通过') == '-1'){
+          this.status = '2'
+        }else{
+			    this.status = '1'
+        }
+        console.log(this.status)
 				if(item.approval_state_num === '0' && this.nowType ===3){
 					this.repealShow	= true
 				}else{
@@ -1492,6 +1618,7 @@
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             }
+            this.reply = res.data.data.approval_id
 					})
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
@@ -1524,6 +1651,45 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
+      reply_other(us,pr,name){
+			  this.wideShow = true
+			  this.sendShow = true
+        document.body.style.overflow = 'hidden'
+        this.sendName = name
+        this.usd = us
+        this.info = pr
+      },
+      closeSend(){
+			  this.wideShow = false
+			  this.sendShow = false
+        document.body.style.overflow = 'visible'
+        this.sendName = ''
+        this.usd = ''
+        this.info = ''
+        this.content = ''
+      },
+      submitCom(){
+        if(!this.content){
+          this.$message.warning('请输入回复内容')
+          return false
+        }
+        let param = new URLSearchParams()
+        param.append('reply_content',this.content)
+        param.append('participation_id',this.info)
+        param.append('approval_id',this.reply)
+        param.append('other_uid',this.usd)
+        this.$http.post('/index.php/Mobile/find/reply_approval',param)
+          .then((res)=>{
+            if(res.data.code == '0'){
+              this.$message.success(res.data.message)
+              this.closeSend()
+              this.listCli(this.list)
+            }else{
+              this.$message.error(res.data.message)
+              this.closeSend()
+            }
+          })
+      },
 			down(){
 				this.ifDownShow = true
 				let param = new URLSearchParams();
@@ -1833,7 +1999,7 @@
 						box-shadow: 1px 1px 2px #999999;
 						>.avatar {
 							display: inline-block;
-							vertical-align: top;
+							/*vertical-align: top;*/
 							margin: 8px 5px 0 15px;
 							img {
 								width: 40px;
@@ -1973,7 +2139,7 @@
 						display: inline-block;
 					}
 					.avatar {
-						vertical-align: top;
+						/*vertical-align: top;*/
 						width: 70px;
 					}
 					.name {
@@ -2088,4 +2254,118 @@
 			}
 		}
 	}
+
+  .send{
+    width: 450px;
+    background: #ffffff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -270px;
+    margin-top: -75px;
+    z-index: 999;
+    .close{
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      text-align: center;
+      .huifu{
+        line-height: 53px;
+        font-size: 16px;
+      }
+      i{
+        float: right;
+        font-size: 16px;
+        margin: 20px 10px 0;
+        cursor: pointer;
+        border-radius: 100%;
+        border: 1px solid black;
+        color: #000;
+      }
+    }
+    .el-textarea{
+      display: block;
+      width: 90%;
+      margin: 0 auto;
+    }
+    .sr{
+      overflow: hidden;
+      display: block;
+      margin-top: 10px;
+      padding-bottom: 10px;
+      #picc{
+        position: relative;
+        width: 70%;
+        .el-upload-list__item{
+          position: relative;
+          top: 30px;
+          left: 15px;
+          width: 50px;
+          height: 50px;
+        }
+        .el-upload{
+          display: block;
+        }
+        .el-upload--picture-card{
+          z-index: 999;
+          position: absolute;
+          left: 3px;
+          top: 0px;
+          width: 0px;
+          height: 0px;
+          margin-top: 12px;
+          margin-left: 27px;
+          outline: none;
+          background: none;
+          border: none;
+          border-radius: 0;
+          line-height: 0;
+          i{
+            font-size: 20px;
+            z-index: 999;
+          }
+        }
+      }
+      #file{
+        width: 70%;
+        position: relative;
+        .el-upload-list--text{
+          position: relative;
+          top: 0px;
+          left: 15px;
+          width: 100%;
+        }
+        .el-upload--text{
+          width: 0px;
+          height: 0px;
+          margin-top: 40px;
+          margin-left: 30px;
+          outline: none;
+          background: none;
+          border: none;
+          border-radius: 0;
+          line-height: 0;
+          i{
+            font-size: 20px;
+          }
+        }
+      }
+      .el-button{
+        padding: 4px 10px;
+        float: right;
+        margin-right: 20px;
+        margin-top: 14px;
+      }
+    }
+  }
+  .wide{
+    width: 100%;
+    z-index: 99;
+    /*height: 3000px;*/
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.5);
+  }
 </style>
