@@ -38,7 +38,7 @@
       <div class="list">
         <ul>
           <li v-for="(item,index) in nearList" @click="detailed(item.uid)">
-            <img :src="item.avatar">
+            <img :src="item.avatar" style="width: 50px;height: 60px">
             <div class="ss">
               <p>{{item.name}}</p>
               <span>{{item.type}}</span>

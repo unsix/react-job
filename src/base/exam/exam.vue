@@ -1689,7 +1689,9 @@
               this.closeSend()
             }
           })
+
       },
+      
 			down(){
 				this.ifDownShow = true
 				let param = new URLSearchParams();
