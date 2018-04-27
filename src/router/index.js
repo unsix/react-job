@@ -13,6 +13,7 @@ const jurisdictionManage = () => import('@/base/jurisdiction_manage/jurisdiction
 const create_company = () => import('@/base/create_company/create_company')
 const record = () => import('@/base/work_record/record')
 const list = () => import('@/base/list/list')
+const nearWork = () => import('@/base/find_work/near')
 Vue.use(Router)
 
 export default new Router({
@@ -71,6 +72,10 @@ export default new Router({
         {
           path:'list',
           component:list
+        },
+        {
+          path:'nearWork',
+          component:nearWork
         }
 			]
 		},

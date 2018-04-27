@@ -31,6 +31,7 @@ module.exports = {
       'components':resolve('src/components'),
       'common':resolve('src/common'),
       'jquery':'jquery',
+      'jSign':resolve('src/assets')
     }
   },
   module: {
@@ -79,7 +80,9 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin('common.js'),
     new webpack.ProvidePlugin({
       jQuery:'jquery',
-      $:'jquery'
+      $:'jquery',
+      'window.jQuery':'jquery',
+      'root.jQuery':'jquery'
     })
   ]
 

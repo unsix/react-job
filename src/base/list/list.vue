@@ -16,7 +16,7 @@
               </div>
               <div class="phone">
                 <span><i class="iconfont icon-xiaoxi"></i>{{item.phone}}</span>
-              </div>
+                </div>
               <div class="distance">
                 <p>{{item.distance}}KM</p>
               </div>
@@ -25,20 +25,20 @@
         </el-select>
       </div>
       <div class="search">
-        <el-select filterable v-model="type" @change="type_change">
+        <el-select filterable v-model="type" @change="type_change" placeholder="工种">
           <el-option v-for="item in work_type" :label="item.type_name" :value="item.wid" :key="item.wid"></el-option>
         </el-select>
-        <el-select filterable v-model="area" @change="area_change">
+        <el-select filterable v-model="area" @change="area_change" placeholder="地区">
           <el-option v-for="item in list" :label="item.label" :value="item.value" :key="item.value"></el-option>
         </el-select>
-        <el-select filterable v-model="order" @change="order_change">
+        <el-select filterable v-model="order" @change="order_change" placeholder="排序">
           <el-option v-for="item in dec" :label="item.label" :value="item.value" :key="item.value"></el-option>
         </el-select>
       </div>
       <div class="list">
         <ul>
           <li v-for="(item,index) in nearList" @click="detailed(item.uid)">
-            <img :src="item.avatar" style="width: 50px;height: 60px">
+            <img :src="item.avatar" style="width: 50px;height: 50px">
             <div class="ss">
               <p>{{item.name}}</p>
               <span>{{item.type}}</span>
@@ -63,8 +63,6 @@
     </div>
 
     <detail v-show="detail_show" ref="detail"></detail>
-
-    <listed v-show="listedShow"></listed>
   </div>
 </template>
 
@@ -73,13 +71,11 @@
   import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import detail from "@/base/list/detail"
-  import listed from "@/base/list/listed"
   export default {
     data(){
       return{
         work_type:[],
         str:'',
-        area:[],
         x:'',
         y:'',
         loading: false,
@@ -102,7 +98,6 @@
         mess:false,
         mains:true,
         detail_show:false,
-        listedShow:false,
         usd:''
       }
     },
@@ -204,6 +199,7 @@
 
       },
       remoteMethod(res){
+        this.listed.splice(0,this.listed.length)
         if(res != ''){
           this.loading = true
           setTimeout(()=>{
@@ -300,7 +296,6 @@
     },
     components:{
       detail,
-      listed
     }
   }
 </script>
