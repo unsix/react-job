@@ -1269,6 +1269,9 @@
 			this._getUserCompanyList()
 			this._getComPersonList()
       this._getComment()
+      if(!localStorage.user){
+        this.$router.push({ path: '/login' })
+      }
 		},
     mounted(){
       if(this.$route.path === '/work/addressBook') {

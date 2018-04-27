@@ -300,16 +300,16 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-					this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录']
+					this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录','工人列表','工程列表']
 				}
 				if(m === 1 && f === 0) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录','工人列表','工程列表']
 				}
 				if(m === 0 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录']
+					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录','工人列表','工程列表']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录',]
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录','工人列表','工程列表']
 				}
 			},
 			changeWorkIndex(num){
@@ -382,6 +382,9 @@
             break;
           case '工人列表':
             this.$router.push({path:'/work/list'})
+            break;
+          case '工程列表':
+            this.$router.push({path:'/work/nearWork'})
             break;
 				}
 			},
@@ -601,7 +604,7 @@
               'Content-Type': 'multipart/form-data'
             }
           }
-          this.$http.post('http://up.qbox.me/',formData,config)
+          this.$http.post('https://up.qbox.me/',formData,config)
             .then((res)=>{
               this.Id_hash()
               setTimeout(()=>{
@@ -665,7 +668,7 @@
                 'Content-Type': 'multipart/form-data'
               }
             }
-            this.$http.post('http://up.qbox.me/',formData,config)
+            this.$http.post('https://up.qbox.me/',formData,config)
               .then((res)=>{
                 this.pic_hash = res.data.hash
               })
@@ -681,7 +684,7 @@
                 'Content-Type': 'multipart/form-data'
               }
             }
-            this.$http.post('http://up.qbox.me/',formData,config)
+            this.$http.post('https://up.qbox.me/',formData,config)
               .then((res)=>{
                 this.asd_hash = res.data.hash
               })

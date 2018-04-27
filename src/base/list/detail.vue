@@ -44,9 +44,33 @@
       <div class="comment" v-show="com"></div>
       <div class="works" v-show="works"></div>
       <div class="bottom">
-        <span><i class="iconfont icon-fasongxinxi" style="color: #B6D8F2;"></i>发送合同</span>
-        <span><i class="iconfont icon-wujiaoxing" style="color: #FFB59B;"></i>加入收藏</span>
+        <span @click="_get_contract" v-show="u_id != user.uid"><i class="iconfont icon-fasongxinxi" style="color: #B6D8F2;" ></i>发送合同</span>
+        <span @click="_collect"><i class="iconfont icon-wujiaoxing" ref="star" style="color: orange;"></i>加入收藏</span>
       </div>
+    </div>
+
+    <div class="contra" v-show="contr">
+      <ul>
+        <i class="el-icon-close" @click="asShow"></i>
+        <li v-for="item in list_con" @click="sel_con(item.contract_type_id,item.contract_name)">{{item.contract_name}}</li>
+      </ul>
+    </div>
+
+    <div class="contract_main" v-show="con_main_show" >
+      <div class="top">
+        <el-button type="primary" size="small" @click="_returned">返回</el-button>
+        <p>{{title}}</p>
+        <b @click="_right" style="cursor: pointer">签字</b>
+      </div>
+      <iframe id="mom" class="win" ref="indx" :src="core" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
+      <el-button type="success" size="small" @click="_submit" style="margin-top: 5px;margin-left: 5px;margin-bottom: 5px">确定</el-button>
+    </div>
+
+    <div class="signed" v-show="signature">
+      <i class="el-icon-close" @click="close_sign"></i>
+      <iframe :src="sign_link" ref="sign" scrolling="no" seamless frameborder="0"></iframe>
+      <el-button type="warning" size="small" @click="_rewirte">重写</el-button>
+      <el-button type="success" size="small" style="float: right" @click="sure">确定</el-button>
     </div>
 
     <div class="pic" ref="pic" v-show="show_pic">
@@ -65,13 +89,14 @@
     </div>
 
     <loading v-show="loadingShow" style="z-index: 9999999"></loading>
+
   </div>
 </template>
 
 <script>
+  import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from "../../common/js/avatar";
   import loading from '@/base/loading/loading'
-
   export default {
   data(){
     return{
@@ -88,11 +113,36 @@
       map:false,
       x:'',
       y:'',
-      loadingShow:false
+      loadingShow:false,
+      contr:false,
+      list_con:[],
+      con_main_show:false,
+      core:'',
+      title:'',
+      signShow:false,
+      sign_link:'',
+      signature:false,
+      signImg:'',
+      pic_hash:'',
+      u_id:'',
+      contract_type_id:'',
+      issc :''
     }
   },
   methods:{
+    ...mapMutations({
+      setUser: 'SET_USER',
+      setNowCompanyId: 'SET_NOWCOMPANY_ID',
+      setComPersonList: 'SET_COM_PERSON_LIST',
+      setComDepartList: 'SET_COM_DEPART_LIST',
+      setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+      setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+      setToken: 'SET_TOKEN',
+      setUserState: 'SET_USERSTATE',
+      setCompanyList: 'SET_COMPANYLIST'
+    }),
     _getInfo(pr,re){
+      this.u_id = pr
       let param = new URLSearchParams()
       param.append('uid',pr)
       param.append('user_id',re)
@@ -105,6 +155,9 @@
             let arr = this.moreInfo.type
             for(var ss in arr){
               str += arr[ss]
+            }
+            if(res.data.data.issc == 1){
+              this.$refs.star.style.color = 'red'
             }
             this.moreInfo.type = str
             this.x = this.moreInfo.longitude
@@ -133,6 +186,7 @@
     _return(){
       this.$parent.mains = true
       this.$parent.detail_show = false
+      this.$refs.star.style.color = '#FFB59B'
     },
     close_pp(){
       this.wideShow = false
@@ -181,12 +235,171 @@
       var marker = new BMap.Marker(point)
       map.addOverlay(marker);
     },
+    _get_contract(){
+      let param = new URLSearchParams()
+      param.append('type',2)
+      this.$http.post('index.php/Mobile/find/select_contract_companty_types',param)
+        .then((res)=>{
+          if(res.data.code == 0){
+            this.list_con = res.data.data
+            this.wideShow = true
+            this.contr = true
+          }else{
+            this.$message.error(res.data.message)
+          }
+        })
+    },
+    asShow(){
+      this.wideShow = false
+      this.contr = false
+      document.body.style.overflow = 'visible'
+    },
+    sel_con(res,tip){
+      this.contract_type_id = res
+      let str = 'index.php/Mobile/skey/look_draft?id=' + res +'&operation=1&view=1'
+      this.core = str
+      this.wideShow = false
+      this.contr = false
+      this.infos = false
+      this.deta = false
+      this.title = tip
+      this.loadingShow = true
+      setTimeout(()=>{
+        this.con_main_show = true
+        this.loadingShow = false
+      },1000)
+    },
+    _getToken(uid) {
+      let nparam = new URLSearchParams();
+      nparam.append("uid", this.user.uid);
+      this.$http.post("/index.php/Mobile/path/get_token", nparam)
+        .then((res) => {
+          this.setToken(res.data.data)
+        })
+    },
+    _returned(){
+      this.con_main_show = false
+      this.infos = true
+      this.deta = true
+      this.$refs.sign.contentWindow.remote()
+      this.title = ''
+      this.core = ''
+    },
+    _right(){
+      this.sign_link = 'index.php/Mobile/find/sign'
+      this.signature = true
+      this.wideShow = true
+    },
+    close_sign(){
+      this.signature = false
+      this.wideShow = false
+      this.$refs.sign.contentWindow.remote()
+    },
+    _submit(){
+      console.log(this.token)
+      this.$refs.indx.contentWindow.getCustomFormResult()
+      let tips = this.$refs.indx.contentWindow.tips
+      if(this.signImg == ''){
+        this.$message.error('请签字')
+      }
+      if(tips.length > 0){
+        this.$message.error(tips)
+      }else{
+        let result = this.$refs.indx.contentWindow.result
+        let formData = new FormData()
+        formData.append('file',this.signImg)
+        formData.append('token',this.token)
+        let config = {
+          headers:{
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+        this.$http.post('https://up.qbox.me',formData,config).then((res)=>{
+          setTimeout(()=>{
+            let param = new URLSearchParams()
+            param.append('content_json',result)
+            param.append('contract_type_id',this.contract_type_id)
+            param.append('worker_id',this.u_id)
+            param.append('signatory_a',res.data.hash)
+            this.loadingShow = true
+            this.$http.post('index.php/Mobile/find/addcontract_new',param)
+              .then((res)=>{
+                if(res.data.code == 0){
+                  this.loadingShow = false
+                  this._returned()
+                  this.$message.success(res.data.message)
+                }else{
+                  this.loadingShow = false
+                  this.$message.error(res.data.message)
+                }
+              })
+          },500)
+        })
+      }
+
+    },
+    _rewirte(){
+      this.$refs.sign.contentWindow.remote()
+    },
+    sure(){
+      this.$refs.sign.contentWindow.sure()
+      this.signImg = this.$refs.sign.contentWindow.ss
+      this.signature = false
+      this.wideShow = false
+    },
+    _collect(){
+      if(this.$refs.star.style.color == 'orange'){
+        let param = new URLSearchParams()
+        param.append('worker_id',this.u_id)
+        param.append('uid',this.user.uid)
+        param.append('status','1')
+        this.$http.post('/index.php/Mobile/Find/collect',param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.$message.success('收藏成功')
+              this.$refs.star.style.color = 'red'
+            }else{
+              this.$message.error('收藏失败')
+            }
+          })
+      }
+      if(this.$refs.star.style.color == 'red'){
+        let param = new URLSearchParams()
+        param.append('worker_id',this.u_id)
+        param.append('uid',this.user.uid)
+        param.append('status','0')
+        this.$http.post('/index.php/Mobile/Find/collect',param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.$message.success('取消收藏成功')
+              this.$refs.star.style.color = 'orange'
+            }else{
+              this.$message.error('取消收藏失败')
+            }
+          })
+      }
+    }
   },
   mounted(){
-
+    let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    this.$refs.wide.style.height = h + 'px'
   },
   components:{
-    loading
+    loading,
+  },
+  computed: {
+    ...mapGetters([
+      'user',
+      'token',
+      'nowCompanyName',
+      'userState',
+      'nowCompanyId',
+      'comDepartList',
+      'companyList'
+    ])
+  },
+  created(){
+    this._getToken()
   }
 }
 </script>
@@ -225,6 +438,8 @@
       border-radius: 50%;
       margin: 40px 15px 20px 20px;
       float: left;
+      width: 50px;
+      height: 50px;
     }
     ul{
       float: left;
@@ -341,7 +556,99 @@
     }
   }
 }
+.contra{
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -100px;
+  ul {
+    width: 200px;
+    background: #FFFFFF;
+    margin: 200px auto;
+    padding: 10px;
+    border-radius: 4px;
+    h2 {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #409EFF;
+    }
+    i {
+      font-size: 20px;
+      float: right;
+      cursor: pointer;
+      &:hover {
+        color: #FA5555
+      }
+    }
+    li {
+      cursor: pointer;
+      display: block;
+      height: 24px;
+      line-height: 24px;
+      font-size: 15px;
+      &:hover {
+        color: #5A5E66;
+      }
+    }
+  }
+}
+.contract_main{
+  background: #fff;
+  width: 100%;
+  .top{
+    position: relative;
+    border-bottom: 1px solid #e3e4e9;
+    .el-button{
+      position: absolute;
+      top: 8px;
+      left: 5px;
+      margin: 0 !important;
+    }
+    p{
+      width: 500px;
+      margin: 0 auto;
+      text-align: center;
+      font-weight: bolder;
+      padding: 15px 0;
+    }
+    b{
+      position: absolute;
+      top: 13px;
+      right: 13px;
+    }
+  }
+  .win{
+    width: 600px;
+    height:700px;
+    border-bottom: 1px solid #e3e4e9;
+  }
+}
 #map{
   height: 600px;
+}
+.signed{
+  width: 600px;
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  margin-left: -345px;
+  z-index: 99999;
+  background: #fff;
+  border-radius: 4px;
+  i{
+    float: right;
+    margin-right: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+  }
+  iframe{
+    width: 600px;
+    height: 230px;
+  }
+  button{
+    margin: 10px;
+  }
 }
 </style>

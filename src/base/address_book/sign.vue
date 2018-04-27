@@ -622,7 +622,7 @@ export default {
                   this.pic_hash_arr.push(this.picArr[i].hash)
                   this.pic_hash_arr.length == this.picArr.length && fn(this.picArr[i].name)
                 }else{
-                  this.$http.post('http://up.qbox.me/',formDate,config).then((res)=>{
+                  this.$http.post('https://up.qbox.me/',formDate,config).then((res)=>{
                     this.pic_hash_arr.push(res.data.hash)
                     if(this.pic_hash_arr.length == this.picArr.length){
                       fn(this.picArr[i].name)
