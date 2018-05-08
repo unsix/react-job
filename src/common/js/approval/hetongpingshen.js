@@ -1,5 +1,5 @@
 export default class hetongpingshen_list {
-  constructor({contract_name_new,contract_name,contract_num,a_name,b_name,executor,project_manager_name,prive,contract_id,total_prive,difference,pay_method,arrive_time,end_time,remarks,many_enclosure}) {
+  constructor({contract_name_new,contract_name,contract_num,a_name,b_name,executor,project_manager_name,prive,contract_id,enclosure_id,total_prive,difference,pay_method,arrive_time,end_time,remarks,many_enclosure,content}) {
     this.contract_name = contract_name
     this.contract_num = contract_num
     this.a_name = a_name
@@ -13,9 +13,11 @@ export default class hetongpingshen_list {
     this.arrive_time = arrive_time
     this.end_time = end_time
     this.remarks = remarks
-    this.many_enclosure = many_enclosure
+    this.many_enclosure = many_enclosure,
+    this.enclosure_id = enclosure_id
     this.contract_name_new = contract_name_new
     this.contract_id = contract_id
+    this.content = content
   }
 }
 export function create_hetongpingshen_list(item) {
@@ -35,7 +37,9 @@ export function create_hetongpingshen_list(item) {
 	    remarks:item.remarks,
 	    contract_id:item.contract_id,
 	    many_enclosure:item.many_enclosure,
-	    contract_name_new:item.contract_name_new
+	    contract_name_new:item.contract_name_new,
+      content:item.content,
+      enclosure_id:item.enclosure_id
 	})
 }
 function get_manager_name(item){
