@@ -473,45 +473,55 @@
 				<div>
 					<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
 				</div>
-				<div>
+				<div >
 					<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>甲方：</span><span>{{form_Lista.a_name}}</span>
 				</div>
 
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>乙方：</span><span>{{form_Lista.b_name}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>执行人：</span><span>{{form_Lista.executor}}</span>
 				</div>
 				<div>
 					<span>项目负责人(项目经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>单价：</span><span>{{form_Lista.prive}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>总价：</span><span>{{form_Lista.total_prive}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>与投标价格差异：</span><span>{{form_Lista.difference}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>付款方式：</span><span>{{form_Lista.pay_method}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>到货时间：</span><span>{{form_Lista.arrive_time}}</span>
 				</div>
-				<div>
+				<div v-if="!form_Lista.content">
 					<span>完工时间：</span><span>{{form_Lista.end_time}}</span>
 				</div>
+        <div v-if="form_Lista.content">
+          <ul>
+            <li v-for="item in form_Lista.content">
+              <p>材料名称：<span>{{item.material_name}}</span></p>
+              <p><b>单位：<span>{{item.unit}}</span></b> <b>数量：<span>{{item.num}}</span></b></p>
+              <p><b>单价：<span>{{item.prive}}</span></b> <b>合计：<span>{{item.total_prive}}</span></b></p>
+              <p><b>联系人：<span>{{item.contacts}}</span></b> <b>联系方式：<span>{{item.tel}}</span></b></p>
+            </li>
+          </ul>
+        </div>
 				<div>
-					<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
+					<span>备注：</span><span>{{form_Lista.remarks}}</span>
 				</div>
 				<div>
 					<span>附件列表：</span>
@@ -1542,13 +1552,11 @@
 			},
 			listCli(item,sta) {
 			  this.list = item
-        console.log(sta)
         if(sta.indexOf('已通过') == '-1'){
           this.status = '2'
         }else{
 			    this.status = '1'
         }
-        console.log(this.status)
 				if(item.approval_state_num === '0' && this.nowType ===3){
 					this.repealShow	= true
 				}else{
@@ -1597,8 +1605,13 @@
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
 							this.form_Lista = create_hetongpingshen_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
+							if(this.form_Lista.many_enclosure){
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+              }else{
+                this.get_img(this.form_Lista.enclosure_id)
+                this.get_file(this.form_Lista.enclosure_id)
+              }
 						} else if(item.type === '请款单') {
 							this.form_Lista = create_qingkuandan_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1691,7 +1704,7 @@
           })
 
       },
-      
+
 			down(){
 				this.ifDownShow = true
 				let param = new URLSearchParams();
@@ -1708,32 +1721,54 @@
 				if(!many_enclosure) {
 					return
 				}
-				many_enclosure.forEach((item) => {
-					if(item.type === 3) {
-						let param = new URLSearchParams();
-						param.append("enclosure_id", item.contract_id);
-						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
-							.then((res) => {
-                var current = this
-                var judge = res.data.code
-                getCro(judge,current)
-								let arr = []
-								res.data.data.picture.forEach((item) => {
-									if(item != '') {
-										arr.push(getAvatar(item))
-									}
-								})
-								// this.img_arr = arr
-								this.$set(this.form_Lista, 'img_list', arr)
-							})
-					}
-				})
+				if(typeof many_enclosure == 'string'){
+          let param = new URLSearchParams();
+          param.append("enclosure_id", many_enclosure);
+          this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+            .then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let arr = []
+              res.data.data.picture.forEach((item) => {
+                if(item != '') {
+                  arr.push(getAvatar(item))
+                }
+              })
+              // this.img_arr = arr
+              this.$set(this.form_Lista, 'img_list', arr)
+            })
+        }else{
+          many_enclosure.forEach((item) => {
+            if(item.type === 3) {
+              let param = new URLSearchParams();
+              param.append("enclosure_id", item.contract_id);
+              this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getAvatar(item))
+                    }
+                  })
+                  // this.img_arr = arr
+                  this.$set(this.form_Lista, 'img_list', arr)
+                })
+            }
+          })
+        }
 			},
 			get_file(many_enclosure) {
 				this.file_arr = []
 				if(!many_enclosure) {
 					return
 				}
+				if(typeof many_enclosure == 'string'){
+				  return
+        }
 				many_enclosure.forEach((item) => {
 					if(item.type === 4) {
 						let param = new URLSearchParams();
@@ -2182,6 +2217,20 @@
 						width: 80px;
 						cursor: pointer;
 					}
+          ul{
+            li{
+              margin-bottom: 5px;
+              font-size: 14px;
+              p{
+                margin-top: 5px;
+                b{
+                  width: 250px;
+                  display: inline-block;
+                  font-weight: normal;
+                }
+              }
+            }
+          }
 				}
 				.file {
 					font-size: 14px;
