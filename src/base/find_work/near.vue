@@ -224,8 +224,10 @@ export default {
       this.$emit('changeWorkIndex', 10)
     }
   },
-  created(){
-
+  watch:{
+    pageIndex() {
+      this._getList()
+    },
   },
   computed:{
     ...mapGetters([

@@ -281,7 +281,9 @@
       this.con_main_show = false
       this.infos = true
       this.deta = true
-      this.$refs.sign.contentWindow.remote()
+      if(this.signImg){
+        this.$refs.sign.contentWindow.remote()
+      }
       this.title = ''
       this.core = ''
     },
@@ -296,7 +298,6 @@
       this.$refs.sign.contentWindow.remote()
     },
     _submit(){
-      console.log(this.token)
       this.$refs.indx.contentWindow.getCustomFormResult()
       let tips = this.$refs.indx.contentWindow.tips
       if(this.signImg == ''){
