@@ -247,8 +247,13 @@
 						} else if(item.type === '合同评审表') {
 							this.psb_if = true
 							this.form_Lista = create_hetongpingshen_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
+              if(this.form_Lista.many_enclosure){
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+              }else{
+                this.get_img(this.form_Lista.enclosure_id)
+                this.get_file(this.form_Lista.enclosure_id)
+              }
 						} else if(item.type === '请款单') {
 							this.qkd_if = true
 							this.form_Lista = create_qingkuandan_list(res.data.data)
@@ -464,56 +469,77 @@
 					})
 			},
       //get_img方法
-			get_img(many_enclosure) {
-				if(!many_enclosure) {
-					return
-				}
-				many_enclosure.forEach((item) => {
-					if(item.type === 3) {
-						let param = new URLSearchParams();
-						param.append("enclosure_id", item.contract_id);
-						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
-							.then((res) => {
+      get_img(many_enclosure) {
+        if(!many_enclosure) {
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          let param = new URLSearchParams();
+          param.append("enclosure_id", many_enclosure);
+          this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+            .then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let arr = []
+              res.data.data.picture.forEach((item) => {
+                if(item != '') {
+                  arr.push(getAvatar(item))
+                }
+              })
+              // this.img_arr = arr
+              this.$set(this.form_Lista, 'img_list', arr)
+            })
+        }else{
+          many_enclosure.forEach((item) => {
+            if(item.type === 3) {
+              let param = new URLSearchParams();
+              param.append("enclosure_id", item.contract_id);
+              this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getAvatar(item))
+                    }
+                  })
+                  // this.img_arr = arr
+                  this.$set(this.form_Lista, 'img_list', arr)
+                })
+            }
+          })
+        }
+      },
+      get_file(many_enclosure) {
+        this.file_arr = []
+        if(!many_enclosure) {
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          return
+        }
+        many_enclosure.forEach((item) => {
+          if(item.type === 4) {
+            let param = new URLSearchParams();
+            param.append("attachments_id", item.contract_id);
+            this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+              .then((res) => {
                 var current = this
                 var judge = res.data.code
                 getCro(judge,current)
-								let arr = []
-								res.data.data.picture.forEach((item) => {
-									if(item != '') {
-										arr.push(getPic(item))
-									}
-								})
-								this.img_arr = arr
-								this.$set(this.form_Lista, 'img_list', arr)
-							})
-					}
-				})
-			},
-      //get_file方法
-			get_file(many_enclosure) {
-				this.file_arr = []
-				if(!many_enclosure) {
-					return
-				}
-				many_enclosure.forEach((item) => {
-					if(item.type === 4) {
-						let param = new URLSearchParams();
-						param.append("attachments_id", item.contract_id);
-						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
-							.then((res) => {
-                var current = this
-                var judge = res.data.code
-                getCro(judge,current)
-								let obj = {}
-								let file_data = res.data.data
-								let file_add = file_data.attachments + '?attname=' + file_data.file_name +'.'+ file_data.attribute
-								obj.name = file_data.file_name+'.'+ file_data.attribute
-								obj.address = file_add
-								this.file_arr.push(obj)
-							})
-					}
-				})
-			},
+                let obj = {}
+                let file_data = res.data.data
+                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                this.file_arr.push(obj)
+              })
+          }
+        })
+      },
 			returnList() {
 				this.psb_if = false
 				this.qgd_if = false

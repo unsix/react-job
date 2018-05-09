@@ -774,7 +774,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
             </div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -910,7 +910,7 @@
         usd:'',
         info:'',
         list:'',
-        status:''
+        status:'',
 			}
 		},
 		computed: {
@@ -1075,9 +1075,10 @@
 					return
 				}
 				this.fileAccordShow = true
-				if(item.approval_type === '7') {
+        console.log(item)
+				if(item.approval_type === '7' || item.approval_type == '10' || item.approval_type == '3') {
 					this.request_money_basis_type = '请购单'
-				} else if(item.approval_type === '111') {
+				} else if(item.approval_type === '111' || item.approval_type == '1' || item.approval_type == '2') {
 					this.request_money_basis_type = '合同评审表'
 				} else {
 					this.request_money_basis_type = '呈批件'
@@ -1278,6 +1279,7 @@
         this.pic = event.target.files;
       },
 			cl_pic(item, index) {
+			  console.log(item)
         item.forEach((res)=>{
           let current = res.indexOf('?')
           this.arr_list.push(res.slice(0,current) + '?imageslim' )
@@ -1304,6 +1306,7 @@
 			},
       //审批
 			agree() {
+			  console.log(this.form_Lista)
         document.body.scrollTop = 0
         document.documentElement.scrollTop = 0
 				this.pic_hash_arr = []
@@ -1321,7 +1324,7 @@
 						this.loading_show = true
 						let param = new URLSearchParams();
 						param.append("uid", this.user.uid);
-						param.append("approval_id", this.untreated.approval_id);
+						param.append("approval_id", this.reply);
 						param.append("participation_id", this.form_Listb.participation_id);
 						param.append("is_agree", '1');
 						param.append("company_id", this.nowCompanyId);
@@ -1384,7 +1387,7 @@
                       getCro(judge,current)
 											let param = new URLSearchParams();
 											param.append("uid", this.user.uid);
-											param.append("approval_id", this.untreated.approval_id);
+											param.append("approval_id", this.reply);
 											param.append("participation_id", this.form_Listb.participation_id);
 											param.append("is_agree", '1');
 											param.append("picture", res.data.data.enclosure_id);
@@ -1437,7 +1440,7 @@
 						this.loading_show = true
 						let param = new URLSearchParams();
 						param.append("uid", this.user.uid);
-						param.append("approval_id", this.untreated.approval_id);
+						param.append("approval_id", this.reply);
 						param.append("participation_id", this.form_Listb.participation_id);
 						param.append("is_agree", '2');
 						param.append("company_id", this.nowCompanyId);
@@ -1498,7 +1501,7 @@
                       getCro(judge,current)
 											let param = new URLSearchParams();
 											param.append("uid", this.user.uid);
-											param.append("approval_id", this.untreated.approval_id);
+											param.append("approval_id", this.reply);
 											param.append("participation_id", this.form_Listb.participation_id);
 											param.append("is_agree", '2');
 											param.append("picture", res.data.data.enclosure_id);

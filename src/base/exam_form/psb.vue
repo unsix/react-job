@@ -43,6 +43,16 @@
 		<div v-if="form_Lista.arrive_time">
 			<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
 		</div>
+    <div v-if="form_Lista.content">
+      <ul>
+        <li v-for="item in form_Lista.content">
+          <p>材料名称：<span>{{item.material_name}}</span></p>
+          <p><b>单位：<span>{{item.unit}}</span></b> <b>数量：<span>{{item.num}}</span></b></p>
+          <p><b>单价：<span>{{item.prive}}</span></b> <b>合计：<span>{{item.total_prive}}</span></b></p>
+          <p><b>联系人：<span>{{item.contacts}}</span></b> <b>联系方式：<span>{{item.tel}}</span></b></p>
+        </li>
+      </ul>
+    </div>
 		<div v-if="form_Lista.remarks">
 			<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
 		</div>
@@ -474,6 +484,26 @@
 				width: 80px;
 				cursor: pointer;
 			}
+      ul{
+        li{
+          margin-bottom: 5px;
+          font-size: 14px;
+          p{
+            margin-top: 5px;
+            span{
+              color: #000;
+            }
+            b{
+              width: 250px;
+              display: inline-block;
+              font-weight: normal;
+              span{
+                color: #000;
+              }
+            }
+          }
+        }
+      }
 		}
 		.file {
 			font-size: 14px;

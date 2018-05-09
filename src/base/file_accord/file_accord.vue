@@ -61,7 +61,7 @@
 			<div>
 				<span>图片附件：</span>
 				<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
-					<img :src="item" alt="" />
+					<img :src="item" alt=""  @click="ctrl_pic_show(form_Lista.img_list,index)"/>
 				</a>
 			</div>
 			<div v-if="form_Listb.found_name">
@@ -122,7 +122,7 @@
 			<div class="top">
 				<span class="title">合同评审表</span>
 			</div>
-			<div v-if="form_Lista.contract_name">
+			<div v-if="form_Lista.contract_name ">
 				<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 			</div>
 			<div v-if="form_Lista.contract_name_new">
@@ -161,6 +161,16 @@
 			<div v-if="form_Lista.arrive_time">
 				<span>完工时间：</span><span>{{form_Lista.arrive_time}}</span>
 			</div>
+      <div v-if="form_Lista.content">
+        <ul>
+          <li v-for="item in form_Lista.content">
+            <p>材料名称：<span>{{item.material_name}}</span></p>
+            <p><b>单位：<span>{{item.unit}}</span></b> <b>数量：<span>{{item.num}}</span></b></p>
+            <p><b>单价：<span>{{item.prive}}</span></b> <b>合计：<span>{{item.total_prive}}</span></b></p>
+            <p><b>联系人：<span>{{item.contacts}}</span></b> <b>联系方式：<span>{{item.tel}}</span></b></p>
+          </li>
+        </ul>
+      </div>
 			<div v-if="form_Lista.remarks">
 				<span>合同主要内容：</span><span>{{form_Lista.remarks}}</span>
 			</div>
@@ -171,7 +181,7 @@
 			<div v-if="form_Lista.img_list">
 				<span>图片附件：</span>
 				<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
-					<img :src="item" alt="" />
+					<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)"/>
 				</a>
 			</div>
 			<div v-if="form_Listb.found_name">
@@ -256,7 +266,7 @@
 			<div>
 				<span>图片附件：</span>
 				<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
-					<img :src="item" alt="" />
+					<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)"/>
 				</a>
 			</div>
 			<div>
@@ -303,16 +313,20 @@
 				</div>
 			</div>
 		</div>
+
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 	</div>
 </template>
 
 <script>
 	import {getPic} from '@/common/js/pic.js'
+  import { getAvatar } from '@/common/js/avatar.js'
   import { getCro } from "@/common/js/crowd";
   import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
+  import browsePic from '@/base/browse_pic/browse_pic'
 	import { mapGetters } from 'vuex'
 	export default {
 		props: {
@@ -341,7 +355,10 @@
 				qgdShow: false,
 				psbShow: false,
 				cpjShow: false,
-				type: ''
+				type: '',
+        pic_index: 0,
+        pic_show: false,
+        arr_list: []
 			}
 
 		},
@@ -385,8 +402,13 @@
 						} else if(this.type === '合同评审表') {
 							this.psbShow = true
 							this.form_Lista = create_hetongpingshen_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
+              if(this.form_Lista.many_enclosure){
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+              }else{
+                this.get_img(this.form_Lista.enclosure_id)
+                this.get_file(this.form_Lista.enclosure_id)
+              }
 						} else if(this.type === '请购单') {
 							this.qgdShow = true
 							this.form_Lista = create_qinggoudan_list(res.data.data)
@@ -426,57 +448,89 @@
 					})
 			},
 			//		获取图片
-			get_img(many_enclosure) {
-				if(!many_enclosure) {
-					return
-				}
-				many_enclosure.forEach((item) => {
-					if(item.type === 3) {
-						let param = new URLSearchParams();
-						param.append("enclosure_id", item.contract_id);
-						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
-							.then((res) => {
+      get_img(many_enclosure) {
+        if(!many_enclosure) {
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          let param = new URLSearchParams();
+          param.append("enclosure_id", many_enclosure);
+          this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+            .then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let arr = []
+              res.data.data.picture.forEach((item) => {
+                if(item != '') {
+                  arr.push(getAvatar(item))
+                }
+              })
+              // this.img_arr = arr
+              this.$set(this.form_Lista, 'img_list', arr)
+            })
+        }else{
+          many_enclosure.forEach((item) => {
+            if(item.type === 3) {
+              let param = new URLSearchParams();
+              param.append("enclosure_id", item.contract_id);
+              this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getAvatar(item))
+                    }
+                  })
+                  // this.img_arr = arr
+                  this.$set(this.form_Lista, 'img_list', arr)
+                })
+            }
+          })
+        }
+      },
+      get_file(many_enclosure) {
+        this.file_arr = []
+        if(!many_enclosure) {
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          return
+        }
+        many_enclosure.forEach((item) => {
+          if(item.type === 4) {
+            let param = new URLSearchParams();
+            param.append("attachments_id", item.contract_id);
+            this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+              .then((res) => {
                 var current = this
                 var judge = res.data.code
                 getCro(judge,current)
-								let arr = []
-								res.data.data.picture.forEach((item) => {
-									if(item != '') {
-										arr.push(getPic(item))
-									}
-								})
-								this.img_arr = arr
-								this.$set(this.form_Lista, 'img_list', arr)
-							})
-					}
-				})
-			},
-			get_file(many_enclosure) {
-				this.file_arr = []
-				if(!many_enclosure) {
-					return
-				}
-				many_enclosure.forEach((item) => {
-
-					if(item.type === 4) {
-						let param = new URLSearchParams();
-						param.append("attachments_id", item.contract_id);
-						this.$http.post("/index.php/Mobile/approval/look_attachments", param)
-							.then((res) => {
-                var current = this
-                var judge = res.data.code
-                getCro(judge,current)
-								let obj = {}
-								let file_data = res.data.data
-								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name + file_data.attribute
-								obj.name = file_data.file_name
-								obj.address = file_add
-								this.file_arr.push(obj)
-							})
-					}
-				})
-			}
-		}
+                let obj = {}
+                let file_data = res.data.data
+                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                this.file_arr.push(obj)
+              })
+          }
+        })
+      },
+      ctrl_pic_show(item, index) {
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
+		},
+    components:{
+      browsePic
+    }
 	}
 </script>
 
@@ -588,6 +642,26 @@
 					display: inline-block;
 					width: 40px;
 				}
+        ul{
+          li{
+            margin-bottom: 5px;
+            font-size: 14px;
+            p{
+              margin-top: 5px;
+              span{
+                color: #000;
+              }
+              b{
+                width: 250px;
+                display: inline-block;
+                font-weight: normal;
+                span{
+                  color: #000;
+                }
+              }
+            }
+          }
+        }
 			}
 			.file {
 				font-size: 14px;
