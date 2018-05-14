@@ -34,15 +34,28 @@
     <div class="contract" v-show="contract">
       <div class="top">
         <el-button type="primary" size="small" @click="_return">返回</el-button>
-        <p>我的合同</p>
+        <p>{{con_title}}</p>
       </div>
       <iframe id="mom" class="win" ref="indx" :src="linked" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
     </div>
 
     <loading v-show="loadingShow"></loading>
 
-    <div class="check">
-
+    <div class="check" v-show="check">
+      <div class="top">
+        <el-button type="primary" size="small" @click="_recont">返回</el-button>
+        <p>验收记录</p>
+      </div>
+      <div class="main">
+        <ul>
+          <li v-for="item in vlurt">
+            <p>申请时间<span>{{item.add_time}}</span></p>
+            <p>结算金额<span>{{item.money}}</span></p>
+            <p @click="look_accept(item.inspection_id)">验收单值<span>点击查看</span></p>
+            <p @click="look_settlement(item.settlement_id)">结算单值<span>点击查看</span></p>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -60,7 +73,10 @@ export default {
       contract:false,
       store:true,
       linked:'',
-      loadingShow:false
+      loadingShow:false,
+      check:false,
+      vlurt:[],
+      con_title:''
     }
   },
   methods:{
@@ -161,6 +177,7 @@ export default {
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
+        this.con_title = '我的合同'
         this.loadingShow = false
       },500)
     },
@@ -168,11 +185,16 @@ export default {
       if(pr == '去付款'){
         this.$message.warning('请在手机端完成此操作')
       }
+
     },
     _return(){
-      this.store = true
-      this.contract = false
-      this.linked = ''
+      if(this.con_title == '我的合同'){
+        this.store = true
+        this.contract = false
+        this.linked = ''
+      }else{
+        this.contract = false
+      }
     },
     look_history(pr){
       let param = new URLSearchParams()
@@ -182,13 +204,39 @@ export default {
       this.$http.post('index.php/Mobile/find/apply_history',param)
         .then((res)=>{
           if(res.data.code == '0'){
-           if(res.data.data.length < 1){
-             this.$message.info('没有数据')
-           }else{
-             console.log(res.data.data)
-           }
+             if(res.data.data.length < 1){
+               this.$message.info('没有数据')
+             }else{
+               this.store = false
+               this.check = true
+               this.vlurt = res.data.data
+             }
           }
         })
+    },
+    _recont(){
+      this.store = true
+      this.check = false
+    },
+    look_accept(pr){
+      this.check = false
+      this.linked = 'index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id='+pr
+      this.loadingShow = true
+      setTimeout(()=>{
+        this.contract = true
+        this.loadingShow = false
+        this.con_title = '验收单'
+      },500)
+    },
+    look_settlement(pr){
+      this.check = false
+      this.linked = 'index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id='+pr
+      this.loadingShow = true
+      setTimeout(()=>{
+        this.contract = true
+        this.loadingShow = false
+        this.con_title = '结算单'
+      },500)
     }
   },
   computed: {
@@ -212,6 +260,11 @@ export default {
   },
   components:{
     loading
+  },
+  mounted(){
+    if(this.$route.path === '/work/exam') {
+      this.$emit('changeWorkIndex', 12)
+    }
   }
 }
 
@@ -324,6 +377,47 @@ export default {
       width: 600px;
       height:700px;
       border-bottom: 1px solid #e3e4e9;
+    }
+  }
+  .check{
+    background: #fff;
+    width: 100%;
+    .top{
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      .el-button{
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
+      }
+      p{
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b{
+        position: absolute;
+        top: 13px;
+        right: 13px;
+      }
+    }
+    .main{
+      ul{
+        width: 100%;
+        li{
+          margin-bottom: 10px;
+          p{
+            padding: 10px;
+            border-bottom: 1px solid #e3e4e9;
+            span{
+              float: right;
+            }
+          }
+        }
+      }
     }
   }
 </style>

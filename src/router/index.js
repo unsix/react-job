@@ -17,6 +17,7 @@ const nearWork = () => import('@/base/find_work/near')
 const release = () =>import('@/base/release/rele')
 const issue = () =>import('@/base/issue_contract/issue')
 const rece = () =>import('@/base/received/rece')
+const opus = () =>import('@/base/myOpus/opus')
 Vue.use(Router)
 
 export default new Router({
@@ -91,6 +92,10 @@ export default new Router({
         {
           path:'rece',
           component:rece
+        },
+        {
+          path:'opus',
+          component:opus
         }
 			]
 		},
