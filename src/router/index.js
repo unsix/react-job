@@ -14,6 +14,11 @@ const create_company = () => import('@/base/create_company/create_company')
 const record = () => import('@/base/work_record/record')
 const list = () => import('@/base/list/list')
 const nearWork = () => import('@/base/find_work/near')
+const release = () =>import('@/base/release/rele')
+const issue = () =>import('@/base/issue_contract/issue')
+const rece = () =>import('@/base/received/rece')
+const opus = () =>import('@/base/myOpus/opus')
+const collect = () =>import('@/base/Mycollect/collect')
 Vue.use(Router)
 
 export default new Router({
@@ -76,6 +81,26 @@ export default new Router({
         {
           path:'nearWork',
           component:nearWork
+        },
+        {
+          path:'release',
+          component:release
+        },
+        {
+          path:'issue',
+          component:issue
+        },
+        {
+          path:'rece',
+          component:rece
+        },
+        {
+          path:'opus',
+          component:opus
+        },
+        {
+          path:'collect',
+          component:collect
         }
 			]
 		},

@@ -15,17 +15,9 @@
           <li><i class="iconfont icon-xiaoxi" style="color: #50BCBC;"></i>找他聊聊</li>
         </ul>
       </div>
-      <div class="tab">
-        <el-tabs v-model="activeName" @tab-click="handClick">
-          <el-tab-pane label="信息详情" name="fir"></el-tab-pane>
-          <el-tab-pane label="用户评价" name="sec"></el-tab-pane>
-          <el-tab-pane label="工人作品" name="thr"></el-tab-pane>
-        </el-tabs>
-      </div>
     </div>
-
     <div class="info" v-show="infos">
-      <div class="info_one" v-show="info">
+      <div class="info_one">
         <ul>
           <li>年龄<span v-show="moreInfo.age != ''">{{moreInfo.age}}岁</span><span v-show="moreInfo.age == ''">无</span></li>
           <li>籍贯<span v-show="moreInfo.hometown != ''">{{moreInfo.hometown}}</span><span v-show="moreInfo.hometown == ''">无</span></li>
@@ -39,18 +31,23 @@
           <li>微信<span>{{moreInfo.wechat}}</span></li>
           <li>暂住地址<span v-show="moreInfo.address != ''">{{moreInfo.address}}</span><span v-show="moreInfo.address == ''">无</span></li>
           <li>个人评价<span>无</span></li>
+          <li @click="show_opus">往期作品<span>查看</span></li>
+          <li>金主评价<span>查看</span></li>
         </ul>
       </div>
-      <div class="comment" v-show="com"></div>
-      <div class="works" v-show="works"></div>
       <div class="bottom">
-        <span @click="_get_contract" v-show="u_id != user.uid"><i class="iconfont icon-fasongxinxi" style="color: #B6D8F2;" ></i>发送合同</span>
-        <span @click="_collect"><i class="iconfont icon-wujiaoxing" ref="star" style="color: orange;"></i>加入收藏</span>
+        <span @click="_get_contract"  v-show="star"><i class="iconfont icon-fasongxinxi" style="color: #B6D8F2;" ></i>发送...</span>
+        <span @click="_collect" ><i class="iconfont icon-wujiaoxing" ref="star" style="color: orange;"></i>加入收藏</span>
       </div>
     </div>
 
     <div class="contra" v-show="contr">
-      <ul>
+      <ul v-show="insert == 0">
+        <h2>选择审批类型</h2>
+        <i class="el-icon-close" @click="asShow"></i>
+        <li v-for="item in types" @click="choose_add(item)">{{item}}</li>
+      </ul>
+      <ul v-show="insert > 5">
         <i class="el-icon-close" @click="asShow"></i>
         <li v-for="item in list_con" @click="sel_con(item.contract_type_id,item.contract_name)">{{item.contract_name}}</li>
       </ul>
@@ -90,6 +87,19 @@
 
     <loading v-show="loadingShow" style="z-index: 9999999"></loading>
 
+    <ysd v-show="ysd_if" ref="ysd"></ysd>
+
+    <opus v-show="op_if" ref="opus" :worker_id="u_id"></opus>
+
+    <div class="qgd" v-show="qgd_if">
+      <div class="top">
+        <el-button type="primary" size="small" @click="_reInfo">返回</el-button>
+        <p>{{con_title}}</p>
+        <b @click="_righted" style="cursor: pointer">从模板选择</b>
+      </div>
+      <qgds class="qgd_s" ref="qgd"></qgds>
+    </div>
+
   </div>
 </template>
 
@@ -97,14 +107,13 @@
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from "../../common/js/avatar";
   import loading from '@/base/loading/loading'
+  import ysd from '@/base/received/rece'
+  import opus from '@/base/myOpus/opus'
+  import qgds from '@/base/add_approval/add_qgd'
   export default {
   data(){
     return{
-      activeName:'fir',
       moreInfo:'',
-      info:true,
-      com:false,
-      works:false,
       show_pic:false,
       linked:'',
       wideShow:false,
@@ -126,7 +135,14 @@
       pic_hash:'',
       u_id:'',
       contract_type_id:'',
-      issc :''
+      issc :'',
+      star : true,
+      types:['发送合同','验收单','请购单','请款单','呈批件','报销单'],
+      insert:'0',
+      ysd_if:false,
+      op_if:false,
+      qgd_if:false,
+      con_title:''
     }
   },
   methods:{
@@ -164,24 +180,6 @@
             this.y = this.moreInfo.latitude
           }
         })
-    },
-    handClick(tab){
-      let index = parseInt(tab.index)
-      if(index == 0){
-        this.info = true
-        this.com = false
-        this.works = false
-      }
-      if(index == 1){
-        this.info = false
-        this.com = true
-        this.works = false
-      }
-      if(index == 2){
-        this.info = false
-        this.com = false
-        this.works = true
-      }
     },
     _return(){
       this.$parent.mains = true
@@ -252,6 +250,7 @@
     asShow(){
       this.wideShow = false
       this.contr = false
+      this.insert = 0
       document.body.style.overflow = 'visible'
     },
     sel_con(res,tip){
@@ -281,7 +280,9 @@
       this.con_main_show = false
       this.infos = true
       this.deta = true
-      this.$refs.sign.contentWindow.remote()
+      if(this.signImg){
+        this.$refs.sign.contentWindow.remote()
+      }
       this.title = ''
       this.core = ''
     },
@@ -296,7 +297,6 @@
       this.$refs.sign.contentWindow.remote()
     },
     _submit(){
-      console.log(this.token)
       this.$refs.indx.contentWindow.getCustomFormResult()
       let tips = this.$refs.indx.contentWindow.tips
       if(this.signImg == ''){
@@ -378,6 +378,49 @@
             }
           })
       }
+    },
+    choose_add(pr){
+      switch (pr){
+        case '发送合同':
+          this.insert = 6
+          break;
+        case '验收单':
+          this.ysd_if = true
+          this.deta = false
+          this.infos = false
+          this.wideShow = false
+          this.$refs.ysd.inserted = '6'
+          this.$refs.ysd.activeName = '2'
+          this.$refs.ysd._getInfo()
+          this.contr = false
+          break;
+        case '请购单':
+          this.qgd_if = true
+          this.deta = false
+          this.infos = false
+          this.wideShow = false
+          this.contr = false
+          this.$refs.qgd.insert = '6'
+          this.con_title = '请购单'
+          break;
+      }
+    },
+    show_opus(){
+      this.deta = false
+      this.infos = false
+      this.op_if = true
+      this.$refs.opus.insert = 6
+      this.$refs.opus._getInfo()
+    },
+    _righted(){
+
+    },
+    _reInfo(){
+      this.deta = true
+      this.infos = true
+      this.$refs.qgd.insert = '0'
+      this.qgd_if = false
+      this.con_title = ''
     }
   },
   mounted(){
@@ -386,6 +429,9 @@
   },
   components:{
     loading,
+    ysd,
+    opus,
+    qgds
   },
   computed: {
     ...mapGetters([
@@ -464,8 +510,6 @@
     width: 100%;
     background: #FFf;
     color: #5a5e66;
-    height: 450px;
-    overflow-y: auto;
     ul{
       li{
         border-bottom: 1px solid #e3e4e9;
@@ -649,6 +693,37 @@
   }
   button{
     margin: 10px;
+  }
+}
+.qgd{
+  width: 100%;
+  background: #Fff;
+  .top{
+    position: relative;
+    border-bottom: 1px solid #e3e4e9;
+    .el-button{
+      position: absolute;
+      top: 8px;
+      left: 5px;
+      margin: 0 !important;
+    }
+    p{
+      width: 500px;
+      margin: 0 auto;
+      text-align: center;
+      font-weight: bolder;
+      padding: 15px 0;
+    }
+    b{
+      position: absolute;
+      top: 13px;
+      right: 13px;
+    }
+  }
+  .qgd_s{
+    width: 96%;
+    margin: 20px auto;
+    padding-bottom: 20px;
   }
 }
 </style>

@@ -68,6 +68,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import { create_depart_list } from 'common/js/initial/depart.js'
   import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import detail from "@/base/list/detail"
@@ -270,11 +271,69 @@
         this.mains = false
         this.detail_show = true
         this.$refs.detail._getInfo(pr,this.user.uid)
+        if(pr == this.user.uid){
+          this.$refs.detail.star = false
+        }else{
+          this.$refs.detail.star = true
+        }
       },
       search(pr){
         this.mains = false
         this.detail_show = true
         this.$refs.detail._getInfo(pr,this.user.uid)
+        if(pr == this.user.uid){
+          this.$refs.detail.star = false
+        }
+      },
+      _getComDepart() {
+        let param = new URLSearchParams();
+        param.append("company_id", this.nowCompanyId);
+        this.$http.post("/index.php/Mobile/user/get_department_lest", param)
+          .then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            let arr = []
+            res.data.data.forEach((item) => {
+              arr.push(create_depart_list(item))
+            })
+            this.setComDepartList(arr)
+          })
+      },
+      _getToken() {
+        let nparam = new URLSearchParams();
+        nparam.append("uid", this.user.uid);
+        this.$http.post("/index.php/Mobile/path/get_token", nparam)
+          .then((res) => {
+            localStorage.token = JSON.stringify(res.data.data);
+          })
+      },
+      _getUserCompanyList() {
+        let param = new URLSearchParams();
+        param.append("uid", this.user.uid);
+        this.$http.post("/index.php/Mobile/user/companies_list", param)
+          .then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            this.setCompanyList(res.data.data)
+          })
+      },
+      _getComPersonList(){
+        let newparam = new URLSearchParams();
+        newparam.append("company_id",this.nowCompanyId);
+        this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
+          .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            let reaDa=[]
+            res.data.data.forEach((item)=>{
+              item.avatar = getAvatar(item.avatar)
+              reaDa.push(item)
+            })
+            this.setComPersonList(reaDa)
+          })
       }
     },
     mounted(){
@@ -288,6 +347,12 @@
       if(!localStorage.user){
         this.$router.push({ path: '/login' })
       }
+      this.setUser(JSON.parse(localStorage.user))
+      this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
+      this._getUserCompanyList()
+      this._getToken()
+      this._getComDepart()
+      this._getComPersonList()
     },
     watch:{
       pageIndex() {
