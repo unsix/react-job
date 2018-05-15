@@ -18,6 +18,7 @@ const release = () =>import('@/base/release/rele')
 const issue = () =>import('@/base/issue_contract/issue')
 const rece = () =>import('@/base/received/rece')
 const opus = () =>import('@/base/myOpus/opus')
+const collect = () =>import('@/base/Mycollect/collect')
 Vue.use(Router)
 
 export default new Router({
@@ -96,6 +97,10 @@ export default new Router({
         {
           path:'opus',
           component:opus
+        },
+        {
+          path:'collect',
+          component:collect
         }
 			]
 		},

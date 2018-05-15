@@ -2,6 +2,7 @@
 <div>
   <div class="re" v-show="store">
     <div class="top">
+      <el-button v-show="inserted == 6" type="primary" size="small" @click="_returnsd">返回</el-button>
       <p>我的合同</p>
       <el-tabs v-model="activeName" @tab-click="handClick">
         <el-tab-pane label="进行中" name="1"></el-tab-pane>
@@ -17,7 +18,7 @@
             <p>乙方姓名：{{item.worker_name}}</p>
           </div>
           <div class="btn">
-            <p v-show="item.fir == '申请完工'" @click.stop="look_history(item.contract_id)" style="cursor: pointer;text-align: right">查看历史验收记录</p>
+            <p v-show="item.take_effect == 4" @click.stop="look_history(item.contract_id)" style="cursor: pointer;text-align: right">查看历史验收记录</p>
             <span v-if="item.log" @click.stop="once(item.log,item.contract_id)">{{item.log}}</span>
             <span v-if="item.ion" @click.stop="twice(item.ion,item.contract_id)">{{item.ion}}</span>
             <span v-if="item.fir" @click.stop='third(item.fir,item.contract_id)'>{{item.fir}}</span>
@@ -137,7 +138,8 @@ export default {
       vlurt:[],
       addShow:false,
       sec_title:'',
-      plan:[]
+      plan:[],
+      inserted:'0'
     }
   },
   methods:{
@@ -213,10 +215,15 @@ export default {
                   }
                   switch (item.worker_apply){
                     case '0':
-                      item.fir = '申请完工'
+                      item.ion = '申请完工'
                       break;
                     case '1':
-                      item.fir = '等待甲方处理完工申请'
+                      item.ion = '等待甲方处理完工申请'
+                      break;
+                  }
+                  switch (this.inserted){
+                    case '6':
+                      item.fir = '请求付款'
                       break;
                   }
                   break;
@@ -380,6 +387,27 @@ export default {
           this.$message.warning('取消操作')
         })
       }
+      if(pr == '申请完工'){
+        this.$confirm('经甲方同意后，则此合同结束，将不能进行任何操作','确认申请完工',{
+          confirmButtonText:'确认',
+          cancelButtonText:'取消',
+          type:'warning'
+        }).then(()=>{
+          let param = new URLSearchParams()
+          param.append('contract_id',res)
+          this.$http.post('index.php/Mobile/find/examine_apply',param)
+            .then((res)=>{
+              if(res.data.code == 0){
+                this.$message.success('等待雇主处理')
+                this._getInfo()
+              }else{
+                this.$message.error(res.data.message)
+              }
+            })
+        }).catch(()=>{
+          this.$message.warning('取消操作')
+        })
+      }
     },
     third(pr,res){
       if(pr == '拒绝'){
@@ -398,27 +426,6 @@ export default {
                 this._getInfo()
               }else{
                 this.$message.warning('拒绝失败')
-              }
-            })
-        }).catch(()=>{
-          this.$message.warning('取消操作')
-        })
-      }
-      if(pr == '申请完工'){
-        this.$confirm('经甲方同意后，则此合同结束，将不能进行任何操作','确认申请完工',{
-          confirmButtonText:'确认',
-          cancelButtonText:'取消',
-          type:'warning'
-        }).then(()=>{
-          let param = new URLSearchParams()
-          param.append('contract_id',res)
-          this.$http.post('index.php/Mobile/find/examine_apply',param)
-            .then((res)=>{
-              if(res.data.code == 0){
-                this.$message.success('等待雇主处理')
-                this._getInfo()
-              }else{
-                this.$message.error(res.data.message)
               }
             })
         }).catch(()=>{
@@ -593,6 +600,12 @@ export default {
         this.con_title = '填写结算单'
       }
 
+    },
+    _returnsd(){
+      this.$parent.deta = true
+      this.$parent.infos = true
+      this.$parent.ysd_if = false
+      this.insert = 0
     }
   },
   created(){
@@ -633,6 +646,12 @@ export default {
     .top{
       background: #fff;
       position: relative;
+      .el-button{
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
+      }
       p{
         width: 500px;
         margin: 0 auto;
