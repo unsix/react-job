@@ -99,5 +99,4 @@ function get_type(type){
 	} else if(type === '11'){
     return '报销单'
   }
-
 }

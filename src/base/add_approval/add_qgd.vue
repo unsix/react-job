@@ -117,7 +117,6 @@
       </el-upload>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_qgd('qgd_ruleForm')">立即添加</el-button>
-				<!--<el-button @click="resetForm('qgd_ruleForm')">重置</el-button>-->
 			</el-form-item>
 		</el-form>
 		<loading v-show="loadingShow"></loading>
@@ -914,7 +913,7 @@
                 this.loadingShow = false
                 if(res.data.code == 0){
                   this.add_ok()
-                  this.qgd_ruleForm = ''
+                  this.$refs.qgd_ruleForm.resetFields();
                   this.$parent._reInfo()
                 }else{
                   this.add_fail()
@@ -1202,7 +1201,7 @@
               this.loadingShow = false
               if(res.data.code == 0){
                 this.add_ok()
-                this.qgd_ruleForm = ''
+                this.$refs.qgd_ruleForm.resetFields();
                 this.$parent._reInfo()
               }else{
                 this.add_fail()
@@ -1239,7 +1238,7 @@
               this.loadingShow = false
               if(res.data.code == 0){
                 this.add_ok()
-                this.qgd_ruleForm = ''
+                this.$refs.qgd_ruleForm.resetFields();
                 this.$parent._reInfo()
               }else{
                 this.add_fail()

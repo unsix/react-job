@@ -47,9 +47,14 @@
         <i class="el-icon-close" @click="asShow"></i>
         <li v-for="item in types" @click="choose_add(item)">{{item}}</li>
       </ul>
-      <ul v-show="insert > 5">
+      <ul v-show="insert == 6">
         <i class="el-icon-close" @click="asShow"></i>
         <li v-for="item in list_con" @click="sel_con(item.contract_type_id,item.contract_name)">{{item.contract_name}}</li>
+      </ul>
+      <ul v-show="insert == 11">
+        <h2>选择请款依据</h2>
+        <i class="el-icon-close" @click="asShow"></i>
+        <li v-for="item in atype" @click="check_add(item)">{{item}}</li>
       </ul>
     </div>
 
@@ -91,13 +96,45 @@
 
     <opus v-show="op_if" ref="opus" :worker_id="u_id"></opus>
 
-    <div class="qgd" v-show="qgd_if">
+    <div class="as_qingkuan" v-if="at_qingkuanShow">
+      <ul>
+        <li v-for="(item,index) in untreated" :key="item.approval_id" ref="list">
+          <div class="edit">
+            <el-button type="primary" round @click="qkView(item,index)">查看</el-button>
+            <el-button type="success" round @click="qkUser(item,index)">使用</el-button>
+            <div class="process">
+              <span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
+            </div>
+          </div>
+          <div class="content">
+            <div class="title">
+              <span>{{item.add_time}}</span>
+            </div>
+            <div class="type">
+              <span>标题：{{item.title}}</span>
+            </div>
+            <div class="type">
+              <span>类型：{{item.type}}</span>
+            </div>
+          </div>
+        </li>
+        <div class="page">
+          <span @click="first_page">首页</span>
+          <span @click="last_page" v-show="pageIndex > 1">上一页</span>
+          <span @click="next_page" v-show="nextPageShow">下一页</span>
+        </div>
+      </ul>
+    </div>
+
+    <div class="qgd" v-show="top_if">
       <div class="top">
         <el-button type="primary" size="small" @click="_reInfo">返回</el-button>
         <p>{{con_title}}</p>
         <b @click="_righted" style="cursor: pointer">从模板选择</b>
       </div>
-      <qgds class="qgd_s" ref="qgd"></qgds>
+      <qgds class="qgd_s" ref="qgd" v-show="qgd_if"></qgds>
+      <qkds class="qkd_s" ref="qkd" v-show="qkd_if"></qkds>
+      <cpjs class="cpj_s" ref="cpj" v-show="cpj_if"></cpjs>
     </div>
 
   </div>
@@ -106,10 +143,13 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from "../../common/js/avatar";
+  import { create_personal_list } from '@/common/js/approval/personal'
   import loading from '@/base/loading/loading'
   import ysd from '@/base/received/rece'
   import opus from '@/base/myOpus/opus'
   import qgds from '@/base/add_approval/add_qgd'
+  import qkds from '@/base/add_approval/add_qkd'
+  import cpjs from '@/base/add_approval/add_cpj'
   export default {
   data(){
     return{
@@ -138,11 +178,20 @@
       issc :'',
       star : true,
       types:['发送合同','验收单','请购单','请款单','呈批件','报销单'],
+      atype:['请购单','呈批件'],
       insert:'0',
       ysd_if:false,
       op_if:false,
       qgd_if:false,
-      con_title:''
+      con_title:'',
+      top_if:false,
+      qkd_if:false,
+      untreated:[],
+      at_qingkuanShow: false,
+      pageIndex:1,
+      approval_type:'',
+      nextPageShow:true,
+      cpj_if:false
     }
   },
   methods:{
@@ -396,6 +445,7 @@
           break;
         case '请购单':
           this.qgd_if = true
+          this.top_if = true
           this.deta = false
           this.infos = false
           this.wideShow = false
@@ -403,6 +453,20 @@
           this.$refs.qgd.insert = '6'
           this.con_title = '请购单'
           break;
+        case '请款单':
+          this.insert = 11
+          break;
+        case '呈批件':
+          this.top_if = true
+          this.cpj_if = true
+          this.deta = false
+          this.infos = false
+          this.wideShow = false
+          this.contr = false
+          this.$refs.cpj.insert = '6'
+          this.con_title = '呈批件'
+          break;
+
       }
     },
     show_opus(){
@@ -419,8 +483,74 @@
       this.deta = true
       this.infos = true
       this.$refs.qgd.insert = '0'
+      this.$refs.cpj.insert = '0'
       this.qgd_if = false
+      this.top_if = false
       this.con_title = ''
+    },
+    check_add(pr){
+      this.deta = false
+      this.infos = false
+      this.wideShow = false
+      this.contr = false
+      this.insert = '0'
+      if(pr == '请购单'){
+        this.approval_type = '1'
+        this._getExamList()
+      }
+      if(pr == '呈批件'){
+        this.approval_type = '3'
+        this._getExamList()
+      }
+    },
+    first_page() {
+      this.nextPageShow = true
+      this.pageIndex = 1
+      this._getExamList()
+    },
+    last_page() {
+      this.nextPageShow = true
+      --this.pageIndex
+      this._getExamList()
+    },
+    next_page() {
+      ++this.pageIndex
+      this._getExamList()
+    },
+    _getExamList(){
+      let param = new URLSearchParams()
+      param.append('approval_type',this.approval_type)
+      param.append('p',this.pageIndex)
+      param.append('each',10)
+      param.append('approval_state',1)
+      param.append('type',2)
+      this.$http.post('index.php/Mobile/personal/select_personal_approval',param)
+        .then((res)=>{
+          console.log(res.data.code)
+          if(res.data.code == 0){
+            let arr = []
+            res.data.data.forEach((item) => {
+              console.log(item)
+              arr.push(create_personal_list(item))
+            })
+            this.untreated = arr
+            console.log(this.untreated)
+            this.at_qingkuanShow = true
+            if(arr.length < 10) {
+              this.nextPageShow = false
+            }
+          }else if(res.data.code == 250){
+            this.$message.error('没有数据')
+            this.deta = true
+            this.infos = true
+          }
+        })
+    },
+    qkView(){
+
+    },
+    qkUser(item){
+      console.log(item)
     }
   },
   mounted(){
@@ -431,7 +561,9 @@
     loading,
     ysd,
     opus,
-    qgds
+    qgds,
+    qkds,
+    cpjs
   },
   computed: {
     ...mapGetters([
@@ -724,6 +856,86 @@
     width: 96%;
     margin: 20px auto;
     padding-bottom: 20px;
+  }
+  .qkd_s{
+    width: 96%;
+    margin: 20px auto;
+    padding-bottom: 20px;
+  }
+  .cpj_s{
+    width: 96%;
+    margin: 20px auto;
+    padding-bottom: 20px;
+  }
+}
+.as_qingkuan {
+  width: 600px;
+  background: #fff;
+  >ul {
+    padding: 4px;
+    >.page {
+      width: 100%;
+      padding: 4px;
+      text-align: center;
+      span {
+        cursor: pointer;
+        font-size: 12px;
+        &:hover {
+          color: #409EFF;
+        }
+      }
+    }
+    >button {
+      margin-bottom: 10px;
+    }
+    >li {
+      display: block;
+      margin-bottom: 10px;
+      color: #2D2F33;
+      font-size: 13px;
+      oz-box-shadow: 1px 1px 2px #999999;
+      -webkit-box-shadow: 1px 1px 2px #999999;
+      box-shadow: 1px 1px 2px #999999;
+      >.avatar {
+        display: inline-block;
+        vertical-align: top;
+        margin: 8px 15px 0 15px;
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 4px;
+          display: block;
+        }
+      }
+      >.edit {
+        display: inline-block;
+        float: right;
+        margin-right: 20px;
+        margin-top: 10px;
+        cursor: pointer;
+        .el-button.is-round {
+          padding: 4px 12px;
+          display: block;
+          margin-bottom: 5px;
+        }
+        .el-button+.el-button {
+          margin-left: 0;
+        }
+        .process {
+          margin-top: 10px;
+        }
+      }
+      .content {
+        cursor: default;
+        padding: 12px 10px;
+        display: inline-block;
+        >div {
+
+          line-height: 25px;
+          max-width: 350px;
+        }
+      }
+    }
   }
 }
 </style>

@@ -318,7 +318,6 @@
         this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
           .then((res)=>{
             this.main_show = res.data.data
-            console.log(this.main_show)
             this.$refs.scse.showMe()
           })
 
