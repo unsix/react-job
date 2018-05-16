@@ -58,7 +58,7 @@
         this.checkId =item.choice_id
         this.result = this.checkId
       },
-      cpjs_submit(){
+      bxds_submit(){
         this.picArr = []
         this.fileArr = []
         this.fileList.forEach((item)=>{
@@ -69,6 +69,22 @@
         this.fileList_a.forEach((item)=>{
           this.fileArr.push(item)
         })
+        let stuf = this.bxd_ruleForm.add
+        for(var i = 0;i<stuf.length;i++){
+          if(stuf[i].month_day.indexOf('-') != '-1'){
+            let timestamp = Date.parse(new Date(stuf[i].month_day))
+            let date = new Date()
+            date.setTime(timestamp)
+            let y = date.getFullYear()
+            let m = date.getMonth() + 1
+            m = m < 10 ? ('0' + m) : m
+            let d = date.getDate()
+            d = d < 10 ? ('0' + d) : d
+            stuf[i].month_day = y + '-' + m + '-' + d
+          }else{
+            stuf[i].month_day = stuf[i].month_day
+          }
+        }
         this.pic_hash_arr = []
         this.afile_hash_arr = []
         this.file_hash_arr = []
@@ -79,16 +95,17 @@
           if(this.picArr.length == 0 && this.fileArr.length == 0){
             let param = new URLSearchParams()
             param.append('uid',this.user.uid)
-            param.append('content',this.cpj_ruleForm.content)
-            param.append('chengpi_num',this.cpj_ruleForm.chengpi_num)
-            param.append('title',this.cpj_ruleForm.title)
+            param.append('title',this.bxd_ruleForm.title)
+            param.append('money',this.bxd_ruleForm.money)
+            param.append('big_money',this.bxd_ruleForm.big_money)
+            param.append('content',JSON.stringify(this.bxd_ruleForm.add))
             param.append('handler_uid',this.$parent.u_id)
-            this.$http.post('index.php/Mobile/personal/add_personal_chengpi',param)
+            this.$http.post('index.php/Mobile/personal/add_baoxiao',param)
               .then((res)=>{
                 this.loadingShow = false
                 if(res.data.code == 0){
                   this.add_ok()
-                  this.$refs.cpj_ruleForm.resetFields()
+                  this.$refs.bxd_ruleForm.resetFields()
                   this.$parent._reInfo()
                 }else{
                   this.add_fail()
@@ -110,7 +127,7 @@
                     this.pic_hash_arr.push(this.picArr[i].hash)
                     this.pic_hash_arr.length == this.picArr.length && fn(this.picArr[i].name)
                   }else{
-                    this.$http.post('http://up.qbox.me/',formData,config).then((res)=>{
+                    this.$http.post('https://up.qbox.me',formData,config).then((res)=>{
                       this.pic_hash_arr.push(res.data.hash)
                       if(this.pic_hash_arr.length == this.picArr.length){
                         fn(this.picArr[i].name)
@@ -120,15 +137,15 @@
                 }
               }
               upload_enclosure_new((name)=>{
-                let nparam = new URLSearchParams()
-                nparam.append('uid',this.user.uid)
-                nparam.append('picture',JSON.stringify(this.pic_hash_arr))
-                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                let param = new URLSearchParams()
+                param.append('uid',this.user.uid)
+                param.append('picture',JSON.stringify(this.pic_hash_arr))
+                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',param)
                   .then((res)=>{
                     this.afile_hash_arr.push({
                       'type':3,
                       'contract_id':res.data.data.enclosure_id,
-                      name
+                      name,
                     })
                     let aDate = Date.parse(new Date())
                     this.pic_times = aDate
@@ -164,7 +181,7 @@
                         'contract_id':res.data.data.attachments_id,
                         'name':this.fileArr[i].name
                       })
-                      if(this.file_hash_arr.length == this.picArr.length){
+                      if(this.file_hash_arr.length == this.fileArr.length){
                         let bDate = Date.parse(new Date())
                         this.file_times = bDate
                       }
@@ -181,7 +198,7 @@
                       let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) != -1){
-                        if(size<maxSize){
+                        if(size < maxSize){
                           this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
                             let file_name = this.fileArr[i].name.slice(0,index)
                             let param = new URLSearchParams()
@@ -217,7 +234,7 @@
               }
             }
           }
-        },500)
+        })
       },
       file_times(){
         if(this.picArr.length != 0){
@@ -228,17 +245,17 @@
         if(this.pic_times != 0 || this.file_times != 0){
           let param = new URLSearchParams()
           param.append('uid',this.user.uid)
-          param.append('content',this.cpj_ruleForm.content)
-          param.append('chengpi_num',this.cpj_ruleForm.chengpi_num)
-          param.append('title',this.cpj_ruleForm.title)
+          param.append('title',this.bxd_ruleForm.title)
+          param.append('money',this.bxd_ruleForm.money)
+          param.append('big_money',this.bxd_ruleForm.big_money)
+          param.append('content',JSON.stringify(this.bxd_ruleForm.add))
           param.append('handler_uid',this.$parent.u_id)
-          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.pic_hash_arr]))
-          this.$http.post('index.php/Mobile/personal/add_personal_chengpi',param)
+          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
             .then((res)=>{
               this.loadingShow = false
               if(res.data.code == 0){
                 this.add_ok()
-                this.$refs.cpj_ruleForm.resetFields()
+                this.$refs.bxd_ruleForm.resetFields()
                 this.$parent._reInfo()
               }else{
                 this.add_fail()
@@ -252,19 +269,20 @@
             return
           }
         }
-        if(this.file_times != 0 || this.pic_time != 0){
+        if(this.pic_times != 0 || this.file_times != 0){
           let param = new URLSearchParams()
           param.append('uid',this.user.uid)
-          param.append('content',this.cpj_ruleForm.content)
-          param.append('chengpi_num',this.cpj_ruleForm.chengpi_num)
-          param.append('title',this.cpj_ruleForm.title)
+          param.append('title',this.bxd_ruleForm.title)
+          param.append('money',this.bxd_ruleForm.money)
+          param.append('big_money',this.bxd_ruleForm.big_money)
+          param.append('content',JSON.stringify(this.bxd_ruleForm.add))
           param.append('handler_uid',this.$parent.u_id)
-          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.pic_hash_arr]))
+          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
             .then((res)=>{
               this.loadingShow = false
               if(res.data.code == 0){
                 this.add_ok()
-                this.$refs.cpj_ruleForm.resetFields()
+                this.$refs.bxd_ruleForm.resetFields()
                 this.$parent._reInfo()
               }else{
                 this.add_fail()

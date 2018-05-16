@@ -287,6 +287,21 @@
 			loading
 		},
 		methods: {
+      resetForm(){
+        this.$refs.qgd_ruleForm.resetFields();
+        this.qgd_ruleForm.total = ''
+        let arr = this.qgd_ruleForm.add
+        for(var i = 0;i<arr.length;i++){
+          arr[i].name = ''
+          arr[i].spec = ''
+          arr[i].unit = ''
+          arr[i].model = ''
+          arr[i].num = ''
+          arr[i].price = ''
+          arr[i].subtotal = ''
+          arr[i].purpose = ''
+        }
+      },
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
@@ -913,7 +928,7 @@
                 this.loadingShow = false
                 if(res.data.code == 0){
                   this.add_ok()
-                  this.$refs.qgd_ruleForm.resetFields();
+                  this.resetForm()
                   this.$parent._reInfo()
                 }else{
                   this.add_fail()
@@ -1201,7 +1216,7 @@
               this.loadingShow = false
               if(res.data.code == 0){
                 this.add_ok()
-                this.$refs.qgd_ruleForm.resetFields();
+                this.resetForm()
                 this.$parent._reInfo()
               }else{
                 this.add_fail()
@@ -1238,7 +1253,7 @@
               this.loadingShow = false
               if(res.data.code == 0){
                 this.add_ok()
-                this.$refs.qgd_ruleForm.resetFields();
+                this.resetForm()
                 this.$parent._reInfo()
               }else{
                 this.add_fail()

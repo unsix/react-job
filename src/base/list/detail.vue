@@ -135,6 +135,7 @@
       <qgds class="qgd_s" ref="qgd" v-show="qgd_if"></qgds>
       <qkds class="qkd_s" ref="qkd" v-show="qkd_if"></qkds>
       <cpjs class="cpj_s" ref="cpj" v-show="cpj_if"></cpjs>
+      <bxds class="bxd_s" ref="bxd" v-show="bxd_if"></bxds>
     </div>
 
   </div>
@@ -150,6 +151,7 @@
   import qgds from '@/base/add_approval/add_qgd'
   import qkds from '@/base/add_approval/add_qkd'
   import cpjs from '@/base/add_approval/add_cpj'
+  import bxds from '@/base/add_approval/add_bxd'
   export default {
   data(){
     return{
@@ -191,7 +193,8 @@
       pageIndex:1,
       approval_type:'',
       nextPageShow:true,
-      cpj_if:false
+      cpj_if:false,
+      bxd_if:false
     }
   },
   methods:{
@@ -466,7 +469,16 @@
           this.$refs.cpj.insert = '6'
           this.con_title = '呈批件'
           break;
-
+        case '报销单':
+          this.top_if = true
+          this.bxd_if = true
+          this.deta = false
+          this.infos = false
+          this.wideShow = false
+          this.contr = false
+          this.$refs.bxd.insert = '6'
+          this.con_title = '报销单'
+          break;
       }
     },
     show_opus(){
@@ -484,8 +496,10 @@
       this.infos = true
       this.$refs.qgd.insert = '0'
       this.$refs.cpj.insert = '0'
+      this.$refs.bxd.insert = '0'
       this.qgd_if = false
       this.top_if = false
+      this.bxd_if = false
       this.con_title = ''
     },
     check_add(pr){
@@ -563,7 +577,8 @@
     opus,
     qgds,
     qkds,
-    cpjs
+    cpjs,
+    bxds
   },
   computed: {
     ...mapGetters([
@@ -863,6 +878,11 @@
     padding-bottom: 20px;
   }
   .cpj_s{
+    width: 96%;
+    margin: 20px auto;
+    padding-bottom: 20px;
+  }
+  .bxd_s{
     width: 96%;
     margin: 20px auto;
     padding-bottom: 20px;

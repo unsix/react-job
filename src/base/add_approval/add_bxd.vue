@@ -4,7 +4,7 @@
       <el-form-item label="标题" prop="title">
         <el-input v-model="bxd_ruleForm.title"></el-input>
       </el-form-item>
-      <el-form-item label="项目负责人(部门经理)">
+      <el-form-item label="项目负责人(部门经理)" v-if="insert == '0'">
         <el-select v-model="bxd_ruleForm.project_manager_name" placeholder="请选择" @change="bxdSelectOk">
           <el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
             <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
@@ -110,7 +110,10 @@
             pic_index: 0,
             img_arr: [],
             pic_enclosure_id: '',
-            str:''
+            str:'',
+            insert:'0',
+            pic_times:0,
+            file_times:0
           }
         },
         props: {
@@ -137,6 +140,20 @@
         methods:{
           handleRemove(file,fileList){
             this.fileList = fileList
+          },
+          resetForm(){
+            this.$refs.bxd_ruleForm.resetFields()
+            this.bxd_ruleForm.money = ''
+            this.bxd_ruleForm.big_money =''
+            var arr = this.bxd_ruleForm.add
+            for(var i = 0;i<arr.length ;i++){
+              arr[i].month_day = ''
+              arr[i].content = ''
+              arr[i].amount = ''
+              arr[i].price = ''
+              arr[i].remarks = ''
+              arr[i].big_price = ''
+            }
           },
           handlePreview(file,fileList){
             if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
@@ -295,6 +312,10 @@
               message: '添加失败',
               type: 'error'
             })
+            var arr = this.bxd_ruleForm.add
+            for(var i = 0;i<arr.length;i++){
+              arr[i].month_day = ''
+            }
           },
           ctrl_pic_show(index){
             this.pic_index = index
@@ -365,10 +386,15 @@
               if(valid) {
                 this.$confirm('确定总额为' + this.bxd_ruleForm.money + '吗', '提示', {
                   confirmButtonText: '确定',
-                  cancelButtonText: '取消'
+                  cancelButtonText: '取消',
+                  type:'warning'
                 }).then(()=>{
-                  this.bxd_submit()
-                  this.loading_show = true
+                  if(this.insert == '0'){
+                    this.bxd_submit()
+                  }else if(this.insert == '6'){
+                    this.bxds_submit()
+                  }
+                  this.loadingShow = true
                 }).catch(()=>{
                   this.$message({
                     type: 'info',
@@ -582,7 +608,181 @@
                 }
               }
             },500)
-          }
+          },
+          bxds_submit(){
+            this.picArr = []
+            this.fileArr = []
+            this.fileList.forEach((item)=>{
+              if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf('图像') != '-1'){
+                this.picArr.push(item)
+              }
+            })
+            this.fileList_a.forEach((item)=>{
+              this.fileArr.push(item)
+            })
+            let stuf = this.bxd_ruleForm.add
+            for(var i = 0;i<stuf.length;i++){
+              let timestamp = Date.parse(new Date(stuf[i].month_day))
+              let date = new Date()
+              date.setTime(timestamp)
+              let y = date.getFullYear()
+              let m = date.getMonth() + 1
+              m = m < 10 ? ('0' + m) : m
+              let d = date.getDate()
+              d = d < 10 ? ('0' + d) : d
+              stuf[i].month_day = y + '-' + m + '-' + d
+            }
+            this.pic_hash_arr = []
+            this.afile_hash_arr = []
+            this.file_hash_arr = []
+            this.file_times = 0
+            this.pic_times = 0
+            this.loadingShow = true
+            setTimeout(()=>{
+              if(this.picArr.length == 0 && this.fileArr.length == 0){
+                let param = new URLSearchParams()
+                param.append('uid',this.user.uid)
+                param.append('title',this.bxd_ruleForm.title)
+                param.append('money',this.bxd_ruleForm.money)
+                param.append('big_money',this.bxd_ruleForm.big_money)
+                param.append('content',JSON.stringify(this.bxd_ruleForm.add))
+                param.append('handler_uid',this.$parent.u_id)
+                this.$http.post('index.php/Mobile/personal/add_baoxiao',param)
+                  .then((res)=>{
+                    this.loadingShow = false
+                    if(res.data.code == 0){
+                      this.add_ok()
+                      this.resetForm()
+                      this.$parent._reInfo()
+                    }else{
+                      this.add_fail()
+                    }
+                  })
+              }else{
+                if(this.picArr.length != 0){
+                  var upload_enclosure_new = (fn) =>{
+                    for(let i = 0;i<this.picArr.length;i++){
+                      let formData = new FormData()
+                      formData.append('file',this.picArr[i].raw)
+                      formData.append('token',this.token)
+                      let config = {
+                        headers:{
+                          'Content-Type':'multipart/form-data'
+                        }
+                      }
+                      if(!this.picArr[i].size){
+                        this.pic_hash_arr.push(this.picArr[i].hash)
+                        this.pic_hash_arr.length == this.picArr.length && fn(this.picArr[i].name)
+                      }else{
+                        this.$http.post('https://up.qbox.me',formData,config).then((res)=>{
+                          this.pic_hash_arr.push(res.data.hash)
+                          if(this.pic_hash_arr.length == this.picArr.length){
+                            fn(this.picArr[i].name)
+                          }
+                        })
+                      }
+                    }
+                  }
+                  upload_enclosure_new((name)=>{
+                    let param = new URLSearchParams()
+                    param.append('uid',this.user.uid)
+                    param.append('picture',JSON.stringify(this.pic_hash_arr))
+                    this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',param)
+                      .then((res)=>{
+                        this.afile_hash_arr.push({
+                          'type':3,
+                          'contract_id':res.data.data.enclosure_id,
+                          name,
+                        })
+                        let aDate = Date.parse(new Date())
+                        this.pic_times = aDate
+                      })
+                  })
+                }
+                if(this.fileArr.length != 0){
+                  for(let i = 0;i<this.fileArr.length;i++){
+                    let formData = new FormData()
+                    formData.append('file',this.fileArr[i].raw)
+                    formData.append('token',this.token)
+                    let config = {
+                      headers:{
+                        'Content-Type':'multipart/form-data'
+                      }
+                    }
+                    if(!this.fileArr[i].size){
+                      let index = this.fileArr[i].name.lastIndexOf('.')
+                      let attribute = this.fileArr[i].name.slice(index)
+                      if(attribute.substr(0,1) == '.'){
+                        attribute = attribute.substr(1)
+                      }
+                      let file_name = this.fileArr[i].name.slice(0,index)
+                      let param = new URLSearchParams()
+                      param.append('uid',this.user.uid)
+                      param.append('attribute',attribute)
+                      param.append('attachments',this.fileArr[i].hash)
+                      param.append('file_name',file_name)
+                      this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                        .then((res)=>{
+                          this.file_hash_arr.push({
+                            'type':4,
+                            'contract_id':res.data.data.attachments_id,
+                            'name':this.fileArr[i].name
+                          })
+                          if(this.file_hash_arr.length == this.fileArr.length){
+                            let bDate = Date.parse(new Date())
+                            this.file_times = bDate
+                          }
+                        })
+                    }else{
+                      let size = this.fileArr[i].size
+                      let index = this.fileArr[i].name.lastIndexOf('.')
+                      let attribute = this.fileArr[i].name.slice(index)
+                      if(attribute.substr(0,1) == '.'){
+                        attribute = attribute.substr(1)
+                      }
+                      this.$http.post('/index.php/Mobile/find/file_info')
+                        .then((res)=>{
+                          let maxSize = res.data.data.max
+                          let attr = res.data.data.attribute
+                          if(attr.indexOf(attribute) != -1){
+                            if(size < maxSize){
+                              this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
+                                let file_name = this.fileArr[i].name.slice(0,index)
+                                let param = new URLSearchParams()
+                                param.append('uid',this.user.uid)
+                                param.append('attribute',attribute)
+                                param.append('attachments',res.data.hash)
+                                param.append('file_name',file_name)
+                                this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                                  .then((res)=>{
+                                    this.file_hash_arr.push({
+                                      'type':4,
+                                      'contract_id':res.data.data.attachments_id,
+                                      'name':this.fileArr[i].name
+                                    })
+                                    if(this.file_hash_arr.length == this.fileArr.length){
+                                      let bDate = Date.parse(new Date())
+                                      this.file_times = bDate
+                                    }
+                                  })
+                              })
+                            }else{
+                              this.$message.error('上传文件过大 请删除')
+                              this.loadingShow = false
+                              return false
+                            }
+                          }else{
+                            this.$message.error('请删除'+this.fileArr[i].name)
+                            this.loadingShow = false
+                            return false
+                          }
+                        })
+                    }
+                  }
+                }
+              }
+            })
+          },
         },
         watch:{
           file_time(){
@@ -648,6 +848,60 @@
                       path: '/work/exam'
                     })
                   } else {
+                    this.add_fail()
+                  }
+                })
+            }
+          },
+          file_times(){
+            if(this.picArr.length != 0){
+              if(this.pic_times == 0){
+                return
+              }
+            }
+            if(this.pic_times != 0 || this.file_times != 0){
+              let param = new URLSearchParams()
+              param.append('uid',this.user.uid)
+              param.append('title',this.bxd_ruleForm.title)
+              param.append('money',this.bxd_ruleForm.money)
+              param.append('big_money',this.bxd_ruleForm.big_money)
+              param.append('content',JSON.stringify(this.bxd_ruleForm.add))
+              param.append('handler_uid',this.$parent.u_id)
+              param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
+                .then((res)=>{
+                  this.loadingShow = false
+                  if(res.data.code == 0){
+                    this.add_ok()
+                    this.resetForm()
+                    this.$parent._reInfo()
+                  }else{
+                    this.add_fail()
+                  }
+                })
+            }
+          },
+          pic_times(){
+            if(this.fileArr.length != 0){
+              if(this.file_times == 0){
+                return
+              }
+            }
+            if(this.pic_times != 0 || this.file_times != 0){
+              let param = new URLSearchParams()
+              param.append('uid',this.user.uid)
+              param.append('title',this.bxd_ruleForm.title)
+              param.append('money',this.bxd_ruleForm.money)
+              param.append('big_money',this.bxd_ruleForm.big_money)
+              param.append('content',JSON.stringify(this.bxd_ruleForm.add))
+              param.append('handler_uid',this.$parent.u_id)
+              param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
+                .then((res)=>{
+                  this.loadingShow = false
+                  if(res.data.code == 0){
+                    this.add_ok()
+                    this.resetForm()
+                    this.$parent._reInfo()
+                  }else{
                     this.add_fail()
                   }
                 })
