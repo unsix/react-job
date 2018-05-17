@@ -1,6 +1,6 @@
 
 export default class personal_list{
-  constructor({add_time,approval_personal_id,approval_state,is_del,title,type,type_id}){
+  constructor({add_time,approval_enclosure,approval_personal_id,approval_state,found_id,handler_uid,is_del,opinion,title,type,type_id}){
     this.add_time = add_time
     this.approval_personal_id = approval_personal_id
     this.approval_state = approval_state
@@ -8,6 +8,10 @@ export default class personal_list{
     this.title = title
     this.type = type
     this.type_id = type_id
+    this.approval_enclosure = approval_enclosure
+    this.found_id = found_id
+    this.handler_uid= handler_uid
+    this.opinion= opinion
   }
 }
 function get_data(time){
@@ -26,29 +30,13 @@ function get_state(state){
   }
 }
 function get_type(type){
-  if(type === '0'){
-    return '请款单'
-  }else if(type === '1'){
-    return '合同评审表'
-  }else if(type === '2'){
-    return '合同评审表'
-  }else if(type === '3'){
+  if(type === '1'){
     return '请购单'
-  }else if(type === '5'){
-    return '申请公章'
-  }else if(type === '6'){
+  }else if(type == '2'){
+    return '请款单'
+  }else if(type == '3'){
     return '呈批件'
-  }else if(type === '7'){
-    return '请购单'
-  }else if(type === '8'){
-    return '请款单'
-  }else if(type === '9'){
-    return '请款单'
-  }else if(type === '111'){
-    return '合同评审表'
-  }else if(type === '10'){
-    return '请购单'
-  } else if(type === '11'){
+  }else if(type == '4'){
     return '报销单'
   }
 }
@@ -60,7 +48,11 @@ export function create_personal_list(item) {
     is_del:item.is_del,
     title:item.title,
     type:get_type(item.type),
-    type_id:item.type_id
+    type_id:item.type_id,
+    approval_enclosure:item.approval_enclosure,
+    found_id:item.found_id,
+    handler_uid:item.handler_uid,
+    opinion:item.opinion
   })
 }
 

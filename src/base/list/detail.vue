@@ -133,7 +133,7 @@
         <b @click="_righted" style="cursor: pointer">从模板选择</b>
       </div>
       <qgds class="qgd_s" ref="qgd" v-show="qgd_if"></qgds>
-      <qkds class="qkd_s" ref="qkd" v-show="qkd_if"></qkds>
+      <qkds class="qkd_s" :form_approval_id="form_approval_id" :request_money_basis_type="request_money_basis_type" ref="qkd" v-show="qkd_if"></qkds>
       <cpjs class="cpj_s" ref="cpj" v-show="cpj_if"></cpjs>
       <bxds class="bxd_s" ref="bxd" v-show="bxd_if"></bxds>
     </div>
@@ -194,7 +194,9 @@
       approval_type:'',
       nextPageShow:true,
       cpj_if:false,
-      bxd_if:false
+      bxd_if:false,
+      form_approval_id:'',
+      request_money_basis_type:''
     }
   },
   methods:{
@@ -497,6 +499,8 @@
       this.$refs.qgd.insert = '0'
       this.$refs.cpj.insert = '0'
       this.$refs.bxd.insert = '0'
+      this.$refs.qkd.insert = '0'
+      this.qkd_if = false
       this.qgd_if = false
       this.top_if = false
       this.bxd_if = false
@@ -540,15 +544,12 @@
       param.append('type',2)
       this.$http.post('index.php/Mobile/personal/select_personal_approval',param)
         .then((res)=>{
-          console.log(res.data.code)
           if(res.data.code == 0){
             let arr = []
             res.data.data.forEach((item) => {
-              console.log(item)
               arr.push(create_personal_list(item))
             })
             this.untreated = arr
-            console.log(this.untreated)
             this.at_qingkuanShow = true
             if(arr.length < 10) {
               this.nextPageShow = false
@@ -564,7 +565,18 @@
 
     },
     qkUser(item){
-      console.log(item)
+      this.form_approval_id = ''
+      this.form_approval_id = item.approval_personal_id
+      this.request_money_basis_type = item.type
+      this.qkd_if = true
+      this.top_if = true
+      this.deta = false
+      this.infos = false
+      this.wideShow = false
+      this.contr = false
+      this.$refs.qkd.insert = '6'
+      this.con_title = '请款单'
+      this.at_qingkuanShow = false
     }
   },
   mounted(){
