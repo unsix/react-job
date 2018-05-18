@@ -105,7 +105,7 @@
 				pic_index: 0,
 				img_arr: [],
 				pic_enclosure_id: '',
-        res:''
+        res:'',
 			}
 		},
 		props: {
@@ -249,6 +249,8 @@
           })
       },
 			initial_data() {
+
+        console.log('--------1')
 				if(!this.approval_id) {
 					return
 				}
@@ -371,7 +373,7 @@
 				})
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-						this.cpj_submit()
+            this.cpj_submit()
 						this.loading_show = true
 					} else {
 						this.$message.error('请将表单填写完整');
@@ -656,7 +658,7 @@
 							}
 						})
 				}
-			}
+			},
 		}
 	}
 </script>

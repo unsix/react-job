@@ -106,7 +106,8 @@
 					<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
 				</div>
 			</div>
-		</div>
+
+			</div>
 		<div v-if="form_Listb.finance">
 			<span>表单回执：</span>
 			<br />
@@ -143,11 +144,10 @@
 				pic_show: false,
 				loading_show: false,
 				input_value: '',
-				handle_txt: '',
 				pic_hash: '',
 				now_personnel_id: 0,
 				pic_hash_arr: [],
-        arr_list: []
+        arr_list: [],
 			}
 		},
 		props: {

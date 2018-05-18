@@ -241,7 +241,6 @@
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
-              console.log(this.form_Lista)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
@@ -318,7 +317,6 @@
         this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
           .then((res)=>{
             this.main_show = res.data.data
-            console.log(this.main_show)
             this.$refs.scse.showMe()
           })
 
@@ -368,7 +366,6 @@
 					this.approval_id1 = item.approval_id
 					this.psb_show = true
 				} else if(item.type === '请购单') {
-					console.log(item.approval_id)
 					this.approval_id2 = item.approval_id
 					this.qgd_show = true
 				} else if(item.type === '呈批件') {

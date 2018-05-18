@@ -110,7 +110,7 @@
             pic_index: 0,
             img_arr: [],
             pic_enclosure_id: '',
-            str:''
+            str:'',
           }
         },
         props: {
@@ -137,6 +137,20 @@
         methods:{
           handleRemove(file,fileList){
             this.fileList = fileList
+          },
+          resetForm(){
+            this.$refs.bxd_ruleForm.resetFields()
+            this.bxd_ruleForm.money = ''
+            this.bxd_ruleForm.big_money =''
+            var arr = this.bxd_ruleForm.add
+            for(var i = 0;i<arr.length ;i++){
+              arr[i].month_day = ''
+              arr[i].content = ''
+              arr[i].amount = ''
+              arr[i].price = ''
+              arr[i].remarks = ''
+              arr[i].big_price = ''
+            }
           },
           handlePreview(file,fileList){
             if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
@@ -295,6 +309,10 @@
               message: '添加失败',
               type: 'error'
             })
+            var arr = this.bxd_ruleForm.add
+            for(var i = 0;i<arr.length;i++){
+              arr[i].month_day = ''
+            }
           },
           ctrl_pic_show(index){
             this.pic_index = index
@@ -365,10 +383,11 @@
               if(valid) {
                 this.$confirm('确定总额为' + this.bxd_ruleForm.money + '吗', '提示', {
                   confirmButtonText: '确定',
-                  cancelButtonText: '取消'
+                  cancelButtonText: '取消',
+                  type:'warning'
                 }).then(()=>{
                   this.bxd_submit()
-                  this.loading_show = true
+                  this.loadingShow = true
                 }).catch(()=>{
                   this.$message({
                     type: 'info',
@@ -582,7 +601,7 @@
                 }
               }
             },500)
-          }
+          },
         },
         watch:{
           file_time(){
@@ -652,7 +671,7 @@
                   }
                 })
             }
-          }
+          },
         }
       }
 </script>

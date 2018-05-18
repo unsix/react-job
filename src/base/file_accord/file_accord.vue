@@ -40,10 +40,10 @@
 			<div v-if="form_Lista.consignee_phone">
 				<span>收货人联系方式：</span><span>{{form_Lista.consignee_phone}}</span>
 			</div>
-			<div v-if="form_Lista.project_manager_name">
+			<div v-if="form_Lista.project_manager_name ">
 				<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 			</div>
-			<div v-if="form_Listb.content === []" v-for="item in form_Lista.content" class="qingdan_qinggou">
+			<div v-if="form_Lista.content.length != 0" v-for="item in form_Lista.content" class="qingdan_qinggou">
 				<h4>请购清单</h4>
 				<p>请购名称：<span>{{item.name}}</span></p>
 				<p>规格：<span>{{item.spec}}</span></p>
@@ -292,7 +292,7 @@
 						<span>时间</span>
 					</div>
 				</div>
-				<div v-for="item in form_Listb.content">
+				<div  v-for="item in form_Listb.content">
 					<div class="exam_info">
 						<div class="avatar">
 							<span>{{item.is_agree}}</span>
@@ -310,8 +310,9 @@
 					<div>
 						<img :src="list" alt="" v-for="(list,index) in item.picture"  />
 					</div>
-				</div>
-			</div>
+				</div >
+
+      </div>
 		</div>
 
     <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
@@ -326,6 +327,7 @@
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
+  import { create_approval_personal_list } from "@/common/js/approval/approval_personal_list";
   import browsePic from '@/base/browse_pic/browse_pic'
 	import { mapGetters } from 'vuex'
 	export default {
@@ -358,7 +360,7 @@
 				type: '',
         pic_index: 0,
         pic_show: false,
-        arr_list: []
+        arr_list: [],
 			}
 
 		},
@@ -371,8 +373,7 @@
 		},
 		methods: {
 			zz() {
-				console.log(this.request_money_basis_type)
-				this.getData()
+        this.getData()
 				if(!this.request_money_basis_type) {
 					this.type = '请购单'
 				} else {
@@ -553,7 +554,13 @@
 			margin: 50px auto;
 			height: 600px;
 			.close {
-				float: right;
+        width: 100%;
+        height: 40px;
+        button{
+          float: right;
+          margin-right: 20px;
+        }
+        padding-bottom: 10px;
 			}
 			>.top {
 				width: 100%;

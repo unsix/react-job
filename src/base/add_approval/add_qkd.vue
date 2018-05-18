@@ -1,7 +1,7 @@
 <template>
 	<div class="qingkuan">
-		<div class="as">
-			<el-button type="primary" plain @click="fileAccordS" v-show="form_approval_id != 0">依据附件</el-button>
+		<div class="as" ref="btn">
+			<el-button type="primary"  plain @click="fileAccordS" v-show="form_approval_id != 0">依据附件</el-button>
 		</div>
 		<el-form :model="qkd_ruleForm" :rules="rules" ref="qkd_ruleForm" label-width="150px" class="demo-qkd_ruleForm">
 			<el-form-item label="工程名称" prop="contract_name">
@@ -214,7 +214,7 @@
 				img_arr: [],
 				pic_enclosure_id: '',
 				fileAccordShow: false,
-        str:''
+        str:'',
 			}
 		},
 		props: {
@@ -471,17 +471,13 @@
 			submitForm_qkd(formName) {
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-						this.qkd_submit()
+            this.qkd_submit()
 						this.loading_show = true
 					} else {
 						this.$message.error('请将表单填写完整');
 						return false;
 					}
 				});
-        // if(this.picArr.length === 0 && this.fileArr.length === 0){
-        //   this.$message.error('请上传附件')
-        //   return false
-        // }
 			},
 			qkd_submit() {
 				this.picArr = []
@@ -494,7 +490,7 @@
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-        if(this.picArr.length === 0 && this.fileArr.length === 0){
+        if(this.picArr.length === 0 || this.fileArr.length === 0){
           this.$message.error('请上传附件')
           return false
         }
@@ -684,7 +680,7 @@
 						}
 					}
 				}, 500)
-			}
+			},
 		},
     created() {
       this._getToken()
@@ -785,7 +781,7 @@
 							}
 						})
 				}
-			}
+			},
 		}
 	}
 </script>
@@ -794,10 +790,11 @@
 	.qingkuan {
 		.as {
 			display: block;
+      height: 20px;
 			button {
 				position: relative;
-				bottom: 50px;
-				left: 450px;
+        bottom: 65px;
+        left: 450px;
 			}
 		}
     .el-select {
