@@ -1,7 +1,7 @@
 <template>
 	<div class="chengpijian" >
 		<el-form v-show="true" :model="cpj_ruleForm" :rules="cpj_rules" ref="cpj_ruleForm" label-width="150px" class="demo-cpj_ruleForm">
-			<el-form-item label="呈批部门" prop="department_name" v-if="insert == 0">
+			<el-form-item label="呈批部门" prop="department_name">
 				<el-select v-model="cpj_ruleForm.department_name" placeholder="请选择呈批部门">
 					<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
 				</el-select>
@@ -15,7 +15,7 @@
 			<el-form-item label="主题内容" prop="content">
 				<el-input v-model="cpj_ruleForm.content"></el-input>
 			</el-form-item>
-			<el-form-item label="项目负责人(部门经理)" v-if="insert == 0">
+			<el-form-item label="项目负责人(部门经理)">
 
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
 					<el-option v-for="item in comPersonList"
@@ -106,9 +106,6 @@
 				img_arr: [],
 				pic_enclosure_id: '',
         res:'',
-        insert:'0',
-        pic_times:0,
-        file_times:0
 			}
 		},
 		props: {
@@ -252,6 +249,8 @@
           })
       },
 			initial_data() {
+
+        console.log('--------1')
 				if(!this.approval_id) {
 					return
 				}
@@ -374,11 +373,7 @@
 				})
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-					  if(this.insert == '0'){
-              this.cpj_submit()
-            }else if(this.insert == '6'){
-					    this.cpjs_submit()
-            }
+            this.cpj_submit()
 						this.loading_show = true
 					} else {
 						this.$message.error('请将表单填写完整');
@@ -597,167 +592,6 @@
 					}
 				},500)
 			},
-      cpjs_submit(){
-        this.picArr = []
-        this.fileArr = []
-        this.fileList.forEach((item)=>{
-          if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf('图像') != '-1'){
-            this.picArr.push(item)
-          }
-        })
-        this.fileList_a.forEach((item)=>{
-          this.fileArr.push(item)
-        })
-        this.pic_hash_arr = []
-        this.afile_hash_arr = []
-        this.file_hash_arr = []
-        this.file_times = 0
-        this.pic_times = 0
-        this.loadingShow = true
-        setTimeout(()=>{
-          if(this.picArr.length == 0 && this.fileArr.length == 0){
-            let param = new URLSearchParams()
-            param.append('uid',this.user.uid)
-            param.append('content',this.cpj_ruleForm.content)
-            param.append('chengpi_num',this.cpj_ruleForm.chengpi_num)
-            param.append('title',this.cpj_ruleForm.title)
-            param.append('handler_uid',this.$parent.u_id)
-            this.$http.post('index.php/Mobile/personal/add_personal_chengpi',param)
-              .then((res)=>{
-                this.loadingShow = false
-                if(res.data.code == 0){
-                  this.add_ok()
-                  this.$refs.cpj_ruleForm.resetFields()
-                  this.$parent._reInfo()
-                }else{
-                  this.add_fail()
-                }
-              })
-          }else{
-            if(this.picArr.length != 0){
-              var upload_enclosure_new = (fn) =>{
-                for(let i = 0;i<this.picArr.length;i++){
-                  let formData = new FormData
-                  formData.append('file',this.picArr[i].raw)
-                  formData.append('token',this.token)
-                  let config = {
-                    headers:{
-                      'Content-Type':'multipart/form-data'
-                    }
-                  }
-                  if(!this.picArr[i].size){
-                    this.pic_hash_arr.push(this.picArr[i].hash)
-                    this.pic_hash_arr.length == this.picArr.length && fn(this.picArr[i].name)
-                  }else{
-                    this.$http.post('http://up.qbox.me/',formData,config).then((res)=>{
-                      this.pic_hash_arr.push(res.data.hash)
-                      if(this.pic_hash_arr.length == this.picArr.length){
-                        fn(this.picArr[i].name)
-                      }
-                    })
-                  }
-                }
-              }
-              upload_enclosure_new((name)=>{
-                let nparam = new URLSearchParams()
-                nparam.append('uid',this.user.uid)
-                nparam.append('picture',JSON.stringify(this.pic_hash_arr))
-                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
-                  .then((res)=>{
-                    this.afile_hash_arr.push({
-                      'type':3,
-                      'contract_id':res.data.data.enclosure_id,
-                      name
-                    })
-                    let aDate = Date.parse(new Date())
-                    this.pic_times = aDate
-                  })
-              })
-            }
-            if(this.fileArr.length != 0){
-              for(let i = 0;i<this.fileArr.length;i++){
-                let formData = new FormData
-                formData.append('file',this.fileArr[i].raw)
-                formData.append('token',this.token)
-                let config = {
-                  headers:{
-                    'Content-Type':'multipart/form-data'
-                  }
-                }
-                if(!this.fileArr[i].size){
-                  let index = this.fileArr[i].name.lastIndexOf('.')
-                  let attribute = this.fileArr[i].name.slice(index)
-                  if(attribute.substr(0,1) == '.'){
-                    attribute = attribute.substr(1)
-                  }
-                  let file_name = this.fileArr[i].name.slice(0,index)
-                  let param = new URLSearchParams()
-                  param.append('uid',this.user.uid)
-                  param.append('attribute',attribute)
-                  param.append('attachments',this.fileArr[i].hash)
-                  param.append('file_name',file_name)
-                  this.$http.post('/index.php/Mobile/approval/add_attachments',param)
-                    .then((res)=>{
-                      this.file_hash_arr.push({
-                        'type':4,
-                        'contract_id':res.data.data.attachments_id,
-                        'name':this.fileArr[i].name
-                      })
-                      if(this.file_hash_arr.length == this.picArr.length){
-                        let bDate = Date.parse(new Date())
-                        this.file_times = bDate
-                      }
-                    })
-                }else{
-                  let size = this.fileArr[i].size
-                  let index = this.fileArr[i].name.lastIndexOf('.')
-                  let attribute = this.fileArr[i].name.slice(index)
-                  if(attribute.substr(0,1) == '.'){
-                    attribute = attribute.substr(1)
-                  }
-                  this.$http.post('/index.php/Mobile/find/file_info')
-                    .then((res)=>{
-                      let maxSize = res.data.data.max
-                      let attr = res.data.data.attribute
-                      if(attr.indexOf(attribute) != -1){
-                        if(size<maxSize){
-                          this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
-                            let file_name = this.fileArr[i].name.slice(0,index)
-                            let param = new URLSearchParams()
-                            param.append('uid',this.user.uid)
-                            param.append('attribute',attribute)
-                            param.append('attachments',res.data.hash)
-                            param.append('file_name',file_name)
-                            this.$http.post('/index.php/Mobile/approval/add_attachments',param)
-                              .then((res)=>{
-                                this.file_hash_arr.push({
-                                  'type':4,
-                                  'contract_id':res.data.data.attachments_id,
-                                  'name':this.fileArr[i].name
-                                })
-                                if(this.file_hash_arr.length == this.fileArr.length){
-                                  let bDate = Date.parse(new Date())
-                                  this.file_times = bDate
-                                }
-                              })
-                          })
-                        }else{
-                          this.$message.error('上传文件过大 请删除')
-                          this.loadingShow = false
-                          return false
-                        }
-                      }else{
-                        this.$message.error('请删除'+this.fileArr[i].name)
-                        this.loadingShow = false
-                        return false
-                      }
-                    })
-                }
-              }
-            }
-          }
-        },500)
-      },
 		},
 		watch: {
 			file_time() {
@@ -825,61 +659,6 @@
 						})
 				}
 			},
-      file_times(){
-        if(this.picArr.length != 0){
-          if(this.pic_times == 0){
-            return
-          }
-        }
-        console.log(this.pic_times)
-        if(this.pic_times != 0 || this.file_times != 0){
-          let param = new URLSearchParams()
-          param.append('uid',this.user.uid)
-          param.append('content',this.cpj_ruleForm.content)
-          param.append('chengpi_num',this.cpj_ruleForm.chengpi_num)
-          param.append('title',this.cpj_ruleForm.title)
-          param.append('handler_uid',this.$parent.u_id)
-          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
-          this.$http.post('index.php/Mobile/personal/add_personal_chengpi',param)
-            .then((res)=>{
-              this.loadingShow = false
-              if(res.data.code == 0){
-                this.add_ok()
-                this.$refs.cpj_ruleForm.resetFields()
-                this.$parent._reInfo()
-              }else{
-                this.add_fail()
-              }
-            })
-        }
-      },
-      pic_times(){
-        if(this.fileArr.length != 0){
-          if(this.file_times == 0){
-            return
-          }
-        }
-        if(this.file_times != 0 || this.pic_times != 0){
-          let param = new URLSearchParams()
-          param.append('uid',this.user.uid)
-          param.append('content',this.cpj_ruleForm.content)
-          param.append('chengpi_num',this.cpj_ruleForm.chengpi_num)
-          param.append('title',this.cpj_ruleForm.title)
-          param.append('handler_uid',this.$parent.u_id)
-          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
-          this.$http.post('index.php/Mobile/personal/add_personal_chengpi',param)
-            .then((res)=>{
-              this.loadingShow = false
-              if(res.data.code == 0){
-                this.add_ok()
-                this.$refs.cpj_ruleForm.resetFields()
-                this.$parent._reInfo()
-              }else{
-                this.add_fail()
-              }
-            })
-        }
-      }
 		}
 	}
 </script>

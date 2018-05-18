@@ -40,7 +40,7 @@
 			<div v-if="form_Lista.consignee_phone">
 				<span>收货人联系方式：</span><span>{{form_Lista.consignee_phone}}</span>
 			</div>
-			<div v-if="form_Lista.project_manager_name && insert == '0'">
+			<div v-if="form_Lista.project_manager_name ">
 				<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 			</div>
 			<div v-if="form_Lista.content.length != 0" v-for="item in form_Lista.content" class="qingdan_qinggou">
@@ -80,15 +80,13 @@
 						<span>姓名</span>
 					</div>
 					<div class="name lzz">
-						<span v-if="insert == '0'">部门</span>
-            <span v-if="insert == '6'">时间</span>
+						<span>部门</span>
 					</div>
 					<div class="operation lzz">
-						<span v-if="insert == '0'">时间</span>
-            <span v-if="insert == '6'">回复</span>
+						<span>时间</span>
 					</div>
 				</div>
-				<div v-for="item in form_Listb.content"  v-if="insert == '0'">
+				<div v-for="item in form_Listb.content">
 					<div class="exam_info">
 						<div class="avatar">
 							<span>{{item.is_agree}}</span>
@@ -107,25 +105,6 @@
 						<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
 					</div>
 				</div>
-        <div v-if="insert == '6'">
-          <div class="exam_info">
-            <div class="avatar">
-              <span>{{form_Listb.approval_state}}</span>
-            </div>
-            <div class="name">
-              <span>{{form_Listb.handler_name}}</span>
-            </div>
-            <div class="tel">
-              <span>{{form_Listb.handle_time}}</span>
-            </div>
-            <div class="operation">
-              <span>{{form_Listb.opinion}}</span>
-            </div>
-          </div>
-          <div>
-            <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(item,index)" />
-          </div>
-        </div>
 			</div>
 			<div v-if="form_Listb.finance">
 				<span>表单回执：</span>
@@ -268,7 +247,7 @@
 			<div>
 				<span>呈批标题：</span><span>{{form_Lista.title}}</span>
 			</div>
-			<div v-if="insert == '0'">
+			<div>
 				<span>呈批部门：</span><span>{{form_Lista.department_name}}</span>
 			</div>
 			<div>
@@ -277,7 +256,7 @@
 			<div>
 				<span>主题内容：</span><span>{{form_Lista.content}}</span>
 			</div>
-			<div v-if="insert == '0'">
+			<div>
 				<span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
 			</div>
 			<div>
@@ -290,10 +269,10 @@
 					<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)"/>
 				</a>
 			</div>
-			<div v-if="insert == '0'">
+			<div>
 				<span>发起人：</span><span>{{form_Listb.found_name}}</span>
 			</div>
-			<div v-if="insert == '0'">
+			<div>
 				<span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
 						</span>
 			</div>
@@ -313,7 +292,7 @@
 						<span>时间</span>
 					</div>
 				</div>
-				<div v-if="insert == '0'" v-for="item in form_Listb.content">
+				<div  v-for="item in form_Listb.content">
 					<div class="exam_info">
 						<div class="avatar">
 							<span>{{item.is_agree}}</span>
@@ -332,25 +311,7 @@
 						<img :src="list" alt="" v-for="(list,index) in item.picture"  />
 					</div>
 				</div >
-        <div v-if="insert == '6'">
-          <div class="exam_info">
-            <div class="avatar">
-              <span>{{form_Listb.approval_state}}</span>
-            </div>
-            <div class="name">
-              <span>{{form_Listb.handler_name}}</span>
-            </div>
-            <div class="tel">
-              <span>{{form_Listb.handle_time}}</span>
-            </div>
-            <div class="operation">
-              <span>{{form_Listb.opinion}}</span>
-            </div>
-          </div>
-          <div>
-            <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(item,index)" />
-          </div>
-        </div>
+
       </div>
 		</div>
 
@@ -400,7 +361,6 @@
         pic_index: 0,
         pic_show: false,
         arr_list: [],
-        insert:'0'
 			}
 
 		},
@@ -413,13 +373,7 @@
 		},
 		methods: {
 			zz() {
-				console.log(this.request_money_basis_type)
-				if(this.$parent.insert == '0'){
-          this.getData()
-        }else if(this.$parent.insert == '6'){
-				  this.get_perData()
-        }
-        this.insert = this.$parent.insert
+        this.getData()
 				if(!this.request_money_basis_type) {
 					this.type = '请购单'
 				} else {
@@ -494,47 +448,6 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
-      get_perData(){
-        this.qgdShow = false
-        this.psbShow = false
-        this.cpjShow = false
-        let param = new URLSearchParams()
-        param.append('uid',this.user.uid)
-        param.append('approval_personal_id',this.form_approval_id)
-        this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
-          .then((res)=>{
-            if(this.type == '请购单'){
-              this.qgdShow = true
-              this.form_Lista = create_qinggoudan_list(res.data.data)
-              this.get_img(this.form_Lista.many_enclosure)
-              this.get_file(this.form_Lista.many_enclosure)
-            }else if(this.type == '呈批件'){
-              this.cpjShow = true
-              this.form_Lista = create_cengpijian_list(res.data.data)
-              this.get_img(this.form_Lista.many_enclosure)
-              this.get_file(this.form_Lista.many_enclosure)
-            }
-            let item = res.data.data.approval_content
-            if(item.picture_enclosure){
-              let arr = []
-              let zparam = new URLSearchParams()
-              zparam.append('enclosure_id',item.picture_enclosure)
-              this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
-                .then((res)=>{
-                  var current = this
-                  var judge = res.data.code
-                  getCro(judge,current)
-                  res.data.data.picture.forEach((item)=>{
-                    if(item != ''){
-                      arr.push(getPic(item))
-                    }
-                  })
-                })
-              res.data.data.approval_content.picture_enclosure = arr
-            }
-            this.form_Listb = create_approval_personal_list(res.data.data.approval_content)
-          })
-      },
 			//		获取图片
       get_img(many_enclosure) {
         if(!many_enclosure) {

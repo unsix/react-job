@@ -71,7 +71,7 @@
 					<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
 				</div>
 			</div>
-		</div>
+    </div>
 		<div class="menu" v-show="handle_show">
 			<el-button type="primary" plain @click="handle">处理</el-button>
 			<div class="button" v-show="menuShow">
@@ -103,7 +103,7 @@
 				pic_hash: '',
 				now_personnel_id: 0,
 				pic_hash_arr: [],
-        arr_list: []
+        arr_list: [],
 			}
 		},
 		props: {
@@ -235,7 +235,6 @@
 					}
 				}
 			},
-
 			refuse() {
 				if(this.handle_txt === '') {
 					this.$message.error('请填写回执内容');

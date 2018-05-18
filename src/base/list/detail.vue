@@ -132,26 +132,44 @@
         <p>{{con_title}}</p>
         <b @click="_righted" style="cursor: pointer">从模板选择</b>
       </div>
-      <qgds class="qgd_s" ref="qgd" v-show="qgd_if"></qgds>
-      <qkds class="qkd_s" :form_approval_id="form_approval_id" :request_money_basis_type="request_money_basis_type" ref="qkd" v-show="qkd_if"></qkds>
-      <cpjs class="cpj_s" ref="cpj" v-show="cpj_if"></cpjs>
-      <bxds class="bxd_s" ref="bxd" v-show="bxd_if"></bxds>
+      <qgds class="qgd_s" ref="qgd" v-if="qgd_if" :approval_id="approval_id"></qgds>
+      <qkds class="qkd_s" :form_approval_id="form_approval_id" :approval_id="approval_id" :request_money_basis_type="request_money_basis_type" ref="qkd" v-if="qkd_if"></qkds>
+      <cpjs class="cpj_s" ref="cpj" v-if="cpj_if" :approval_id="approval_id"></cpjs>
+      <bxds class="bxd_s" ref="bxd" v-if="bxd_if" :approval_id="approval_id"></bxds>
     </div>
 
+    <chooseTemplate v-if="chooseTemShow" ref="choosetem" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
+    <qgd :qk_return="qk_return" @return_qk="return_qk" ref="qgd_a" v-show="if_qgd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
+    <cpj v-show="if_cpj" :form_Lista="form_Lista" ref="cpj_a" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
+    <qkd :form_approval_id="form_approval_id" v-if="if_qkd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
+    <bxd v-if="if_bxd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
   </div>
 </template>
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import { getCro } from "@/common/js/crowd"
   import {getAvatar} from "../../common/js/avatar";
+  import {getPic} from '@/common/js/pic.js'
   import { create_personal_list } from '@/common/js/approval/personal'
+  import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
+  import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
+  import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
+  import { create_baoxiaodan_list} from "@/common/js/approval/baoxiaodan"
+  import { create_approval_personal_list } from "@/common/js/approval/approval_personal_list";
   import loading from '@/base/loading/loading'
   import ysd from '@/base/received/rece'
   import opus from '@/base/myOpus/opus'
-  import qgds from '@/base/add_approval/add_qgd'
-  import qkds from '@/base/add_approval/add_qkd'
-  import cpjs from '@/base/add_approval/add_cpj'
-  import bxds from '@/base/add_approval/add_bxd'
+  import qgds from '@/base/personal_approval/qgd_a'
+  import qkds from '@/base/personal_approval/qkd_a'
+  import cpjs from '@/base/personal_approval/cpj_a'
+  import bxds from '@/base/personal_approval/bxd_a'
+  import cpj from '@/base/personal_approval/cpj_b'
+  import qgd from '@/base/personal_approval/qgd_b'
+  import bxd from '@/base/personal_approval/bxd_b'
+  import qkd from '@/base/personal_approval/qkd_b'
+  import chooseTemplate from '@/base/personal_approval/inital'
+
   export default {
   data(){
     return{
@@ -196,7 +214,17 @@
       cpj_if:false,
       bxd_if:false,
       form_approval_id:'',
-      request_money_basis_type:''
+      request_money_basis_type:'',
+      if_cpj:false,
+      form_Lista:{},
+      form_Listb:{},
+      file_arr:[],
+      qk_return: false,
+      if_qgd:false,
+      chooseTemShow:false,
+      approval_id:'',
+      if_qkd:false,
+      if_bxd:false
     }
   },
   methods:{
@@ -455,7 +483,6 @@
           this.infos = false
           this.wideShow = false
           this.contr = false
-          this.$refs.qgd.insert = '6'
           this.con_title = '请购单'
           break;
         case '请款单':
@@ -468,7 +495,6 @@
           this.infos = false
           this.wideShow = false
           this.contr = false
-          this.$refs.cpj.insert = '6'
           this.con_title = '呈批件'
           break;
         case '报销单':
@@ -478,7 +504,6 @@
           this.infos = false
           this.wideShow = false
           this.contr = false
-          this.$refs.bxd.insert = '6'
           this.con_title = '报销单'
           break;
       }
@@ -491,19 +516,35 @@
       this.$refs.opus._getInfo()
     },
     _righted(){
-
+      this.top_if = false
+      this.cpj_if = false
+      this.qgd_if = false
+      this.qkd_if = false
+      this.bxd_if = false
+      switch (this.con_title){
+        case '请购单':
+          this.approval_type = 1
+          break;
+        case '请款单':
+          this.approval_type = 2
+          break;
+        case '呈批件':
+          this.approval_type = 3
+          break;
+        case '报销单':
+          this.approval_type = 4
+          break;
+      }
+      this.chooseTemShow = true
     },
     _reInfo(){
       this.deta = true
       this.infos = true
-      this.$refs.qgd.insert = '0'
-      this.$refs.cpj.insert = '0'
-      this.$refs.bxd.insert = '0'
-      this.$refs.qkd.insert = '0'
       this.qkd_if = false
       this.qgd_if = false
       this.top_if = false
       this.bxd_if = false
+      this.cpj_if = false
       this.con_title = ''
     },
     check_add(pr){
@@ -561,8 +602,47 @@
           }
         })
     },
-    qkView(){
-
+    qkView(item){
+      this.qk_return = true
+      this.at_qingkuanShow = false
+      let param = new URLSearchParams()
+      param.append('uid',this.user.uid)
+      param.append('approval_personal_id',item.approval_personal_id)
+      this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
+        .then((res)=>{
+          if(item.type == '呈批件'){
+            this.if_cpj = true
+            this.$refs.cpj_a.insert = '6'
+            this.form_Lista = create_cengpijian_list(res.data.data)
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }else if(item.type == '请购单'){
+            this.if_qgd = true
+            this.$refs.qgd_a.insert = '6'
+            this.form_Lista = create_qinggoudan_list(res.data.data)
+            console.log(res.data.data)
+            console.log(this.form_Lista)
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }
+          let adobe = res.data.data.approval_content
+          if(adobe.picture_enclosure){
+            let arr = []
+            let zparam = new URLSearchParams()
+            zparam.append('enclosure_id',adobe.picture_enclosure)
+            this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
+              .then((res)=>{
+                res.data.data.picture.forEach((item)=>{
+                  if(item != ''){
+                    arr.push(getPic(item))
+                  }
+                })
+              })
+            res.data.data.approval_content.picture_enclosure = arr
+          }
+          this.form_Listb = create_approval_personal_list(res.data.data.approval_content)
+          console.log(this.form_Listb)
+        })
     },
     qkUser(item){
       this.form_approval_id = ''
@@ -574,9 +654,186 @@
       this.infos = false
       this.wideShow = false
       this.contr = false
-      this.$refs.qkd.insert = '6'
       this.con_title = '请款单'
       this.at_qingkuanShow = false
+    },
+    returnList(){
+      this.if_cpj = false
+      this.if_qgd = false
+      this.if_bxd = false
+      this.if_qkd = false
+      if(!this.con_title){
+        this.at_qingkuanShow = true
+      }else{
+        this.chooseTemShow = true
+      }
+    },
+    get_img(many_enclosure) {
+      if(!many_enclosure) {
+        return
+      }
+      if(typeof many_enclosure == 'string'){
+        let param = new URLSearchParams();
+        param.append("enclosure_id", many_enclosure);
+        this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+          .then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            let arr = []
+            res.data.data.picture.forEach((item) => {
+              if(item != '') {
+                arr.push(getAvatar(item))
+              }
+            })
+            // this.img_arr = arr
+            this.$set(this.form_Lista, 'img_list', arr)
+          })
+      }else{
+        many_enclosure.forEach((item) => {
+          if(item.type === 3) {
+            let param = new URLSearchParams();
+            param.append("enclosure_id", item.contract_id);
+            this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+              .then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
+                let arr = []
+                res.data.data.picture.forEach((item) => {
+                  if(item != '') {
+                    arr.push(getAvatar(item))
+                  }
+                })
+                // this.img_arr = arr
+                this.$set(this.form_Lista, 'img_list', arr)
+              })
+          }
+        })
+      }
+    },
+    get_file(many_enclosure) {
+      this.file_arr = []
+      if(!many_enclosure) {
+        return
+      }
+      if(typeof many_enclosure == 'string'){
+        return
+      }
+      many_enclosure.forEach((item) => {
+        if(item.type === 4) {
+          let param = new URLSearchParams();
+          param.append("attachments_id", item.contract_id);
+          this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+            .then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let obj = {}
+              let file_data = res.data.data
+              let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+              obj.name = file_data.file_name+'.'+file_data.attribute
+              obj.address = file_add
+              this.file_arr.push(obj)
+            })
+        }
+      })
+    },
+    return_qk(){
+      this.if_qgd = false
+      this.qk_return = false
+      this.at_qingkuanShow = true
+    },
+    returnForm(){
+      this.chooseTemShow = false
+      this.top_if = true
+      if(this.con_title == '呈批件'){
+        this.cpj_if = true
+      }else if(this.con_title == '请购单'){
+        this.qgd_if = true
+      }else if(this.con_title == '请款单'){
+        this.qkd_if = true
+      }else if(this.con_title == '报销单'){
+        this.bxd_if = true
+      }
+    },
+    viewInfo(item){
+      this.if_cpj = false
+      this.if_bxd = false
+      this.if_qgd = false
+      this.if_qkd = false
+      let title = item.type
+      this.chooseTemShow = false
+      let param = new URLSearchParams()
+      param.append('approval_personal_id',item.approval_personal_id)
+      this.$http.post('/index.php/Mobile/Personal/approval_personal_process_show',param)
+        .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
+          if(title == '呈批件'){
+            this.if_cpj = true
+            this.form_Lista = create_cengpijian_list(res.data.data)
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }else if(title == '请购单'){
+            this.if_qgd = true
+            this.form_Lista = create_qinggoudan_list(res.data.data)
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }else if(title == '请款单'){
+            this.if_qkd = true
+            this.form_Lista = create_qingkuandan_list(res.data.data)
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }else if(title == '报销单'){
+            this.if_bxd = true
+            this.form_Lista = create_baoxiaodan_list(res.data.data)
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }
+          let item = res.data.data.approval_content
+          if(item.picture_enclosure){
+            let arr = []
+            let zparam = new URLSearchParams()
+            zparam.append('enclosure_id',item.picture_enclosure)
+            this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
+              .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
+                res.data.data.picture.forEach((item)=>{
+                  if(item != ''){
+                    arr.push(getPic(item))
+                  }
+                })
+              })
+            res.data.data.approval_content.picture_enclosure = arr
+          }
+          this.form_Listb = create_approval_personal_list(res.data.data.approval_content)
+        })
+    },
+    useInfo(item) {
+      this.approval_id = ''
+      this.top_if = true
+      this.qkd_if = false
+      this.qgd_if = false
+      this.cpj_if = false
+      this.bxd_if = false
+      this.chooseTemShow = false
+      if(item.type == '请购单'){
+        this.approval_id = item.approval_personal_id
+        this.qgd_if = true
+      }else if(item.type == '请款单'){
+        this.approval_id = item.approval_personal_id
+        this.qkd_if = true
+      }else if(item.type == '呈批件'){
+        this.approval_id = item.approval_personal_id
+        this.cpj_if = true
+      }else if(item.type == '报销单'){
+        this.approval_id = item.approval_personal_id
+        this.bxd_if = true
+      }
     }
   },
   mounted(){
@@ -590,7 +847,12 @@
     qgds,
     qkds,
     cpjs,
-    bxds
+    bxds,
+    cpj,
+    qgd,
+    bxd,
+    qkd,
+    chooseTemplate
   },
   computed: {
     ...mapGetters([

@@ -53,7 +53,7 @@
 				<el-input v-model="qkd_ruleForm.request_num"></el-input>
 			</el-form-item>
 
-			<el-form-item label="项目负责人" prop="project_manager_name" v-if="insert == '0'">
+			<el-form-item label="项目负责人" prop="project_manager_name">
 				<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
 					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
@@ -215,9 +215,6 @@
 				pic_enclosure_id: '',
 				fileAccordShow: false,
         str:'',
-        insert:'0',
-        pic_times:0,
-        file_times:0
 			}
 		},
 		props: {
@@ -474,11 +471,7 @@
 			submitForm_qkd(formName) {
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
-						if(this.insert == '0'){
-              this.qkd_submit()
-            }else{
-						  this.qkds_submit()
-            }
+            this.qkd_submit()
 						this.loading_show = true
 					} else {
 						this.$message.error('请将表单填写完整');
@@ -688,193 +681,6 @@
 					}
 				}, 500)
 			},
-      qkds_submit(){
-        this.picArr = []
-        this.fileArr = []
-        this.fileList.forEach((item)=>{
-          if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf('图像') != '-1'){
-            this.picArr.push(item)
-          }
-        })
-        this.fileList_a.forEach((item)=>{
-          this.fileArr.push(item)
-        })
-        if(this.picArr.length === 0 && this.fileArr.length === 0){
-          this.$message.error('请上传附件')
-          return false
-        }
-        var re = /^[0-9]+$/;
-        if(!re.test(this.qkd_ruleForm.request_num)){
-          this.$message.error('请求次数请填正整数')
-          return
-        }
-        var ret = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/;
-        if(!ret.test(this.qkd_ruleForm.balance_subtotal)){
-          this.$message.error('已领工程款请填数字')
-          return
-        }
-        this.pic_hash_arr = []
-        this.afile_hash_arr = []
-        this.file_hash_arr = []
-        this.pic_times = 0
-        this.file_times = 0
-        this.loadingShow = true
-        setTimeout(()=>{
-          if(this.picArr.length == 0 && this.fileArr.length == 0){
-            let param = new URLSearchParams()
-            param.append('contract_name',this.qkd_ruleForm.contract_name)
-            param.append('request_name',this.qkd_ruleForm.request_name)
-            param.append('worker_type',this.qkd_ruleForm.worker_type)
-            param.append('phone',this.qkd_ruleForm.phone)
-            param.append('account_name',this.qkd_ruleForm.account_name)
-            param.append('bank_card',this.qkd_ruleForm.bank_card)
-            param.append('bank_address',this.qkd_ruleForm.bank_address)
-            param.append('request_num',this.qkd_ruleForm.request_num)
-            param.append('subtotal',this.qkd_ruleForm.subtotal)
-            param.append('gain_reduction_subtotal',this.qkd_ruleForm.gain_reduction_subtotal)
-            param.append('request_subtotal',this.qkd_ruleForm.request_subtotal)
-            param.append('request_content',this.qkd_ruleForm.request_content)
-            param.append('contract_state',this.qkd_ruleForm.contract_state)
-            param.append('form_approval_id',this.form_approval_id)
-            param.append('contract_name_new',this.qkd_ruleForm.contract_name_new)
-            param.append('handler_uid',this.$parent.u_id)
-            param.append('balance_subtotal',this.qkd_ruleForm.balance_subtotal)
-            this.$http.post('index.php/Mobile/personal/add_request_money_personal',param)
-              .then((res)=>{
-                this.loadingShow = false
-                if(res.data.code == 0){
-                  this.add_ok()
-                  this.$refs.qkd_ruleForm.resetFields()
-                  this.$parent._reInfo()
-                }else{
-                  this.add_fail()
-                }
-              })
-          }else{
-            if(this.picArr.length != 0){
-              var upload_enclosure_new = (fn) =>{
-                for(let i = 0;i<this.picArr.length;i++){
-                  let formData = new FormData()
-                  formData.append('file',this.picArr[i].raw)
-                  formData.append('token',this.token)
-                  let config = {
-                    headers:{
-                      'Content-Type':'multipart/form-data'
-                    }
-                  }
-                  if(!this.picArr[i].size){
-                    this.pic_hash_arr.push(this.picArr[i].hash)
-                    this.pic_hash_arr.length == this.picArr.length && fn(this.picArr[i].name)
-                  }else{
-                    this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
-                      this.pic_hash_arr.push(res.data.hash)
-                      if(this.pic_hash_arr.length == this.picArr.length){
-                        fn(this.picArr[i].name)
-                      }
-                    })
-                  }
-                }
-              }
-              upload_enclosure_new((name)=>{
-                let param = new URLSearchParams()
-                param.append('uid',this.user.uid)
-                param.append('picture',JSON.stringify(this.pic_hash_arr))
-                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',param)
-                  .then((res)=>{
-                    this.afile_hash_arr.push({
-                      'type':3,
-                      'contract_id':res.data.data.enclosure_id,
-                      name
-                    })
-                    let aDate = Date.parse(new Date())
-                    this.pic_times = aDate
-                  })
-              })
-            }
-            if(this.fileArr.length != 0){
-              for(let i = 0;i<this.fileArr.length;i++){
-                let formData = new FormData()
-                formData.append('file',this.fileArr[i].raw)
-                formData.append('token',this.token)
-                let config = {
-                  headers:{
-                    'Content-Type':'multipart/form-data'
-                  }
-                }
-                if(!this.fileArr[i].size){
-                  let index = this.fileArr[i].name.last('.')
-                  let attribute = this.fileArr[i].name.slice(index)
-                  if(attribute.substr(0,1) == '.'){
-                    attribute = attribute.substr(1)
-                  }
-                  let file_name = this.fileArr[i].name.slice(0,index)
-                  let param = new URLSearchParams()
-                  param.append('uid',this.user.uid)
-                  param.append('attribute',attribute)
-                  param.append('attachments',this.fileArr[i].hash)
-                  param.append('file_name',file_name)
-                  this.$http.post('/index.php/Mobile/approval/add_attachments',param)
-                    .then((res)=>{
-                      this.file_hash_arr.push({
-                        'type':4,
-                        'contract_id':res.data.data.attachments_id,
-                        'name':this.fileArr[i].name
-                      })
-                      if(this.file_hash_arr.length == this.fileArr.length){
-                        let bDate = Date.parse(new Date())
-                        this.file_times = bDate
-                      }
-                    })
-                }else{
-                  let size = this.fileArr[i].size
-                  let index = this.fileArr[i].name.lastIndexOf('.')
-                  let attribute = this.fileArr[i].name.slice(index)
-                  if(attribute.substr(0,1)== '.'){
-                    attribute = attribute.substr(1)
-                  }
-                  this.$http.post('/index.php/Mobile/find/file_info')
-                    .then((res)=>{
-                      let maxSize = res.data.data.max
-                      let attr = res.data.data.attribute
-                      if(attr.indexOf(attribute) != '-1'){
-                        if(size < maxSize){
-                          this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
-                            let file_name = this.fileArr[i].name.slice(0,index)
-                            let param = new URLSearchParams()
-                            param.append('uid',this.user.uid)
-                            param.append('attribute',attribute)
-                            param.append('attachments',res.data.hash)
-                            param.append('file_name',file_name)
-                            this.$http.post('/index.php/Mobile/approval/add_attachments',param)
-                              .then((res)=>{
-                                this.file_hash_arr.push({
-                                  'type':4,
-                                  'contract_id':res.data.data.attachments_id,
-                                  'name':this.fileArr[i].name
-                                })
-                                if(this.file_hash_arr.length == this.fileArr.length){
-                                  let bDate = Date.parse(new Date())
-                                  this.file_times = bDate
-                                }
-                              })
-                          })
-                        }else{
-                          this.$message.error('上传文件过大 请删除')
-                          this.loadingShow = false
-                          return false
-                        }
-                      }else{
-                        this.$message.error('请删除'+this.fileArr[i].name)
-                        this.loadingShow = false
-                        return false
-                      }
-                    })
-                }
-              }
-            }
-          }
-        },500)
-      },
 		},
     created() {
       this._getToken()
@@ -976,89 +782,6 @@
 						})
 				}
 			},
-      file_times(){
-        if(this.picArr.length != 0){
-          if(this.pic_times == 0){
-            return
-          }
-        }
-        if(this.file_times != 0 || this.pic_times != 0){
-          let param = new URLSearchParams()
-          param.append('contract_name',this.qkd_ruleForm.contract_name)
-          param.append('request_name',this.qkd_ruleForm.request_name)
-          param.append('worker_type',this.qkd_ruleForm.worker_type)
-          param.append('phone',this.qkd_ruleForm.phone)
-          param.append('account_name',this.qkd_ruleForm.account_name)
-          param.append('bank_card',this.qkd_ruleForm.bank_card)
-          param.append('bank_address',this.qkd_ruleForm.bank_address)
-          param.append('request_num',this.qkd_ruleForm.request_num)
-          param.append('subtotal',this.qkd_ruleForm.subtotal)
-          param.append('gain_reduction_subtotal',this.qkd_ruleForm.gain_reduction_subtotal)
-          param.append('request_subtotal',this.qkd_ruleForm.request_subtotal)
-          param.append('request_content',this.qkd_ruleForm.request_content)
-          param.append('contract_state',this.qkd_ruleForm.contract_state)
-          param.append('form_approval_id',this.form_approval_id)
-          param.append('contract_name_new',this.qkd_ruleForm.contract_name_new)
-          param.append('handler_uid',this.$parent.u_id)
-          param.append('balance_subtotal',this.qkd_ruleForm.balance_subtotal)
-          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
-          this.$http.post('index.php/Mobile/personal/add_request_money_personal',param)
-            .then((res)=>{
-              this.loadingShow = false
-              if(res.data.code == 0){
-                this.add_ok()
-                this.$refs.qkd_ruleForm.resetFields()
-                this.$parent._reInfo()
-              }else{
-                this.add_fail()
-              }
-            })
-        }
-      },
-      pic_times(){
-        if(this.fileArr.length != 0){
-          if(this.file_times == 0){
-            return
-          }
-        }
-        if(this.file_times != 0 || this.pic_times != 0){
-          let param = new URLSearchParams()
-          param.append('contract_name',this.qkd_ruleForm.contract_name)
-          param.append('request_name',this.qkd_ruleForm.request_name)
-          param.append('worker_type',this.qkd_ruleForm.worker_type)
-          param.append('phone',this.qkd_ruleForm.phone)
-          param.append('account_name',this.qkd_ruleForm.account_name)
-          param.append('bank_card',this.qkd_ruleForm.bank_card)
-          param.append('bank_address',this.qkd_ruleForm.bank_address)
-          param.append('request_num',this.qkd_ruleForm.request_num)
-          param.append('subtotal',this.qkd_ruleForm.subtotal)
-          param.append('gain_reduction_subtotal',this.qkd_ruleForm.gain_reduction_subtotal)
-          param.append('request_subtotal',this.qkd_ruleForm.request_subtotal)
-          param.append('request_content',this.qkd_ruleForm.request_content)
-          param.append('contract_state',this.qkd_ruleForm.contract_state)
-          param.append('form_approval_id',this.form_approval_id)
-          param.append('contract_name_new',this.qkd_ruleForm.contract_name_new)
-          param.append('handler_uid',this.$parent.u_id)
-          param.append('balance_subtotal',this.qkd_ruleForm.balance_subtotal)
-          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
-          this.$http.post('index.php/Mobile/personal/add_request_money_personal',param)
-            .then((res)=>{
-              this.loadingShow = false
-              if(res.data.code == 0){
-                this.add_ok()
-                this.$refs.qkd_ruleForm.resetFields()
-                this.$parent._reInfo()
-              }else{
-                this.add_fail()
-              }
-            })
-        }
-      },
-      insert(){
-			  if(this.insert == '6'){
-          this.$refs.btn.style.marginTop = '70px'
-        }
-      }
 		}
 	}
 </script>
