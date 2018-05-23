@@ -1,6 +1,6 @@
 
 export default class personal_list{
-  constructor({add_time,approval_enclosure,approval_personal_id,approval_state,found_id,handler_uid,is_del,opinion,title,type,type_id}){
+  constructor({add_time,approval_enclosure,approval_personal_id,approval_state,found_id,handler_uid,is_del,opinion,title,type,type_id,name}){
     this.add_time = add_time
     this.approval_personal_id = approval_personal_id
     this.approval_state = approval_state
@@ -12,6 +12,7 @@ export default class personal_list{
     this.found_id = found_id
     this.handler_uid= handler_uid
     this.opinion= opinion
+    this.name = name
   }
 }
 function get_data(time){
@@ -52,7 +53,8 @@ export function create_personal_list(item) {
     approval_enclosure:item.approval_enclosure,
     found_id:item.found_id,
     handler_uid:item.handler_uid,
-    opinion:item.opinion
+    opinion:item.opinion,
+    name:item.name
   })
 }
 

@@ -620,8 +620,6 @@
             this.if_qgd = true
             this.$refs.qgd_a.insert = '6'
             this.form_Lista = create_qinggoudan_list(res.data.data)
-            console.log(res.data.data)
-            console.log(this.form_Lista)
             this.get_img(this.form_Lista.many_enclosure)
             this.get_file(this.form_Lista.many_enclosure)
           }

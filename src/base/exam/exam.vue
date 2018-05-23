@@ -1,5 +1,6 @@
 <template>
 	<div class="exam_wrapper">
+
 		<div class="exam" v-show="listShow">
 			<div class="nav">
 				<transition name="fade">
@@ -94,6 +95,8 @@
 				</ul>
 			</div>
 		</div>
+
+
 		<div class="form_wrapper" v-show="formShow">
 			<div class="top">
 				<el-button type="info" plain @click="return_list">返回列表</el-button>
@@ -802,6 +805,7 @@
           </div>
         </div>
       </div>
+
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
@@ -1707,7 +1711,6 @@
           })
 
       },
-
 			down(){
 				this.ifDownShow = true
 				let param = new URLSearchParams();

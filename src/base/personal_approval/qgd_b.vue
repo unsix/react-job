@@ -289,7 +289,9 @@
             })
         }
       },
-
+      getPic(event){
+        this.pic = event.target.files;
+      },
       refuse() {
         if(this.handle_txt === '') {
           this.$message.error('请填写回执内容');

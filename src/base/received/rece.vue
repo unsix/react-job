@@ -605,7 +605,9 @@ export default {
       this.$parent.deta = true
       this.$parent.infos = true
       this.$parent.ysd_if = false
-      this.insert = 0
+      this.$parent.infoShow = true
+      this.$parent.receShow = false
+      this.inserted = 0
     }
   },
   created(){
