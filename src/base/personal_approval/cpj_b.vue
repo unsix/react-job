@@ -306,7 +306,10 @@
               })
           }
         }
-      }
+      },
+      getPic(event){
+        this.pic = event.target.files;
+      },
     },
     watch:{
 

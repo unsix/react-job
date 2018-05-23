@@ -17,7 +17,13 @@ function state(item) {
   }
 }
 function time(item) {
-  return item.substring(0,10)
+  if(item){
+    if(item.length>13){
+      return item.substring(0,10)
+    }else{
+      return
+    }
+  }
 }
 export function create_approval_personal_list(item) {
   return new approval_personal_list({

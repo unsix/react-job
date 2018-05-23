@@ -319,7 +319,10 @@
               })
           }
         }
-      }
+      },
+      getPic(event){
+        this.pic = event.target.files;
+      },
     },
     components:{
       browsePic,
