@@ -354,7 +354,7 @@
 						break;
 					case '权限管理':
 						this.$router.push({ path: '/work/jurisdictionManage' })
-						break
+						break;
 					case '表单回执':
 						this.$router.push({ path: '/work/formReceipt' })
 						break;

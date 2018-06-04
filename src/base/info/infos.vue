@@ -11,7 +11,7 @@
       </ul>
     </div>
 
-    <div class="main" v-if="main_If">
+    <div class="mains" v-if="main_If">
       <div class="nav">
         <el-button type="primary" size="small" @click="_return" v-show="!searchShow">返回</el-button>
         <transition name="fade">
@@ -491,7 +491,7 @@ export default {
   data(){
     return{
       pageIndex:1,
-      infoShow:false,
+      infoShow:true,
       main_If:false,
       activeName: '1',
       searchShow:false,
@@ -531,7 +531,7 @@ export default {
       loadingShow:false,
       pic_hash_arr:[],
       receShow:false,
-      chatShow:true
+      chatShow:false,
     }
   },
   methods:{
@@ -1084,8 +1084,9 @@ export default {
       this.$refs.rece.inserted = '6'
     },
     chat(){
-      this.infoShow = false
-      this.chatShow = true
+      this.$message.warning('功能尚在研发中')
+      // this.infoShow = false
+      // this.chatShow = true
     }
   },
   created(){
@@ -1182,7 +1183,7 @@ export default {
     }
   }
 }
-.main{
+.mains{
   width: 100%;
   .nav {
     position: relative;
