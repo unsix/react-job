@@ -116,7 +116,7 @@ export default {
         param.append('wid',this.typed)
       }
       param.append('order',this.orders)
-      this.$http.post('/index.php/Mobile/Find/find_work',param)
+      this.$http.post('/index.php/Mobile/Find/find_work_personal',param)
         .then((res)=>{
           var arr = res.data.data
           for(var sr in arr){
