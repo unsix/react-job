@@ -1,7 +1,7 @@
 import {getAvatar} from '@/common/js/avatar.js'
 export default class exam_list {
   //审批列表
-  constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,approval_state_num,participation_id,tagging}) {
+  constructor({approval_id, name,avatar,company_name,add_time,creat_time,type,title,approval_state,approval_state_num,participation_id,tagging,company_id}) {
     this.approval_id = approval_id
     this.name = name
     this.avatar = avatar
@@ -98,5 +98,7 @@ function get_type(type){
 		return '请购单'
 	} else if(type === '11'){
     return '报销单'
+  }else if(type == '12'){
+	  return '报验单'
   }
 }

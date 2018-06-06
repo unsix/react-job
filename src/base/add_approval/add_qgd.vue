@@ -387,7 +387,7 @@
 				this.qgd_ruleForm.add.splice(index, 1)
 			},
 			initial_data() {
-				if(!this.approval_id || this.approval_id === '') {
+				if(!this.approval_id || this.approval_id === '')  {
 					return
 				}
 				let param = new URLSearchParams();
@@ -410,15 +410,15 @@
 							this.qgd_ruleForm.consignee = this.form_Lista.consignee
 							this.qgd_ruleForm.consignee_phone = this.form_Lista.consignee_phone
 							this.qgd_ruleForm.buy_person = this.form_Lista.buy_person
-              var str = 0
-              var sub = this.form_Lista.content
-              for (var i = 0;i<sub.length;i++){
-                str += Number(sub[i].subtotal)
-              }
-							this.qgd_ruleForm.total = str
+							this.qgd_ruleForm.total = this.form_Lista.total
 							this.qgd_ruleForm.buy_person_phone = this.form_Lista.buy_person_phone
 							this.qgd_ruleForm.receive_address = this.form_Lista.receive_address
 							this.qgd_ruleForm.request_contract_address = this.form_Lista.request_contract_address
+              this.form_Lista.content.forEach((item)=>{
+                if(item.subtotal.indexOf('元') != '-1'){
+                  item.subtotal = item.subtotal.substr(0,item.subtotal.length-1)
+                }
+              })
 							this.qgd_ruleForm.add = this.form_Lista.content
               this.qgd_ruleForm.arrival_time = this.form_Lista.arrival_time
               if(this.qgd_ruleForm.arrival_time){

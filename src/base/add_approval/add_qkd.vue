@@ -490,7 +490,7 @@
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-        if(this.picArr.length === 0 || this.fileArr.length === 0){
+        if(this.picArr.length === 0 && this.fileArr.length === 0){
           this.$message.error('请上传附件')
           return false
         }

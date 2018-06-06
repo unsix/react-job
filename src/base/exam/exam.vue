@@ -101,7 +101,7 @@
 			<div class="top">
 				<el-button type="info" plain @click="return_list">返回列表</el-button>
 				<el-button type="primary" plain @click="down" v-show="downShow">下载</el-button>
-				<el-button type="primary" plain @click="repeal" v-show="repealShow">撤销</el-button>
+				<el-button type="primary" plain @click="repeal()" v-show="repealShow">撤销</el-button>
 				<div class="as">
 					<el-button type="primary" plain @click="fileAccord(form_Lista)" v-show="now_type_name === '请款单'">依据附件</el-button>
 					<el-button type="primary" plain @click="viewHt(form_Lista)" v-if="form_Lista.contract_id">合同附件</el-button>
@@ -193,7 +193,6 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
-
               </div>
             </div>
 					</div>
@@ -937,6 +936,7 @@
         info:'',
         list:'',
         status:'',
+        newCompany:''
 			}
 		},
 		computed: {
@@ -1112,32 +1112,32 @@
               inputErrorMessage:'撤销原因不能为空'
 		       }).then(({ value }) => {
 		        	let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("approval_id", this.downApproId);
-					param.append("company_id", this.nowCompanyId);
-					param.append("withdrawal_reason",value)
-					this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
-					.then((res)=>{
-					  //撤销审批
-						this.listShow = true
-						this.listSeaShow = true
-						this.formShow = false
-						this.qingkuandan_show = false
-						this.cengpijian_show = false
-						this.qinggoudan_show = false
-						this.pingshenbiao_show = false
-						this.gongzhang_show = false
-            this.baoxiaodan_show = false
-						if(res.data.code === 0){
-							this.$message({
-					          message: '撤销成功',
-					          type: 'success'
-					        });
-					        this._getExamList()
-						}else{
-							this.$message.error(res.data.message);
-						}
-					})
+              param.append("uid", this.user.uid);
+              param.append("approval_id", this.downApproId);
+              param.append("company_id", this.newCompany);
+              param.append("withdrawal_reason",value)
+              this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
+              .then((res)=>{
+                //撤销审批
+                this.listShow = true
+                this.listSeaShow = true
+                this.formShow = false
+                this.qingkuandan_show = false
+                this.cengpijian_show = false
+                this.qinggoudan_show = false
+                this.pingshenbiao_show = false
+                this.gongzhang_show = false
+                this.baoxiaodan_show = false
+                if(res.data.code === 0){
+                  this.$message({
+                        message: '撤销成功',
+                        type: 'success'
+                      });
+                      this._getExamList()
+                }else{
+                  this.$message.error(res.data.message);
+                }
+              })
 		        }).catch(() => {
 		        	this.$message({
 		            	type: 'info',
@@ -1724,6 +1724,7 @@
               this.get_file(this.form_Lista.many_enclosure)
             }
             this.reply = res.data.data.approval_id
+            this.newCompany = res.data.data.company_id
 					})
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
@@ -1752,13 +1753,14 @@
 									})
 								res.data.data.content[index].picture = arr
 							}
-							item.replys.forEach((pic)=>{
-                this.get_imgs(pic.many_enclosure,pic)
-                this.get_files(pic.many_enclosure,pic)
-              })
+							if(typeof item.replys == 'array'){
+                item.replys.forEach((pic)=>{
+                  this.get_imgs(pic.many_enclosure,pic)
+                  this.get_files(pic.many_enclosure,pic)
+                })
+              }
 						})
 						this.form_Listb = create_approval_list(res.data.data)
-            console.log(this.form_Listb)
 					})
 			},
       reply_other(us,pr,name){
@@ -2165,6 +2167,7 @@
 				this.menuShow = false
 			},
 			_getExamList() {
+			  this.nextPageShow = true
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("type", this.nowType);
