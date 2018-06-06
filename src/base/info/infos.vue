@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="info" v-show="infoShow">
+    <div class="infos" v-show="infoShow">
       <div class="top">
         <p>消息提醒</p>
       </div>
@@ -1145,7 +1145,7 @@ export default {
   {
     opacity: 0;
   }
-.info{
+.infos{
   width: 100%;
   .top{
     width: 100%;

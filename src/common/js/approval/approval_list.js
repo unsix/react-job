@@ -3,7 +3,7 @@ export default class approval_list {
   constructor({found_name, is_ok,list,content,participation_id,finance}) {
     this.found_name = found_name
     this.is_ok = is_ok
-    // this.list = list
+    this.list = list
     this.content = content
     this.participation_id = participation_id
     this.finance = finance
@@ -37,7 +37,7 @@ export function create_approval_list(item) {
   return new approval_list({
     found_name: item.found_name,
     is_ok: is_ok(item.is_ok),
-    // list: list(item.list),
+    list: list(item.list),
     content:content(item.content),
     participation_id:item.participation_id,
     finance:get_finance(item)
