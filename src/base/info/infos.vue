@@ -150,7 +150,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(item,index)" />
+              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(form_Listb.picture_enclosure,index)" />
             </div>
           </div>
         </div>
@@ -255,7 +255,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(item,index)" />
+              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(form_Listb.picture_enclosure,index)" />
             </div>
           </div>
         </div>
@@ -361,7 +361,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(item,index)" />
+              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(form_Listb.picture_enclosure,index)" />
             </div>
           </div>
         </div>
@@ -436,7 +436,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(item,index)" />
+              <img :src="list" alt="" v-for="(list,index) in form_Listb.picture_enclosure" @click="cl_pic(form_Listb.picture_enclosure,index)" />
             </div>
           </div>
         </div>
@@ -1087,7 +1087,16 @@ export default {
       this.$message.warning('功能尚在研发中')
       // this.infoShow = false
       // this.chatShow = true
-    }
+    },
+    cl_pic(item, index) {
+      console.log(item)
+      item.forEach((res)=>{
+        let current = res.indexOf('?')
+        this.arr_list.push(res.slice(0,current) + '?imageslim' )
+      })
+      this.pic_index = index
+      this.pic_show = true
+    },
   },
   created(){
     // this.approval()

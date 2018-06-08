@@ -8,7 +8,7 @@
       <div class="tops" v-show="mess">
         <el-select filterable remote v-model="name" :remote-method="remoteMethod" :loading="loading" @blur="shoe"  placeholder="请输入工人姓名或手机号码">
           <el-option class="inset" v-for="(item,index) in listed" :key="index" :value="item.name" >
-            <div @click="search(item.uid)">
+            <div @click="search(item.uid)" style="overflow: hidden">
               <img :src="item.avatar">
               <div class="main">
                 <p>{{item.name}}</p>
@@ -268,21 +268,96 @@
         this.mess = false
       },
       detailed(pr){
-        this.mains = false
-        this.detail_show = true
-        this.$refs.detail._getInfo(pr,this.user.uid)
         if(pr == this.user.uid){
+          this.mains = false
+          this.detail_show = true
+          this.$refs.detail._getInfo(pr,this.user.uid)
           this.$refs.detail.star = false
         }else{
           this.$refs.detail.star = true
+          let nparam = new URLSearchParams()
+          nparam.append('target_uid',pr)
+          this.$http.post('index.php/Mobile/alisun/view_power',nparam)
+            .then((res)=>{
+              if(res.data.data.status == 1){
+                this.mains = false
+                this.detail_show = true
+                this.$refs.detail._getInfo(pr,this.user.uid)
+              }else{
+                this.$confirm('是否从余额付费两元查看用户详情','提示',{
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(()=>{
+                  let param = new URLSearchParams()
+                  param.append('target_uid',pr)
+                  this.$http.post('index.php/Mobile/alisun/view_payment',param)
+                    .then((res)=>{
+                      if(res.data.code == 0){
+                        this.mains = false
+                        this.detail_show = true
+                        this.$refs.detail._getInfo(pr,this.user.uid)
+                        if(pr == this.user.uid){
+                          this.$refs.detail.star = false
+                        }else{
+                          this.$refs.detail.star = true
+                        }
+                      }else{
+                        this.$message.warning(res.data.message)
+                      }
+                    })
+                }).catch(()=>{
+                  this.$message.warning('已取消支付')
+                })
+              }
+            })
         }
       },
       search(pr){
-        this.mains = false
-        this.detail_show = true
-        this.$refs.detail._getInfo(pr,this.user.uid)
+        this.name = ''
         if(pr == this.user.uid){
+          this.mains = false
+          this.detail_show = true
+          this.$refs.detail._getInfo(pr,this.user.uid)
           this.$refs.detail.star = false
+        }else{
+          this.$refs.detail.star = true
+          let nparam = new URLSearchParams()
+          nparam.append('target_uid',pr)
+          this.$http.post('index.php/Mobile/alisun/view_power',nparam)
+            .then((res)=>{
+              if(res.data.data.status == 1){
+                this.mains = false
+                this.detail_show = true
+                this.$refs.detail._getInfo(pr,this.user.uid)
+              }else{
+                this.$confirm('是否从余额付费两元查看用户详情','提示',{
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(()=>{
+                  let param = new URLSearchParams()
+                  param.append('target_uid',pr)
+                  this.$http.post('index.php/Mobile/alisun/view_payment',param)
+                    .then((res)=>{
+                      if(res.data.code == 0){
+                        this.mains = false
+                        this.detail_show = true
+                        this.$refs.detail._getInfo(pr,this.user.uid)
+                        if(pr == this.user.uid){
+                          this.$refs.detail.star = false
+                        }else{
+                          this.$refs.detail.star = true
+                        }
+                      }else{
+                        this.$message.warning(res.data.message)
+                      }
+                    })
+                }).catch(()=>{
+                  this.$message.warning('已取消支付')
+                })
+              }
+            })
         }
       },
       _getComDepart() {
