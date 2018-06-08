@@ -180,7 +180,7 @@
               </div>
 						</div>
 						<div>
-							<img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+							<img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
 						</div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -313,7 +313,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
             </div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -443,7 +443,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
             </div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -577,7 +577,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
             </div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -677,7 +677,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture.picture,index)" />
             </div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -777,7 +777,7 @@
               </div>
             </div>
             <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture.picture,index)" />
             </div>
             <div style="width: 530px;float: right;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
@@ -813,7 +813,20 @@
           </div>
         </div>
       </div>
-
+      <!--验收单展示-->
+      <div class="form" name="验收单" v-if="yanshou_show">
+        <iframe id="mom" class="win" ref="indx" :src="core" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
+        <div class="menu" v-show="handle_show">
+          <el-button type="primary" plain @click="handle">处理</el-button>
+          <div class="button" v-show="menuShow">
+            <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            <!--<input name="token" type="hidden" :value="input_value">-->
+            <!--<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />-->
+            <el-button type="primary" round @click="agreed">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
+          </div>
+        </div>
+      </div>
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
@@ -845,6 +858,13 @@
     </div>
 
     <div class="wide" ref="wide" v-show="wideShow"></div>
+
+    <div class="signed" v-show="signature">
+      <i class="el-icon-close" @click="close_sign"></i>
+      <iframe :src="sign_link" ref="sign" scrolling="no" seamless frameborder="0"></iframe>
+      <el-button type="warning" size="small" @click="_rewirte">重写</el-button>
+      <el-button type="success" size="small" style="float: right" @click="sure">确定</el-button>
+    </div>
 	</div>
 </template>
 
@@ -936,7 +956,12 @@
         info:'',
         list:'',
         status:'',
-        newCompany:''
+        newCompany:'',
+        yanshou_show:false,
+        core:'',
+        signature:false,
+        sign_link:'',
+        signImg:''
 			}
 		},
 		computed: {
@@ -1048,13 +1073,13 @@
 			},
       //選擇
 			chooseExamCom(){
+        this.nextPageShow = true
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("type", this.nowType);
 				param.append("each", '10');
 				param.append("p", this.pageIndex);
 				if(this.examComName != '全部'){
-				  console.log(this.examComName)
 					param.append("company_id",this.examComName);
 				}
 				this.$http.post("/index.php/Mobile/approval/see_approval_list", param)
@@ -1385,9 +1410,9 @@
         this.pic_index = index
         this.pic_show = true
       },
-			handle() {
-				this.menuShow = true
-				let param = new URLSearchParams();
+			handle(){
+        this.menuShow = !this.menuShow
+        let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/path/get_token", param)
 					.then((res) => {
@@ -1395,8 +1420,7 @@
 					})
 			},
       //审批
-			agree() {
-			  console.log(this.form_Lista)
+			agree(){
         document.body.scrollTop = 0
         document.documentElement.scrollTop = 0
 				this.pic_hash_arr = []
@@ -1411,6 +1435,7 @@
 						cancelButtonText: '取消',
 						type: 'warning'
 					}).then(() => {
+
 						this.loading_show = true
 						let param = new URLSearchParams();
 						param.append("uid", this.user.uid);
@@ -1443,7 +1468,7 @@
 					}).catch(() => {
 						this.$message({
 							type: 'info',
-							message: '已取消删除'
+							message: '已取消操作'
 						});
 					});
 
@@ -1509,13 +1534,13 @@
 					}).catch(() => {
 						this.$message({
 							type: 'info',
-							message: '已取消删除'
+							message: '已取消操作'
 						});
 					});
 				}
 			},
       //拒絕
-			refuse() {
+			refuse(){
 				this.pic_hash_arr = []
 				if(this.handle_txt === '') {
 					this.$message.error('请填写审批意见');
@@ -1670,6 +1695,7 @@
 				this.pingshenbiao_show = false,
         this.baoxiaodan_show = false,
 				this.gongzhang_show = false,
+        this.yanshou_show = false,
 				this.now_type_name = item.type
 				if(item.type === '呈批件') {
 					this.cengpijian_show = true
@@ -1683,6 +1709,8 @@
 					this.gongzhang_show = true
 				} else if(item.type === '报销单'){
 			    this.baoxiaodan_show = true
+        } else if(item.type == '验收单'){
+			    this.yanshou_show = true
         }
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -1722,6 +1750,8 @@
               this.form_Lista = create_baoxiaodan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type == '验收单'){
+              this.core = 'index.php/Mobile/skey/look_inspection_company?approval_id='+res.data.data.approval_id
             }
             this.reply = res.data.data.approval_id
             this.newCompany = res.data.data.company_id
@@ -2161,7 +2191,11 @@
 					this.ilaunched = false
 					this.handle_show = false
 				}
-				this._getExamList()
+				if(this.examComName == ''){
+          this._getExamList()
+        }else{
+				  this.chooseExamCom()
+        }
 			},
 			closeMenu() {
 				this.menuShow = false
@@ -2197,7 +2231,84 @@
 					.then((res) => {
 						localStorage.token = JSON.stringify(res.data.data);
 					})
-			}
+			},
+      close_sign(){
+        this.signature = false
+        this.wideShow = false
+        this.$refs.sign.contentWindow.remote()
+      },
+      _rewirte(){
+        this.$refs.sign.contentWindow.remote()
+      },
+      sure(){
+        this.$refs.sign.contentWindow.sure()
+        this.signImg = this.$refs.sign.contentWindow.ss
+        this.signature = false
+        this.wideShow = false
+        this.submit()
+      },
+      agreed(){
+        this.sign_link = 'index.php/Mobile/find/sign'
+        this.signature = true
+        this.wideShow = true
+      },
+      submit(){
+        if(this.signImg == ''){
+          this.$message.error('请签字')
+        }
+        this.$confirm('是否提交审批?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
+          let formData = new FormData()
+          formData.append('file',this.signImg)
+          formData.append('token',this.token)
+          let config = {
+            headers:{
+              'Content-Type':'multipart/form-data'
+            }
+          }
+          this.$http.post('https://up.qbox.me',formData,config).then((res)=>{
+            setTimeout(()=>{
+              let param = new URLSearchParams()
+              param.append("uid", this.user.uid);
+              param.append("approval_id", this.reply);
+              param.append("participation_id", this.form_Listb.participation_id);
+              param.append("is_agree", '1');
+              param.append("sign_picture", res.data.hash);
+              param.append("company_id", this.nowCompanyId);
+              param.append("opinion", this.handle_txt);
+              this.loading_show = true
+              this.$http.post('index.php/Mobile/find/approval_process',param)
+                .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  this.loading_show = false
+                  this.handle_txt = ''
+                  this.listShow = true
+                  this.formShow = false
+                  this._getExamList()
+                  if(res.data.code === 0) {
+                    this.$message({
+                      message: '操作成功',
+                      type: 'success'
+                    });
+                  } else {
+                    this.$message.error('操作失败');
+                  }
+                })
+            })
+          })
+        }).catch(()=>{
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+          this.signImg = ''
+        })
+      }
 		},
 
 	}
@@ -2654,6 +2765,10 @@
 						}
 					}
 				}
+        .win{
+          width: 100%;
+          height: 600px;
+        }
 			}
 		}
 	}
@@ -2770,5 +2885,28 @@
     top: 0;
     left: 0;
     background: rgba(0,0,0,0.5);
+  }
+  .signed{
+    width: 600px;
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    margin-left: -345px;
+    z-index: 99999;
+    background: #fff;
+    border-radius: 4px;
+    i{
+      float: right;
+      margin-right: 5px;
+      margin-top: 5px;
+      cursor: pointer;
+    }
+    iframe{
+      width: 600px;
+      height: 230px;
+    }
+    button{
+      margin: 10px;
+    }
   }
 </style>

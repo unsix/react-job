@@ -20,6 +20,8 @@ const rece = () =>import('@/base/received/rece')
 const opus = () =>import('@/base/myOpus/opus')
 const collect = () =>import('@/base/Mycollect/collect')
 const infos = () => import('@/base/info/infos')
+const account = () =>import('@/base/account/myAccount')
+const pay = () =>import('@/base/account/pay')
 Vue.use(Router)
 
 export default new Router({
@@ -106,6 +108,14 @@ export default new Router({
         {
           path:'infos',
           component:infos
+        },
+        {
+          path:'account',
+          component:account
+        },
+        {
+          path:'pay',
+          component:pay
         }
 			]
 		},

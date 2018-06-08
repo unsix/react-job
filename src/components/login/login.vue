@@ -156,7 +156,6 @@
         code:'',
         resetPassShow:false,
         str : '',
-        loadingShow:false,
         res_ruleForm:{
           password: '',
           check_password: ''

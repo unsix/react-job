@@ -99,6 +99,6 @@ function get_type(type){
 	} else if(type === '11'){
     return '报销单'
   }else if(type == '12'){
-	  return '报验单'
+	  return '验收单'
   }
 }

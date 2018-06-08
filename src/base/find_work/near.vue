@@ -21,7 +21,7 @@
               </div>
               <div class="disd">
                 <span>{{item.add_time}}</span>
-                <span style="color: #FFA574;margin-top: 15px ">{{item.distance}}<b style="color: #000;font-weight: normal">KM</b></span>
+                <span style="color: #FFA574;margin-top: 10px ">{{item.distance}}<b style="color: #000;font-weight: normal">KM</b></span>
               </div>
             </div>
           </el-option>
@@ -51,7 +51,7 @@
             </div>
             <div class="disd">
               <span>{{item.add_time}}</span>
-              <span style="color: #FFA574;margin-top: 15px ">{{item.distance}}</span>KM
+              <span style="color: #FFA574;margin-top: 10px ">{{item.distance}}</span>KM
             </div>
           </li>
         </ul>
@@ -79,7 +79,7 @@ export default {
       work_type:[],
       mean:true,
       se:['距离','金额','发布时间'],
-      orders:'',
+      orders:'d',
       typed:'',
       nearList:[],
       dec:[],
@@ -109,7 +109,7 @@ export default {
     _getList(){
       this.nearList.splice(0,this.nearList.length)
       let param = new URLSearchParams()
-      param.append('uid',this.user.uid)
+      // param.append('uid',this.user.uid)
       param.append('p',this.pageIndex)
       param.append('each','20')
       if(this.typed != '1'){
