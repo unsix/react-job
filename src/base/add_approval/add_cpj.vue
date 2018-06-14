@@ -249,8 +249,6 @@
           })
       },
 			initial_data() {
-
-        console.log('--------1')
 				if(!this.approval_id) {
 					return
 				}
@@ -284,7 +282,6 @@
                       obj.name = img_name
                       obj.url = img_add
                       this.fileList.push(obj)
-                      console.log(this.fileList)
                     })
                   })
               }else if(item.type === 4){

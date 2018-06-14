@@ -315,6 +315,7 @@
         }
       },
       cc(){
+        this.activeNames = '1'
         this.logShow = false
         this.ccShow = true
         this.deShow = true

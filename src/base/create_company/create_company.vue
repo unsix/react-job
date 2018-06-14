@@ -221,7 +221,7 @@
 	      }
 	    },
       mounted() {
-        if(this.$route.path === '/work/exam') {
+        if(this.$route.path === '/work/create_company') {
           this.$emit('changeWorkIndex', 3)
         }
       },

@@ -168,6 +168,7 @@
         let param = new URLSearchParams()
         param.append('uid',this.user.uid)
         param.append('p',this.pageIndex)
+        param.append('each',10)
         if(this.typed != '1'){
           param.append('wid',this.typed)
         }
@@ -187,7 +188,7 @@
               arr[sr].distance = (arr[sr].distance/1000).toFixed(2)
               this.nearList.push(arr[sr])
             }
-            if(this.nearList.length<20){
+            if(this.nearList.length<10){
               this.nextPageShow =false
             }
             this.dec = this.se.map(item=>{
@@ -284,7 +285,7 @@
                 this.detail_show = true
                 this.$refs.detail._getInfo(pr,this.user.uid)
               }else{
-                this.$confirm('是否从余额付费两元查看用户详情','提示',{
+                this.$confirm('是否从余额付费一元查看用户详情','提示',{
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
                   type: 'warning'
@@ -415,7 +416,7 @@
       this._getType()
       this._getNearWork()
       if(this.$route.path === '/work/list') {
-        this.$emit('changeWorkIndex', 9)
+        this.$emit('changeWorkIndex', 8)
       }
     },
     created(){

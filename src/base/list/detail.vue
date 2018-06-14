@@ -7,33 +7,81 @@
         <b><i class="iconfont icon-xiazai19" style="color: #62A4D7;cursor: pointer" @click="showMap"></i></b>
       </div>
       <div class="main">
-        <img :src="moreInfo.avatar" alt="" @click="picShow(moreInfo.avatar)">
-        <ul>
-          <li>姓名：{{moreInfo.name}}</li>
-          <li>职业：{{moreInfo.type}}</li>
-          <li><i class="iconfont icon-weibiaoti-" style="color: #7CC7FF"></i>{{moreInfo.phone}}</li>
-          <li><i class="iconfont icon-xiaoxi" style="color: #50BCBC;"></i>找他聊聊</li>
-        </ul>
-      </div>
-    </div>
-    <div class="info" v-show="infos">
-      <div class="info_one">
-        <ul>
-          <li>年龄<span v-show="moreInfo.age != ''">{{moreInfo.age}}岁</span><span v-show="moreInfo.age == ''">无</span></li>
-          <li>籍贯<span v-show="moreInfo.hometown != ''">{{moreInfo.hometown}}</span><span v-show="moreInfo.hometown == ''">无</span></li>
-          <li>好评率<span>好评率{{moreInfo.nice}}%</span></li>
-          <li>雇佣次数<span>被雇佣次数{{moreInfo.work_num}}次</span></li>
-          <li>期望薪资<span>{{moreInfo.salary}}</span></li>
-          <li>支付宝<span>无</span></li>
-          <li>银行卡<span>无</span></li>
-          <li>身份证号<span>{{moreInfo.idcard}}</span></li>
-          <li>QQ<span v-show="moreInfo.qq != ''">{{moreInfo.qq}}</span><span v-show="moreInfo.qq == ''">无</span></li>
-          <li>微信<span>{{moreInfo.wechat}}</span></li>
-          <li>暂住地址<span v-show="moreInfo.address != ''">{{moreInfo.address}}</span><span v-show="moreInfo.address == ''">无</span></li>
-          <li>个人评价<span>无</span></li>
-          <li @click="show_opus">往期作品<span>查看</span></li>
-          <li>金主评价<span>查看</span></li>
-        </ul>
+        <div class="portfolio">
+          <p>PERSONAL PORTFOLIO</p>
+          <ul>
+            <li>
+              <div class="outer">
+                <div class="inner">
+                  <img src="../../assets/banner1.jpg" alt="">
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="outer">
+                <div class="inner">
+                  <img src="../../assets/banner1.jpg" alt="">
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="top_img">
+          <h2>ABOUT ME</h2>
+          <span>关于我</span>
+          <img src="../../assets/banner1.jpg" alt="">
+        </div>
+        <div class="detas">
+          <p style="font-size: 20px !important;">您名字</p>
+          <p>曹测试/13625718871</p>
+          <div class="table">
+            <ul style="margin-left: 130px">
+              <li><span>工种:</span><b>杂工</b></li>
+              <li><span>年龄:</span><b>20</b></li>
+              <li><span>籍贯:</span><b>重庆市</b></li>
+              <li><span>好评率:</span><b>511</b></li>
+              <li><span>雇佣次数:</span><b>123</b></li>
+              <li><span>期望薪资:</span><b>123</b></li>
+              <li><span>暂住地址:</span><b>133123</b></li>
+            </ul>
+            <ul style="margin-left: 20px;margin-top: 20px">
+              <li><span>支付宝:</span><b>213</b></li>
+              <li><span>银行卡:</span><b></b></li>
+              <li><span>身份证号:</span><b></b></li>
+              <li><span>QQ:</span><b></b></li>
+              <li><span>微信:</span><b></b></li>
+              <li><span>个人评价:</span><b>1231232132121211233121231232133123321</b></li>
+            </ul>
+          </div>
+        </div>
+        <!--<div class="assect">-->
+          <!--<img :src="moreInfo.avatar" alt="" @click="picShow(moreInfo.avatar)">-->
+          <!--<ul>-->
+            <!--<li>姓名：{{moreInfo.name}}</li>-->
+            <!--<li>职业：{{moreInfo.type}}</li>-->
+            <!--<li><i class="iconfont icon-weibiaoti-" style="color: #7CC7FF"></i>{{moreInfo.phone}}</li>-->
+            <!--<li><i class="iconfont icon-xiaoxi" style="color: #50BCBC;"></i>找他聊聊</li>-->
+          <!--</ul>-->
+        <!--</div>-->
+        <!--<div class="info_one">-->
+          <!--<ul>-->
+            <!--<li>年龄<span v-show="moreInfo.age != ''">{{moreInfo.age}}岁</span><span v-show="moreInfo.age == ''">无</span></li>-->
+            <!--<li>籍贯<span v-show="moreInfo.hometown != ''">{{moreInfo.hometown}}</span><span v-show="moreInfo.hometown == ''">无</span></li>-->
+            <!--<li>好评率<span>好评率{{moreInfo.nice}}%</span></li>-->
+            <!--<li>雇佣次数<span>被雇佣次数{{moreInfo.work_num}}次</span></li>-->
+            <!--<li>期望薪资<span>{{moreInfo.salary}}</span></li>-->
+            <!--<li>支付宝<span>无</span></li>-->
+            <!--<li>银行卡<span>无</span></li>-->
+            <!--<li>身份证号<span>{{moreInfo.idcard}}</span></li>-->
+            <!--<li>QQ<span v-show="moreInfo.qq != ''">{{moreInfo.qq}}</span><span v-show="moreInfo.qq == ''">无</span></li>-->
+            <!--<li>微信<span>{{moreInfo.wechat}}</span></li>-->
+            <!--<li>暂住地址<span v-show="moreInfo.address != ''">{{moreInfo.address}}</span><span v-show="moreInfo.address == ''">无</span></li>-->
+            <!--<li>个人评价<span>无</span></li>-->
+            <!--<li @click="show_opus">往期作品<span>查看</span></li>-->
+            <!--<li>金主评价<span>查看</span></li>-->
+          <!--</ul>-->
+        <!--</div>-->
+
       </div>
       <div class="bottom">
         <span @click="_get_contract"  v-show="star"><i class="iconfont icon-fasongxinxi" style="color: #B6D8F2;" ></i>发送...</span>
@@ -260,6 +308,7 @@
             this.moreInfo.type = str
             this.x = this.moreInfo.longitude
             this.y = this.moreInfo.latitude
+            console.log(this.moreInfo)
           }
         })
     },
@@ -337,7 +386,7 @@
     },
     sel_con(res,tip){
       this.contract_type_id = res
-      let str = 'index.php/Mobile/skey/look_draft?id=' + res +'&operation=1&view=1'
+      let str = '/index.php/Mobile/skey/look_draft?id=' + res +'&operation=1&view=1'
       this.core = str
       this.wideShow = false
       this.contr = false
@@ -899,59 +948,144 @@
   .main{
     width: 100%;
     overflow: hidden;
-    img{
-      border-radius: 50%;
-      margin: 40px 15px 20px 20px;
-      float: left;
-      width: 50px;
-      height: 50px;
-    }
-    ul{
-      float: left;
-      line-height: 22px;
-      margin: 20px 0;
-    }
-  }
-  .tab{
-    width: 100%;
-    .el-tabs{
-      width: 100%;
-      .el-tabs__item{
-        width: 200px;
-        text-align: center;
+    background: url(../../assets/back.jpg) no-repeat;
+    background-size: cover;
+    height: 850px;
+    color: #5CF2B2;
+    .portfolio{
+      height: 250px;
+      p{
+        font-size: 28px;
+        text-align: right;
+        margin: 10px 30px;
       }
-    }
-  }
-}
-.info{
-  width: 100%;
-  .info_one{
-    width: 100%;
-    background: #FFf;
-    color: #5a5e66;
-    ul{
-      li{
-        border-bottom: 1px solid #e3e4e9;
-        padding: 10px 20px;
-        span{
-          float: right;
+      ul{
+        width: 100%;
+        height: 200px;
+        display: flex;
+        align-items:center;
+        display: -webkit-flex;
+        li{
+          margin: 0 60px;
+          .outer{
+            width: 130px;
+            height: 130px;
+            border: 3px solid white;
+            transform: rotate(15deg);
+            position: relative;
+            .inner{
+              width: 130px;
+              height: 130px;
+              border: 3px solid white;
+              transform: rotate(25deg);
+              img{
+                width: 130px;
+                height: 130px;
+                border: 3px solid white;
+                transform: rotate(25deg);
+              }
+            }
+          }
         }
       }
     }
-  }
-  .comment{
-    width: 100%;
-    background: #FFf;
-    color: #5a5e66;
-    height: 450px;
-    overflow-y: auto;
-  }
-  .works{
-    width: 100%;
-    background: #FFf;
-    color: #5a5e66;
-    height: 450px;
-    overflow-y: auto;
+    .top_img{
+      width: 120px;
+      float: left;
+      margin-left: 60px;
+      h2{
+        font-size: 20px;
+        margin-top: 50px;
+      }
+      span{
+        text-decoration: underline;
+        display:block;
+        color: #59bfb0;
+        margin-top: 5px;
+        padding-bottom: 10px;
+        font-size: 16px;
+      }
+      img{
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin-top: 50px;
+      }
+    }
+    .detas{
+      width: 395px;
+      float: right;
+      margin-top: 80px;
+      p{
+        margin-top: 10px;
+      }
+      .table{
+        margin-top: 10px;
+        color: #fff;
+        ul{
+          li{
+            padding: 6px 10px;
+            span{
+              width: 70px;
+              text-align: right;
+              display: inline-block;
+            }
+            b{
+              text-align: right;
+              display: inline-block;
+              width: 150px;
+              overflow: hidden;
+              text-overflow:ellipsis;
+              white-space: nowrap;
+              font-weight: normal;
+            }
+          }
+        }
+      }
+    }
+    .assect{
+      img{
+        border-radius: 50%;
+        margin: 40px 15px 20px 20px;
+        float: left;
+        width: 50px;
+        height: 50px;
+      }
+      ul{
+        float: left;
+        line-height: 22px;
+        margin: 20px 0;
+      }
+    }
+    .info_one{
+      width: 100%;
+      background: #FFf;
+      color: #5a5e66;
+      ul{
+        li{
+          border-bottom: 1px solid #e3e4e9;
+          padding: 10px 20px;
+          span{
+            float: right;
+          }
+        }
+      }
+    }
+    .comment{
+      width: 100%;
+      background: #FFf;
+      color: #5a5e66;
+      height: 450px;
+      overflow-y: auto;
+    }
+    .works{
+      width: 100%;
+      background: #FFf;
+      color: #5a5e66;
+      height: 450px;
+      overflow-y: auto;
+    }
+
   }
   .bottom{
     background: #Fff;

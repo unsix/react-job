@@ -11,6 +11,7 @@
 					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="呈批件"></el-tab-pane>
           <el-tab-pane label="报销单"></el-tab-pane>
+          <el-tab-pane label="验收单"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -23,13 +24,15 @@
 				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
 				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
         <addBxd v-if="bxd_show" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
+        <addYsd v-if="ysd_show" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
 			</div>
 		</div>
 		<div class="as_what" v-show="as_what_show">
 			<ul>
 				<h2>选择请款依据</h2>
-				<i class="el-icon-close" @click="as_what_show = !as_what_show"></i>
-				<li v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
+				<i class="el-icon-close" @click="close_as"></i>
+				<li v-show="ysdType.length == 0" v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
+        <li v-show="ysdType.length > 0" v-for="(item,index) in ysdType" @click="ysd_click(item.inspection_type_id)" >{{item.inspection_name}}</li>
 			</ul>
 		</div>
 		<div class="as_qingkuan" v-if="at_qingkuanShow">
@@ -69,7 +72,8 @@
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
-	</div>
+	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
+  </div>
 </template>
 
 <script>
@@ -79,12 +83,14 @@
 	import addSqgz from '@/base/add_approval/add_sqgz'
 	import addQkd from '@/base/add_approval/add_qkd'
   import addBxd from '@/base/add_approval/add_bxd'
+  import addYsd from '@/base/add_approval/add_ysd'
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import cpj from '@/base/exam_form/cpj'
 	import qkd from '@/base/exam_form/qkd'
 	import sqgz from '@/base/exam_form/sqgz'
   import bxd from '@/base/exam_form/bxd'
+  import ysd from '@/base/exam_form/ysd'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
@@ -98,13 +104,15 @@
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
-  import { create_baoxiaodan_list} from "@/common/js/approval/baoxiaodan"
+  import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan"
+  import { create_yanshoudan_list } from "@/common/js/approval/yanshoudan";
   import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
 				navIndex: 0,
 				asType: ['请购单', '合同评审表', '呈批件'],
+        ysdType:[],
 				form_Lista: {},
 				form_Listb: {},
         main_show: {},
@@ -115,6 +123,7 @@
 				qkd_if: false,
 				sqgz_if: false,
         bxd_if: false,
+        ysd_if:false,
 				formShow: true,
 				chooseTemShow: false,
 				as_what_show: false,
@@ -122,10 +131,12 @@
 				qgd_show: false,
 				cpj_show: false,
         bxd_show: false,
+        ysd_show: false,
 				psb_show: true,
 				sqgz_show: false,
 				loading_show: false,
 				at_qingkuanShow:false,
+        inspection_type_id:'',
 				untreated: [],
 				file_arr: [],
 				nowType: 1,
@@ -137,12 +148,14 @@
 				approval_id4: '',
 				approval_id5: '',
         approval_id6:'',
+        approval_id7:'',
 				form_approval_id:'',
 				qk_return:false,
 				nextPageShow: true,
 				pageIndex:1,
 				xindex:0,
 				request_money_basis_type:'',
+        link:''
 			}
 		},
 		computed: {
@@ -159,7 +172,7 @@
 			nowCompanyId(){
 				this._getComPersonList()
 				this._getComDepart()
-			}
+			},
 		},
 		mounted(){
 			if(this.$route.path === '/work/addApproval') {
@@ -353,6 +366,7 @@
 				this.approval_id4 = ''
 				this.approval_id5 = ''
         this.approval_id6 = ''
+        this.approval_id7 = ''
 				this.formShow = true
 				this.qkd_show = false
 				this.qgd_show = false
@@ -360,6 +374,7 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.ysd_show = false
 				this.at_qingkuanShow = false
 				this.chooseTemShow = false
 				if(item.type === '合同评审表') {
@@ -380,6 +395,9 @@
 				} else if(item.type === '报销单'){
 				  this.approval_id6 = item.approval_id
           this.bxd_show = true
+        } else if(item.type === '验收单'){
+				  this.approval_id7 = item.approval_id
+          this.ysd_show = true
         }
 			},
 			viewInfo(item) {
@@ -389,6 +407,7 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.ysd_show = false
 				this.chooseTemShow = false
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -427,9 +446,11 @@
 						} else if(item.type === '报销单'){
 						  this.bxd_if = true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
-              console.log(this.form_Lista)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type == '验收单'){
+              this.ysd_if = true
+              this.form_Lista = create_yanshoudan_list(res.data.data)
             }
 					})
 
@@ -544,6 +565,7 @@
 				this.qkd_if = false
 				this.sqgz_if = false
         this.bxd_if = false
+        this.ysd_if = false
 				this.chooseTemShow = true
 			},
 			returnForm() {
@@ -560,6 +582,7 @@
 				this.sqgz_show = false
 				this.cpj_show = false
         this.bxd_show = false
+        this.ysd_show = false
 			},
       //tab 切換
 			handleClick(tab) {
@@ -569,6 +592,9 @@
 				this.approval_id4 = ''
 				this.approval_id5 = ''
         this.approval_id6 = ''
+        this.approval_id7 = ''
+        this.link = ''
+        this.inspection_type_id = ''
 				this.navIndex = JSON.parse(tab.index)
 				this.qkd_show = false
 				this.qgd_show = false
@@ -576,6 +602,7 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.ysd_show = false
         this.psb_if = false
         this.qgd_if= false
         this.cpj_if= false
@@ -604,9 +631,20 @@
 				} else if(this.navIndex === 5){
 				  this.bxd_show = true
           this.approval_type = 11
+        } else if(this.navIndex === 6){
+          this.ysd_show = true
+          this.get_ysd_type()
+          this.as_what_show = true
+          this.formShow = false
+          this.approval_type = 12
         }
 			},
-
+      get_ysd_type(){
+			  this.$http.post('index.php/Mobile/approval/inspection_list')
+          .then((res)=>{
+            this.ysdType = res.data.data
+          })
+      },
 			close_sqgz(item, index) {
 				this.sqgz_ruleForm.add.splice(index, 1)
 			},
@@ -634,6 +672,20 @@
 					this.as_what_show = false
 				}
 			},
+      ysd_click(pr){
+        this.as_what_show = !this.as_what_show
+        this.ysdType = []
+        this.loading_show = true
+        this.inspection_type_id = pr
+        setTimeout(()=>{
+          this.loading_show = false
+          this.formShow = true
+        },500)
+      },
+      close_as(){
+        this.as_what_show = !this.as_what_show
+        this.ysdType = []
+      },
 			_getExamList(index) {
 				if(!index){
 					index = this.xindex
@@ -698,12 +750,14 @@
 			qkd,
 			sqgz,
       bxd,
+      ysd,
 			addPsb,
 			addQgd,
 			addCpj,
 			addSqgz,
 			addQkd,
-      addBxd
+      addBxd,
+      addYsd
 		}
 	}
 </script>
@@ -838,7 +892,7 @@
 				.el-tabs__item {
 					font-size: 15px;
 					font-weight: 700;
-					width: 100px;
+					width: 85px;
 					text-align: center;
 				}
 			}
