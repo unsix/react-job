@@ -72,7 +72,6 @@
 				this.$emit('viewInfo', item)
 			},
 			useInfo(item, index) {
-			  console.log(item)
 				this.$emit('useInfo', item)
 			},
 			returnForm() {

@@ -45,11 +45,10 @@ export default class qingkuandan_list {
     this.balance_subtotal = balance_subtotal
     this.approval_type = approval_type
     this.request_money_basis_type = request_money_basis_type
-  
+
   }
 }
 export function create_qingkuandan_list(item) {
-	console.log(item)
 	return new qingkuandan_list({
 	    contract_name:item.contract_name,
 	    contract_name_new: item.contract_name_new,
@@ -75,7 +74,7 @@ export function create_qingkuandan_list(item) {
 	    form_approval_id:item.form_approval_id,
 	    draw_money_name:item.draw_money_name,
 	    balance_subtotal:item.balance_subtotal
-	   
+
 	})
 }
 function get_manager_name(item){

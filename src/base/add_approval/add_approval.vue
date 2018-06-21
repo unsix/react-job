@@ -11,10 +11,11 @@
 					<el-tab-pane label="申请公章"></el-tab-pane>
 					<el-tab-pane label="呈批件"></el-tab-pane>
           <el-tab-pane label="报销单"></el-tab-pane>
+          <el-tab-pane label="验收单"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
-				<el-button type="primary" plain @click="chooseTem">从模板选择</el-button>
+				<el-button type="primary" plain @click="chooseTem" v-show="forms">从模板选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
 				<addQkd v-if="qkd_show" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
@@ -23,13 +24,16 @@
 				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
 				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
         <addBxd v-if="bxd_show" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
+        <addYsd v-if="ysd_show" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
 			</div>
 		</div>
 		<div class="as_what" v-show="as_what_show">
 			<ul>
-				<h2>选择请款依据</h2>
-				<i class="el-icon-close" @click="as_what_show = !as_what_show"></i>
-				<li v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
+				<h2 v-show="ysdType.length == 0">选择请款依据</h2>
+        <h2 v-show="ysdType.length > 0">选择验收单类型</h2>
+				<i class="el-icon-close" @click="close_as"></i>
+				<li v-show="ysdType.length == 0" v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
+        <li v-show="ysdType.length > 0" v-for="(item,index) in ysdType" @click="ysd_click(item.inspection_type_id)" >{{item.inspection_name}}</li>
 			</ul>
 		</div>
 		<div class="as_qingkuan" v-if="at_qingkuanShow">
@@ -67,9 +71,27 @@
 		<qgd :qk_return="qk_return" @return_qk="return_qk" v-if="qgd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
 		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
-		<qkd :form_approval_id="form_approval_id" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
+		<qkd :form_approval_id="form_approval_id" :change_type="change_type" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
-	</div>
+	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
+
+    <div class="send" v-show="sendShow">
+      <div>
+        <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
+        <el-input type="textarea" v-model="content"></el-input>
+        <span class="sr">
+          <el-button type="primary" round @click="submitCom">确定</el-button>
+          <el-upload class="upload-demo" id="picc" multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+            <i class="iconfont icon-zhaopian"></i>
+          </el-upload>
+          <el-upload class="upload-demo_a" style="margin-top: 0" id="file" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+            <i class="iconfont icon-fujian"></i>
+          </el-upload>
+        </span>
+      </div>
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -79,12 +101,14 @@
 	import addSqgz from '@/base/add_approval/add_sqgz'
 	import addQkd from '@/base/add_approval/add_qkd'
   import addBxd from '@/base/add_approval/add_bxd'
+  import addYsd from '@/base/add_approval/add_ysd'
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import cpj from '@/base/exam_form/cpj'
 	import qkd from '@/base/exam_form/qkd'
 	import sqgz from '@/base/exam_form/sqgz'
   import bxd from '@/base/exam_form/bxd'
+  import ysd from '@/base/exam_form/ysd'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
@@ -98,13 +122,16 @@
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
-  import { create_baoxiaodan_list} from "@/common/js/approval/baoxiaodan"
+  import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan"
+  import { create_yanshoudan_list } from "@/common/js/approval/yanshoudan";
   import { mapGetters, mapMutations } from 'vuex'
 	export default {
 		data() {
 			return {
+        forms:true,
 				navIndex: 0,
 				asType: ['请购单', '合同评审表', '呈批件'],
+        ysdType:[],
 				form_Lista: {},
 				form_Listb: {},
         main_show: {},
@@ -115,6 +142,7 @@
 				qkd_if: false,
 				sqgz_if: false,
         bxd_if: false,
+        ysd_if:false,
 				formShow: true,
 				chooseTemShow: false,
 				as_what_show: false,
@@ -122,10 +150,12 @@
 				qgd_show: false,
 				cpj_show: false,
         bxd_show: false,
+        ysd_show: false,
 				psb_show: true,
 				sqgz_show: false,
 				loading_show: false,
 				at_qingkuanShow:false,
+        inspection_type_id:'',
 				untreated: [],
 				file_arr: [],
 				nowType: 1,
@@ -137,12 +167,26 @@
 				approval_id4: '',
 				approval_id5: '',
         approval_id6:'',
+        approval_id7:'',
 				form_approval_id:'',
 				qk_return:false,
 				nextPageShow: true,
 				pageIndex:1,
 				xindex:0,
 				request_money_basis_type:'',
+        link:'',
+        sendShow:false,
+        content:'',
+        fileList:[],
+        fileList_a:[],
+        picArr:[],
+        fileArr:[],
+        pic_hash_arr:[],
+        afile_hash_arr:[],
+        file_hash_arr:[],
+        file_time:0,
+        pic_time:0,
+        change_type:''
 			}
 		},
 		computed: {
@@ -159,7 +203,63 @@
 			nowCompanyId(){
 				this._getComPersonList()
 				this._getComDepart()
-			}
+			},
+      pic_time(){
+			  if(this.fileArr.length != 0){
+			    if(this.file_time == 0){
+			      return
+          }
+        }
+        if(this.file_time!=0 || this.pic_time !=0){
+			    let param = new URLSearchParams()
+          param.append('approval_id',this.form_approval_id)
+          param.append('remarks',this.content)
+          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
+          this.$http.post('index.php/Mobile/Approval/add_chengpi_supply',param)
+            .then((res)=>{
+              this.loading_show = false
+              this.content = ''
+              this.fileList = []
+              this.fileList_a = []
+              if(res.data.code == 0){
+                this.$message.success(res.data.message)
+                this.formShow = true
+                this.sendShow = false
+                this.qkd_show = true
+              }else{
+                this.$message.error('添加失败')
+              }
+            })
+        }
+      },
+      file_time(){
+        if(this.picArr.length != 0){
+          if(this.pic_time == 0){
+            return
+          }
+        }
+        if(this.file_time != 0 || this.pic_time != 0){
+          let param = new URLSearchParams()
+          param.append('approval_id',this.form_approval_id)
+          param.append('remarks',this.content)
+          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
+          this.$http.post('index.php/Mobile/Approval/add_chengpi_supply',param)
+            .then((res)=>{
+              this.loading_show = false
+              this.content = ''
+              this.fileList = []
+              this.fileList_a = []
+              if(res.data.code == 0){
+                this.$message.success(res.data.message)
+                this.sendShow = false
+                this.formShow = true
+                this.qkd_show = true
+              }else{
+                this.$message.error('添加失败')
+              }
+            })
+        }
+      }
 		},
 		mounted(){
 			if(this.$route.path === '/work/addApproval') {
@@ -178,6 +278,198 @@
 			this._getComPersonList()
 		},
 		methods: {
+      submitCom(){
+        if(!this.content){
+          this.$message.error('请填写备注')
+          return false
+        }
+        this.fileList.forEach((item) => {
+          if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
+            this.picArr.push(item)
+          }
+        })
+        this.fileList_a.forEach((item) =>{
+          this.fileArr.push(item)
+        })
+        if(this.picArr.length === 0 && this.fileArr.length === 0){
+          this.$message.error('至少选择一个附件')
+          return false
+        }
+        this.pic_hash_arr = []
+        this.afile_hash_arr = []
+        this.file_hash_arr = []
+        this.file_time = 0
+        this.pic_time = 0
+        this.loading_show = true
+        setTimeout(()=>{
+          if(this.picArr.length != 0){
+            var upload_enclosure_new = (fn) =>{
+              this.picArr.forEach((item)=>{
+                let formData = new FormData()
+                formData.append('file',item.raw)
+                formData.append('token',this.token)
+                let config = {
+                  headers:{
+                    'Content-Type':'multipart/form-data'
+                  }
+                }
+                if(!item.size){
+                  this.pic_hash_arr.push(item.hash)
+                  this.pic_hash_arr.length == this.picArr.length && fn(item.name)
+                }else{
+                  this.$http.post('https://up.qbox.me/', formData, config).then((res)=>{
+                    this.pic_hash_arr.push(res.data.hash)
+                    if(this.pic_hash_arr.length == this.picArr.length){
+                      fn(item.name)
+                    }
+                  })
+                }
+              })
+            }
+            upload_enclosure_new((name)=>{
+              let nparam = new URLSearchParams()
+              nparam.append('uid',this.user.uid)
+              nparam.append('picture',JSON.stringify(this.pic_hash_arr))
+              this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                .then((res)=>{
+                  this.afile_hash_arr.push({
+                    'type':3,
+                    'contract_id':res.data.data.enclosure_id,
+                    name
+                  })
+                  this.pic_time = Date.parse(new Date())
+                })
+            })
+          }
+          if(this.fileArr.length != 0){
+            this.fileArr.forEach((item)=>{
+              let formData = new FormData()
+              formData.append('file',item.raw)
+              formData.append('token',this.token)
+              let config = {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              }
+              if(!item.size){
+                let index = item.name.lastIndexOf('.')
+                let attribute = item.name.slice(index)
+                if(attribute.substr(0,1) == '.'){
+                  attribute = attribute.substr(1)
+                }
+                let file_name = item.name.slice(0,index)
+                let param = new URLSearchParams()
+                param.append('uid',this.user.uid)
+                param.append('attribute',attribute)
+                param.append('attachments',item.hash)
+                param.append('file_name',file_name)
+                this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                  .then((res)=>{
+                    this.file_hash_arr.push({
+                      'type':4,
+                      'contract_id':res.data.data.attachments_id,
+                      'name':item.name
+                    })
+                    if(this.file_hash_arr.length == this.fileArr.length){
+                      this.file_times = Date.parse(new Date())
+                    }
+                  })
+              }else{
+                let size = item.size
+                let index = item.name.lastIndexOf('.')
+                let attribute = item.name.slice(index)
+                if(attribute.substr(0,1)=='.'){
+                  attribute = attribute.substr(1)
+                }
+                this.$http.post('/index.php/Mobile/find/file_info')
+                  .then((res)=>{
+                    let maxSize = res.data.data.max
+                    let attr = res.data.data.attribute
+                    if(attr.indexOf(attribute) != -1){
+                      if(size < maxSize){
+                        this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
+                          let file_name = item.name.slice(0,index)
+                          let param = new URLSearchParams()
+                          param.append('uid',this.user.uid)
+                          param.append('attribute',attribute)
+                          param.append('attachments',res.data.hash)
+                          param.append("file_name",file_name)
+                          this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                            .then((res)=>{
+                              this.file_hash_arr.push({
+                                'type':4,
+                                'contract_id':res.data.data.attachments_id,
+                                'name':item.name
+                              })
+                              if(this.file_hash_arr.length == this.fileArr.length){
+                                this.file_times = Date.parse(new Date())
+                              }
+                            })
+                        })
+                      }else{
+                        this.$message.error('上传文件过大 请删除')
+                        this.loading_show = false
+                        return false
+                      }
+                    }else{
+                      this.$message.error('请删除'+this.fileArr[i].name)
+                      this.loading_show = false
+                      return false
+                    }
+                  })
+              }
+            })
+          }
+        })
+      },
+      closeSend(){
+        this.sendShow = false
+        this.content = ''
+        this.fileList = []
+        this.fileList_a = []
+      },
+      handleRemove(file, fileList) {
+        this.fileList = fileList
+      },
+      handlePreview(file, fileList) {
+        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+          this.$message.error('上传文件格式错误')
+          this.str = file
+        }
+        function remove(arr,val) {
+          for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+              arr.splice(i, 1);
+              break;
+            }
+          }
+        }
+        remove(fileList,this.str)
+        this.fileList = fileList
+      },
+      handleRemove_a(file, fileList_a) {
+        this.fileList_a = fileList_a
+
+      },
+      handlePreview_a(file, fileList_a){
+        //后缀
+        let index = file.name.lastIndexOf('.')
+        let attribute = file.name.slice(index)
+        if(attribute.substr(0,1)=='.'){
+          attribute=attribute.substr(1)
+        }
+        this.$http.post("/index.php/Mobile/find/file_info")
+          .then((res)=>{
+            let attr = res.data.data.attribute
+            if(attr.indexOf(attribute) !=-1){
+              this.fileList_a = fileList_a
+            }else{
+              this.$message.error('上传文件格式错误 请删除')
+              this.fileList_a = fileList_a
+            }
+
+          })
+      },
 			fileAccordS(){
 				console.log(1)
 			},
@@ -238,6 +530,9 @@
             var current = this
             var judge = res.data.code
             getCro(judge,current)
+            if(res.data.data.change_type){
+              this.change_type = res.data.data.change_type
+            }
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
@@ -302,26 +597,47 @@
 									})
 								res.data.data.content[index].picture = arr
 							}
+              if(item.many_enclosure){
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              }
+              if(typeof item.replys == 'array'){
+                item.replys.forEach((pic)=>{
+                  this.get_imgs(pic.many_enclosure,pic)
+                  this.get_files(pic.many_enclosure,pic)
+                })
+              }
 						})
+            if(res.data.data.supply){
+              res.data.data.supply.forEach((item,index)=>{
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
       //使用
 			qkUser(item,index){
-        this.request_money_basis_type = item.type;
-				this.form_approval_id = ''
-				this.at_qingkuanShow = false
-				this.form_approval_id = item.approval_id
-        let nparam = new URLSearchParams()
-        nparam.append('approval_id',this.form_approval_id)
-        this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
-          .then((res)=>{
-            this.main_show = res.data.data
-            this.$refs.scse.showMe()
-          })
-
-				this.formShow = true
-				this.qkd_show = true
+        if(item.type == '呈批件'){
+          this.sendShow = true
+          this.form_approval_id = item.approval_id
+          this.at_qingkuanShow = false
+        }else{
+          this.request_money_basis_type = item.type;
+          this.form_approval_id = ''
+          this.at_qingkuanShow = false
+          this.form_approval_id = item.approval_id
+          let nparam = new URLSearchParams()
+          nparam.append('approval_id',this.form_approval_id)
+          this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
+            .then((res)=>{
+              this.main_show = res.data.data
+              this.$refs.scse.showMe()
+            })
+          this.formShow = true
+          this.qkd_show = true
+        }
 			},
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
@@ -353,6 +669,7 @@
 				this.approval_id4 = ''
 				this.approval_id5 = ''
         this.approval_id6 = ''
+        this.approval_id7 = ''
 				this.formShow = true
 				this.qkd_show = false
 				this.qgd_show = false
@@ -360,6 +677,7 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.ysd_show = false
 				this.at_qingkuanShow = false
 				this.chooseTemShow = false
 				if(item.type === '合同评审表') {
@@ -380,6 +698,9 @@
 				} else if(item.type === '报销单'){
 				  this.approval_id6 = item.approval_id
           this.bxd_show = true
+        } else if(item.type === '验收单'){
+				  this.approval_id7 = item.approval_id
+          this.ysd_show = true
         }
 			},
 			viewInfo(item) {
@@ -389,6 +710,7 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.ysd_show = false
 				this.chooseTemShow = false
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -398,6 +720,9 @@
             var current = this
             var judge = res.data.code
             getCro(judge,current)
+            if(res.data.data.change_type){
+              this.change_type = res.data.data.change_type
+            }
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
@@ -427,9 +752,11 @@
 						} else if(item.type === '报销单'){
 						  this.bxd_if = true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
-              console.log(this.form_Lista)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type == '验收单'){
+              this.ysd_if = true
+              this.form_Lista = create_yanshoudan_list(res.data.data)
             }
 					})
 
@@ -461,6 +788,16 @@
 									})
 								res.data.data.content[index].picture = arr
 							}
+              if(item.many_enclosure){
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              }
+              if(typeof item.replys == 'array'){
+                item.replys.forEach((pic)=>{
+                  this.get_imgs(pic.many_enclosure,pic)
+                  this.get_files(pic.many_enclosure,pic)
+                })
+              }
 						})
 						this.form_Listb = create_approval_list(res.data.data)
 					})
@@ -544,6 +881,7 @@
 				this.qkd_if = false
 				this.sqgz_if = false
         this.bxd_if = false
+        this.ysd_if = false
 				this.chooseTemShow = true
 			},
 			returnForm() {
@@ -560,6 +898,7 @@
 				this.sqgz_show = false
 				this.cpj_show = false
         this.bxd_show = false
+        this.ysd_show = false
 			},
       //tab 切換
 			handleClick(tab) {
@@ -569,6 +908,9 @@
 				this.approval_id4 = ''
 				this.approval_id5 = ''
         this.approval_id6 = ''
+        this.approval_id7 = ''
+        this.link = ''
+        this.inspection_type_id = ''
 				this.navIndex = JSON.parse(tab.index)
 				this.qkd_show = false
 				this.qgd_show = false
@@ -576,6 +918,7 @@
 				this.psb_show = false
 				this.sqgz_show = false
         this.bxd_show = false
+        this.ysd_show = false
         this.psb_if = false
         this.qgd_if= false
         this.cpj_if= false
@@ -584,6 +927,7 @@
         this.bxd_if= false
 				this.chooseTemShow = false
 				this.formShow = true
+        this.at_qingkuanShow = false
 				if(this.navIndex === 0) {
 					this.psb_show = true
 					this.approval_type = 111
@@ -604,9 +948,20 @@
 				} else if(this.navIndex === 5){
 				  this.bxd_show = true
           this.approval_type = 11
+        } else if(this.navIndex === 6){
+          this.ysd_show = true
+          this.get_ysd_type()
+          this.as_what_show = true
+          this.formShow = false
+          this.approval_type = 12
         }
 			},
-
+      get_ysd_type(){
+			  this.$http.post('index.php/Mobile/approval/inspection_list')
+          .then((res)=>{
+            this.ysdType = res.data.data
+          })
+      },
 			close_sqgz(item, index) {
 				this.sqgz_ruleForm.add.splice(index, 1)
 			},
@@ -634,6 +989,20 @@
 					this.as_what_show = false
 				}
 			},
+      ysd_click(pr){
+        this.as_what_show = !this.as_what_show
+        this.ysdType = []
+        this.loading_show = true
+        this.inspection_type_id = pr
+        setTimeout(()=>{
+          this.loading_show = false
+          this.formShow = true
+        },500)
+      },
+      close_as(){
+        this.as_what_show = !this.as_what_show
+        this.ysdType = []
+      },
 			_getExamList(index) {
 				if(!index){
 					index = this.xindex
@@ -687,7 +1056,71 @@
 				    })
 				   	this.setComPersonList(reaDa)
 				})
-			}
+			},
+      get_imgs(many_enclosure,info){
+        if(!many_enclosure){
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          let param = new URLSearchParams()
+          param.append('enclosure_id',many_enclosure)
+          this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
+            .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let arr = []
+              res.data.data.picture.forEach((item)=>{
+                if(item != ''){
+                  arr.push(getAvatar(item))
+                }
+              })
+              this.$set(info,'imgs',arr)
+            })
+        }else{
+          many_enclosure.forEach((item)=>{
+            if(item.type == 3){
+              let param = new URLSearchParams()
+              param.append('enclosure_id',item.contract_id)
+              this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
+                .then((res)=>{
+                  let arr = []
+                  res.data.data.picture.forEach((item)=>{
+                    if(item != ''){
+                      arr.push(getAvatar(item))
+                    }
+                  })
+                  this.$set(info,'imgs',arr)
+                })
+            }
+          })
+        }
+      },
+      get_files(many_enclosure,info){
+        if(!many_enclosure){
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          return
+        }
+        many_enclosure.forEach((item)=>{
+          let arr =[]
+          if(item.type == 4){
+            let param = new URLSearchParams()
+            param.append('attachments_id',item.contract_id)
+            this.$http.post('/index.php/Mobile/approval/look_attachments',param)
+              .then((res)=>{
+                let obj = {}
+                let file_data = res.data.data
+                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                arr.push(obj)
+              })
+            this.$set(info,'files',arr)
+          }
+        })
+      },
 		},
 		components: {
 			loading,
@@ -698,12 +1131,14 @@
 			qkd,
 			sqgz,
       bxd,
+      ysd,
 			addPsb,
 			addQgd,
 			addCpj,
 			addSqgz,
 			addQkd,
-      addBxd
+      addBxd,
+      addYsd
 		}
 	}
 </script>
@@ -800,7 +1235,6 @@
 				display: inline-block;
 				margin-bottom: 10px;
 				font-size: 20px;
-				font-size: 16px;
 				color: #409EFF;
 			}
 			i {
@@ -823,7 +1257,117 @@
 			}
 		}
 	}
-
+  .send{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    >div{
+      width: 450px;
+      background: #ffffff;
+      margin: 200px auto;
+      z-index: 99;
+      .close{
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-align: center;
+        .huifu{
+          line-height: 53px;
+          font-size: 16px;
+        }
+        i{
+          float: right;
+          font-size: 16px;
+          margin: 20px 10px 0;
+          cursor: pointer;
+          border-radius: 100%;
+          border: 1px solid black;
+          color: #000;
+        }
+      }
+      .el-textarea{
+        display: block;
+        width: 90%;
+        margin: 0 auto;
+      }
+      .sr{
+        overflow: hidden;
+        display: block;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        #picc{
+          position: relative;
+          width: 70%;
+          .el-upload-list__item{
+            position: relative;
+            top: 30px;
+            left: 15px;
+            width: 50px;
+            height: 50px;
+          }
+          .el-upload{
+            display: block;
+          }
+          .el-upload--picture-card{
+            z-index: 999;
+            position: absolute;
+            left: 3px;
+            top: 0px;
+            width: 0px;
+            height: 0px;
+            margin-top: 12px;
+            margin-left: 27px;
+            outline: none;
+            background: none;
+            border: none;
+            border-radius: 0;
+            line-height: 0;
+            i{
+              font-size: 20px;
+              z-index: 999;
+            }
+          }
+        }
+        #file{
+          width: 70%;
+          position: relative;
+          .el-upload-list--text{
+            position: relative;
+            top: 0px;
+            left: 15px;
+            width: 100%;
+          }
+          .el-upload--text{
+            width: 0px;
+            height: 0px;
+            margin-top: 40px;
+            margin-left: 30px;
+            outline: none;
+            background: none;
+            border: none;
+            border-radius: 0;
+            line-height: 0;
+            i{
+              font-size: 20px;
+            }
+          }
+        }
+        .el-button{
+          padding: 4px 10px;
+          float: right;
+          margin-right: 20px;
+          margin-top: 14px;
+        }
+      }
+    }
+  }
 	.add_approval_wrapper {
 		background: #FFFFFF;
 		box-shadow: 0 0 2px rgba(0, 0, 0, .2);
@@ -838,7 +1382,7 @@
 				.el-tabs__item {
 					font-size: 15px;
 					font-weight: 700;
-					width: 100px;
+					width: 85px;
 					text-align: center;
 				}
 			}

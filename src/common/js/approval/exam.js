@@ -98,7 +98,7 @@ function get_type(type){
 		return '请购单'
 	} else if(type === '11'){
     return '报销单'
-  }else if(type == '12'){
+  } else if(type == '12'){
 	  return '验收单'
   }
 }

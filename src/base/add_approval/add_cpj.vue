@@ -29,7 +29,6 @@
 
 			<el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <i class="el-icon-plus"></i>
-        <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
 			</el-upload>
       <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
@@ -249,8 +248,6 @@
           })
       },
 			initial_data() {
-
-        console.log('--------1')
 				if(!this.approval_id) {
 					return
 				}
@@ -284,7 +281,6 @@
                       obj.name = img_name
                       obj.url = img_add
                       this.fileList.push(obj)
-                      console.log(this.fileList)
                     })
                   })
               }else if(item.type === 4){

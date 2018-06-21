@@ -147,42 +147,17 @@
 				</div>
 				<div>
 					<span>审批：</span>
-					<div class="exam_info">
-						<div class="avatar lzz">
-							<span style="margin-left: 5px;">状态</span>
-						</div>
-						<div class="name lzz">
-							<span>姓名</span>
-						</div>
-						<div class="tel lzz">
-							<span>时间</span>
-						</div>
-						<div class="operation lzz">
-							<span>回复</span>
-						</div>
-					</div>
-					<div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-						<div class="exam_info">
-							<div class="avatar">
-								<span>{{item.is_agree}}</span>
-							</div>
-							<div class="name">
-								<span>{{item.name}}</span>
-							</div>
-							<div class="tel">
-								<span>{{item.add_time}}</span>
-							</div>
-							<div class="operation">
-								<span>{{item.opinion}}</span>
-							</div>
-              <div>
-                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
-              </div>
-						</div>
-						<div>
-							<img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
-						</div>
-            <div style="width: 530px;float: right;background: #e3e4e9;">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
                 <div class="avatar">
                   <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
@@ -195,16 +170,41 @@
                 </div>
               </div>
             </div>
-					</div>
+            <p>审批时间:{{item.add_time}}</p>
+          </div>
 				</div>
+        <div>
+          <span>协议:</span>
+          <div v-for="item in form_Listb.supply" class="info">
+            <p>姓名:{{item.name}}</p>
+            <p>备注:{{item.remarks}}</p>
+            <div>
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+            </div>
+            <p>{{item.creat_time}}</p>
+          </div>
+        </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
-						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-						<input name="token" type="hidden" :value="input_value">
-						<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-						<el-button type="primary" round @click="agree($event)">同意</el-button>
-						<el-button type="danger" round @click="refuse">拒绝</el-button>
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <label>
+              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
 					</div>
 				</div>
 			</div>
@@ -280,42 +280,17 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div class="exam_info">
-            <div class="avatar lzz">
-              <span style="margin-left: 5px;">状态</span>
-            </div>
-            <div class="name lzz">
-              <span>姓名</span>
-            </div>
-            <div class="tel lzz">
-              <span>时间</span>
-            </div>
-            <div class="operation lzz">
-              <span>回复</span>
-            </div>
-          </div>
-          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-            <div class="exam_info">
-              <div class="avatar">
-                <span>{{item.is_agree}}</span>
-              </div>
-              <div class="name">
-                <span>{{item.name}}</span>
-              </div>
-              <div class="tel">
-                <span>{{item.add_time}}</span>
-              </div>
-              <div class="operation">
-                <span>{{item.opinion}}</span>
-              </div>
-              <div>
-                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
-              </div>
-            </div>
-            <div>
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
               <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
-            </div>
-            <div style="width: 530px;float: right;background: #e3e4e9;">
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
                 <div class="avatar">
                   <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
@@ -328,16 +303,28 @@
                 </div>
               </div>
             </div>
+            <p>审批时间:{{item.add_time}}</p>
           </div>
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
-						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-						<input name="token" type="hidden" :value="input_value">
-						<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-						<el-button type="primary" round @click="agree($event)">同意</el-button>
-						<el-button type="danger" round @click="refuse">拒绝</el-button>
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <label>
+              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
 					</div>
 				</div>
 			</div>
@@ -367,22 +354,22 @@
 				<div>
 					<span>银行卡号：</span><span>{{form_Lista.bank_card}}</span>
 				</div>
-				<div>
+				<div v-show="change_type!=2">
 					<span>请款次数：</span><span>{{form_Lista.request_num}}</span>
 				</div>
 				<div>
 					<span>合同执行进度：</span><span>{{form_Lista.contract_state}}</span>
 				</div>
-				<div>
+				<div v-show="change_type!=2">
 					<span>合同金额￥：</span><span>{{form_Lista.subtotal}}</span>
 				</div>
-				<div>
+				<div v-show="change_type!=2">
 					<span>增减金额￥：</span><span>{{form_Lista.gain_reduction_subtotal}}</span>
 				</div>
-				<div>
+				<div v-show="change_type!=2">
 					<span>已领工程款￥：</span><span>{{form_Lista.balance_subtotal}}</span>
 				</div>
-				<div>
+				<div v-show="change_type!=2">
 					<span>本次请款￥：</span><span>{{form_Lista.request_subtotal}}</span>
 				</div>
 				<div>
@@ -410,42 +397,17 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div class="exam_info">
-            <div class="avatar lzz">
-              <span style="margin-left: 5px;">状态</span>
-            </div>
-            <div class="name lzz">
-              <span>姓名</span>
-            </div>
-            <div class="tel lzz">
-              <span>时间</span>
-            </div>
-            <div class="operation lzz">
-              <span>回复</span>
-            </div>
-          </div>
-          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-            <div class="exam_info">
-              <div class="avatar">
-                <span>{{item.is_agree}}</span>
-              </div>
-              <div class="name">
-                <span>{{item.name}}</span>
-              </div>
-              <div class="tel">
-                <span>{{item.add_time}}</span>
-              </div>
-              <div class="operation">
-                <span>{{item.opinion}}</span>
-              </div>
-              <div>
-                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
-              </div>
-            </div>
-            <div>
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0"  class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
               <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
-            </div>
-            <div style="width: 530px;float: right;background: #e3e4e9;">
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
                 <div class="avatar">
                   <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
@@ -458,16 +420,28 @@
                 </div>
               </div>
             </div>
+            <p>审批时间:{{item.add_time}}</p>
           </div>
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
-						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-						<input name="token" type="hidden" :value="input_value">
-						<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-						<el-button type="primary" round @click="agree($event)">同意</el-button>
-						<el-button type="danger" round @click="refuse">拒绝</el-button>
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <label>
+              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
 					</div>
 				</div>
 			</div>
@@ -544,42 +518,17 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div class="exam_info">
-            <div class="avatar lzz">
-              <span style="margin-left: 5px;">状态</span>
-            </div>
-            <div class="name lzz">
-              <span>姓名</span>
-            </div>
-            <div class="tel lzz">
-              <span>时间</span>
-            </div>
-            <div class="operation lzz">
-              <span>回复</span>
-            </div>
-          </div>
-          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-            <div class="exam_info">
-              <div class="avatar">
-                <span>{{item.is_agree}}</span>
-              </div>
-              <div class="name">
-                <span>{{item.name}}</span>
-              </div>
-              <div class="tel">
-                <span>{{item.add_time}}</span>
-              </div>
-              <div class="operation">
-                <span>{{item.opinion}}</span>
-              </div>
-              <div>
-                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
-              </div>
-            </div>
-            <div>
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
               <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
-            </div>
-            <div style="width: 530px;float: right;background: #e3e4e9;">
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
                 <div class="avatar">
                   <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
@@ -592,16 +541,28 @@
                 </div>
               </div>
             </div>
+            <p>审批时间:{{item.add_time}}</p>
           </div>
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-show="menuShow">
-						<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-						<input name="token" type="hidden" :value="input_value">
-						<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-						<el-button type="primary" round @click="agree($event)">同意</el-button>
-						<el-button type="danger" round @click="refuse">拒绝</el-button>
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <label>
+              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
 					</div>
 				</div>
 			</div>
@@ -644,42 +605,17 @@
         </div>
         <div>
           <span>审批：</span>
-          <div class="exam_info">
-            <div class="avatar lzz">
-              <span style="margin-left: 5px;">状态</span>
-            </div>
-            <div class="name lzz">
-              <span>姓名</span>
-            </div>
-            <div class="tel lzz">
-              <span>时间</span>
-            </div>
-            <div class="operation lzz">
-              <span>回复</span>
-            </div>
-          </div>
-          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-            <div class="exam_info">
-              <div class="avatar">
-                <span>{{item.is_agree}}</span>
-              </div>
-              <div class="name">
-                <span>{{item.name}}</span>
-              </div>
-              <div class="tel">
-                <span>{{item.add_time}}</span>
-              </div>
-              <div class="operation">
-                <span>{{item.opinion}}</span>
-              </div>
-              <div>
-                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
-              </div>
-            </div>
-            <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture.picture,index)" />
-            </div>
-            <div style="width: 530px;float: right;background: #e3e4e9;">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
                 <div class="avatar">
                   <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
@@ -692,15 +628,27 @@
                 </div>
               </div>
             </div>
+            <p>审批时间:{{item.add_time}}</p>
           </div>
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
           <div class="button" v-show="menuShow">
-            <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-            <input name="token" type="hidden" :value="input_value">
-            <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-            <el-button type="primary" round @click="agree($event)">同意</el-button>
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <label>
+              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
             <el-button type="danger" round @click="refuse">拒绝</el-button>
           </div>
         </div>
@@ -744,42 +692,17 @@
         </div>
         <div>
           <span>审批：</span>
-          <div class="exam_info">
-            <div class="avatar lzz">
-              <span style="margin-left: 5px;">状态</span>
-            </div>
-            <div class="name lzz">
-              <span>姓名</span>
-            </div>
-            <div class="tel lzz">
-              <span>时间</span>
-            </div>
-            <div class="operation lzz">
-              <span>回复</span>
-            </div>
-          </div>
-          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-            <div class="exam_info">
-              <div class="avatar">
-                <span>{{item.is_agree}}</span>
-              </div>
-              <div class="name">
-                <span>{{item.name}}</span>
-              </div>
-              <div class="tel">
-                <span>{{item.add_time}}</span>
-              </div>
-              <div class="operation">
-                <span>{{item.opinion}}</span>
-              </div>
-              <div>
-                <i v-show="status == 2" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i>
-              </div>
-            </div>
-            <div>
-              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture.picture,index)" />
-            </div>
-            <div style="width: 530px;float: right;background: #e3e4e9;">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
               <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
                 <div class="avatar">
                   <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
@@ -790,25 +713,29 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
-                <div class="img">
-                  <a v-for="(er,index) in res.imgs" v-if="res.imgs">
-                    <img :src="er" alt="" @click="er_show(res.imgs,index)" />
-                  </a>
-                </div>
-                <div class="files">
-                  <a :href="er.address" v-for="(er,index) in res.files" target="_blank" class="file">{{er.name}}</a>
-                </div>
               </div>
             </div>
+            <p>审批时间:{{item.add_time}}</p>
           </div>
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
           <div class="button" v-show="menuShow">
-            <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-            <input name="token" type="hidden" :value="input_value">
-            <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-            <el-button type="primary" round @click="agree($event)">同意</el-button>
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <label>
+              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
             <el-button type="danger" round @click="refuse">拒绝</el-button>
           </div>
         </div>
@@ -865,6 +792,10 @@
       <el-button type="warning" size="small" @click="_rewirte">重写</el-button>
       <el-button type="success" size="small" style="float: right" @click="sure">确定</el-button>
     </div>
+
+    <div class="simpleText">
+
+    </div>
 	</div>
 </template>
 
@@ -884,6 +815,7 @@
   import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { mapGetters, mapMutations } from 'vuex'
+  import simpleText from '@/base/unit/input'
 	export default {
 		data() {
 			return {
@@ -932,6 +864,8 @@
         afile_hash_arr:[],
         pic_time:0,
         file_time:0,
+        pic_times:0,
+        file_times:0,
 				pageIndex: 1,
 				searchInfo: '',
 				classValue: '',
@@ -961,7 +895,14 @@
         core:'',
         signature:false,
         sign_link:'',
-        signImg:''
+        signImg:'',
+        mands:[],
+        choices:[],
+        describe:'',
+        many_enclosure:{},
+        pity:{},
+        is_agree:'',
+        change_type:''
 			}
 		},
 		computed: {
@@ -1015,7 +956,7 @@
       },
       pic_time(){
 			  if(this.picArr.length != 0){
-          if(this.file_times == 0){
+          if(this.file_time == 0){
             return
           }
         }
@@ -1036,6 +977,70 @@
               }else{
                 this.$message.error(res.data.message)
                 this.closeSend()
+              }
+            })
+        }
+      },
+      file_times(){
+        console.log(this.picArr.length)
+        console.log(this.pic_times)
+			  if(this.picArr.length != 0){
+			    if(this.pic_times == 0){
+			      return
+          }
+        }
+        if(this.file_times != 0 || this.pic_times != 0){
+			    let param = new URLSearchParams()
+          param.append('approval_id',this.reply)
+          param.append('uid',this.user.uid)
+          param.append('participation_id',this.form_Listb.participation_id)
+          param.append('is_agree',this.is_agree)
+          param.append('opinion',this.handle_txt)
+          param.append('form_result',this.pity)
+          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
+          this.$http.post('index.php/Mobile/find/approval_process',param)
+            .then((res)=>{
+              this.loading_show = false
+              this.handle_txt = ''
+              this.is_agree = ''
+              this.listShow = true
+              this.formShow = false
+              this._getExamList()
+              if(res.data.code == 0){
+                this.$message.success(res.data.message)
+              }else{
+                this.$message.error('添加失败')
+              }
+            })
+        }
+      },
+      pic_times(){
+        if(this.fileArr.length != 0) {
+          if(this.file_times === 0) {
+            return
+          }
+        }
+        if(this.file_times != 0 || this.pic_times != 0){
+          let param = new URLSearchParams()
+          param.append('approval_id',this.reply)
+          param.append('uid',this.user.uid)
+          param.append('participation_id',this.form_Listb.participation_id)
+          param.append('is_agree',this.is_agree)
+          param.append('opinion',this.handle_txt)
+          param.append('form_result',this.pity)
+          param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
+          this.$http.post('index.php/Mobile/find/approval_process',param)
+            .then((res)=>{
+              this.loading_show = false
+              this.handle_txt = ''
+              this.is_agree = ''
+              this.listShow = true
+              this.formShow = false
+              this._getExamList()
+              if(res.data.code == 0){
+                this.$message.success(res.data.message)
+              }else{
+                this.$message.error('添加失败')
               }
             })
         }
@@ -1062,9 +1067,21 @@
 		components: {
 			browsePic,
 			loading,
-			fileAccord
+			fileAccord,
+      simpleText
 		},
 		methods: {
+      ...mapMutations({
+        setUser: 'SET_USER',
+        setNowCompanyId: 'SET_NOWCOMPANY_ID',
+        setComPersonList: 'SET_COM_PERSON_LIST',
+        setComDepartList: 'SET_COM_DEPART_LIST',
+        setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
+        setNowCompanyName: 'SET_NOWCOMPANY_NAME',
+        setToken: 'SET_TOKEN',
+        setUserState: 'SET_USERSTATE',
+        setCompanyList: 'SET_COMPANYLIST'
+      }),
 			sureDown(){
 				this.ifDownShow = false
 			},
@@ -1182,7 +1199,6 @@
 					return
 				}
 				this.fileAccordShow = true
-        console.log(item)
 				if(item.approval_type === '7' || item.approval_type == '10' || item.approval_type == '3') {
 					this.request_money_basis_type = '请购单'
 				} else if(item.approval_type === '111' || item.approval_type == '1' || item.approval_type == '2') {
@@ -1356,17 +1372,6 @@
 						}
 					})
 			},
-			...mapMutations({
-				setUser: 'SET_USER',
-				setNowCompanyId: 'SET_NOWCOMPANY_ID',
-				setComPersonList: 'SET_COM_PERSON_LIST',
-				setComDepartList: 'SET_COM_DEPART_LIST',
-				setComPartPersonList: 'SET_COM_PART_PERSON_LIST',
-				setNowCompanyName: 'SET_NOWCOMPANY_NAME',
-				setToken: 'SET_TOKEN',
-				setUserState: 'SET_USERSTATE',
-				setCompanyList: 'SET_COMPANYLIST'
-			}),
 			first_page() {
 				this.nextPageShow = true
 				this.pageIndex = 1
@@ -1386,7 +1391,8 @@
         this.pic = event.target.files;
       },
 			cl_pic(item, index) {
-			  console.log(item)
+        document.body.scrollTop = 0
+        document.documentElement.scrollTop = 0
         item.forEach((res)=>{
           let current = res.indexOf('?')
           this.arr_list.push(res.slice(0,current) + '?imageslim' )
@@ -1421,237 +1427,381 @@
 			},
       //审批
 			agree(){
-        document.body.scrollTop = 0
-        document.documentElement.scrollTop = 0
-				this.pic_hash_arr = []
-        //同意情况下 如果当前输入框内容为空 提示‘请填写审批意见’ 反之 则同意
-				// if(this.handle_txt === '') {
-				// 	this.$message.error('请填写审批意见');
-				// 	return
-				// }
-				if(!this.pic) {
-					this.$confirm('是否提交审批?', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-						type: 'warning'
-					}).then(() => {
+        var obj = new Object()
+        var obj2 = new Object()
+        this.is_agree = '1'
+        let str = ''
+        this.$refs.re.forEach((item)=>{
+          if(!item.result){
+            this.$message.warning(`${item.title}为必选项`)
+            str = item.title
+          }else{
+            obj[item.title] = item.result
+          }
+        })
 
-						this.loading_show = true
-						let param = new URLSearchParams();
-						param.append("uid", this.user.uid);
-						param.append("approval_id", this.reply);
-						param.append("participation_id", this.form_Listb.participation_id);
-						param.append("is_agree", '1');
-						param.append("company_id", this.nowCompanyId);
-						param.append("opinion", this.handle_txt);
-						this.$http.post("/index.php/Mobile/find/approval_process", param)
-							.then((res) => {
-                var current = this
-                var judge = res.data.code
-                getCro(judge,current)
-								this.loading_show = false
-								this.handle_txt = ''
-								this.listShow = true
-								this.formShow = false
-								this._getExamList()
-								if(res.data.code === 0) {
-									this.$message({
-										message: '操作成功',
-										type: 'success'
-									});
-                  document.body.scrollTop = 324
-                  document.documentElement.scrollTop = 324
-								} else {
-									this.$message.error('操作失败');
-								}
-							})
-					}).catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消操作'
-						});
-					});
+        if(str != ''){
+          return false
+        }
 
-				}
-				if(this.pic) {
-					this.$confirm('是否提交审批?', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-						type: 'warning'
-					}).then(() => {
-						this.loading_show = true
-						for(let i = 0; i < this.pic.length; i++) {
-							let formData = new FormData();
-							formData.append('file', this.pic[i]);
-							formData.append('token', JSON.parse(localStorage.token));
-							let config = {
-								headers: {
-									'Content-Type': 'multipart/form-data'
-								}
-							}
-							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-								this.pic_hash_arr.push(res.data.hash)
-								if(this.pic_hash_arr.length === this.pic.length) {
-									let nparam = new URLSearchParams();
-									nparam.append("uid", this.user.uid);
-									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-										.then((res) => {
-                      var current = this
-                      var judge = res.data.code
-                      getCro(judge,current)
-											let param = new URLSearchParams();
-											param.append("uid", this.user.uid);
-											param.append("approval_id", this.reply);
-											param.append("participation_id", this.form_Listb.participation_id);
-											param.append("is_agree", '1');
-											param.append("picture", res.data.data.enclosure_id);
-											param.append("company_id", this.nowCompanyId);
-											param.append("opinion", this.handle_txt);
-											this.$http.post("/index.php/Mobile/find/approval_process", param)
-												.then((res) => {
-                          var current = this
-                          var judge = res.data.code
-                          getCro(judge,current)
-													this.loading_show = false
-													this.handle_txt = ''
-													this.listShow = true
-													this.formShow = false
-													this._getExamList()
-													if(res.data.code === 0) {
-														this.$message({
-															message: '操作成功',
-															type: 'success'
-														});
-													} else {
-														this.$message.error('操作失败');
-													}
-												})
-										})
-								}
-							})
-						}
-					}).catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消操作'
-						});
-					});
-				}
+        this.$refs.te.forEach((item)=>{
+          if(item.result){
+            obj2[item.title] = item.result
+          }
+        })
+        this.pity =  Object.assign(obj,obj2)
+        this.pity = JSON.stringify(this.pity)
+        this.pic_hash_arr = []
+        this.afile_hash_arr = []
+        this.file_hash_arr = []
+        this.picArr = []
+        this.fileArr = []
+        this.fileList.forEach((item) => {
+          if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
+            this.picArr.push(item)
+          }
+        })
+        this.fileList_a.forEach((item) =>{
+          this.fileArr.push(item)
+        })
+        this.file_times = 0
+        this.pic_times = 0
+        this.$confirm('是否提交审批?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.loading_show = true
+          setTimeout(()=>{
+            if(this.picArr.length == 0 && this.fileArr.length == 0){
+              let param = new URLSearchParams()
+              param.append('approval_id',this.reply)
+              param.append('uid',this.user.uid)
+              param.append('participation_id',this.form_Listb.participation_id)
+              param.append('is_agree',this.is_agree)
+              param.append('opinion',this.handle_txt)
+              param.append('form_result',this.pity)
+              this.$http.post('index.php/Mobile/find/approval_process',param)
+                .then((res)=>{
+                  this.loading_show = false
+                  this.handle_txt = ''
+                  this.listShow = true
+                  this.formShow = false
+                  this._getExamList()
+                  if(res.data.code == 0){
+                    this.$message.success(res.data.message)
+                  }else{
+                    this.$message.error('添加失败')
+                  }
+                })
+            }else{
+              if(this.picArr.length != 0){
+                var upload_enclosure_new = (fn)=>{
+                  this.picArr.forEach((item)=>{
+                    let formData = new FormData()
+                    formData.append('file',item.raw)
+                    formData.append('token',this.token)
+                    let config = {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                    if(!item.size){
+                      this.pic_hash_arr.push(item.hash)
+                      this.pic_hash_arr.length == this.picArr.length && fn(item.name)
+                    }else{
+                      this.$http.post('https://up.qbox.me/', formData, config).then((res)=>{
+                        this.pic_hash_arr.push(res.data.hash)
+                        if(this.pic_hash_arr.length === this.picArr.length) {
+                          fn(item.name);
+                        }
+                      })
+                    }
+                  })
+                }
+                upload_enclosure_new((name)=>{
+                  let nparam = new URLSearchParams()
+                  nparam.append('uid',this.user.uid)
+                  nparam.append('picture',JSON.stringify(this.pic_hash_arr))
+                  this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                    .then((res)=>{
+                      this.afile_hash_arr.push({
+                        'type':3,
+                        'contract_id':res.data.data.enclosure_id,
+                        name
+                      })
+                      this.pic_times = Date.parse(new Date())
+                    })
+                })
+              }
+              if(this.fileArr.length != 0){
+                this.fileArr.forEach((item)=>{
+                  let formData = new FormData()
+                  formData.append('file',item.raw)
+                  formData.append('token',this.token)
+                  let config = {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  }
+                  if(!item.size){
+                    let index = item.name.lastIndexOf('.')
+                    let attribute = item.name.slice(index)
+                    if(attribute.substr(0,1) == '.'){
+                      attribute = attribute.substr(1)
+                    }
+                    let file_name = item.name.slice(0,index)
+                    let param = new URLSearchParams()
+                    param.append('uid',this.user.uid)
+                    param.append('attribute',attribute)
+                    param.append('attachments',item.hash)
+                    param.append('file_name',file_name)
+                    this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                      .then((res)=>{
+                        this.file_hash_arr.push({
+                          'type':4,
+                          'contract_id':res.data.data.attachments_id,
+                          'name':item.name
+                        })
+                        if(this.file_hash_arr.length == this.fileArr.length){
+                          this.file_times = Date.parse(new Date())
+                        }
+                      })
+                  }else{
+                    let size = item.size
+                    let index = item.name.lastIndexOf('.')
+                    let attribute = item.name.slice(index)
+                    if(attribute.substr(0,1)=='.'){
+                      attribute = attribute.substr(1)
+                    }
+                    this.$http.post('/index.php/Mobile/find/file_info')
+                      .then((res)=>{
+                        let maxSize = res.data.data.max
+                        let attr = res.data.data.attribute
+                        if(attr.indexOf(attribute) != -1){
+                          if(size < maxSize){
+                            this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
+                              let file_name = item.name.slice(0,index)
+                              let param = new URLSearchParams()
+                              param.append('uid',this.user.uid)
+                              param.append('attribute',attribute)
+                              param.append('attachments',res.data.hash)
+                              param.append("file_name",file_name)
+                              this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                                .then((res)=>{
+                                  this.file_hash_arr.push({
+                                    'type':4,
+                                    'contract_id':res.data.data.attachments_id,
+                                    'name':item.name
+                                  })
+                                  if(this.file_hash_arr.length == this.fileArr.length){
+                                    this.file_times = Date.parse(new Date())
+                                  }
+                                })
+                            })
+                          }else{
+                            this.$message.error('上传文件过大 请删除')
+                            this.loading_show = false
+                            return false
+                          }
+                        }else{
+                          this.$message.error('请删除'+this.fileArr[i].name)
+                          this.loading_show = false
+                          return false
+                        }
+                      })
+                  }
+                })
+              }
+            }
+          },500)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+        });
 			},
       //拒絕
 			refuse(){
-				this.pic_hash_arr = []
 				if(this.handle_txt === '') {
 					this.$message.error('请填写审批意见');
 					return
 				}
-				if(!this.pic) {
-					this.$confirm('是否提交审批?', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-						type: 'warning'
-					}).then(() => {
-						this.loading_show = true
-						let param = new URLSearchParams();
-						param.append("uid", this.user.uid);
-						param.append("approval_id", this.reply);
-						param.append("participation_id", this.form_Listb.participation_id);
-						param.append("is_agree", '2');
-						param.append("company_id", this.nowCompanyId);
-						param.append("opinion", this.handle_txt);
-						this.$http.post("/index.php/Mobile/find/approval_process", param)
-							.then((res) => {
-                var current = this
-                var judge = res.data.code
-                getCro(judge,current)
-								this.loading_show = false
-								this.handle_txt = ''
-								this.listShow = true
-								this.formShow = false
-								this._getExamList()
-								if(res.data.code === 0) {
-									this.$message({
-										message: '操作成功',
-										type: 'success'
-									});
-								} else {
-									this.$message.error('操作失败');
-								}
-							})
-					}).catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消删除'
-						});
-					});
-
-				}
-				if(this.pic) {
-					this.$confirm('是否提交审批?', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-						type: 'warning'
-					}).then(() => {
-						this.loading_show = true
-						for(let i = 0; i < this.pic.length; i++) {
-							let formData = new FormData();
-							formData.append('file', this.pic[i]);
-							formData.append('token', JSON.parse(localStorage.token));
-							let config = {
-								headers: {
-									'Content-Type': 'multipart/form-data'
-								}
-							}
-							this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-								this.pic_hash_arr.push(res.data.hash)
-								if(this.pic_hash_arr.length === this.pic.length) {
-									let nparam = new URLSearchParams();
-									nparam.append("uid", this.user.uid);
-									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-										.then((res) => {
-                      var current = this
-                      var judge = res.data.code
-                      getCro(judge,current)
-											let param = new URLSearchParams();
-											param.append("uid", this.user.uid);
-											param.append("approval_id", this.reply);
-											param.append("participation_id", this.form_Listb.participation_id);
-											param.append("is_agree", '2');
-											param.append("picture", res.data.data.enclosure_id);
-											param.append("company_id", this.nowCompanyId);
-											param.append("opinion", this.handle_txt);
-											this.$http.post("/index.php/Mobile/find/approval_process", param)
-												.then((res) => {
-                          var current = this
-                          var judge = res.data.code
-                          getCro(judge,current)
-													this.loading_show = false
-													this.handle_txt = ''
-													this.listShow = true
-													this.formShow = false
-													this._getExamList()
-													if(res.data.code === 0) {
-														this.$message({
-															message: '操作成功',
-															type: 'success'
-														});
-													} else {
-														this.$message.error('操作失败');
-													}
-												})
-										})
-								}
-							})
-						}
-					}).catch(() => {
-						this.$message({
-							type: 'info',
-							message: '已取消删除'
-						});
-					});
-				}
+        this.is_agree = '2'
+        var obj = new Object()
+        var obj2 = new Object()
+        this.$refs.re.forEach((item)=>{
+          obj[item.title] = item.result
+        })
+        this.$refs.re.forEach((item)=>{
+          obj2[item.title] = item.result
+        })
+        this.pity = Object.assign(obj,obj2)
+        this.pity = JSON.stringify(this.pity)
+        this.pic_hash_arr = []
+        this.afile_hash_arr = []
+        this.file_hash_arr = []
+        this.picArr = []
+        this.fileArr = []
+        this.fileList.forEach((item) => {
+          if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
+            this.picArr.push(item)
+          }
+        })
+        this.fileList_a.forEach((item) =>{
+          this.fileArr.push(item)
+        })
+        this.file_times = 0
+        this.pic_times = 0
+        this.$confirm('是否提交审批','提示',{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
+          this.loading_show = true
+          setTimeout(()=>{
+            if(this.picArr.length == 0 && this.fileArr.length == 0){
+              let param = new URLSearchParams()
+              param.append('approval_id',this.reply)
+              param.append('uid',this.user.uid)
+              param.append('participation_id',this.form_Listb.participation_id)
+              param.append('is_agree',this.is_agree)
+              param.append('opinion',this.handle_txt)
+              param.append('form_result',this.pity)
+              this.$http.post('index.php/Mobile/find/approval_process',param)
+                .then((res)=>{
+                  this.loading_show = false
+                  this.handle_txt = ''
+                  this.listShow = true
+                  this.formShow = false
+                  this._getExamList()
+                  if(res.data.code == 0){
+                    this.$message.success(res.data.message)
+                  }else{
+                    this.$message.error('添加失败')
+                  }
+                })
+            }else{
+              if(this.picArr.length != 0){
+                var upload_enclosure_new = (fn)=>{
+                  this.picArr.forEach((item)=>{
+                    let formData = new FormData()
+                    formData.append('file',item.raw)
+                    formData.append('token',this.token)
+                    let config = {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                    if(!item.size){
+                      this.pic_hash_arr.push(item.hash)
+                      this.pic_hash_arr.length == this.picArr.length && fn(item.name)
+                    }else{
+                      this.$http.post('https://up.qbox.me/', formData, config).then((res)=>{
+                        this.pic_hash_arr.push(res.data.hash)
+                        if(this.pic_hash_arr.length === this.picArr.length) {
+                          fn(item.name);
+                        }
+                      })
+                    }
+                  })
+                }
+                upload_enclosure_new((name)=>{
+                  let nparam = new URLSearchParams()
+                  nparam.append('uid',this.user.uid)
+                  nparam.append('picture',JSON.stringify(this.pic_hash_arr))
+                  this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                    .then((res)=>{
+                      this.afile_hash_arr.push({
+                        'type':3,
+                        'contract_id':res.data.data.enclosure_id,
+                        name
+                      })
+                      this.pic_times = Date.parse(new Date())
+                    })
+                })
+              }
+              if(this.fileArr.length != 0){
+                this.fileArr.forEach((item)=>{
+                  let formData = new FormData()
+                  formData.append('file',item.raw)
+                  formData.append('token',this.token)
+                  let config = {
+                    headers: {
+                      'Content-Type': 'multipart/form-data'
+                    }
+                  }
+                  if(!item.size){
+                    let index = item.name.lastIndexOf('.')
+                    let attribute = item.name.slice(index)
+                    if(attribute.substr(0,1) == '.'){
+                      attribute = attribute.substr(1)
+                    }
+                    let file_name = item.name.slice(0,index)
+                    let param = new URLSearchParams()
+                    param.append('uid',this.user.uid)
+                    param.append('attribute',attribute)
+                    param.append('attachments',item.hash)
+                    param.append('file_name',file_name)
+                    this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                      .then((res)=>{
+                        this.file_hash_arr.push({
+                          'type':4,
+                          'contract_id':res.data.data.attachments_id,
+                          'name':item.name
+                        })
+                        if(this.file_hash_arr.length == this.fileArr.length){
+                          this.file_times = Date.parse(new Date())
+                        }
+                      })
+                  }else{
+                    let size = item.size
+                    let index = item.name.lastIndexOf('.')
+                    let attribute = item.name.slice(index)
+                    if(attribute.substr(0,1)=='.'){
+                      attribute = attribute.substr(1)
+                    }
+                    this.$http.post('/index.php/Mobile/find/file_info')
+                      .then((res)=>{
+                        let maxSize = res.data.data.max
+                        let attr = res.data.data.attribute
+                        if(attr.indexOf(attribute) != -1){
+                          if(size < maxSize){
+                            this.$http.post('https://up.qbox.me/',formData,config).then((res)=>{
+                              let file_name = item.name.slice(0,index)
+                              let param = new URLSearchParams()
+                              param.append('uid',this.user.uid)
+                              param.append('attribute',attribute)
+                              param.append('attachments',res.data.hash)
+                              param.append("file_name",file_name)
+                              this.$http.post('/index.php/Mobile/approval/add_attachments',param)
+                                .then((res)=>{
+                                  this.file_hash_arr.push({
+                                    'type':4,
+                                    'contract_id':res.data.data.attachments_id,
+                                    'name':item.name
+                                  })
+                                  if(this.file_hash_arr.length == this.fileArr.length){
+                                    this.file_times = Date.parse(new Date())
+                                  }
+                                })
+                            })
+                          }else{
+                            this.$message.error('上传文件过大 请删除')
+                            this.loading_show = false
+                            return false
+                          }
+                        }else{
+                          this.$message.error('请删除'+this.fileArr[i].name)
+                          this.loading_show = false
+                          return false
+                        }
+                      })
+                  }
+                })
+              }
+            }
+          },500)
+        }).catch(()=>{
+          this.$message.info('已取消操作')
+        })
 			},
 			return_list() {
 				this.downShow = false
@@ -1720,6 +1870,9 @@
             var current = this
             var judge = res.data.code
             getCro(judge,current)
+            if(res.data.data.change_type){
+              this.change_type = res.data.data.change_type
+            }
 						if(item.type === '呈批件') {
 							this.form_Lista = create_cengpijian_list(res.data.data)
 							this.get_img(this.form_Lista.many_enclosure)
@@ -1739,7 +1892,6 @@
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '申请公章') {
 							this.form_Lista = create_gongzhang_list(res.data.data)
-              console.log(this.form_Lista)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '请购单') {
@@ -1783,6 +1935,10 @@
 									})
 								res.data.data.content[index].picture = arr
 							}
+							if(item.many_enclosure){
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              }
 							if(typeof item.replys == 'array'){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
@@ -1790,8 +1946,29 @@
                 })
               }
 						})
+            if(res.data.data.supply){
+              res.data.data.supply.forEach((item,index)=>{
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
+        let mparam = new URLSearchParams()
+        mparam.append('approval_id',item.approval_id)
+        this.$http.post('index.php/Mobile/approval/find_sequence_attachment_new',mparam)
+          .then((res)=>{
+            if(res.data.code == 0){
+              let form = res.data.data
+              if(form.form_content.optional.length > 0){
+                this.choices = form.form_content.optional
+              }
+              if(form.form_content.required.length > 0){
+                this.mands = form.form_content.required
+              }
+              this.describe = form.enclosure_describe
+            }
+          })
 			},
       reply_other(us,pr,name){
 			  this.wideShow = true
@@ -2255,6 +2432,7 @@
       submit(){
         if(this.signImg == ''){
           this.$message.error('请签字')
+          return false
         }
         this.$confirm('是否提交审批?', '提示', {
           confirmButtonText: '确定',
@@ -2616,45 +2794,71 @@
 					font-size: 14px;
 					transition: .3s;
 					margin-bottom: 4px;
-					>.lzz {
-						font-weight: 700;
-						font-size: 15px;
-						text-indent: 2px;
-					}
-					&:first-child {
-						border-bottom: 1px solid transparent;
-						&:hover {
-							background: none;
-						}
-					}
-					&:nth-child(even) {
-						background: rgb(245, 247, 250);
-					}
-					&:hover {
-						background: #EEEEEE;
-					}
-					>div {
-						height: 40px;
-						line-height: 40px;
-						display: inline-block;
-					}
-					.avatar {
-						/*vertical-align: top;*/
-						width: 70px;
-					}
-					.name {
-						width: 80px;
-					}
-					.tel {
-						width: 150px;
-					}
-					.operation {
-						width: 240px;
-						button {
-							display: block;
-						}
-					}
+					b{
+            margin-left: 20px;
+            margin-bottom:5px;
+            display: block;
+            span{
+              margin-right: 15px;
+              &:last-child{
+                color: red;
+              }
+            }
+          }
+          p{
+            margin-left: 30px;
+            margin-bottom: 10px;
+          }
+          .enclosure{
+            a{
+              font-size: 14px;
+              margin: 4px auto;
+              display: block;
+              height: 24px;
+              width: 80%;
+              line-height: 24px;
+              color: #5A5E66;
+              border: 1px solid #F9F9F9;
+              border-radius: 4px;
+              background: #DDDDDD;
+              text-align: center;
+            }
+            img{
+              width: 50px;
+              height: 50px;
+              margin: 5px;
+            }
+          }
+          &:last-child{
+            border-bottom: none;
+          }
 				}
+        .info{
+          margin-left: 10px;
+          p{
+            margin: 5px 0;
+          }
+          div{
+            a{
+              font-size: 14px;
+              margin: 4px auto;
+              display: block;
+              height: 24px;
+              width: 80%;
+              line-height: 24px;
+              color: #5A5E66;
+              border: 1px solid #F9F9F9;
+              border-radius: 4px;
+              background: #DDDDDD;
+              text-align: center;
+            }
+            img{
+              width: 50px;
+              height: 50px;
+              margin: 5px;
+            }
+          }
+        }
 				>div {
 					display: block;
 					border-bottom: 1px solid #DDDDDD;
@@ -2752,17 +2956,47 @@
 					}
 					.button {
 						margin-top: 10px;
-						margin-left: 120px;
 						display: block;
 						font-size: 0;
 						z-index: 2;
-						width: 300px;
-						input[type="file"] {
-							margin: 10px 0 10px 0px;
-						}
+						width: 100%;
 						>button {
 							margin-left: 50px;
+              margin-top: 10px;
 						}
+            >label{
+              margin: 5px 0;
+            }
+            .miao{
+              margin-left: 30px;
+              font-size: 14px;
+            }
+            #picc{
+              margin-top: 10px;
+              margin-left: 30px;
+              ul{
+                li{
+                  width: 85px;
+                  height: 85px;
+                }
+              }
+            }
+            .el-upload--picture-card{
+              width: 85px;
+              height: 85px;
+              .el-upload-list__item.is-success{
+                width: 85px;
+                height: 85px;
+              }
+            }
+            .el-icon-plus{
+              position: relative;
+              top: -25px;
+            }
+            .upload-demo_a{
+              margin-top: 20px;
+              margin-left: 30px;
+            }
 					}
 				}
         .win{
@@ -2908,5 +3142,9 @@
     button{
       margin: 10px;
     }
+  }
+  .simpleText{
+    width: 100%;
+    background: #FFF;
   }
 </style>

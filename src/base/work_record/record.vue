@@ -2090,24 +2090,24 @@
       margin-top: -75px;
       z-index: 999;
       .close{
-        display: block;
-        width: 100%;
-        overflow: hidden;
-        text-align: center;
-        .huifu{
-          line-height: 53px;
-          font-size: 16px;
-        }
-        i{
-          float: right;
-          font-size: 16px;
-          margin: 20px 10px 0;
-          cursor: pointer;
-          border-radius: 100%;
-          border: 1px solid black;
-          color: #000;
-        }
-      }
+         display: block;
+         width: 100%;
+         overflow: hidden;
+         text-align: center;
+         .huifu{
+           line-height: 53px;
+           font-size: 16px;
+         }
+         i{
+           float: right;
+           font-size: 16px;
+           margin: 20px 10px 0;
+           cursor: pointer;
+           border-radius: 100%;
+           border: 1px solid black;
+           color: #000;
+         }
+       }
       .el-textarea{
         display: block;
         width: 90%;

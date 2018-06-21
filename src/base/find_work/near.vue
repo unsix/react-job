@@ -111,7 +111,7 @@ export default {
       let param = new URLSearchParams()
       // param.append('uid',this.user.uid)
       param.append('p',this.pageIndex)
-      param.append('each','20')
+      param.append('each','10')
       if(this.typed != '1'){
         param.append('wid',this.typed)
       }
@@ -130,7 +130,7 @@ export default {
             arr[sr].distance = (arr[sr].distance/1000).toFixed(2)
             this.nearList.push(arr[sr])
           }
-          if(this.nearList.length<20){
+          if(this.nearList.length<10){
             this.nextPageShow =false
           }
           this.dec = this.se.map(item=>{

@@ -36,6 +36,7 @@ export default {
 	methods: {
 		close(){
 			this.$parent.pic_show = false
+      document.body.style.overflow = 'visible'
       this.img_arr.splice(0,this.img_arr.length)
 		},
 		left() {
@@ -72,7 +73,7 @@ export default {
 	background: rgba(0, 0, 0, 0.5);
 	z-index: 10;
 	>div{
-		height: 100%;
+		height: 960px;
 		display: flex;
 		justify-content:center;
 		 align-items:center;

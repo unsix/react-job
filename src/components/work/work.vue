@@ -44,7 +44,7 @@
 				<div class="work_wrapper">
 					<ul>
 						<li class="work_item" v-for="(item,index) in workList" @click="doList(item,index)">
-							<router-link to="" :class="{'active' : index === workIndex}">
+							<router-link to="" :class="{'active' : index == workIndex}">
 								<span class="content">{{item}}</span>
 							</router-link>
 						</li>
@@ -300,20 +300,21 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-					this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+					this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
 				}
 				if(m === 1 && f === 0) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
 				}
 				if(m === 0 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+					this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
 				}
 				if(m === 1 && f === 1) {
-					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录','工人列表','工程列表','我发布的','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+					this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录','工人列表','工程列表','我发布的','我要发工资','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
 				}
 			},
 			changeWorkIndex(num){
-				this.workIndex = num
+        // console.log('----'+num)
+				// this.workIndex = num
 			},
 			userIconOver() {
 				this.$refs.userIcon.style.transition = 'all 0.4s'
@@ -409,6 +410,9 @@
             break;
           case '我要充值':
             this.$router.push({path:'/work/pay'})
+            break;
+          case '我要发工资':
+            this.$router.push({path:'/work/wage'})
             break;
 				}
 			},
@@ -746,9 +750,11 @@
 		},
 		watch: {
 			nowCompanyId() {
-				this.compamyShow = false
-				this._getUserState()
-				this._getToken()
+				if(this.nowCompanyId){
+          this.compamyShow = false
+          this._getUserState()
+          this._getToken()
+        }
 			}
 		}
 	}
@@ -923,7 +929,6 @@
 						>.work_item {
 							position: relative;
 							color: #3e5685;
-							font-size: 13px;
 							line-height: 28px;
 							white-space: nowrap;
 							text-overflow: ellipsis;

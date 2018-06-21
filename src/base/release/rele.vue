@@ -276,9 +276,11 @@ export default {
       let tips = this.$refs.indx.contentWindow.tips
       if(this.signImg == ''){
         this.$message.error('请签字')
+        return false
       }
       if(tips.length > 0){
         this.$message.error(tips)
+        return false
       }else{
         let result = this.$refs.indx.contentWindow.result
         let formData = new FormData()

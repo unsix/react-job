@@ -30,27 +30,11 @@
 			<el-form-item label="银行卡号" prop="bank_card">
 				<el-input v-model="qkd_ruleForm.bank_card"></el-input>
 			</el-form-item>
-			<el-form-item label="合同金额" prop="subtotal">
-				<el-input v-model="qkd_ruleForm.subtotal"></el-input>
-			</el-form-item>
-      <el-form-item label="已领工程款" prop="balance_subtotal">
-        <el-input v-model.number="qkd_ruleForm.balance_subtotal"></el-input>
-      </el-form-item>
-
-			<el-form-item label="本次请款金额" prop="request_subtotal">
-				<el-input v-model="qkd_ruleForm.request_subtotal"></el-input>
-			</el-form-item>
 			<el-form-item label="请款内容" prop="request_content">
 				<el-input type="textarea" v-model="qkd_ruleForm.request_content"></el-input>
 			</el-form-item>
 			<el-form-item label="合同执行进度" prop="contract_state">
 				<el-input v-model="qkd_ruleForm.contract_state"></el-input>
-			</el-form-item>
-			<el-form-item label="增减金额" prop="gain_reduction_subtotal">
-				<el-input v-model="qkd_ruleForm.gain_reduction_subtotal"></el-input>
-			</el-form-item>
-			<el-form-item label="请款次数" prop="request_num">
-				<el-input v-model="qkd_ruleForm.request_num"></el-input>
 			</el-form-item>
 
 			<el-form-item label="项目负责人" prop="project_manager_name">
@@ -494,16 +478,6 @@
           this.$message.error('请上传附件')
           return false
         }
-				var re = /^[0-9]+$/;
-				if(!re.test(this.qkd_ruleForm.request_num)) {
-					this.$message.error('请求次数请填正整数');
-					return
-				}
-				var ret = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/;
-				if(!ret.test(this.qkd_ruleForm.balance_subtotal)) {
-					this.$message.error('已领工程款请填数字');
-					return
-				}
 				if(this.qkd_ruleForm.project_manager_name != '') {
 					this.comPersonList.forEach((item) => {
 						if(item.name === this.qkd_ruleForm.project_manager_name) {
@@ -592,7 +566,7 @@
                       "contract_id": res.data.data.enclosure_id,
                       name,
                     })
-                    let aDate = Date.parse(new Date())//看下把
+                    let aDate = Date.parse(new Date())
                     this.pic_time = aDate
                   })
               })
@@ -718,6 +692,7 @@
 						param.append("form_approval_id", this.form_approval_id);
 					}
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
+					param.append('change_type',2)
 					param.append("contract_state", this.qkd_ruleForm.contract_state);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
@@ -762,6 +737,7 @@
 					param.append("request_content", this.qkd_ruleForm.request_content);
 					param.append("request_num", this.qkd_ruleForm.request_num);
 					param.append("type", '2');
+          param.append('change_type',2)
 					if(this.form_approval_id != '0') {
 						param.append("form_approval_id", this.form_approval_id);
 					}

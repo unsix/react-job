@@ -1275,7 +1275,7 @@
 		},
     mounted(){
       if(this.$route.path === '/work/addressBook') {
-        this.$emit('changeWorkIndex', 8)
+        this.$emit('changeWorkIndex', 7)
         let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
         this.$refs.wide.style.height = h + 'px'
       }

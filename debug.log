@@ -4,3 +4,5 @@
 [0309/171023.301:ERROR:process_info.cc(396)] NtQuerySystemInformation SystemExtendedHandleInformation: {没有足够配额} 没有足够的虚拟内存或分页文件配额以完成指定的操作。 (0xc0000017)
 [0309/171035.148:ERROR:process_info.cc(396)] NtQuerySystemInformation SystemExtendedHandleInformation: {没有足够配额} 没有足够的虚拟内存或分页文件配额以完成指定的操作。 (0xc0000017)
 [0412/180334.755:ERROR:process_info.cc(359)] UncheckedAllocate
+[0608/172604.226:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: {没有足够配额} 没有足够的虚拟内存或分页文件配额以完成指定的操作。 (0xc0000017)
+[0619/164149.540:ERROR:process_info.cc(375)] NtQuerySystemInformation SystemExtendedHandleInformation: {没有足够配额} 没有足够的虚拟内存或分页文件配额以完成指定的操作。 (0xc0000017)

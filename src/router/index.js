@@ -22,6 +22,7 @@ const collect = () =>import('@/base/Mycollect/collect')
 const infos = () => import('@/base/info/infos')
 const account = () =>import('@/base/account/myAccount')
 const pay = () =>import('@/base/account/pay')
+const wage = () =>import('@/base/account/wages')
 Vue.use(Router)
 
 export default new Router({
@@ -116,6 +117,10 @@ export default new Router({
         {
           path:'pay',
           component:pay
+        },
+        {
+          path:'wage',
+          component:wage
         }
 			]
 		},
