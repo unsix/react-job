@@ -74,39 +74,31 @@
 		</div>
 		<div>
 			<span>审批：</span>
-			<div class="exam_info">
-				<div class="avatar lzz">
-					<span style="margin-left: 5px;">状态</span>
-				</div>
-				<div class="name lzz">
-					<span>姓名</span>
-				</div>
-				<div class="tel lzz">
-					<span>时间</span>
-				</div>
-				<div class="operation lzz">
-					<span>回复</span>
-				</div>
-			</div>
-			<div v-for="item in form_Listb.content">
-				<div class="exam_info">
-					<div class="avatar">
-						<span>{{item.is_agree}}</span>
-					</div>
-					<div class="name">
-						<span>{{item.name}}</span>
-					</div>
-					<div class="tel">
-						<span>{{item.add_time}}</span>
-					</div>
-					<div class="operation">
-						<span>{{item.opinion}}</span>
-					</div>
-				</div>
-				<div>
-					<img :src="list" alt="" v-for="(list,index) in item.picture" @click="cl_pic(item,index)" />
-				</div>
-			</div>
+      <div v-for="item in form_Listb.content" class="exam_info">
+        <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
+        <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+        <p>意见:<span>{{item.opinion}}</span></p>
+        <p v-show="item.many_enclosure" class="enclosure">
+          <span style="display: block">附件列表</span>
+          <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+          <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+          <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+        </p>
+        <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
+          <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+            <div class="avatar">
+              <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+            </div>
+            <div class="tel">
+              <span>{{res.add_time}}</span>
+            </div>
+            <div class="operation">
+              <span>{{res.reply_content}}</span>
+            </div>
+          </div>
+        </div>
+        <p>审批时间:{{item.add_time}}</p>
+      </div>
 		</div>
 		<div v-if="form_Listb.finance">
 			<span>表单回执：</span>
@@ -413,52 +405,52 @@
 				line-height: 30px;
 			}
 		}
-		.exam_info {
-			cursor: default;
-			display: block;
-			border-bottom: 1px solid #DDDDDD;
-			font-size: 14px;
-			transition: .3s;
-			margin-bottom: 0px;
-			>.lzz {
-				font-weight: 700;
-				font-size: 15px;
-				text-indent: 2px;
-			}
-			&:first-child {
-				border-bottom: 1px solid transparent;
-				&:hover {
-					background: none;
-				}
-			}
-			&:nth-child(even) {
-				background: rgb(245, 247, 250);
-			}
-			&:hover {
-				background: #EEEEEE;
-			}
-			>div {
-				height: 40px;
-				line-height: 40px;
-				display: inline-block;
-			}
-			.avatar {
-				vertical-align: top;
-				width: 70px;
-			}
-			.name {
-				width: 80px;
-			}
-			.tel {
-				width: 150px;
-			}
-			.operation {
-				width: 240px;
-				button {
-					display: block;
-				}
-			}
-		}
+    .exam_info {
+      cursor: default;
+      display: block;
+      border-bottom: 1px solid #DDDDDD;
+      font-size: 14px;
+      transition: .3s;
+      margin-bottom: 4px;
+      b{
+        margin-left: 20px;
+        margin-bottom:5px;
+        display: block;
+        span{
+          margin-right: 15px;
+          &:last-child{
+            color: red;
+          }
+        }
+      }
+      p{
+        margin-left: 30px;
+        margin-bottom: 10px;
+      }
+      .enclosure{
+        a{
+          font-size: 14px;
+          margin: 4px auto;
+          display: block;
+          height: 24px;
+          width: 80%;
+          line-height: 24px;
+          color: #5A5E66;
+          border: 1px solid #F9F9F9;
+          border-radius: 4px;
+          background: #DDDDDD;
+          text-align: center;
+        }
+        img{
+          width: 50px;
+          height: 50px;
+          margin: 5px;
+        }
+      }
+      &:last-child{
+        border-bottom: none;
+      }
+    }
 		>div {
 			display: block;
 			border-bottom: 1px solid #DDDDDD;

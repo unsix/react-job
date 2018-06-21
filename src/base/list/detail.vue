@@ -386,7 +386,7 @@
     },
     sel_con(res,tip){
       this.contract_type_id = res
-      let str = '/index.php/Mobile/skey/look_draft?id=' + res +'&operation=1&view=1'
+      let str = 'index.php/Mobile/skey/look_draft?id='+ res +'&operation=1&view=1'
       this.core = str
       this.wideShow = false
       this.contr = false
@@ -416,6 +416,7 @@
       }
       this.title = ''
       this.core = ''
+      this.insert = ''
     },
     _right(){
       this.sign_link = 'index.php/Mobile/find/sign'
@@ -432,9 +433,11 @@
       let tips = this.$refs.indx.contentWindow.tips
       if(this.signImg == ''){
         this.$message.error('请签字')
+        return false
       }
       if(tips.length > 0){
         this.$message.error(tips)
+        return false
       }else{
         let result = this.$refs.indx.contentWindow.result
         let formData = new FormData()
