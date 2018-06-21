@@ -467,7 +467,6 @@
 							this.account_num = ''
 				 			this.password_num = ''
 						},1000)
-
 					}else{
 						 this.$message.error(res.data.message);
 					}

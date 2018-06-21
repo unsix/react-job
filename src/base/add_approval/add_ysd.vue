@@ -53,6 +53,7 @@
       setCompanyList: 'SET_COMPANYLIST'
     }),
     submitForm_ysd(){
+      this.$parent.forms = false
       this.$refs.indx.contentWindow.getCustomFormResult()
       let tips = this.$refs.indx.contentWindow.tips
       let result = this.$refs.indx.contentWindow.result
@@ -173,6 +174,9 @@
   }
   .approval_person{
     width: 100%;
+    position: relative;
+    top: -20px;
+    z-index: 99;
     .top{
       position: relative;
       border-bottom: 1px solid #e3e4e9;
@@ -200,6 +204,8 @@
       margin-left: 40px;
       width: 80%;
       float: left;
+      height: 600px;
+      overflow-y: auto;
       .el-checkbox-group{
         padding: 10px 0 0;
       }

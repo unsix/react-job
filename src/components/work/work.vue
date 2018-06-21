@@ -750,9 +750,11 @@
 		},
 		watch: {
 			nowCompanyId() {
-				this.compamyShow = false
-				this._getUserState()
-				this._getToken()
+				if(this.nowCompanyId){
+          this.compamyShow = false
+          this._getUserState()
+          this._getToken()
+        }
 			}
 		}
 	}

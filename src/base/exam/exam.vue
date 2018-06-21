@@ -147,7 +147,7 @@
 				</div>
 				<div>
 					<span>审批：</span>
-          <div v-for="item in form_Listb.content" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -280,7 +280,7 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -397,46 +397,30 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div class="exam_info">
-            <div class="avatar lzz">
-              <span style="margin-left: 5px;">状态</span>
-            </div>
-            <div class="name lzz">
-              <span>姓名</span>
-            </div>
-            <div class="tel lzz">
-              <span>时间</span>
-            </div>
-            <div class="operation lzz">
-              <span>回复</span>
-            </div>
-          </div>
-          <div v-for="item in form_Listb.content" style="overflow: hidden;margin-bottom: 20px">
-            <div v-for="item in form_Listb.content" class="exam_info">
-              <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
-              <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-              <p>意见:<span>{{item.opinion}}</span></p>
-              <p v-show="item.many_enclosure" class="enclosure">
-                <span style="display: block">附件列表</span>
-                <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
-                <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
-                <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
-              </p>
-              <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
-                <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
-                  <div class="avatar">
-                    <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
-                  </div>
-                  <div class="tel">
-                    <span>{{res.add_time}}</span>
-                  </div>
-                  <div class="operation">
-                    <span>{{res.reply_content}}</span>
-                  </div>
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0"  class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
                 </div>
               </div>
-              <p>审批时间:{{item.add_time}}</p>
             </div>
+            <p>审批时间:{{item.add_time}}</p>
           </div>
         </div>
 				<div class="menu" v-show="handle_show">
@@ -534,7 +518,7 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -621,7 +605,7 @@
         </div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -708,7 +692,7 @@
         </div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>

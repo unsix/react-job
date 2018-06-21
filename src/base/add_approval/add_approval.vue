@@ -15,7 +15,7 @@
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
-				<el-button type="primary" plain @click="chooseTem">从模板选择</el-button>
+				<el-button type="primary" plain @click="chooseTem" v-show="forms">从模板选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
 				<addQkd v-if="qkd_show" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
@@ -29,7 +29,8 @@
 		</div>
 		<div class="as_what" v-show="as_what_show">
 			<ul>
-				<h2>选择请款依据</h2>
+				<h2 v-show="ysdType.length == 0">选择请款依据</h2>
+        <h2 v-show="ysdType.length > 0">选择验收单类型</h2>
 				<i class="el-icon-close" @click="close_as"></i>
 				<li v-show="ysdType.length == 0" v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
         <li v-show="ysdType.length > 0" v-for="(item,index) in ysdType" @click="ysd_click(item.inspection_type_id)" >{{item.inspection_name}}</li>
@@ -127,6 +128,7 @@
 	export default {
 		data() {
 			return {
+        forms:true,
 				navIndex: 0,
 				asType: ['请购单', '合同评审表', '呈批件'],
         ysdType:[],
@@ -925,6 +927,7 @@
         this.bxd_if= false
 				this.chooseTemShow = false
 				this.formShow = true
+        this.at_qingkuanShow = false
 				if(this.navIndex === 0) {
 					this.psb_show = true
 					this.approval_type = 111
