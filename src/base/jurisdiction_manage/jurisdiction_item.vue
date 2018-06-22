@@ -236,6 +236,9 @@
         param.append('target_uid',item.uid)
         this.$http.post('index.php/Mobile/approval/find_sequence_attachment_appoint_new',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               let obj = res.data.data
               if(obj.enclosure_describe){
@@ -267,6 +270,9 @@
         param.append('enclosure_describe',this.describe)
         this.$http.post('index.php/Mobile/approval/add_sequence_attachment',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.setting_show = false
               this.$message.success(res.data.message)

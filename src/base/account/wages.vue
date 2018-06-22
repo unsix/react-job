@@ -159,6 +159,7 @@
 <script>
   import loading from '@/base/loading/loading'
   import moment from 'moment'
+  import {getCro} from "@/common/js/crowd";
   import { mapGetters, mapMutations } from 'vuex'
   import browsePic from '@/base/browse_pic/browse_pic'
   export default {
@@ -259,6 +260,9 @@
         nparam.append("uid", this.user.uid);
         this.$http.post("/index.php/Mobile/path/get_token", nparam)
           .then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             localStorage.token = JSON.stringify(res.data.data);
             this.setToken(res.data.data)
           })
@@ -331,6 +335,9 @@
             nparam.append('picture',JSON.stringify(this.pic_hash_arr))
             this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.enclosure_id = res.data.data.enclosure_id
                 setTimeout(()=>{
                   let param = new URLSearchParams()
@@ -344,6 +351,9 @@
                   param.append('basis',this.enclosure_id)
                   this.$http.post('index.php/Mobile/user/bookkeeping_book',param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       if(res.data.code == 0){
                         this.loadingShow = false
                         this.$message.success('付款成功')
@@ -393,6 +403,9 @@
         param.append('p',this.pageIndex)
         this.$http.post('index.php/Mobile/find/contract_list',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.untreated = res.data.data
             }
@@ -483,6 +496,9 @@
       get_rate(){
         this.$http.post('index.php/Mobile/find/return_rate')
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.rate = res.data.data
           })
       },
@@ -503,6 +519,9 @@
         }
         this.$http.post('index.php/Mobile/user/bookkeeping_list',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 (item.pay_type == 1) ? item.pay_type='支付宝': item.pay_type='其他'
@@ -573,6 +592,9 @@
         param.append('enclosure_id',item)
         this.$http.post('index.php/Mobile/approval/look_enclosure',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             res.data.data.picture.forEach((item) => {
               if(item != '') {
                 item = `http://bbsf-test-file.hzxb.net/${item}?imageView2`

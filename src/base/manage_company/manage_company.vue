@@ -201,6 +201,9 @@
         param.append('company_id',this.nowCompanyId)
         this.$http.post("/index.php/Mobile/User/return_company_new",param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let item = res.data.data
             this.m = item.is_manage
             this.personnel_id = item.personnel_id
@@ -212,6 +215,9 @@
                 mparam.append('company_id',this.nowCompanyId)
                 this.$http.post("/index.php/Mobile/User/quit_company",mparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     if(res.data.code == 0){
                       this.$message({
                         message: '操作成功',
@@ -221,6 +227,9 @@
                       param.append("uid", this.user.uid);
                       this.$http.post("/index.php/Mobile/user/companies_list", param)
                         .then((res)=>{
+                          var current = this
+                          var judge = res.data.code
+                          getCro(judge,current)
                           this.setNowCompanyId(res.data.data[0].company_id)
                           this.setNowCompanyName(res.data.data[0].company_name)
                           localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
@@ -294,6 +303,9 @@
           nparam.append("company_id",this.nowCompanyId)
           this.$http.post("/index.php/Mobile/company/add_company_project",nparam)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this._getProjectList()
               if(res.data.code === 0){
                 this.project = true
@@ -510,8 +522,9 @@
         mparam.append('company_id',this.nowCompanyId)
         this.$http.post("/index.php/Mobile/company/company_project_list",mparam)
           .then((res)=>{
+            var current = this
             var judge = res.data.code
-            getCro(judge)
+            getCro(judge,current)
             res.data.data.forEach((item)=>{
               this.comProjectList.push(item)
             })

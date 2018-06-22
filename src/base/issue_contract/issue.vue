@@ -62,6 +62,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -108,6 +109,9 @@ export default {
       param.append('each',10)
       this.$http.post('/index.php/Mobile/find/contract_list',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.$set(item,'log')
@@ -203,6 +207,9 @@ export default {
       param.append('p',1)
       this.$http.post('index.php/Mobile/find/apply_history',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == '0'){
              if(res.data.data.length < 1){
                this.$message.info('没有数据')

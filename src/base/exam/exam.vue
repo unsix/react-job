@@ -147,7 +147,7 @@
 				</div>
 				<div>
 					<span>审批：</span>
-          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -280,7 +280,7 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -397,7 +397,7 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0"  class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0"  class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -518,7 +518,7 @@
 				</div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -605,7 +605,7 @@
         </div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -692,7 +692,7 @@
         </div>
         <div>
           <span>审批：</span>
-          <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
@@ -942,6 +942,9 @@
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
           this.$http.post('/index.php/Mobile/find/reply_approval',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               if(res.data.code == '0'){
                 this.$message.success(res.data.message)
@@ -969,6 +972,9 @@
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
           this.$http.post('/index.php/Mobile/find/reply_approval',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               if(res.data.code == '0'){
                 this.$message.success(res.data.message)
@@ -1000,6 +1006,9 @@
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.$http.post('index.php/Mobile/find/approval_process',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               this.handle_txt = ''
               this.is_agree = ''
@@ -1031,6 +1040,9 @@
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.$http.post('index.php/Mobile/find/approval_process',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               this.handle_txt = ''
               this.is_agree = ''
@@ -1129,6 +1141,9 @@
 					param.append("company_id", this.nowCompanyId);
 					this.$http.post("/index.php/Mobile/find/del_approval", param)
 					.then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						if(res.data.code === 0){
 							this.$message({
                 message: '删除成功',
@@ -1161,6 +1176,9 @@
               this.$http.post("/index.php/Mobile/find/withdraw_approval", param)
               .then((res)=>{
                 //撤销审批
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.listShow = true
                 this.listSeaShow = true
                 this.formShow = false
@@ -1422,6 +1440,9 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/path/get_token", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.input_value = res.data.data
 					})
 			},
@@ -1483,6 +1504,9 @@
               param.append('form_result',this.pity)
               this.$http.post('index.php/Mobile/find/approval_process',param)
                 .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
                   this.loading_show = false
                   this.handle_txt = ''
                   this.listShow = true
@@ -1556,6 +1580,9 @@
                     param.append('file_name',file_name)
                     this.$http.post('/index.php/Mobile/approval/add_attachments',param)
                       .then((res)=>{
+                        var current = this
+                        var judge = res.data.code
+                        getCro(judge,current)
                         this.file_hash_arr.push({
                           'type':4,
                           'contract_id':res.data.data.attachments_id,
@@ -1574,6 +1601,9 @@
                     }
                     this.$http.post('/index.php/Mobile/find/file_info')
                       .then((res)=>{
+                        var current = this
+                        var judge = res.data.code
+                        getCro(judge,current)
                         let maxSize = res.data.data.max
                         let attr = res.data.data.attribute
                         if(attr.indexOf(attribute) != -1){
@@ -1669,6 +1699,9 @@
               param.append('form_result',this.pity)
               this.$http.post('index.php/Mobile/find/approval_process',param)
                 .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
                   this.loading_show = false
                   this.handle_txt = ''
                   this.listShow = true
@@ -1709,6 +1742,9 @@
                   nparam.append('picture',JSON.stringify(this.pic_hash_arr))
                   this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       this.afile_hash_arr.push({
                         'type':3,
                         'contract_id':res.data.data.enclosure_id,
@@ -1760,6 +1796,9 @@
                     }
                     this.$http.post('/index.php/Mobile/find/file_info')
                       .then((res)=>{
+                        var current = this
+                        var judge = res.data.code
+                        getCro(judge,current)
                         let maxSize = res.data.data.max
                         let attr = res.data.data.attribute
                         if(attr.indexOf(attribute) != -1){
@@ -1958,6 +1997,9 @@
         mparam.append('approval_id',item.approval_id)
         this.$http.post('index.php/Mobile/approval/find_sequence_attachment_new',mparam)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               let form = res.data.data
               if(form.form_content.optional.length > 0){
@@ -2021,6 +2063,9 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
@@ -2062,6 +2107,9 @@
             param.append('other_uid',this.usd)
             this.$http.post('/index.php/Mobile/find/reply_approval',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.loading_show = false
                 if(res.data.code == '0'){
                   this.$message.success(res.data.message)
@@ -2091,7 +2139,6 @@
                   }else{
                     this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
                       this.pic_hash_arr.push(res.data.hash)
-                      console.log(this.pic_hash_arr)
                       if(this.pic_hash_arr.length === this.picArr.length) {
                         fn(this.picArr[i].name);
                       }
@@ -2105,6 +2152,9 @@
                 nparam.append('picture',JSON.stringify(this.pic_hash_arr))
                 this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     this.afile_hash_arr.push({
                       'type':3,
                       'contract_id':res.data.data.enclosure_id,
@@ -2139,6 +2189,9 @@
                   param.append('file_name',file_name)
                   this.$http.post('/index.php/Mobile/approval/add_attachments',param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       this.file_hash_arr.push({
                         'type':4,
                         'contract_id':res.data.data.attachemnts_id,
@@ -2158,6 +2211,9 @@
                   }
                   this.$http.post('/index.php/Mobile/find/file_info')
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) != -1){
@@ -2208,6 +2264,9 @@
 				param.append("participation_id", this.downPartId)
 				this.$http.post("/index.php/Mobile/find/get_download_token", param)
 				.then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
 					this.downUrl = '/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data
 				})
 			},
@@ -2282,6 +2341,9 @@
               param.append('enclosure_id',item.contract_id)
               this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
                 .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
                   let arr = []
                   res.data.data.picture.forEach((item)=>{
                     if(item != ''){
@@ -2335,6 +2397,9 @@
             param.append('attachments_id',item.contract_id)
             this.$http.post('/index.php/Mobile/approval/look_attachments',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 let obj = {}
                 let file_data = res.data.data
                 let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute

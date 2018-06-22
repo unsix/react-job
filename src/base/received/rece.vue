@@ -113,6 +113,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -171,6 +172,9 @@ export default {
       param.append('each',10)
       this.$http.post('/index.php/Mobile/find/contract_list',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.$set(item,'log')
@@ -285,6 +289,9 @@ export default {
         param.append('contract_id',res)
         this.$http.post('index.php/Mobile/find/look_apply_content',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
               if(res.data.code == 0) {
                 this.$set(res.data.data,'log')
                 this.$set(res.data.data,'ion')
@@ -324,6 +331,9 @@ export default {
         param.append('contract_id',res)
         this.$http.post('index.php/Mobile/find/look_apply_content',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0) {
               this.$set(res.data.data,'log')
               this.$set(res.data.data,'ion')
@@ -376,6 +386,9 @@ export default {
           param.append('contract_id',res)
           this.$http.post('index.php/Mobile/Find/audit_new',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               if(res.data.code == 0){
                 this.$message.warning('合同退回成功')
                 this._getInfo()
@@ -397,6 +410,9 @@ export default {
           param.append('contract_id',res)
           this.$http.post('index.php/Mobile/find/examine_apply',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               if(res.data.code == 0){
                 this.$message.success('等待雇主处理')
                 this._getInfo()
@@ -421,6 +437,9 @@ export default {
           param.append('contract_id',res)
           this.$http.post('index.php/Mobile/Find/audit_new',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               if(res.data.code == 0){
                 this.$message.warning('拒绝成功')
                 this._getInfo()
@@ -441,6 +460,9 @@ export default {
       param.append('p',1)
       this.$http.post('index.php/Mobile/find/apply_history',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == '0'){
             if(res.data.data.length < 1){
               this.$message.info('没有数据')
@@ -488,6 +510,9 @@ export default {
           this.loadingShow = true
           this.$http.post('index.php/Mobile/Find/audit_new',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               if(res.data.code == 0){
                 this.loadingShow = false
                 this.wideShow = false
@@ -530,6 +555,9 @@ export default {
       }else{
         this.$http.post('index.php/Mobile/find/inspection_list')
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.addShow = true
             this.wideShow = true
             this.sec_title = '选择验收单类型'
@@ -550,6 +578,9 @@ export default {
       }else{
         this.$http.post('/index.php/Mobile/find/seelement_list')
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.addShow = true
             this.wideShow = true
             this.sec_title = '选择结算单类型'

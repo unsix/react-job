@@ -56,6 +56,7 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from '@/common/js/avatar.js'
+  import {getCro} from "@/common/js/crowd";
   import browsePic from '@/base/browse_pic/browse_pic'
   import loading from '@/base/loading/loading'
 export default {
@@ -116,6 +117,9 @@ export default {
       }
       this.$http.post('/index.php/Mobile/works/works',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.untreated.push(item)
@@ -232,6 +236,9 @@ export default {
         param.append('picture',JSON.stringify(this.pic_hash_arr))
         this.$http.post('/index.php/Mobile/works/upload_works_new',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.loadingShow = false
               this.upload = false
@@ -262,6 +269,9 @@ export default {
         param.append('works_id',pr)
         this.$http.post('/index.php/Mobile/works/del_works',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message.success('删除成功')
               this._getInfo()

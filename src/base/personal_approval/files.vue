@@ -382,6 +382,9 @@
         param.append('approval_personal_id',this.form_approval_id)
         this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(this.type == '请购单'){
               this.qgdShow = true
               this.form_Lista = create_qinggoudan_list(res.data.data)

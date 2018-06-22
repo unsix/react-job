@@ -72,7 +72,7 @@
 			</div>
 			<div>
 				<span>审批：</span>
-        <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+        <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
@@ -184,7 +184,7 @@
 			</div>
 			<div>
 				<span>审批：</span>
-        <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+        <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
@@ -262,7 +262,7 @@
 			</div>
 			<div>
 				<span>审批：</span>
-        <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+        <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
@@ -583,6 +583,9 @@
             param.append('attachments_id',item.contract_id)
             this.$http.post('/index.php/Mobile/approval/look_attachments',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 let obj = {}
                 let file_data = res.data.data
                 let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute

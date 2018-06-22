@@ -25,6 +25,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
   import { create_yanshoudan_list } from "@/common/js/approval/yanshoudan";
 
@@ -77,6 +78,9 @@
       newparam.append("company_id", this.nowCompanyId);
       this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
         .then((res) => {
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           let reaDa = []
           res.data.data.forEach((item) => {
             item.avatar = 'http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
@@ -98,6 +102,9 @@
         param.append('content',this.result)
         this.$http.post('index.php/Mobile/approval/add_inspection',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.loadingShow = false
             if(res.data.code == 0){
               this.person_show = false
@@ -123,6 +130,9 @@
       param.append('approval_id',this.approval_id)
       this.$http.post('/index.php/Mobile/approval/approval_process_show',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           this.form_Lista = create_yanshoudan_list(res.data.data)
           this.linked = `/index.php/Mobile/skey/look_inspection_company?type_id=${this.form_Lista.type_id}&form_id=${this.form_Lista.form_id}`
         })

@@ -599,6 +599,9 @@ export default {
       param.append('p',this.pageIndex)
       this.$http.post('/index.php/Mobile/personal/see_approval_personal_list',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           let arr = []
           res.data.data.forEach((item)=>{
             arr.push(create_personal_list(item))
@@ -633,6 +636,9 @@ export default {
         param.append('approval_personal_id',pr)
         this.$http.post('index.php/Mobile/Personal/del_approval_personal',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message.success('删除成功')
               this._getExamList()
@@ -672,6 +678,9 @@ export default {
       param.append('type',parseInt(this.classRadio))
       this.$http.post('index.php/Mobile/personal/select_personal_approval',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             let arr = []
             res.data.data.forEach((item) => {
@@ -732,6 +741,9 @@ export default {
       param.append('approval_personal_id',item.approval_personal_id)
       this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(item.type == '呈批件'){
             this.form_Lista = create_cengpijian_list(res.data.data)
             this.get_img(this.form_Lista.many_enclosure)
@@ -756,6 +768,9 @@ export default {
             zparam.append('enclosure_id',adobe.picture_enclosure)
             this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 res.data.data.picture.forEach((item)=>{
                   if(item != ''){
                     arr.push(getPic(item))
@@ -790,6 +805,9 @@ export default {
       param.append('type',1)
       this.$http.post('index.php/Mobile/find/get_download_token',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           this.downUrl = '/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data
         })
     },

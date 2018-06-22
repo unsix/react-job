@@ -139,9 +139,6 @@
 			next_page() {
 				++this.pageIndex
 			},
-			nav_cli(index) {
-
-			},
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);

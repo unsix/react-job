@@ -92,6 +92,7 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from '@/common/js/avatar.js'
+  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -152,6 +153,9 @@ export default {
       param.append('p',this.pageIndex)
       this.$http.post('/index.php/Mobile/Myinfo/myRelease',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.list.push(item)
@@ -183,6 +187,9 @@ export default {
       param.append('iid',pr)
       this.$http.post('/index.php/Mobile/Myinfo/releaseDetail',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.moreInfo = res.data.data
           }
@@ -210,6 +217,9 @@ export default {
       param.append('type',this.activeNames)
       this.$http.post('/index.php/Mobile/Myinfo/lookUser',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               item.avatar = getAvatar(item.avatar)
@@ -224,6 +234,9 @@ export default {
       param.append('type',2)
       this.$http.post('index.php/Mobile/find/select_contract_companty_types',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.list_con = res.data.data
             this.wideShow = true
@@ -301,6 +314,9 @@ export default {
             this.loadingShow = true
             this.$http.post('index.php/Mobile/find/addcontract_new',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 if(res.data.code == 0){
                   this.loadingShow = false
                   this._returned()
@@ -342,6 +358,9 @@ export default {
         param.append('iid',pr)
         this.$http.post('/index.php/Mobile/myinfo/end_enter',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message.success('结束招工成功')
               this._return()

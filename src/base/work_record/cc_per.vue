@@ -17,6 +17,7 @@
 </template>
 
 <script>
+  import {getCro} from "@/common/js/crowd";
   export default {
     data(){
       return{
@@ -32,6 +33,9 @@
         param.append('publish_id',this.pub)
         this.$http.post('/index.php/Mobile/company/look_cc_user_name',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             res.data.data.forEach((item)=>{
               item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar +'?imageView2/1/w/50/h/50'
               this.cc_range.push(item)

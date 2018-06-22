@@ -95,6 +95,7 @@
 
 <script>
 	import {mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
 	export default{
 		data() {
 	      return {
@@ -330,6 +331,9 @@
             newparam.append("company_id", this.nowCompanyId);
             this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.workerInfo = res.data.data
               })
 			   // this.workerInfo=this.comPersonList
@@ -345,7 +349,9 @@
 			    c_param.append("company_tel",this.companyPhone);
 			    this.$http.post("/index.php/Mobile/User/add_company",c_param)
 			    .then((res)=>{
-			    	console.log(res)
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 			    	if(res.data.code === 0){
 			    		this.companyId=res.data.data.company_id
 			    		let ret = []
@@ -380,6 +386,9 @@
                 param.append("uid",this.user.uid);
                 this.$http.post("/index.php/Mobile/company/entrance_company",param)
 					      .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
 					      	if(res.data.code === 0){
 					      			this.$message({
 						        	message: '创建公司成功',

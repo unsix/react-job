@@ -71,6 +71,7 @@
 <script>
 	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
+  import {getCro} from "@/common/js/crowd";
 	import { mapGetters, mapMutations } from 'vuex'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
 	export default {
@@ -261,6 +262,9 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
@@ -306,6 +310,9 @@
 				param.append("approval_id", this.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.form_Lista = create_qingkuandan_list(res.data.data)
 						this.qkd_ruleForm.balance_subtotal = this.form_Lista.balance_subtotal
 						this.qkd_ruleForm.contract_name_new = this.form_Lista.contract_name_new
@@ -331,6 +338,9 @@
                 param.append("enclosure_id", item.contract_id);
                 this.$http.post("index.php/Mobile/approval/look_enclosure",param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     res.data.data.picture.forEach((item) => {
                       console.log(item)
                       let obj = {}
@@ -346,7 +356,9 @@
                 param.append("attachments_id", item.contract_id);
                 this.$http.post("/index.php/Mobile/approval/look_attachments", param)
                   .then((res) => {
-                    console.log(res)
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     let obj = {}
                     let file_data = res.data.data
                     let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
@@ -381,6 +393,9 @@
 				param.append("enclosure_id", enclosure_id);
 				this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.picture.forEach((item) => {
 							if(item != '') {
@@ -399,6 +414,9 @@
 						param.append("enclosure_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
@@ -521,6 +539,9 @@
 						param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 						this.$http.post("/index.php/Mobile/approval/add_request_money", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								this.loadingShow = false
 								if(res.data.code === 0) {
 									this.add_ok()
@@ -561,6 +582,9 @@
                 nparam.append("picture", JSON.stringify(this.pic_hash_arr));
                 this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     this.afile_hash_arr.push({
                       "type": 3,
                       "contract_id": res.data.data.enclosure_id,
@@ -614,6 +638,9 @@
                   }
                   this.$http.post("/index.php/Mobile/find/file_info")
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) !=-1){
@@ -698,6 +725,9 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_request_money", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
@@ -747,6 +777,9 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_request_money", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()

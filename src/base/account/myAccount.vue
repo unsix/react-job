@@ -62,6 +62,7 @@
 
 <script>
   import {getAvatar} from '@/common/js/avatar.js'
+  import {getCro} from "@/common/js/crowd";
 export default {
   data(){
     return{
@@ -77,6 +78,9 @@ export default {
     _get_money(){
       this.$http.post('index.php/Mobile/Myinfo/money')
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.balance = res.data.data.withdraw
             this.cash_amount = res.data.data.withdraw - res.data.data.no_withdraw
@@ -86,6 +90,9 @@ export default {
     _get_order(){
       this.$http.post('index.php/Mobile/order/get_all_order')
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               if(item.amount_type == 0){
@@ -101,6 +108,9 @@ export default {
     look_record(){
       this.$http.post('index.php/Mobile/Myinfo/withdraw_recording')
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             if(!res.data.data){
               this.$message.error('没有数据')
@@ -120,6 +130,9 @@ export default {
         param.append('money',value)
         this.$http.post('index.php/Mobile/myinfo/withdraw',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message.success(res.data.message)
               this._get_money()
@@ -140,6 +153,9 @@ export default {
       param.append('amount_type',re)
       this.$http.post('index.php/Mobile/order/get_pay_detail',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.detail = true
             this.account = false

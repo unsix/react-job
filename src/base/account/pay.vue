@@ -17,6 +17,7 @@
 </template>
 
 <script>
+  import {getCro} from "@/common/js/crowd";
 export default {
   data(){
     return{
@@ -33,6 +34,9 @@ export default {
         param.append('money',this.pay_off)
         this.$http.post('index.php/Mobile/Alisun/recharge',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             console.log(res)
           })
       }
