@@ -1,7 +1,8 @@
 <template>
 	<div class="form" name="呈批件">
 		<div class="top">
-			<el-button type="primary" plain @click="return_">返回列表</el-button>
+      <el-button type="info" plain @click="return_" v-if="!qk_return">返回列表</el-button>
+      <el-button type="info" plain @click="return_qk" v-if="qk_return">返回列表</el-button>
 			<span class="title">呈批件</span>
 		</div>
 		<div>
@@ -127,7 +128,11 @@
 			},
 			file_arr: {
 				type: Array
-			}
+			},
+      qk_return: {
+        type: Boolean,
+        default: false
+      },
 		},
 		computed: {
 			...mapGetters([
@@ -136,10 +141,13 @@
 			])
 		},
 		methods: {
-			return_() {
-				this.$emit('return_psb')
-				this.handle_txt === ''
-			},
+      return_qk() {
+        this.$emit('return_qk')
+      },
+      return_() {
+        this.$emit('return_psb')
+        this.handle_txt === ''
+      },
 			rec_pic(item, index) {
 				this.img_arr = item
 				this.pic_index = index

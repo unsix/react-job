@@ -67,9 +67,9 @@
 		</div>
 		<loading v-show="loading_show"></loading>
 		<chooseTemplate v-if="chooseTemShow" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
-		<psb v-if="psb_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
+		<psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
 		<qgd :qk_return="qk_return" @return_qk="return_qk" v-if="qgd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
-		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
+		<cpj v-if="cpj_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" :change_type="change_type" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
@@ -307,6 +307,7 @@
         this.file_time = 0
         this.pic_time = 0
         this.loading_show = true
+        this.sendShow = false
         setTimeout(()=>{
           if(this.picArr.length != 0){
             var upload_enclosure_new = (fn) =>{
@@ -383,7 +384,7 @@
                       'name':item.name
                     })
                     if(this.file_hash_arr.length == this.fileArr.length){
-                      this.file_times = Date.parse(new Date())
+                      this.file_time = Date.parse(new Date())
                     }
                   })
               }else{
@@ -420,7 +421,7 @@
                                 'name':item.name
                               })
                               if(this.file_hash_arr.length == this.fileArr.length){
-                                this.file_times = Date.parse(new Date())
+                                this.file_time = Date.parse(new Date())
                               }
                             })
                         })

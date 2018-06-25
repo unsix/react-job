@@ -722,7 +722,10 @@
                   display: inline-block;
                 }
                 .name {
-                  width: 150px;
+                  width: 300px;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
                 }
                 .time{
                   width: 200px;

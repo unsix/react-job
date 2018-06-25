@@ -192,7 +192,7 @@
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <label>
-              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
             <p class="miao" v-show="describe">附件描述:{{describe}}</p>
             <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
@@ -312,7 +312,7 @@
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <label>
-              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
             <p class="miao" v-show="describe">附件描述:{{describe}}</p>
             <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
@@ -429,7 +429,7 @@
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <label>
-              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
             <p class="miao" v-show="describe">附件描述:{{describe}}</p>
             <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
@@ -550,7 +550,7 @@
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <label>
-              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
             <p class="miao" v-show="describe">附件描述:{{describe}}</p>
             <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
@@ -637,7 +637,7 @@
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <label>
-              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
             <p class="miao" v-show="describe">附件描述:{{describe}}</p>
             <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
@@ -724,7 +724,7 @@
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <label>
-              <p>回复</p><el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
             <p class="miao" v-show="describe">附件描述:{{describe}}</p>
             <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
@@ -1452,24 +1452,29 @@
         var obj2 = new Object()
         this.is_agree = '1'
         let str = ''
-        this.$refs.re.forEach((item)=>{
-          if(!item.result){
-            this.$message.warning(`${item.title}为必选项`)
-            str = item.title
-          }else{
-            obj[item.title] = item.result
-          }
-        })
+        console.log(this.$refs.re)
+        if(this.$refs.re){
+          this.$refs.re.forEach((item)=>{
+            if(!item.result){
+              this.$message.warning(`${item.title}为必选项`)
+              str = item.title
+            }else{
+              obj[item.title] = item.result
+            }
+          })
+        }
 
         if(str != ''){
           return false
         }
 
-        this.$refs.te.forEach((item)=>{
-          if(item.result){
-            obj2[item.title] = item.result
-          }
-        })
+        if(this.$refs.te){
+          this.$refs.te.forEach((item)=>{
+            if(item.result){
+              obj2[item.title] = item.result
+            }
+          })
+        }
         this.pity =  Object.assign(obj,obj2)
         this.pity = JSON.stringify(this.pity)
         this.pic_hash_arr = []
@@ -3030,7 +3035,31 @@
               margin-top: 10px;
 						}
             >label{
-              margin: 5px 0;
+              overflow: hidden;
+              height: 55px;
+              display: block;
+              display: flex;
+              justify-content: center;
+              textarea{
+                min-height: 33px;
+                display: inline-block;
+                resize: none;
+                padding: 5px 15px;
+                line-height: 1.5;
+                box-sizing: border-box;
+                width: 100%;
+                font-size: 14px;
+                color: #606266;
+                background-color: #FFf;
+                background-image: none;
+                border: 1px solid #dcdfe6;
+                border-radius: 4px;
+                transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+                &:focus{
+                  outline: 0;
+                  border-color: #5393ff;
+                }
+              }
             }
             .miao{
               margin-left: 30px;

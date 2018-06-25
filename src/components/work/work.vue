@@ -414,6 +414,9 @@
           case '我要发工资':
             this.$router.push({path:'/work/wage'})
             break;
+          case '公司列表':
+            this.$router.push({path:'/work/company'})
+            break;
 				}
 			},
 			_getUserState() {

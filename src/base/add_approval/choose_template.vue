@@ -95,7 +95,6 @@
 							arr.push(create_exam_list(item))
 						})
 						this.untreated = arr
-            console.log(this.untreated)
 						if(arr.length < 10) {
 							this.nextPageShow = false
 						}
