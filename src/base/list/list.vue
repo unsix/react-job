@@ -126,6 +126,9 @@
       _getType(){
         this.$http.post('/index.php/Mobile/Find/worker_type')
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 this.work_type.push(item)
@@ -176,6 +179,9 @@
         param.append('order',this.orders)
         this.$http.post('/index.php/Mobile/Find/nearby_worker_list',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             var arr = res.data.data.nworker
             for(var sr in arr){
               arr[sr].avatar = getAvatar(arr[sr].avatar)
@@ -210,6 +216,9 @@
             param.append('keyword',res)
             this.$http.post('index.php/Mobile/worker/search_worker',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 res.data.data.forEach((item)=>{
                   item.avatar = getAvatar(item.avatar)
                   item.distance = (item.distance/1000).toFixed(2)
@@ -280,6 +289,9 @@
           nparam.append('target_uid',pr)
           this.$http.post('index.php/Mobile/alisun/view_power',nparam)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               if(res.data.data.status == 1){
                 this.mains = false
                 this.detail_show = true
@@ -294,6 +306,9 @@
                   param.append('target_uid',pr)
                   this.$http.post('index.php/Mobile/alisun/view_payment',param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       if(res.data.code == 0){
                         this.mains = false
                         this.detail_show = true
@@ -327,6 +342,9 @@
           nparam.append('target_uid',pr)
           this.$http.post('index.php/Mobile/alisun/view_power',nparam)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               if(res.data.data.status == 1){
                 this.mains = false
                 this.detail_show = true
@@ -341,6 +359,9 @@
                   param.append('target_uid',pr)
                   this.$http.post('index.php/Mobile/alisun/view_payment',param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       if(res.data.code == 0){
                         this.mains = false
                         this.detail_show = true

@@ -176,32 +176,47 @@ export default {
           this.formType = 11
           break;
       }
-      this.manage_show = false
-      this.as_what_show = false
-      this.jurisdictionItemShow = true
       this._getApproval()
     },
     reload() {
       this._getApproval()
     },
     _getApproval(){
-      this.jurisdictionFormList = []
-      let param = new URLSearchParams();
-      param.append("company_id", this.nowCompanyId);
-      this.$http.post("/index.php/Mobile/approval/approval_list", param)
-        .then((res) => {
+      let param = new URLSearchParams()
+      param.append('company_id',this.nowCompanyId)
+      param.append('type',this.formType)
+      this.$http.post('index.php/Mobile/approval/can_set_sequence',param)
+        .then((res)=>{
           var current = this
           var judge = res.data.code
           getCro(judge,current)
-          res.data.data.approval.forEach((item) => {
-            if(item.type === this.formType) {
-              if(item.list.length != 0) {
-                item.list.forEach((list) => {
-                  this.jurisdictionFormList.push(createJurisdictionList(list))
-                })
-              }
+          if(res.data.code == 0){
+            if(res.data.data == 1){
+              this.manage_show = false
+              this.as_what_show = false
+              this.jurisdictionItemShow = true
+              this._get_list()
+            }else{
+              this.$message.error(res.data.message)
             }
-          })
+          }
+        })
+    },
+    _get_list(){
+      this.jurisdictionFormList = []
+      let param = new URLSearchParams()
+      param.append('company_id',this.nowCompanyId)
+      param.append('type',this.formType)
+      this.$http.post('index.php/Mobile/user/get_approval_user_info',param)
+        .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
+          if(res.data.code == 0){
+            res.data.data.forEach((item)=>{
+              this.jurisdictionFormList.push(createJurisdictionList(item))
+            })
+          }
         })
     },
     _getUserCompanyList() {
@@ -308,7 +323,14 @@ export default {
         zz = 3
       } else if(this.formRePersonIndex === 'qingkuan') {
         zz = 7
-
+      } else if(this.formRePersonIndex == 'gongzhang'){
+        zz = 5
+      } else if(this.formRePersonIndex == 'chengpi'){
+        zz = 6
+      } else if(this.formRePersonIndex == 'baoxiao'){
+        zz = 11
+      } else if(this.formRePersonIndex == 'yanshou'){
+        zz = 12
       }
       let narr = []
       this.setFormRe[this.formRePersonIndex].groups.forEach((item) => {
@@ -380,12 +402,12 @@ export default {
     this.setUser(JSON.parse(localStorage.user))
     this.setNowCompanyId(JSON.parse(localStorage.nowCompanyId))
     this._getUserCompanyList()
-    this._getApproval()
+    // this._getApproval()
     this._getComPersonList()
   },
   watch: {
     nowCompanyId() {
-      // this._getHuizhi()
+      this._getHuizhi()
       this._getComPersonList()
       this._getApproval()
     }

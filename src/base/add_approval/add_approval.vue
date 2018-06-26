@@ -67,15 +67,15 @@
 		</div>
 		<loading v-show="loading_show"></loading>
 		<chooseTemplate v-if="chooseTemShow" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
-		<psb v-if="psb_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
+		<psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
 		<qgd :qk_return="qk_return" @return_qk="return_qk" v-if="qgd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
-		<cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
+		<cpj v-if="cpj_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
 		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
 		<qkd :form_approval_id="form_approval_id" :change_type="change_type" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
 	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
 
-    <div class="send" v-show="sendShow">
+    <div class="sendsd" v-show="sendShow">
       <div>
         <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
         <el-input type="textarea" v-model="content"></el-input>
@@ -217,6 +217,9 @@
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.$http.post('index.php/Mobile/Approval/add_chengpi_supply',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               this.content = ''
               this.fileList = []
@@ -245,6 +248,9 @@
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.$http.post('index.php/Mobile/Approval/add_chengpi_supply',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               this.content = ''
               this.fileList = []
@@ -301,6 +307,7 @@
         this.file_time = 0
         this.pic_time = 0
         this.loading_show = true
+        this.sendShow = false
         setTimeout(()=>{
           if(this.picArr.length != 0){
             var upload_enclosure_new = (fn) =>{
@@ -332,6 +339,9 @@
               nparam.append('picture',JSON.stringify(this.pic_hash_arr))
               this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
                 .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
                   this.afile_hash_arr.push({
                     'type':3,
                     'contract_id':res.data.data.enclosure_id,
@@ -365,13 +375,16 @@
                 param.append('file_name',file_name)
                 this.$http.post('/index.php/Mobile/approval/add_attachments',param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     this.file_hash_arr.push({
                       'type':4,
                       'contract_id':res.data.data.attachments_id,
                       'name':item.name
                     })
                     if(this.file_hash_arr.length == this.fileArr.length){
-                      this.file_times = Date.parse(new Date())
+                      this.file_time = Date.parse(new Date())
                     }
                   })
               }else{
@@ -383,6 +396,9 @@
                 }
                 this.$http.post('/index.php/Mobile/find/file_info')
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     let maxSize = res.data.data.max
                     let attr = res.data.data.attribute
                     if(attr.indexOf(attribute) != -1){
@@ -396,13 +412,16 @@
                           param.append("file_name",file_name)
                           this.$http.post('/index.php/Mobile/approval/add_attachments',param)
                             .then((res)=>{
+                              var current = this
+                              var judge = res.data.code
+                              getCro(judge,current)
                               this.file_hash_arr.push({
                                 'type':4,
                                 'contract_id':res.data.data.attachments_id,
                                 'name':item.name
                               })
                               if(this.file_hash_arr.length == this.fileArr.length){
-                                this.file_times = Date.parse(new Date())
+                                this.file_time = Date.parse(new Date())
                               }
                             })
                         })
@@ -460,6 +479,9 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
@@ -481,6 +503,9 @@
             var current = this
             var judge = res.data.code
             getCro(judge,current)
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -493,6 +518,9 @@
 				nparam.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/path/get_token", nparam)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						localStorage.token = JSON.stringify(res.data.data);
 					})
 			},
@@ -512,6 +540,8 @@
 			},
 			return_qk(){
 				this.qgd_if = false
+        this.cpj_if = false
+        this.psb_if = false
 				this.qk_return = false
 				this.at_qingkuanShow = true
 			},
@@ -614,8 +644,31 @@
                 this.get_files(item.many_enclosure,item)
               })
             }
+            if(res.data.data.finance) {
+              if(res.data.data.finance.finance_state === '1') {
+                res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+              } else {
+                res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+              }
+              let zparam = new URLSearchParams();
+              zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+              this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getPic(item))
+                    }
+                  })
+                  this.$set(this.form_Listb, 're_pic', arr)
+                })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
+
 			},
       //使用
 			qkUser(item,index){
@@ -632,6 +685,9 @@
           nparam.append('approval_id',this.form_approval_id)
           this.$http.post("/index.php/Mobile/approval/history_request_money",nparam)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.main_show = res.data.data
               this.$refs.scse.showMe()
             })
@@ -644,6 +700,7 @@
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/user/companies_list", param)
 					.then((res) => {
+
             var current = this
             var judge = res.data.code
             getCro(judge,current)
@@ -959,6 +1016,9 @@
       get_ysd_type(){
 			  this.$http.post('index.php/Mobile/approval/inspection_list')
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.ysdType = res.data.data
           })
       },
@@ -1004,16 +1064,14 @@
         this.ysdType = []
       },
 			_getExamList(index) {
-				if(!index){
-					index = this.xindex
-				}
-				this.xindex = index
+
 				let type
-				if(this.xindex === 0) {
+        console.log(index)
+				if(index === 0) {
 					type = 3
-				} else if(this.xindex === 1) {
+				} else if(index === 1) {
 					type = 1
-				} else if(this.xindex === 2) {
+				} else if(index === 2) {
 					type = 6
 				} else {
 					type = -1
@@ -1084,6 +1142,9 @@
               param.append('enclosure_id',item.contract_id)
               this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
                 .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
                   let arr = []
                   res.data.data.picture.forEach((item)=>{
                     if(item != ''){
@@ -1110,6 +1171,9 @@
             param.append('attachments_id',item.contract_id)
             this.$http.post('/index.php/Mobile/approval/look_attachments',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 let obj = {}
                 let file_data = res.data.data
                 let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
@@ -1257,7 +1321,7 @@
 			}
 		}
 	}
-  .send{
+  .sendsd{
     position: fixed;
     top: 0;
     left: 0;

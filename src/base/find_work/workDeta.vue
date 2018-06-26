@@ -40,6 +40,7 @@
 
 <script>
   import {getAvatar} from '@/common/js/avatar.js'
+  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -57,6 +58,9 @@ export default {
       param.append('iid',pr)
       this.$http.post('/index.php/Mobile/Myinfo/workDetails',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.moreInfo = res.data.data
             this.moreInfo.avatar = getAvatar(this.moreInfo.avatar)

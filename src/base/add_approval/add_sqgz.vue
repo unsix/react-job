@@ -11,7 +11,7 @@
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="sqgz_ruleForm.project_manager_name" placeholder="请选择" @change="sqgzSelectOk">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -72,6 +72,7 @@
 
 <script>
 	import loading from '@/base/loading/loading'
+  import {getCro} from "@/common/js/crowd";
 	import { mapGetters, mapMutations } from 'vuex'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang.js'
 	export default {
@@ -133,7 +134,8 @@
 				loadingShow: false,
 				pic_index: 0,
 				img_arr: [],
-        str:''
+        str:'',
+        handler:''
 			}
 		},
 		props: {
@@ -188,6 +190,9 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
@@ -218,6 +223,9 @@
 				param.append("approval_id", this.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.form_Lista = create_gongzhang_list(res.data.data)
 						this.sqgz_ruleForm.user_name = this.form_Lista.user_name
 						this.sqgz_ruleForm.departmental = this.form_Lista.department_name
@@ -246,7 +254,9 @@
                 param.append("enclosure_id", item.contract_id);
                 this.$http.post("index.php/Mobile/approval/look_enclosure", param)
                   .then((res) => {
-                    console.log(res)
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     res.data.data.picture.forEach((item) => {
                       //item 就是hash
                       let obj = {}
@@ -264,7 +274,9 @@
                 param.append("attachments_id", item.contract_id);
                 this.$http.post("/index.php/Mobile/approval/look_attachments", param)
                   .then((res) => {
-                    console.log(res)
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     let obj = {}
                     let file_data = res.data.data
                     let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
@@ -329,6 +341,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			sqgzSelectOk(tab) {
+			  this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
@@ -391,13 +404,7 @@
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-				if(this.sqgz_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.sqgz_ruleForm.project_manager_name) {
-							this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.sqgz_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -417,6 +424,9 @@
 						param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
 						this.$http.post("/index.php/Mobile/approval/add_request_seal", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								this.loadingShow = false
 								if(res.data.code === 0) {
 									this.add_ok()
@@ -457,6 +467,9 @@
                 nparam.append("picture", JSON.stringify(this.pic_hash_arr));
                 this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     this.afile_hash_arr.push({
                       "type": 3,
                       "contract_id": res.data.data.enclosure_id,
@@ -510,6 +523,9 @@
                   }
                   this.$http.post("/index.php/Mobile/find/file_info")
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) !=-1){
@@ -572,6 +588,9 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_request_seal", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
@@ -602,6 +621,9 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_request_seal", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()

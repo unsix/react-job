@@ -46,6 +46,11 @@
 		</qgd>
 		<qkd v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb">
 		</qkd>
+    <cpj v-if="cpj_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb"></cpj>
+
+    <sqgz v-if="gz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb"></sqgz>
+
+    <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb"></bxd>
 	</div>
 </template>
 
@@ -53,6 +58,10 @@
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import qkd from '@/base/exam_form/qkd'
+  import cpj from '@/base/exam_form/cpj'
+  import sqgz from '@/base/exam_form/sqgz'
+  import bxd from '@/base/exam_form/bxd'
+  import {getAvatar} from '@/common/js/avatar.js'
 	import {getPic} from '@/common/js/pic.js'
   import {getCro} from "@/common/js/crowd";
   import { create_exam_list } from '@/common/js/approval/exam'
@@ -60,6 +69,7 @@
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
+  import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan";
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { mapGetters ,mapMutations} from 'vuex'
@@ -72,10 +82,13 @@
 				finance_type: 1,
 				psb_if: false,
 				qgd_if: false,
+        cpj_if:false,
+        bxd_if:false,
+        qkd_if: false,
+        gz_if:false,
 				listShow: true,
 				nextPageShow: true,
 				handle_show: true,
-				qkd_if: false,
 				pageIndex: 1,
 				psb_approval_id: '',
 				activeName: ''
@@ -139,9 +152,6 @@
 			next_page() {
 				++this.pageIndex
 			},
-			nav_cli(index) {
-
-			},
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -179,12 +189,29 @@
 				this.psb_if = false
 				this.qgd_if = false
 				this.qkd_if = false
+        this.bxd_if = false
+        this.cpj_if = false
+        this.gz_if = false
 				this.listShow = true
 				this._get_data()
 			},
 			listCli(item) {
+			  console.log(item)
 				this.listShow = false
 				this.psb_approval_id = item.approval_id
+        if(item.type === '呈批件') {
+          this.cpj_if = true
+        } else if(item.type === '请款单') {
+          this.qkd_if = true
+        } else if(item.type === '请购单') {
+          this.qgd_if = true
+        } else if(item.type === '合同评审表') {
+          this.psb_if = true
+        } else if(item.type === '申请公章') {
+          this.gz_if = true
+        } else if(item.type === '报销单'){
+          this.bxd_if = true
+        }
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", item.approval_id);
@@ -193,37 +220,36 @@
             var current = this
             var judge = res.data.code
             getCro(judge,current)
-						if(item.type === '呈批件') {
-							this.form_Lista = create_cengpijian_list(res.data.data)
-							this.get_img(this.form_Lista.img_list)
-						} else if(item.type === '合同评审表') {
-							this.psb_if = true
-							this.form_Lista = create_hetongpingshen_list(res.data.data)
-							if(res.data.data.enclosure_id) {
-								this.get_img(res.data.data.enclosure_id)
-							}
-							if(res.data.data.many_enclosure) {
-								this.get_moreimg(res.data.data.many_enclosure)
-							}
-						} else if(item.type === '请款单') {
-							this.qkd_if = true
-							this.form_Lista = create_qingkuandan_list(res.data.data)
-//							if(res.data.data.contract_id) {
-//								this.get_img(res.data.data.contract_id[0].contract_id)
-//							}
-							if(res.data.data.many_enclosure) {
-								this.get_moreimg(res.data.data.many_enclosure)
-							}
-						} else if(item.type === '申请公章') {
-							this.form_Lista = create_gongzhang_list(res.data.data)
-						} else if(item.type === '请购单') {
-							this.qgd_if = true
-							this.form_Lista = create_qinggoudan_list(res.data.data)
-							if(!this.form_Lista.enclosure_id) {
-								return
-							}
-							this.get_img(this.form_Lista.enclosure_id.contract_id)
-						}
+            if(item.type === '呈批件') {
+              this.form_Lista = create_cengpijian_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type === '合同评审表') {
+              this.form_Lista = create_hetongpingshen_list(res.data.data)
+              if(this.form_Lista.many_enclosure){
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+              }else{
+                this.get_img(this.form_Lista.enclosure_id)
+                this.get_file(this.form_Lista.enclosure_id)
+              }
+            } else if(item.type === '请款单') {
+              this.form_Lista = create_qingkuandan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type === '申请公章') {
+              this.form_Lista = create_gongzhang_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type === '请购单') {
+              this.form_Lista = create_qinggoudan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type === '报销单'){
+              this.form_Lista = create_baoxiaodan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            }
 					})
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
@@ -236,26 +262,44 @@
             getCro(judge,current)
 						this.form_Listb = create_approval_list(res.data.data)
 						if(res.data.data.content) {
-							res.data.data.content.forEach((item) => {
-								if(item.picture) {
-									let zparam = new URLSearchParams();
-									zparam.append("enclosure_id", item.picture);
-									this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
-										.then((res) => {
+              res.data.data.content.forEach((item, index) => {
+                if(item.picture) {
+                  let arr = []
+                  let zparam = new URLSearchParams();
+                  zparam.append("enclosure_id", item.picture);
+                  this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
+                    .then((res) => {
                       var current = this
                       var judge = res.data.code
                       getCro(judge,current)
-											let arr = []
-											res.data.data.picture.forEach((item) => {
-												if(item != '') {
-													arr.push(getPic(item))
-												}
-											})
-											item.picture = arr
-										})
-								}
-							})
+                      res.data.data.picture.forEach((item) => {
+                        if(item != '') {
+                          arr.push(getAvatar(item))
+                        }
+                      })
+                    })
+                  res.data.data.content[index].picture = arr
+                }
+                if(item.many_enclosure){
+                  this.get_imgs(item.many_enclosure,item)
+                  this.get_files(item.many_enclosure,item)
+                }
+                if(typeof item.replys == 'array'){
+                  item.replys.forEach((pic)=>{
+                    this.get_imgs(pic.many_enclosure,pic)
+                    this.get_files(pic.many_enclosure,pic)
+                  })
+                }
+              })
+              if(res.data.data.supply){
+                res.data.data.supply.forEach((item,index)=>{
+                  this.get_imgs(item.many_enclosure,item)
+                  this.get_files(item.many_enclosure,item)
+                })
+              }
+              this.form_Listb = create_approval_list(res.data.data)
 						}
+
 						if(res.data.data.finance) {
 							if(res.data.data.finance.finance_state === '1') {
 								res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
@@ -354,13 +398,113 @@
 						localStorage.token = JSON.stringify(res.data.data);
 						this.setToken(res.data.data)
 					})
-			}
+			},
+      get_file(many_enclosure) {
+        this.file_arr = []
+        if(!many_enclosure) {
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          return
+        }
+        many_enclosure.forEach((item) => {
+          if(item.type === 4) {
+            let param = new URLSearchParams();
+            param.append("attachments_id", item.contract_id);
+            this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+              .then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
+                let obj = {}
+                let file_data = res.data.data
+                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                this.file_arr.push(obj)
+              })
+          }
+        })
+      },
+      get_imgs(many_enclosure,info){
+        if(!many_enclosure){
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          let param = new URLSearchParams()
+          param.append('enclosure_id',many_enclosure)
+          this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
+            .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let arr = []
+              res.data.data.picture.forEach((item)=>{
+                if(item != ''){
+                  arr.push(getAvatar(item))
+                }
+              })
+              this.$set(info,'imgs',arr)
+            })
+        }else{
+          many_enclosure.forEach((item)=>{
+            if(item.type == 3){
+              let param = new URLSearchParams()
+              param.append('enclosure_id',item.contract_id)
+              this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
+                .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item)=>{
+                    if(item != ''){
+                      arr.push(getAvatar(item))
+                    }
+                  })
+                  this.$set(info,'imgs',arr)
+                })
+            }
+          })
+        }
+      },
+      get_files(many_enclosure,info){
+        if(!many_enclosure){
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          return
+        }
+        many_enclosure.forEach((item)=>{
+          let arr =[]
+          if(item.type == 4){
+            let param = new URLSearchParams()
+            param.append('attachments_id',item.contract_id)
+            this.$http.post('/index.php/Mobile/approval/look_attachments',param)
+              .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
+                let obj = {}
+                let file_data = res.data.data
+                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                arr.push(obj)
+              })
+            this.$set(info,'files',arr)
+          }
+        })
+      },
 		},
 
 		components: {
 			psb,
 			qgd,
-			qkd
+			qkd,
+      cpj,
+      sqgz,
+      bxd
 		}
 	}
 </script>

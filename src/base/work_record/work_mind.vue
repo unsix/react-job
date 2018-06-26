@@ -43,6 +43,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
   import cc_per from '@/base/work_record/cc_per'
   import loading from '@/base/loading/loading'
   import mind from '@/base/work_record/mind'
@@ -129,6 +130,9 @@
         param.append('company_id',this.nowCompanyId)
         this.$http.post('index.php/Mobile/company/message_notification_list',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.list = res.data.data
             if(this.list.wait_reviewed == null){
               this.rec = false

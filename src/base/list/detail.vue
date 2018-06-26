@@ -298,6 +298,9 @@
       param.append('user_id',re)
       this.$http.post('/index.php/Mobile/Find/worker_info',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.moreInfo = res.data.data.worker
             this.moreInfo.avatar = getAvatar(this.moreInfo.avatar)
@@ -375,6 +378,9 @@
       param.append('type',2)
       this.$http.post('index.php/Mobile/find/select_contract_companty_types',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.list_con = res.data.data
             this.wideShow = true
@@ -456,6 +462,9 @@
         }
         this.$http.post('https://up.qbox.me',formData,config).then((res)=>{
           setTimeout(()=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let param = new URLSearchParams()
             param.append('content_json',result)
             param.append('contract_type_id',this.contract_type_id)
@@ -464,6 +473,9 @@
             this.loadingShow = true
             this.$http.post('index.php/Mobile/find/addcontract_new',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 if(res.data.code == 0){
                   this.loadingShow = false
                   this._returned()
@@ -495,6 +507,9 @@
         param.append('status','1')
         this.$http.post('/index.php/Mobile/Find/collect',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message.success('收藏成功')
               this.$refs.star.style.color = 'red'
@@ -510,6 +525,9 @@
         param.append('status','0')
         this.$http.post('/index.php/Mobile/Find/collect',param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message.success('取消收藏成功')
               this.$refs.star.style.color = 'orange'
@@ -669,6 +687,9 @@
       param.append('type',2)
       this.$http.post('index.php/Mobile/personal/select_personal_approval',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             let arr = []
             res.data.data.forEach((item) => {
@@ -694,6 +715,9 @@
       param.append('approval_personal_id',item.approval_personal_id)
       this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(item.type == '呈批件'){
             this.if_cpj = true
             this.$refs.cpj_a.insert = '6'
@@ -714,6 +738,9 @@
             zparam.append('enclosure_id',adobe.picture_enclosure)
             this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 res.data.data.picture.forEach((item)=>{
                   if(item != ''){
                     arr.push(getPic(item))

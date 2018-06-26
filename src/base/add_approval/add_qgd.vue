@@ -14,7 +14,7 @@
 			</el-form-item>
 			<el-form-item label="工程负责人" prop="contract_responsible">
 				<el-select v-model="qgd_ruleForm.contract_responsible" placeholder="请选择" @change="qgdPro">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -26,7 +26,7 @@
 			</el-form-item>
 			<el-form-item label="收货人姓名" prop="consignee">
 				<el-select v-model="qgd_ruleForm.consignee" placeholder="请选择" @change="qgdShouhuo">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -38,7 +38,7 @@
 			</el-form-item>
 			<el-form-item label="采购执行人" prop="buy_person">
 				<el-select v-model="qgd_ruleForm.buy_person" placeholder="请选择" @change="qgdCaigou">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -56,7 +56,7 @@
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)" >
 				<el-select v-model="qgd_ruleForm.project_manager_name" placeholder="请选择" @change="qgdLeader">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -126,6 +126,7 @@
 <script>
 
 	import loading from '@/base/loading/loading'
+  import {getCro} from "@/common/js/crowd";
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -260,6 +261,7 @@
 				loadingShow: false,
 				returnOk: false,
         str:'',
+        handler:''
 			}
 		},
 		props: {
@@ -329,6 +331,9 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
@@ -395,6 +400,9 @@
 				param.append("approval_id", this.approval_id);
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.form_Lista = create_qinggoudan_list(res.data.data)
 						let department_name
 						setTimeout(() => {
@@ -435,8 +443,10 @@
                   param.append("enclosure_id", item.contract_id);
                   this.$http.post("index.php/Mobile/approval/look_enclosure",param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       res.data.data.picture.forEach((item) => {
-                        console.log(item)
                         let obj = {}
                         let img_add = 'http://bbsf-file.hzxb.net/'+item
                         console.log(img_add)
@@ -451,7 +461,9 @@
                   param.append("attachments_id", item.contract_id);
                   this.$http.post("/index.php/Mobile/approval/look_attachments", param)
                     .then((res) => {
-                      console.log(res)
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       let obj = {}
                       let file_data = res.data.data
                       let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
@@ -488,6 +500,9 @@
 				param.append("enclosure_id", enclosure_id);
 				this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						let arr = []
 						res.data.data.picture.forEach((item) => {
 							if(item != '') {
@@ -505,6 +520,9 @@
 						param.append("enclosure_id", item.contract_id);
 						this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								let arr = []
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
@@ -552,8 +570,9 @@
 				setToken: 'SET_TOKEN'
 			}),
 			qgdShouhuo(tab) {
+        this.qgd_ruleForm.consignee_uid = tab
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.qgd_ruleForm.consignee = item.name
 						this.qgd_ruleForm.consignee_phone = item.phone
 						return
@@ -561,6 +580,7 @@
 				})
 			},
 			qgdCaigou(tab) {
+        this.qgd_ruleForm.buy_person_uid = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.qgd_ruleForm.buy_person = item.name
@@ -571,6 +591,7 @@
 				})
 			},
 			qgdLeader(tab) {
+        this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.qgd_ruleForm.project_manager, 'uid', item.uid)
@@ -578,6 +599,7 @@
 				})
 			},
 			qgdPro(tab) {
+        console.log(tab)
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.qgd_ruleForm.contract_responsible = item.name
@@ -668,13 +690,8 @@
 				d = d < 10 ? ('0' + d) : d;
 				this.qgd_ruleForm.arrival_time = y + '-' + m + '-' + d
 
-				if(this.qgd_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.project_manager_name) {
-							this.$set(this.qgd_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.qgd_ruleForm.project_manager, 'uid', this.handler)
+        console.log(this.qgd_ruleForm.project_manager)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -690,22 +707,8 @@
 								buy_depart_id = item.department_id
 							}
 						})
-						let consignee_uid
-						this.comPersonList.forEach((item) => {
-							if(item.name === this.qgd_ruleForm.consignee) {
-								this.qgd_ruleForm.consignee_uid = item.uid
-							}
-						})
-						let buy_person_uid
-						this.comPersonList.forEach((item) => {
-							if(item.name === this.qgd_ruleForm.buy_person) {
-								this.qgd_ruleForm.buy_person_uid = item.uid
-							}
-						})
 						let param = new URLSearchParams();
-						if(this.qgd_ruleForm.project_manager.uid) {
-							param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
-						}
+            param.append("project_manager", JSON.stringify(this.qgd_ruleForm.project_manager));
 						param.append("uid", this.user.uid);
 						param.append("company_id", this.nowCompanyId);
 						param.append("request_buy_department", buy_depart_id);
@@ -727,6 +730,9 @@
             param.append("many_enclosure", this.qgd_ruleForm.many_enclosure);
 						this.$http.post("/index.php/Mobile/approval/add_request_buy", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								this.loadingShow = false
 								if(res.data.code === 0) {
 									this.add_ok()
@@ -768,6 +774,9 @@
                 nparam.append("picture", JSON.stringify(this.pic_hash_arr));
                 this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     this.afile_hash_arr.push({
                       "type": 3,
                       "contract_id": res.data.data.enclosure_id,
@@ -802,6 +811,9 @@
                   param.append("file_name", file_name);
                   this.$http.post("/index.php/Mobile/approval/add_attachments", param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       this.file_hash_arr.push({
                         "type": 4,
                         "contract_id": res.data.data.attachments_id,
@@ -821,6 +833,9 @@
                   }
                   this.$http.post("/index.php/Mobile/find/file_info")
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) !=-1){
@@ -914,7 +929,9 @@
 					param.append("type", 2);
 					this.$http.post("/index.php/Mobile/approval/add_request_buy", param)
 						.then((res) => {
-							console.log(res)
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
@@ -977,7 +994,9 @@
 					param.append("type", 2);
 					this.$http.post("/index.php/Mobile/approval/add_request_buy", param)
 						.then((res) => {
-							console.log(res)
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()

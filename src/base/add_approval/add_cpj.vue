@@ -19,7 +19,7 @@
 
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
 					<el-option v-for="item in comPersonList"
-                     :key="item.personnel_id" :value="item.name">
+                     :key="item.personnel_id"  :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -46,6 +46,7 @@
 <script>
 	import loading from '@/base/loading/loading'
   import { getPic } from '@/common/js/pic.js'
+  import {getCro} from "@/common/js/crowd";
   import chose from '@/base/unit/chose'
   import fuchose from '@/base/unit/fuchose'
   import datas from '@/base/unit/datas'
@@ -105,6 +106,7 @@
 				img_arr: [],
 				pic_enclosure_id: '',
         res:'',
+        handler:''
 			}
 		},
 		props: {
@@ -237,6 +239,9 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
               this.fileList_a = fileList_a
@@ -257,7 +262,11 @@
         this.fileList=[]
 				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
 					.then((res) => {
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
 						this.form_Lista = create_cengpijian_list(res.data.data)
+
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
 						this.cpj_ruleForm.department_name = this.form_Lista.department_name
 						this.cpj_ruleForm.content = this.form_Lista.content
@@ -272,6 +281,9 @@
                 param.append("enclosure_id", item.contract_id);
                 this.$http.post("index.php/Mobile/approval/look_enclosure",param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     res.data.data.picture.forEach((item) => {
                       //item 就是hash
                       let obj = {}
@@ -288,7 +300,9 @@
                 param.append("attachments_id", item.contract_id);
                 this.$http.post("/index.php/Mobile/approval/look_attachments", param)
                   .then((res) => {
-                    console.log(res)
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     let obj = {}
                     let file_data = res.data.data
                     let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
@@ -354,6 +368,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			cpjSelectOk(tab) {
+        this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
@@ -390,13 +405,7 @@
           this.fileArr.push(item)
         })
 
-				if(this.cpj_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.cpj_ruleForm.project_manager_name) {
-							this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.cpj_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -417,6 +426,9 @@
 						param.append("title", this.cpj_ruleForm.title);
 						this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 							.then((res) => {
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
 								this.loadingShow = false
 								if(res.data.code === 0) {
 									this.add_ok()
@@ -460,6 +472,9 @@
                 nparam.append("picture", JSON.stringify(this.pic_hash_arr));
                 this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     this.afile_hash_arr.push({
                       "type": 3,
                       "contract_id": res.data.data.enclosure_id,
@@ -528,6 +543,9 @@
                   param.append("file_name", file_name);
                   this.$http.post("/index.php/Mobile/approval/add_attachments", param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       this.file_hash_arr.push({
                         "type": 4,
                         "contract_id": res.data.data.attachments_id,
@@ -547,6 +565,9 @@
                   }
                   this.$http.post("/index.php/Mobile/find/file_info")
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       let maxSize = res.data.data.max
                       let attr = res.data.data.attribute
                       if(attr.indexOf(attribute) !=-1){
@@ -560,6 +581,9 @@
                             param.append("file_name", file_name);
                             this.$http.post("/index.php/Mobile/approval/add_attachments", param)
                               .then((res) => {
+                                var current = this
+                                var judge = res.data.code
+                                getCro(judge,current)
                                 this.file_hash_arr.push({
                                   "type": 4,
                                   "contract_id": res.data.data.attachments_id,
@@ -610,6 +634,9 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							this.loadingShow = false
 							if(res.data.code === 0) {
 								this.add_ok()
@@ -643,6 +670,9 @@
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					this.$http.post("/index.php/Mobile/approval/add_chengpi", param)
 						.then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
 							if(res.data.code === 0) {
 								this.add_ok()
                 this.loading_show = false

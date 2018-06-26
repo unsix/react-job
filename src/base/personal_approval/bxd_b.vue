@@ -94,6 +94,7 @@
 <script>
   import loading from '@/base/loading/loading'
   import browsePic from '@/base/browse_pic/browse_pic'
+  import {getCro} from "@/common/js/crowd";
   import { mapGetters } from 'vuex'
   export default {
     data(){
@@ -167,6 +168,9 @@
         param.append("uid",this.user.uid)
         this.$https.post("/index.php/Mobile/path/get_token", param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             this.input_value = res.data.data
           })
       },
@@ -210,6 +214,9 @@
             nparam.append("company_id",this.nowCompanyId)
             this.$http.post("/index.php/Mobile/User/return_company_new",nparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.now_personnel_id = res.data.data.personnel_id
                 if(this.now_personnel_id = res.data.data.personnel_id){
                   let nparam = new URLSearchParams()
@@ -222,6 +229,9 @@
                   param.append("receipt_pic", res.data.data.enclosure_id);
                   this.$http.post("/index.php/Mobile/find/finance_receipt", param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      getCro(judge,current)
                       this.loading_show = false
                       if(res.data.code === 0){
                         this.$message({
@@ -253,6 +263,9 @@
           nparam.append("receipt_content", this.handle_txt);
           this.$http.post("/index.php/Mobile/find/finance_receipt", param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loading_show = false
               if(res.data.code === 0) {
                 this.$message({
@@ -286,6 +299,9 @@
             mparam.append("company_id",this.nowCompanyId)
             this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.now_personnel_id = res.data.data.personnel_id
                 if(this.now_personnel_id === res.data.data.personnel_id) {
                   let nparam = new URLSearchParams();
@@ -303,6 +319,9 @@
                       param.append("receipt_pic", res.data.data.enclosure_id);
                       this.$http.post("/index.php/Mobile/find/finance_receipt", param)
                         .then((res) => {
+                          var current = this
+                          var judge = res.data.code
+                          getCro(judge,current)
                           this.loading_show = false
                           if(res.data.code === 0) {
                             this.$message({

@@ -24,6 +24,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import detail from "@/base/list/detail"
 export default {
@@ -50,6 +51,9 @@ export default {
       this.list = []
       this.$http.post('/index.php/Mobile/Myinfo/myCollection')
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               item.worker.avatar = getAvatar(item.worker.avatar)
@@ -64,6 +68,9 @@ export default {
       param.append('worker_id',pr)
       this.$http.post('/index.php/Mobile/Find/collect',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             this.$message.success('取消收藏成功')
             this._getInfo()

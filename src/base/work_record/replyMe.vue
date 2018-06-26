@@ -278,6 +278,9 @@ export default {
       param.append('each',10)
       this.$http.post('/index.php/Mobile/company/reply_me_message_list',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           res.data.data.forEach((item)=>{
             item.avatar='http://bbsf-file.hzxb.net/' + item.avatar
             this.$set(item,'log_form')
@@ -403,6 +406,9 @@ export default {
             }
             this.$http.post('/index.php/Mobile/company/user_comment',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.loadingShow = false
                 if(res.data.code === 0) {
                   this.add_ok()
@@ -429,6 +435,9 @@ export default {
             param.append('log_id',this.log_id)
             this.$http.post('/index.php/Mobile/company/user_reviewer',param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                getCro(judge,current)
                 this.loadingShow = false
                 if(res.data.code === 0) {
                   this.add_ok()
@@ -533,6 +542,9 @@ export default {
                 }
                 this.$http.post("/index.php/Mobile/find/file_info")
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    getCro(judge,current)
                     let maxSize = res.data.data.max
                     let attr = res.data.data.attribute
                     if(attr.indexOf(attribute) !=-1){
@@ -546,6 +558,9 @@ export default {
                           param.append("file_name", file_name);
                           this.$http.post("/index.php/Mobile/approval/add_attachments", param)
                             .then((res) => {
+                              var current = this
+                              var judge = res.data.code
+                              getCro(judge,current)
                               this.file_hash_arr.push({
                                 "type": 4,
                                 "contract_id": res.data.data.attachments_id,
@@ -622,6 +637,9 @@ export default {
       }
       this.$http.post("/index.php/Mobile/find/file_info")
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           let attr = res.data.data.attribute
           if(attr.indexOf(attribute) !=-1){
             this.fileList_a = fileList_a
@@ -690,6 +708,9 @@ export default {
       param.append('company_id',this.nowCompanyId)
       this.$http.post('/index.php/Mobile/company/get_public_content',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           let ss = res.data.data
           ss.avatar = 'http://bbsf-file.hzxb.net/' + ss.avatar
           this.moreInfo = ss
@@ -767,6 +788,9 @@ export default {
       param.append('publish_id',this.publish_id)
       this.$http.post('/index.php/Mobile/company/get_publish_comment',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code != 0){
             this.comShow = false
           }else{
@@ -895,6 +919,9 @@ export default {
       param.append('publish_id',this.publish_id)
       this.$http.post('/index.php/Mobile/company/like_list',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code != 0){
             this.likeShow = false
             this.likeArr.splice(0,this.likeArr.length)
@@ -950,6 +977,9 @@ export default {
       param.append('company_id',this.nowCompanyId)
       this.$http.post('/index.php/Mobile/company/like_company_log',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == '0'){
             this.$message({
               message: '点赞成功',
@@ -976,6 +1006,9 @@ export default {
       param.append('company_id',this.nowCompanyId)
       this.$http.post('/index.php/Mobile/company/like_company_log',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == '0'){
             this.$message({
               message: '取消点赞',
@@ -1005,6 +1038,9 @@ export default {
         param.append("uid",this.user.uid)
         this.$http.post("/index.php/Mobile/company/del_publish",param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
             if(res.data.code == 0){
               this.$message({
                 message:'删除成功',
@@ -1097,6 +1133,9 @@ export default {
           }
           this.$http.post('/index.php/Mobile/company/user_comment',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loadingShow = false
               if(res.data.code === 0) {
                 this.add_ok()
@@ -1124,6 +1163,9 @@ export default {
           param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
           this.$http.post('/index.php/Mobile/company/user_reviewer',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loadingShow = false
               if(res.data.code === 0) {
                 this.add_ok()
@@ -1164,6 +1206,9 @@ export default {
           }
           this.$http.post('/index.php/Mobile/company/user_comment',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loadingShow = false
               if(res.data.code === 0) {
                 this.add_ok()
@@ -1191,6 +1236,9 @@ export default {
           param.append("enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
           this.$http.post('/index.php/Mobile/company/user_reviewer',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               this.loadingShow = false
               if(res.data.code === 0) {
                 this.add_ok()

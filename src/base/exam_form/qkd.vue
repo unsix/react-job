@@ -66,7 +66,7 @@
 		</div>
 		<div>
 			<span>审批：</span>
-      <div v-for="item in form_Listb.content" v-show="form_Listb.length > 0" class="exam_info">
+      <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
         <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
         <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
         <p>意见:<span>{{item.opinion}}</span></p>
@@ -92,24 +92,28 @@
         <p>审批时间:{{item.add_time}}</p>
       </div>
 		</div>
-		<div v-if="form_Listb.finance">
-			<span>表单回执：</span>
-			<br />
-			<span style="color: #444444;">
+    <div v-if="form_Listb.finance">
+      <span>表单回执：</span>
+      <br />
+      <span style="color: #444444;">
 						<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
-			<div><img :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" /></div>
+			<div><img style="width: 50px;height: 50px;border: 1px solid #e3e4e9;" :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" /></div>
 			</span>
-		</div>
-		<div class="menu" v-show="handle_show">
-			<el-button type="primary" plain @click="handle">处理</el-button>
-			<div class="button" v-show="menuShow">
-				<el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-				<input name="token" type="hidden" :value="input_value">
-				<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
-				<el-button type="primary" round @click="agree($event)">同意</el-button>
-				<el-button type="danger" round @click="refuse">拒绝</el-button>
-			</div>
-		</div>
+    </div>
+    <div class="menu" v-show="handle_show">
+      <el-button type="primary" plain @click="handle">处理</el-button>
+      <div class="button" v-show="menuShow">
+        <label>
+          <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+        </label>
+        <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+          <i class="el-icon-plus"></i>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+        </el-upload>
+        <el-button type="primary" round @click="agree">同意</el-button>
+        <el-button type="danger" round @click="refuse">拒绝</el-button>
+      </div>
+    </div>
     <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 
 		<loading v-show="loading_show"></loading>
@@ -118,6 +122,7 @@
 
 <script>
 	import loading from '@/base/loading/loading'
+  import {getCro} from "@/common/js/crowd";
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -131,8 +136,16 @@
 				input_value: '',
 				pic_hash: '',
 				now_personnel_id: 0,
-				pic_hash_arr: [],
-        arr_list: []
+        pic_hash_arr: [],
+        arr_list: [],
+        picArr:[],
+        fileList: [],
+        many_enclosure:{},
+        personnel_id:'',
+        pic_time:0,
+        enclosure_id:'',
+        finance_state:'',
+        status:'1'
 			}
 		},
 		props: {
@@ -210,157 +223,147 @@
 			getPic(event) {
 				this.file = event.target.files;
 			},
-			agree() {
-				if(this.handle_txt === '') {
-					this.$message.error('请填写回执内容');
-					return
-				}
-				if(!this.file) {
-					this.$message.error('确认回执必须上传图片');
-					return
-				}
-				if(this.file) {
-					if(this.file.length === 0) {
-						this.$message.error('确认回执必须上传图片');
-						return
-					}
-					for(let i = 0; i < this.file.length; i++) {
-						this.loading_show = true
-						let formData = new FormData();
-						formData.append('file', this.file[i]);
-						formData.append('token', this.token);
-						let config = {
-							headers: {
-								'Content-Type': 'multipart/form-data'
-							}
-						}
-						this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-							this.pic_hash_arr.push(res.data.hash)
-							if(this.pic_hash_arr.length === this.file.length) {
-								let mparam = new URLSearchParams();
-								mparam.append("uid", this.user.uid);
-								mparam.append("company_id", this.nowCompanyId);
-								this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
-									.then((res) => {
-										this.now_personnel_id = res.data.data.personnel_id
-										if(this.now_personnel_id === res.data.data.personnel_id) {
-											let nparam = new URLSearchParams();
-											nparam.append("uid", this.user.uid);
-											nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-											this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-												.then((res) => {
-													let param = new URLSearchParams();
-													param.append("uid", this.user.uid);
-													param.append("approval_id", this.psb_approval_id);
-													param.append("personnel_id", this.now_personnel_id);
-													param.append("company_id", this.nowCompanyId);
-													param.append("finance_state", 1);
-													param.append("receipt_content", this.handle_txt);
-													param.append("receipt_pic", res.data.data.enclosure_id);
-													this.$http.post("/index.php/Mobile/find/finance_receipt", param)
-														.then((res) => {
-															this.loading_show = false
-															if(res.data.code === 0) {
-																this.$message({
-																	message: '恭喜你，操作成功',
-																	type: 'success'
-																});
-																this.return_()
-
-															} else {
-																this.$message.error('操作失败');
-															}
-														})
-												})
-										}
-									})
-							}
-						})
-					}
-				}
-			},
-			refuse() {
-				if(this.handle_txt === '') {
-					this.$message.error('请填写回执内容');
-					return
-				}
-				if(!this.file) {
-					let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("approval_id", this.psb_approval_id);
-					param.append("personnel_id", this.now_personnel_id);
-					param.append("company_id", this.nowCompanyId);
-					param.append("finance_state", 1);
-					param.append("receipt_content", this.handle_txt);
-					this.$http.post("/index.php/Mobile/find/finance_receipt", param)
-						.then((res) => {
-							this.loading_show = false
-							if(res.data.code === 0) {
-								this.$message({
-									message: '恭喜你，操作成功',
-									type: 'success'
-								});
-								this.return_()
-							} else {
-								this.$message.error('操作失败');
-							}
-						})
-				}
-				if(this.file) {
-					for(let i = 0; i < this.file.length; i++) {
-						let formData = new FormData();
-						formData.append('file', this.file[i]);
-						formData.append('token', this.input_value);
-						let config = {
-							headers: {
-								'Content-Type': 'multipart/form-data'
-							}
-						}
-						this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
-							this.pic_hash_arr.push(res.data.hash)
-						})
-					}
-					if(this.pic_hash_arr.length === this.file.length) {
-						this.loading_show = true
-						let mparam = new URLSearchParams();
-						mparam.append("uid", this.user.uid);
-						mparam.append("company_id", this.nowCompanyId);
-						this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
-							.then((res) => {
-								this.now_personnel_id = res.data.data.personnel_id
-								if(this.now_personnel_id === res.data.data.personnel_id) {
-									let nparam = new URLSearchParams();
-									nparam.append("uid", this.user.uid);
-									nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-									this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
-										.then((res) => {
-											let param = new URLSearchParams();
-											param.append("uid", this.user.uid);
-											param.append("approval_id", this.psb_approval_id);
-											param.append("personnel_id", this.now_personnel_id);
-											param.append("company_id", this.nowCompanyId);
-											param.append("finance_state", 1);
-											param.append("receipt_content", '111');
-											param.append("receipt_pic", res.data.data.enclosure_id);
-											this.$http.post("/index.php/Mobile/find/finance_receipt", param)
-												.then((res) => {
-													this.loading_show = false
-													if(res.data.code === 0) {
-														this.$message({
-															message: '恭喜你，操作成功',
-															type: 'success'
-														});
-														this.return_()
-													} else {
-														this.$message.error('操作失败');
-													}
-												})
-										})
-								}
-							})
-					}
-				}
-			},
+      agree() {
+        this.finance_state = '1'
+        if(this.handle_txt === '') {
+          this.$message.error('请填写回执内容');
+          return
+        }
+        if(this.fileList.length == 0) {
+          this.$message.error('确认回执必须上传图片');
+          return
+        }
+        let nparam = new URLSearchParams()
+        nparam.append("uid",this.user.uid)
+        nparam.append("company_id",this.nowCompanyId)
+        this.$http.post("/index.php/Mobile/User/return_company_new",nparam)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.personnel_id = res.data.data.personnel_id
+            }
+          })
+        this.fileList.forEach((item) => {
+          if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
+            this.picArr.push(item)
+          }
+        })
+        this.loading_show = true
+        setTimeout(()=>{
+          var upload_enclosure_new = (fn)=>{
+            this.picArr.forEach((item)=>{
+              let formData = new FormData()
+              formData.append('file',item.raw)
+              formData.append('token',this.input_value)
+              let config = {
+                'Content-Type': 'multipart/form-data'
+              }
+              if(!item.size){
+                this.pic_hash_arr.push(item.hash)
+                this.pic_hash_arr.length == this.picArr.length && fn(item.name)
+              }else{
+                this.$http.post('https://up.qbox.me/', formData, config).then((res)=>{
+                  this.pic_hash_arr.push(res.data.hash)
+                  if(this.pic_hash_arr.length === this.picArr.length) {
+                    fn(item.name);
+                  }
+                })
+              }
+            })
+          }
+          upload_enclosure_new((name)=>{
+            let nparam = new URLSearchParams()
+            nparam.append('uid',this.user.uid)
+            nparam.append('picture',JSON.stringify(this.pic_hash_arr))
+            this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+              .then((res)=>{
+                this.enclosure_id = res.data.data.enclosure_id
+                this.pic_time = Date.parse(new Date())
+              })
+          })
+        },500)
+      },
+      refuse() {
+        this.finance_state = '2'
+        if(this.handle_txt === '') {
+          this.$message.error('请填写回执内容');
+          return
+        }
+        let nparam = new URLSearchParams()
+        nparam.append("uid",this.user.uid)
+        nparam.append("company_id",this.nowCompanyId)
+        this.$http.post("/index.php/Mobile/User/return_company_new",nparam)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.personnel_id = res.data.data.personnel_id
+            }
+          })
+        if(this.fileList.length == 0) {
+          let param = new URLSearchParams();
+          param.append("uid", this.user.uid);
+          param.append("approval_id", this.psb_approval_id);
+          param.append("personnel_id", this.personnel_id);
+          param.append("company_id", this.nowCompanyId);
+          param.append("finance_state", 1);
+          param.append("receipt_content", this.handle_txt);
+          this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+            .then((res) => {
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              this.loading_show = false
+              if(res.data.code === 0) {
+                this.$message({
+                  message: '恭喜你，操作成功',
+                  type: 'success'
+                });
+                this.return_()
+              } else {
+                this.$message.error('操作失败');
+              }
+            })
+        }
+        if(this.fileList) {
+          this.fileList.forEach((item) => {
+            if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
+              this.picArr.push(item)
+            }
+          })
+          this.loading_show = true
+          setTimeout(()=>{
+            var upload_enclosure_new = (fn)=>{
+              this.picArr.forEach((item)=>{
+                let formData = new FormData()
+                formData.append('file',item.raw)
+                formData.append('token',this.input_value)
+                let config = {
+                  'Content-Type': 'multipart/form-data'
+                }
+                if(!item.size){
+                  this.pic_hash_arr.push(item.hash)
+                  this.pic_hash_arr.length == this.picArr.length && fn(item.name)
+                }else{
+                  this.$http.post('https://up.qbox.me/', formData, config).then((res)=>{
+                    this.pic_hash_arr.push(res.data.hash)
+                    if(this.pic_hash_arr.length === this.picArr.length) {
+                      fn(item.name);
+                    }
+                  })
+                }
+              })
+            }
+            upload_enclosure_new((name)=>{
+              let nparam = new URLSearchParams()
+              nparam.append('uid',this.user.uid)
+              nparam.append('picture',JSON.stringify(this.pic_hash_arr))
+              this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                .then((res)=>{
+                  this.enclosure_id = res.data.data.enclosure_id
+                  this.pic_time = Date.parse(new Date())
+                })
+            })
+          },500)
+        }
+      },
 			_getToken() {
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
@@ -372,12 +375,56 @@
 			},
 			...mapMutations({
 				setToken: 'SET_TOKEN'
-			})
+			}),
+      handleRemove(file, fileList) {
+        this.fileList = fileList
+      },
+      handlePreview(file, fileList) {
+        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+          this.$message.error('上传文件格式错误')
+          this.str = file
+        }
+        function remove(arr,val) {
+          for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+              arr.splice(i, 1);
+              break;
+            }
+          }
+        }
+        remove(fileList,this.str)
+        this.fileList = fileList
+      },
 		},
 		components: {
 			browsePic,
 			loading
-		}
+		},
+    watch:{
+      pic_time(){
+        let param = new URLSearchParams()
+        param.append("uid", this.user.uid);
+        param.append("approval_id", this.psb_approval_id);
+        param.append("personnel_id", this.personnel_id);
+        param.append("company_id", this.nowCompanyId);
+        param.append("finance_state", this.finance_state);
+        param.append("receipt_content", this.handle_txt);
+        param.append("receipt_pic", this.enclosure_id);
+        this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+          .then((res)=>{
+            this.loading_show = false
+            if(res.data.code === 0) {
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              });
+              this.return_()
+            } else {
+              this.$message.error('操作失败');
+            }
+          })
+      }
+    }
 	}
 </script>
 
@@ -519,26 +566,80 @@
 				}
 			}
 		}
-		.menu {
-			margin-top: 10px;
-			border-bottom: none;
-			>button {
-				display: block;
-			}
-			.button {
-				margin-top: 10px;
-				margin-left: 120px;
-				display: block;
-				font-size: 0;
-				z-index: 2;
-				width: 300px;
-				input[type="file"] {
-					margin: 10px 0 10px 0px;
-				}
-				>button {
-					margin-left: 50px;
-				}
-			}
-		}
+    .menu {
+      margin-top: 10px;
+      border-bottom: none;
+      >button {
+        display: block;
+      }
+      .button {
+        margin-top: 10px;
+        display: block;
+        font-size: 0;
+        z-index: 2;
+        width: 100%;
+        >button {
+          margin-left: 50px;
+          margin-top: 10px;
+        }
+        >label{
+          overflow: hidden;
+          height: 55px;
+          display: block;
+          display: flex;
+          justify-content: center;
+          textarea{
+            min-height: 33px;
+            display: inline-block;
+            resize: none;
+            padding: 5px 15px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            width: 100%;
+            font-size: 14px;
+            color: #606266;
+            background-color: #FFf;
+            background-image: none;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+            &:focus{
+              outline: 0;
+              border-color: #5393ff;
+            }
+          }
+        }
+        .miao{
+          margin-left: 30px;
+          font-size: 14px;
+        }
+        #picc{
+          margin-top: 10px;
+          margin-left: 30px;
+          ul{
+            li{
+              width: 85px;
+              height: 85px;
+            }
+          }
+        }
+        .el-upload--picture-card{
+          width: 85px;
+          height: 85px;
+          .el-upload-list__item.is-success{
+            width: 85px;
+            height: 85px;
+          }
+        }
+        .el-icon-plus{
+          position: relative;
+          top: -25px;
+        }
+        .upload-demo_a{
+          margin-top: 20px;
+          margin-left: 30px;
+        }
+      }
+    }
 	}
 </style>

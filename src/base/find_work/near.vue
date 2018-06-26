@@ -69,6 +69,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import workDe from '@/base/find_work/workDeta'
 
@@ -118,6 +119,9 @@ export default {
       param.append('order',this.orders)
       this.$http.post('/index.php/Mobile/Find/find_work_personal',param)
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           var arr = res.data.data
           for(var sr in arr){
             arr[sr].avatar = getAvatar(arr[sr].avatar)
@@ -141,6 +145,9 @@ export default {
     _getType(){
       this.$http.post('/index.php/Mobile/Find/worker_type')
         .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          getCro(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.work_type.push(item)
@@ -198,6 +205,9 @@ export default {
           param.append('keyword',res)
           this.$http.post('index.php/Mobile/Task/get_work_list',param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
               res.data.data.forEach((item)=>{
                 item.avatar = getAvatar(item.avatar)
                 item.distance = (item.distance / 1000).toFixed(2)
