@@ -75,7 +75,7 @@
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
 	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
 
-    <div class="send" v-show="sendShow">
+    <div class="sendsd" v-show="sendShow">
       <div>
         <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
         <el-input type="textarea" v-model="content"></el-input>
@@ -540,6 +540,8 @@
 			},
 			return_qk(){
 				this.qgd_if = false
+        this.cpj_if = false
+        this.psb_if = false
 				this.qk_return = false
 				this.at_qingkuanShow = true
 			},
@@ -642,8 +644,31 @@
                 this.get_files(item.many_enclosure,item)
               })
             }
+            if(res.data.data.finance) {
+              if(res.data.data.finance.finance_state === '1') {
+                res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+              } else {
+                res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+              }
+              let zparam = new URLSearchParams();
+              zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+              this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getPic(item))
+                    }
+                  })
+                  this.$set(this.form_Listb, 're_pic', arr)
+                })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
+
 			},
       //使用
 			qkUser(item,index){
@@ -1039,16 +1064,14 @@
         this.ysdType = []
       },
 			_getExamList(index) {
-				if(!index){
-					index = this.xindex
-				}
-				this.xindex = index
+
 				let type
-				if(this.xindex === 0) {
+        console.log(index)
+				if(index === 0) {
 					type = 3
-				} else if(this.xindex === 1) {
+				} else if(index === 1) {
 					type = 1
-				} else if(this.xindex === 2) {
+				} else if(index === 2) {
 					type = 6
 				} else {
 					type = -1
@@ -1298,7 +1321,7 @@
 			}
 		}
 	}
-  .send{
+  .sendsd{
     position: fixed;
     top: 0;
     left: 0;

@@ -153,7 +153,8 @@
         personnel_id:'',
         pic_time:0,
         enclosure_id:'',
-        finance_state:''
+        finance_state:'',
+        status:'1'
 			}
 		},
 		props: {

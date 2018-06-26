@@ -98,14 +98,14 @@
           <p>审批时间:{{item.add_time}}</p>
         </div>
 			</div>
-			<div v-if="form_Listb.finance">
-				<span>表单回执：</span>
-				<br />
-				<span style="color: #444444;">
+      <div v-if="form_Listb.finance">
+        <span>表单回执：</span>
+        <br />
+        <span style="color: #444444;">
 						<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
-				<div><img :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" /></div>
-				</span>
-			</div>
+			<div><img style="width: 50px;height: 50px;border: 1px solid #e3e4e9;" :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="cl_pic(form_Listb.re_pic,index)" /></div>
+			</span>
+      </div>
 		</div>
 		<div class="form" name="合同评审表" v-if="psbShow">
 			<div class="close">
@@ -210,16 +210,14 @@
           <p>审批时间:{{item.add_time}}</p>
         </div>
 			</div>
-			<div v-if="form_Listb.finance">
-				<span>表单回执：</span>
-				<br />
-				<span style="color: #444444;">
-				<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
-				<div>
-					<img :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" />
-				</div>
-				</span>
-			</div>
+      <div v-if="form_Listb.finance">
+        <span>表单回执：</span>
+        <br />
+        <span style="color: #444444;">
+						<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
+			<div><img style="width: 50px;height: 50px;border: 1px solid #e3e4e9;" :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="cl_pic(form_Listb.re_pic,index)" /></div>
+			</span>
+      </div>
 		</div>
 		<div class="form" name="呈批件" v-if="cpjShow">
 			<div class="close">
@@ -287,6 +285,14 @@
           </div>
           <p>审批时间:{{item.add_time}}</p>
         </div>
+      </div>
+      <div v-if="form_Listb.finance">
+        <span>表单回执：</span>
+        <br />
+        <span style="color: #444444;">
+						<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
+			<div><img style="width: 50px;height: 50px;border: 1px solid #e3e4e9;" :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="cl_pic(form_Listb.re_pic,index)" /></div>
+			</span>
       </div>
       <div>
         <span>协议:</span>
@@ -448,6 +454,28 @@
                 this.get_files(item.many_enclosure,item)
               })
             }
+            if(res.data.data.finance) {
+              if(res.data.data.finance.finance_state === '1') {
+                res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+              } else {
+                res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+              }
+              let zparam = new URLSearchParams();
+              zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+              this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  getCro(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getPic(item))
+                    }
+                  })
+                  this.$set(this.form_Listb, 're_pic', arr)
+                })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
@@ -599,7 +627,6 @@
         })
       },
       cl_pic(item, index) {
-        console.log(item)
         item.forEach((res)=>{
           let current = res.indexOf('?')
           this.arr_list.push(res.slice(0,current) + '?imageslim' )
