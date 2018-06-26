@@ -39,7 +39,7 @@
 
 			<el-form-item label="项目负责人" prop="project_manager_name">
 				<el-select v-model="qkd_ruleForm.project_manager_name" placeholder="请选择" @change="qkdSelectOk">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -200,6 +200,7 @@
 				pic_enclosure_id: '',
 				fileAccordShow: false,
         str:'',
+        handler:''
 			}
 		},
 		props: {
@@ -464,6 +465,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			qkdSelectOk(tab) {
+			  this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
@@ -496,13 +498,7 @@
           this.$message.error('请上传附件')
           return false
         }
-				if(this.qkd_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qkd_ruleForm.project_manager_name) {
-							this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.qkd_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -512,9 +508,7 @@
 				setTimeout(() => {
 					if(this.picArr.length === 0 && this.fileArr.length === 0) {
 						let param = new URLSearchParams();
-						if(this.qkd_ruleForm.project_manager.uid) {
-							param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
-						}
+            param.append("project_manager", JSON.stringify(this.qkd_ruleForm.project_manager));
 						param.append("uid", this.user.uid);
 						param.append("contract_name", this.qkd_ruleForm.contract_name);
 						param.append("company_id", this.nowCompanyId);

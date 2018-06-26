@@ -11,7 +11,7 @@
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
 				<el-select v-model="sqgz_ruleForm.project_manager_name" placeholder="请选择" @change="sqgzSelectOk">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -134,7 +134,8 @@
 				loadingShow: false,
 				pic_index: 0,
 				img_arr: [],
-        str:''
+        str:'',
+        handler:''
 			}
 		},
 		props: {
@@ -340,6 +341,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			sqgzSelectOk(tab) {
+			  this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
@@ -402,13 +404,7 @@
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-				if(this.sqgz_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.sqgz_ruleForm.project_manager_name) {
-							this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.sqgz_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

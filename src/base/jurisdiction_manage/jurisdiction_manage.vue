@@ -323,7 +323,14 @@ export default {
         zz = 3
       } else if(this.formRePersonIndex === 'qingkuan') {
         zz = 7
-
+      } else if(this.formRePersonIndex == 'gongzhang'){
+        zz = 5
+      } else if(this.formRePersonIndex == 'chengpi'){
+        zz = 6
+      } else if(this.formRePersonIndex == 'baoxiao'){
+        zz = 11
+      } else if(this.formRePersonIndex == 'yanshou'){
+        zz = 12
       }
       let narr = []
       this.setFormRe[this.formRePersonIndex].groups.forEach((item) => {

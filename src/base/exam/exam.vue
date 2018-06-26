@@ -988,8 +988,6 @@
         }
       },
       file_times(){
-        console.log(this.picArr.length)
-        console.log(this.pic_times)
 			  if(this.picArr.length != 0){
 			    if(this.pic_times == 0){
 			      return
@@ -1014,6 +1012,19 @@
               this.is_agree = ''
               this.listShow = true
               this.formShow = false
+              this.menuShow = false
+              if(this.$refs.te){
+                this.$refs.te.forEach((item)=>{
+                  item.result = ''
+                })
+              }
+              if(this.$refs.re){
+                this.$refs.re.forEach((item)=>{
+                  item.result = ''
+                })
+              }
+              this.fileList = []
+              this.fileList_a = []
               this._getExamList()
               if(res.data.code == 0){
                 this.$message.success(res.data.message)
@@ -1048,6 +1059,19 @@
               this.is_agree = ''
               this.listShow = true
               this.formShow = false
+              this.menuShow = false
+              if(this.$refs.te){
+                this.$refs.te.forEach((item)=>{
+                  item.result = ''
+                })
+              }
+              if(this.$refs.re){
+                this.$refs.re.forEach((item)=>{
+                  item.result = ''
+                })
+              }
+              this.fileList = []
+              this.fileList_a = []
               this._getExamList()
               if(res.data.code == 0){
                 this.$message.success(res.data.message)
@@ -1452,7 +1476,6 @@
         var obj2 = new Object()
         this.is_agree = '1'
         let str = ''
-        console.log(this.$refs.re)
         if(this.$refs.re){
           this.$refs.re.forEach((item)=>{
             if(!item.result){
@@ -1516,6 +1539,19 @@
                   this.handle_txt = ''
                   this.listShow = true
                   this.formShow = false
+                  this.menuShow = false
+                  if(this.$refs.te){
+                    this.$refs.te.forEach((item)=>{
+                      item.result = ''
+                    })
+                  }
+                  if(this.$refs.re){
+                    this.$refs.re.forEach((item)=>{
+                      item.result = ''
+                    })
+                  }
+                  this.fileList = []
+                  this.fileList_a = []
                   this._getExamList()
                   if(res.data.code == 0){
                     this.$message.success(res.data.message)
@@ -1711,6 +1747,19 @@
                   this.handle_txt = ''
                   this.listShow = true
                   this.formShow = false
+                  this.menuShow = false
+                  if(this.$refs.te){
+                    this.$refs.te.forEach((item)=>{
+                      item.result = ''
+                    })
+                  }
+                  if(this.$refs.re){
+                    this.$refs.re.forEach((item)=>{
+                      item.result = ''
+                    })
+                  }
+                  this.fileList = []
+                  this.fileList_a = []
                   this._getExamList()
                   if(res.data.code == 0){
                     this.$message.success(res.data.message)

@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="项目负责人(部门经理)">
         <el-select v-model="bxd_ruleForm.project_manager_name" placeholder="请选择" @change="bxdSelectOk">
-          <el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+          <el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
             <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
             <span style="float: left;margin-left: 20px;">{{ item.name }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -112,6 +112,7 @@
             img_arr: [],
             pic_enclosure_id: '',
             str:'',
+            handler:''
           }
         },
         props: {
@@ -260,12 +261,13 @@
                   str += Number(sub[i].price)
                 }
                 this.bxd_ruleForm.money = str
+                this.bxd_ruleForm.big_money = this.form_Lista.big_money
                 this.bxd_ruleForm.add = this.form_Lista.content
                 this.bxd_ruleForm.title = this.form_Lista.title
                 this.bxd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
                 this.bxd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
                 this.form_Lista.many_enclosure.forEach((item)=>{
-                  console.log(item)
+
                   let img_name = item.name
                   if (item.type === 3){
                     let param = new URLSearchParams();
@@ -366,6 +368,7 @@
             setToken:'SET_TOKEN'
           }),
           bxdSelectOk(tab){
+            this.handler = tab
             this.comPersonList.forEach((item) => {
               if(item.name === tab) {
                 this.$set(this.bxd_ruleForm.project_manager, 'uid', item.uid)
@@ -437,13 +440,7 @@
               d = d < 10 ? ('0' + d) : d;
               stuf[i].month_day = y + '-' + m + '-' + d
             }
-            if (this.bxd_ruleForm.project_manager_name != ''){
-              this.comPersonList.forEach((item) => {
-                if(item.name === this.bxd_ruleForm.project_manager_name) {
-                  this.$set(this.bxd_ruleForm.project_manager, 'uid', item.uid)
-                }
-              })
-            }
+            this.$set(this.bxd_ruleForm.project_manager, 'uid', this.handler)
             this.pic_hash_arr = []
             this.afile_hash_arr = []
             this.file_hash_arr = []

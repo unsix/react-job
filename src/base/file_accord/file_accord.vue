@@ -442,12 +442,13 @@
                 })
               }
 						})
-            res.data.data.supply.forEach((item,index)=>{
-              this.get_imgs(item.many_enclosure,item)
-              this.get_files(item.many_enclosure,item)
-            })
+            if(res.data.data.supply){
+              res.data.data.supply.forEach((item,index)=>{
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
-            console.log(this.form_Listb)
 					})
 			},
 			//		获取图片

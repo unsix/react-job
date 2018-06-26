@@ -44,7 +44,7 @@
 			</el-form-item>
 			<el-form-item label="项目负责人" prop="project_manager_name">
 				<el-select v-model="psb_ruleForm.project_manager_name" placeholder="请选择" @change="psbSelectOk">
-					<el-option v-for="item in comPersonList" :key="item.personnel_id" :value="item.name">
+					<el-option v-for="item in comPersonList" :key="item.personnel_id" :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -201,7 +201,8 @@
 				hetongList: [],
 				picArr: [],
 				fileArr: [],
-        str:''
+        str:'',
+        handler:''
 			}
 		},
 		props: {
@@ -422,6 +423,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			psbSelectOk(tab) {
+			  this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
@@ -446,9 +448,6 @@
 					if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
 						this.picArr.push(item)
 					}
-				// 	else {
-				// 		this.fileArr.push(item)
-				// 	}
 				})
 
         this.fileList_a.forEach((item) =>{
@@ -479,13 +478,7 @@
 				d1 = d1 < 10 ? ('0' + d1) : d1;
 				this.psb_ruleForm.end_time = y1 + '-' + m1 + '-' + d1
 
-				if(this.psb_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.psb_ruleForm.project_manager_name) {
-							this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.psb_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -495,9 +488,7 @@
 				setTimeout(() => {
 					if(this.picArr.length === 0 && this.fileArr.length === 0) {
 						let param = new URLSearchParams();
-						if(this.psb_ruleForm.project_manager.uid) {
-							param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
-						}
+            param.append("project_manager", JSON.stringify(this.psb_ruleForm.project_manager));
 						param.append("uid", this.user.uid);
 						param.append("company_id", this.nowCompanyId);
 						param.append("a_name", this.psb_ruleForm.a_name);

@@ -19,7 +19,7 @@
 
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
 					<el-option v-for="item in comPersonList"
-                     :key="item.personnel_id" :value="item.name">
+                     :key="item.personnel_id"  :label="item.name" :value="item.uid">
 						<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
 						<span style="float: left;margin-left: 20px;">{{ item.name }}</span>
 						<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>
@@ -106,6 +106,7 @@
 				img_arr: [],
 				pic_enclosure_id: '',
         res:'',
+        handler:''
 			}
 		},
 		props: {
@@ -265,6 +266,7 @@
             var judge = res.data.code
             getCro(judge,current)
 						this.form_Lista = create_cengpijian_list(res.data.data)
+
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
 						this.cpj_ruleForm.department_name = this.form_Lista.department_name
 						this.cpj_ruleForm.content = this.form_Lista.content
@@ -366,6 +368,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			cpjSelectOk(tab) {
+        this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.name === tab) {
 						this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
@@ -402,13 +405,7 @@
           this.fileArr.push(item)
         })
 
-				if(this.cpj_ruleForm.project_manager_name != '') {
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.cpj_ruleForm.project_manager_name) {
-							this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
-						}
-					})
-				}
+        this.$set(this.cpj_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
