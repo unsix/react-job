@@ -193,7 +193,7 @@
       },
       _return(){
         this.detail_show = false
-        this.company_show =false
+        this.company_show =true
       },
       _returns(){
         this.info_show = false
