@@ -179,6 +179,11 @@ export default {
     this._get_money()
     this._get_order()
   },
+  mounted(){
+    if(this.$route.path === '/work/account') {
+      this.$emit('changeWorkIndex', '6-3')
+    }
+  }
 }
 </script>
 

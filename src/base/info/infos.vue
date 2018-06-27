@@ -1119,6 +1119,11 @@ export default {
   created(){
     // this.approval()
   },
+  mounted(){
+    if(this.$route.path === '/work/infos') {
+      this.$emit('changeWorkIndex', '8-3')
+    }
+  },
   watch:{
     pageIndex() {
       this._getExamList()

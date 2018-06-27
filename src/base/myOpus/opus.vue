@@ -299,6 +299,11 @@ export default {
       type:String
     }
   },
+  mounted(){
+    if(this.$route.path === '/work/opus') {
+      this.$emit('changeWorkIndex', '8-1')
+    }
+  },
   computed:{
     ...mapGetters([
       'user',

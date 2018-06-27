@@ -664,8 +664,8 @@ export default {
     ])
   },
   mounted(){
-    if(this.$route.path === '/work/exam') {
-      this.$emit('changeWorkIndex', 13)
+    if(this.$route.path === '/work/rece') {
+      this.$emit('changeWorkIndex', '7-2')
     }
     let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
     this.$refs.wide.style.height = h + 'px'

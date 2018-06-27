@@ -230,8 +230,8 @@ export default {
   mounted(){
     this._getType()
     this._getList()
-    if(this.$route.path === '/work/list') {
-      this.$emit('changeWorkIndex', 10)
+    if(this.$route.path === '/work/nearWork') {
+      this.$emit('changeWorkIndex', '5-1')
     }
   },
   watch:{

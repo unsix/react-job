@@ -46,6 +46,11 @@ export default {
     if(!localStorage.user){
       this.$router.push({ path: '/login' })
     }
+  },
+  mounted(){
+    if(this.$route.path === '/work/pay') {
+      this.$emit('changeWorkIndex', '6-2')
+    }
   }
 }
 </script>

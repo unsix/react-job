@@ -24,6 +24,8 @@ const account = () =>import('@/base/account/myAccount')
 const pay = () =>import('@/base/account/pay')
 const wage = () =>import('@/base/account/wages')
 const company = () =>import('@/base/find_work/company')
+const workMind = () =>import('@/base/work_record/work_mind')
+const log = () =>import('@/base/work_record/log')
 Vue.use(Router)
 
 export default new Router({
@@ -126,6 +128,14 @@ export default new Router({
         {
           path:'company',
           component:company
+        },
+        {
+          path:'workMind',
+          component:workMind
+        },
+        {
+          path:'log',
+          component:log
         }
 			]
 		},

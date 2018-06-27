@@ -611,7 +611,11 @@
       this._getToken()
       this._get_bill()
     },
-
+    mounted(){
+      if(this.$route.path === '/work/wage') {
+        this.$emit('changeWorkIndex', '6-1')
+      }
+    },
     components:{
       loading,
       moment,

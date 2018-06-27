@@ -100,6 +100,11 @@ export default {
   },
   components:{
     detail
+  },
+  mounted(){
+    if(this.$route.path === '/work/collect') {
+      this.$emit('changeWorkIndex', '8-2')
+    }
   }
 }
 </script>

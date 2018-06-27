@@ -269,8 +269,8 @@ export default {
     loading
   },
   mounted(){
-    if(this.$route.path === '/work/exam') {
-      this.$emit('changeWorkIndex', 12)
+    if(this.$route.path === '/work/issue') {
+      this.$emit('changeWorkIndex', '7-1')
     }
   }
 }

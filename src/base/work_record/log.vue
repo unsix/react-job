@@ -1,6 +1,14 @@
 <template>
   <div class="log" ref="logs">
+
     <div v-show="logShow">
+      <div class="tab">
+        <el-tabs v-model="activeNames" @tab-click="handClick">
+          <el-tab-pane label="日志" name="1"></el-tab-pane>
+          <el-tab-pane label="周计划" name="2"></el-tab-pane>
+          <el-tab-pane label="月计划" name="3"></el-tab-pane>
+        </el-tabs>
+      </div>
       <div class="block">
         <div class="date">
           <div v-show="das != 'week'" class="day">
@@ -79,6 +87,15 @@
       </el-radio-group>
     </div>
     <loading v-show="loadingShow" style="z-index: 9999999"></loading>
+
+    <div class="addsd" v-show="addShow">
+      <ul>
+        <h2>选择日志类型</h2>
+        <i class="el-icon-close" @click="asShow"></i>
+        <li v-for="(item,index) in plan" :log_type_id="item.log_type_id" @click="log(item.log_type_id)">{{item.log_type_name}}</li>
+      </ul>
+    </div>
+
   </div>
 </template>
 
@@ -114,7 +131,7 @@
           reviewer:''
         },
         ccShow:false,
-        logShow: true,
+        logShow: false,
         deShow:false,
         activeNames:'1',
         peShow:false,
@@ -133,13 +150,18 @@
         time:'',
         loadingShow: false,
         actions:'',
-        str:''
+        str:'',
+        plan:[],
+        addShow:false,
+        tode:[],
+        custom_form_type:'',
+        log_type:''
       }
     },
     methods:{
       msms() {
         this.conpents.splice(0,this.conpents.length)
-        this.todo.forEach((item)=>{
+        this.tode.forEach((item)=>{
           item.meta_data = JSON.parse(item.meta_data)
           if(item.type == "input_text"){
             this.conpents.push({
@@ -548,7 +570,7 @@
             param.append('user_save_time',this.logs.user_save_time)
             this.logs.json = JSON.stringify(this.logs.json)
             param.append('json',this.logs.json)
-            param.append('custom_form_type',this.log_type_id)
+            param.append('custom_form_type',this.custom_form_type)
             param.append('custom_form_result',this.logs.custom_form_result)
             this.$http.post('index.php/Mobile/company/publish_log',param)
               .then((res)=>{
@@ -560,7 +582,9 @@
                   this.add_ok()
                   this.loading_show = false
                   this.actions = '0'
-                  this.$parent.actions()
+                  this.$router.push({
+                    path: '/work/record'
+                  })
                 } else {
                   this.add_fail()
                 }
@@ -710,6 +734,86 @@
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST'
       }),
+      handClick(tab){
+        this.tode = []
+        let index = parseInt(tab.index)+1
+        this.log_type = index
+        if(index == 1){
+          this.das = 'date'
+          this.inde = this.log_type
+          let param = new URLSearchParams()
+          param.append('type',index)
+          this.$http.post('index.php/Mobile/find/select_company_log_types',param)
+            .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              res.data.data.forEach((item)=>{
+                this.plan.push(item)
+              })
+            })
+          this.addShow = true
+          this.logShow = false
+        }
+        if(index == 2 || index == 3){
+          let param = new URLSearchParams()
+          param.append('type',index)
+          this.$http.post('index.php/Mobile/find/select_company_log_types',param)
+            .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              getCro(judge,current)
+              let ad = res.data.data[0].log_type_id
+              if(ad == 100){
+                this.das = 'week'
+              }
+              if(ad == 101){
+                this.das = 'month'
+              }
+              this.log(ad)
+            })
+        }
+      },
+      _getData(){
+        this.log_type = '1'
+        this.tode = []
+        this.das = 'date'
+        let param = new URLSearchParams()
+        param.append('type',1)
+        this.$http.post('index.php/Mobile/find/select_company_log_types',param)
+          .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            res.data.data.forEach((item)=>{
+              this.plan.push(item)
+            })
+          })
+        this.addShow = true
+      },
+      asShow(){
+        this.addShow = false
+        this.plan = []
+      },
+      log(se){
+        this.addShow = false
+        this.logShow = true
+        let param = new URLSearchParams()
+        param.append('log_type_id',se)
+        this.custom_form_type = se
+        this.$http.post('index.php/Mobile/find/get_company_log_elements',param)
+          .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            getCro(judge,current)
+            res.data.data.forEach((item)=>{
+              this.tode.push(item)
+            })
+            this.msms()
+            this.fill()
+            this.plan = []
+          })
+      },
     },
     components: {
       sec,
@@ -721,19 +825,16 @@
       todo:{
 
       },
-      das:{
-
-      },
-      log_type:{
-
-      },
-      log_type_id:{
-
-      }
     },
     created(){
       this._getComDepart()
       this._getComPersonList()
+      this._getData()
+    },
+    mounted(){
+      if(this.$route.path === '/work/log') {
+        this.$emit('changeWorkIndex', '3-3')
+      }
     },
     watch:{
       file_time(){
@@ -743,7 +844,6 @@
           }
         }
         if(this.file_time != 0 || this.pic_time != 0){
-
           let param = new URLSearchParams();
           param.append('uid',this.user.uid)
           param.append('company_id',this.nowCompanyId)
@@ -754,7 +854,7 @@
           param.append('enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.logs.json = JSON.stringify(this.logs.json)
           param.append('json',this.logs.json)
-          param.append('custom_form_type',this.log_type_id)
+          param.append('custom_form_type',this.custom_form_type)
           param.append('custom_form_result',this.logs.custom_form_result)
           this.$http.post('index.php/Mobile/company/publish_log',param)
             .then((res)=>{
@@ -766,7 +866,9 @@
                 this.add_ok()
                 this.loading_show = false
                 this.actions = '0'
-                this.$parent.actions()
+                this.$router.push({
+                  path: '/work/record'
+                })
               } else {
                 this.add_fail()
               }
@@ -790,7 +892,7 @@
           param.append('enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.logs.json = JSON.stringify(this.logs.json)
           param.append('json',this.logs.json)
-          param.append('custom_form_type',this.log_type_id)
+          param.append('custom_form_type',this.custom_form_type)
           param.append('custom_form_result',this.logs.custom_form_result)
           this.$http.post('index.php/Mobile/company/publish_log',param)
             .then((res)=>{
@@ -801,8 +903,9 @@
               if(res.data.code === 0) {
                 this.add_ok()
                 this.loading_show = false
-                this.actions = '0'
-                this.$parent.actions()
+                this.$router.push({
+                  path: '/work/record'
+                })
               } else {
                 this.add_fail()
               }
@@ -828,6 +931,27 @@
     overflow: hidden;
     background: #ffffff;
     margin-top: 3px;
+    .tab {
+      width: 100%;
+      height: 40px;
+      overflow: hidden;
+      background: #ffffff;
+      .el-tabs__header{
+        margin-bottom: 5px;
+      }
+      .el-tabs__active-bar {
+        width: 33.3%;
+      }
+      .el-tabs__nav {
+        width: 100%;
+      }
+      .el-tabs__item {
+        font-size: 15px;
+        font-weight: 700;
+        width: 33.3%;
+        text-align: center;
+      }
+    }
     .block{
       width: 100%;
       overflow: hidden;
@@ -955,6 +1079,49 @@
       display: block;
       margin-top: 10px;
       margin-left: 15px;
+    }
+  }
+  .addsd{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    ul {
+      width: 200px;
+      background: #FFFFFF;
+      margin: 200px auto;
+      padding: 10px;
+      border-radius: 4px;
+      h2 {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #409EFF;
+      }
+      i {
+        font-size: 20px;
+        float: right;
+        cursor: pointer;
+        &:hover {
+          color: #FA5555
+        }
+      }
+      li {
+        cursor: pointer;
+        display: block;
+        height: 24px;
+        line-height: 24px;
+        font-size: 15px;
+        &:hover {
+          color: #5A5E66;
+        }
+      }
     }
   }
 </style>

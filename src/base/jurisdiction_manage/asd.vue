@@ -333,7 +333,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/jurisdictionManage') {
-				this.$emit('changeWorkIndex', 4)
+				this.$emit('changeWorkIndex', '2-3')
 			}
 		},
 		created() {
