@@ -70,7 +70,9 @@ export default {
     },
     _return(){
       this.$parent.mains = true
+      this.$parent.info_show = true
       this.$parent.detail_show = false
+      this.$parent.details_show = false
     },
     showMap(pr,se){
       this.deta = false

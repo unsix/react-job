@@ -185,7 +185,6 @@ export default {
       this.$refs.sou._getInfo(pr,this.user.uid,)
     },
     first_page() {
-      this.nextPageShow = true
       this.pageIndex = 1
     },
     last_page() {
@@ -295,7 +294,6 @@ export default {
     }
     .ens{
       width: 380px;
-      height: 50px;
       float: left;
       margin-left: 30px;
       .mar{
@@ -305,9 +303,11 @@ export default {
         }
       }
       .tip{
-        margin-top: 15px;
+        margin-top: 5px;
         span{
+          display: inline-block;
           margin-right: 5px;
+          margin-top: 3px;
         }
       }
     }
@@ -345,7 +345,7 @@ export default {
   }
 }
 .inset{
-  height: 60px;
+  height: auto;
   margin-top: 5px;
   img{
     margin-top: 5px;
@@ -353,7 +353,6 @@ export default {
   }
   .ens{
     width: 260px;
-    height: 50px;
     float: left;
     margin-left: 30px;
     .mar{
@@ -365,11 +364,11 @@ export default {
       }
     }
     .tip{
-      height: 20px;
-      margin-top: 5px;
+      margin-top: -2px;
       span{
         margin-right: 5px;
-        line-height: 20px!important;
+        display: inline-block;
+        line-height: 14px!important;
       }
     }
   }
@@ -383,5 +382,9 @@ export default {
       line-height: 20px!important;
     }
   }
+}
+.el-select-dropdown__item{
+  white-space: normal;
+  line-height: 0px!important;
 }
 </style>

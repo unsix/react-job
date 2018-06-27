@@ -361,7 +361,6 @@
 				this.pic_show = true
 			},
 			first_page() {
-				this.nextPageShow = true
 				this.pageIndex = 1
 			},
 			last_page() {

@@ -1415,7 +1415,6 @@
 					})
 			},
 			first_page() {
-				this.nextPageShow = true
 				this.pageIndex = 1
 			},
 			last_page() {

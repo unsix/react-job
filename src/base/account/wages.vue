@@ -434,7 +434,6 @@
         this.handle_name = ''
       },
       first_page() {
-        this.nextPageShow = true
         this.pageIndex = 1
         if(this.list_show == true){
           this.choose_contract()
