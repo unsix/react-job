@@ -186,9 +186,12 @@
       ])
     },
     created(){
+      this._get_notification_list()
     },
     mounted(){
-
+      if(this.$route.path === '/work/workMind') {
+        this.$emit('changeWorkIndex', '3-2')
+      }
     },
     components:{
       cc_per,

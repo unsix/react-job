@@ -613,7 +613,6 @@ export default {
         })
     },
     first_page() {
-      this.nextPageShow = true
       this.pageIndex = 1
     },
     last_page() {
@@ -1118,6 +1117,11 @@ export default {
   },
   created(){
     // this.approval()
+  },
+  mounted(){
+    if(this.$route.path === '/work/infos') {
+      this.$emit('changeWorkIndex', '8-3')
+    }
   },
   watch:{
     pageIndex() {

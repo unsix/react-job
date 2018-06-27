@@ -1,14 +1,14 @@
 <template>
   <div class="record">
-    <div class="tab">
-      <el-tabs v-model="activeNames" @tab-click="handleClick">
-        <el-tab-pane label="工作记录" name="1"></el-tab-pane>
-        <el-tab-pane label="工作提醒" name="2"></el-tab-pane>
-        <el-tab-pane label="新建日志" name="3"></el-tab-pane>
-      </el-tabs>
-    </div>
+    <!--<div class="tab">-->
+      <!--<el-tabs v-model="activeNames" @tab-click="handleClick">-->
+        <!--<el-tab-pane label="工作记录" name="1"></el-tab-pane>-->
+        <!--<el-tab-pane label="工作提醒" name="2"></el-tab-pane>-->
+        <!--<el-tab-pane label="新建日志" name="3"></el-tab-pane>-->
+      <!--</el-tabs>-->
+    <!--</div>-->
 
-    <div class="workList" v-show="idx == 0">
+    <div class="workList" >
       <div class="tabs">
         <el-tabs v-model="activeCard" @tab-click="handle">
           <el-tab-pane label="工作记录" name="1"></el-tab-pane>
@@ -113,7 +113,7 @@
             </div>
             <ul>
               <li v-for="ti in star.custom_form_elements">
-                <p>{{ti.title}}</p>
+                <!--<p>{{ti.title}}</p>-->
                 <span style="margin-left: 20px;display: block" v-html="ti.result" ></span>
               </li>
             </ul>
@@ -253,10 +253,6 @@
       </ul>
     </div>
 
-    <log v-show="logShow" :log_type_id="this.custom_form_type" :log_type="this.log_type" :das="this.das" ref="logo" :todo="this.tode"></log>
-
-    <work ref="work" v-show="idx == 1"></work>
-
     <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 
     <loading v-show="loadingShow" style="z-index: 9999999"></loading>
@@ -271,7 +267,6 @@
 
 <script>
   import log from '@/base/work_record/log'
-  import work from '@/base/work_record/work_mind'
   import cc_per from '@/base/work_record/cc_per'
   import browsePic from '@/base/browse_pic/browse_pic'
   import { mapGetters, mapMutations } from 'vuex'
@@ -658,7 +653,6 @@
           }
       },
       first_page() {
-        this.nextPageShow = true
         this.pageIndex = 1
       },
       last_page() {
@@ -1526,7 +1520,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/record') {
-        this.$emit('changeWorkIndex', 6)
+        this.$emit('changeWorkIndex', '3-1')
       }
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
       this.$refs.wide.style.height = h + 'px'
@@ -1548,7 +1542,6 @@
     },
     components:{
       log,
-      work,
       cc_per,
       browsePic,
       loading,

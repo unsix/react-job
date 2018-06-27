@@ -434,7 +434,6 @@
         this.handle_name = ''
       },
       first_page() {
-        this.nextPageShow = true
         this.pageIndex = 1
         if(this.list_show == true){
           this.choose_contract()
@@ -611,7 +610,11 @@
       this._getToken()
       this._get_bill()
     },
-
+    mounted(){
+      if(this.$route.path === '/work/wage') {
+        this.$emit('changeWorkIndex', '6-1')
+      }
+    },
     components:{
       loading,
       moment,

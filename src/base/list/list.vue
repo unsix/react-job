@@ -437,7 +437,7 @@
       this._getType()
       this._getNearWork()
       if(this.$route.path === '/work/list') {
-        this.$emit('changeWorkIndex', 8)
+        this.$emit('changeWorkIndex', '4-2')
       }
     },
     created(){

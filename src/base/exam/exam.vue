@@ -1084,7 +1084,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/exam') {
-				this.$emit('changeWorkIndex', 0)
+				this.$emit('changeWorkIndex', '1-1')
 			}
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
       this.$refs.wide.style.height = h + 'px'
@@ -1415,7 +1415,6 @@
 					})
 			},
 			first_page() {
-				this.nextPageShow = true
 				this.pageIndex = 1
 			},
 			last_page() {

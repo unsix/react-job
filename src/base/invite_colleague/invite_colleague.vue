@@ -47,7 +47,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/inviteCol') {
-				this.$emit('changeWorkIndex', 5)
+				this.$emit('changeWorkIndex', '4-1')
 			}
 		},
 		watch: {

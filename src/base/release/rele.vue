@@ -383,8 +383,8 @@ export default {
     this._getToken()
   },
   mounted(){
-    if(this.$route.path === '/work/exam') {
-      this.$emit('changeWorkIndex', 11)
+    if(this.$route.path === '/work/release') {
+      this.$emit('changeWorkIndex', '5-2')
     }
     let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
     this.$refs.wide.style.height = h + 'px'

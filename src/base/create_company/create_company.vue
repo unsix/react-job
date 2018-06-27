@@ -223,7 +223,7 @@
 	    },
       mounted() {
         if(this.$route.path === '/work/create_company') {
-          this.$emit('changeWorkIndex', 3)
+          this.$emit('changeWorkIndex', '2-1')
         }
       },
 	    created(){
