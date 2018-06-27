@@ -64,7 +64,6 @@ export default {
           if(res.data.code == 0){
             this.moreInfo = res.data.data
             this.moreInfo.avatar = getAvatar(this.moreInfo.avatar)
-            console.log(this.moreInfo)
           }
         })
     },

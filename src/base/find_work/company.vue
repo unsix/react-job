@@ -239,7 +239,6 @@
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 item.avatar = getAvatar(item.avatar)
-                console.log(item)
                 this.nearList.push(item)
               })
               if(this.nearList.length<10){
