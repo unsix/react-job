@@ -3,6 +3,7 @@
     <div class="company" v-show="company_show">
       <div class="top">
         <p>公司列表</p>
+        <b style="cursor: pointer" @click="look_project">发布工程</b>
       </div>
       <div class="main">
         <ul>
@@ -97,6 +98,8 @@
     </div>
 
     <workDe v-show="details_show" ref="sou"></workDe>
+
+    <pro v-if="projectShow" :handle="handles"></pro>
   </div>
 </template>
 
@@ -104,6 +107,7 @@
   import {getAvatar} from '@/common/js/avatar.js'
   import {getCro} from "@/common/js/crowd";
   import workDe from '@/base/find_work/workDeta'
+  import pro from '@/base/find_work/rele_project'
   import { mapGetters, mapMutations } from 'vuex'
   export default {
     data(){
@@ -130,7 +134,9 @@
         dec:[],
         work_type:[],
         orders:'',
-        company_id:''
+        company_id:'',
+        projectShow:false,
+        handles:true
       }
     },
     methods:{
@@ -322,7 +328,11 @@
         this.info_show = false
         this.details_show = true
         this.$refs.sou._getInfo(pr,this.user.uid,)
-      }
+      },
+      look_project(){
+        this.company_show = false
+        this.projectShow = true
+      },
     },
     created(){
       this._get_company()
@@ -342,7 +352,7 @@
       }
     },
     components:{
-      workDe
+      workDe,pro
     },
     computed:{
       ...mapGetters([
@@ -361,17 +371,25 @@
     width: 100%;
     .top{
       position: relative;
-      background: #Fff;
-      p{
-        text-align: center;
-        font-size: 18px;
-        font-weight: bolder;
-        padding: 20px 0;
+      border-bottom: 1px solid #e3e4e9;
+      background: #FFF;
+      .el-button{
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
       }
-      .el-button--success{
+      p{
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b{
         position: absolute;
         top: 13px;
-        right: 15px;
+        right: 13px;
       }
     }
     .main{

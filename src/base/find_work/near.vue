@@ -2,8 +2,9 @@
   <div>
     <div class="main" v-show="mains">
       <div class="top" v-show="mean">
-        <p>工程列表</p>
         <el-button type="success" size="small" @click="show_sea">搜索</el-button>
+        <p>工程列表</p>
+        <b @click="look_project">发布工程</b>
       </div>
       <div class="miss" v-show="miss">
         <el-select filterable remote v-model="name" :remote-method="remoteMethod" :loading="loading" @blur="shoe" placeholder="搜索">
@@ -64,6 +65,8 @@
     </div>
 
     <workDe v-show="detail_show" ref="sou"></workDe>
+
+    <pro v-if="projectShow" :handle="handles"></pro>
   </div>
 </template>
 
@@ -72,7 +75,7 @@
   import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import workDe from '@/base/find_work/workDeta'
-
+  import pro from '@/base/find_work/rele_project'
 export default {
   data(){
     return{
@@ -92,10 +95,16 @@ export default {
       miss:false,
       listed:[],
       name:'',
-      detail_show:false
+      detail_show:false,
+      projectShow:false,
+      handles:false
     }
   },
   methods:{
+    look_project(){
+      this.mains = false
+      this.projectShow = true
+    },
     ...mapMutations({
       setUser: 'SET_USER',
       setNowCompanyId: 'SET_NOWCOMPANY_ID',
@@ -248,7 +257,8 @@ export default {
     ])
   },
   components:{
-    workDe
+    workDe,
+    pro
   }
 }
 </script>
@@ -258,17 +268,26 @@ export default {
   width: 100%;
   .top{
     position: relative;
-    background: #Fff;
-    p{
-      text-align: center;
-      font-size: 18px;
-      font-weight: bolder;
-      padding: 20px 0;
-    }
-    .el-button--success{
+    border-bottom: 1px solid #e3e4e9;
+    background: #FFF;
+    .el-button{
       position: absolute;
+      top: 8px;
+      left: 5px;
+      margin: 0 !important;
+    }
+    p{
+      width: 500px;
+      margin: 0 auto;
+      text-align: center;
+      font-weight: bolder;
+      padding: 15px 0;
+    }
+    b{
+      position: absolute;
+      cursor: pointer;
       top: 13px;
-      right: 15px;
+      right: 13px;
     }
   }
   .search{
