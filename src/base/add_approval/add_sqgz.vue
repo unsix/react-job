@@ -60,7 +60,12 @@
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
-
+      <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
+        <p>审批流程</p>
+        <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
+          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span></span>)</span>
+        </li>
+      </div>
 			<el-form-item>
 				<el-button type="primary" @click="submitForm_sqgz('sqgz_ruleForm')">立即添加</el-button>
 				<!--<el-button @click="resetForm('sqgz_ruleForm')">重置</el-button>-->
@@ -141,7 +146,10 @@
 		props: {
 			approval_id: {
 				type: String
-			}
+			},
+      userList:{
+
+      }
 		},
 		created() {
 			this._getToken()

@@ -18,13 +18,13 @@
 				<el-button type="primary" plain @click="chooseTem" v-show="forms">从模板选择</el-button>
 			</div>
 			<div class="form" v-show="formShow">
-				<addQkd v-if="qkd_show" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
-				<addCpj v-if="cpj_show" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
-				<addPsb v-if="psb_show" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
-				<addQgd v-if="qgd_show" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
-				<addSqgz v-if="sqgz_show" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
-        <addBxd v-if="bxd_show" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
-        <addYsd v-if="ysd_show" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
+				<addQkd v-if="qkd_show" :userList="user_info" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
+				<addCpj v-if="cpj_show" :userList="user_info" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
+				<addPsb v-if="psb_show" :userList="user_info" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
+				<addQgd v-if="qgd_show" :userList="user_info" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
+				<addSqgz v-if="sqgz_show" :userList="user_info" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
+        <addBxd v-if="bxd_show" :userList="user_info" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
+        <addYsd v-if="ysd_show" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
 			</div>
 		</div>
 		<div class="as_what" v-show="as_what_show">
@@ -186,7 +186,8 @@
         file_hash_arr:[],
         file_time:0,
         pic_time:0,
-        change_type:''
+        change_type:'',
+        user_info:[]
 			}
 		},
 		computed: {
@@ -282,6 +283,7 @@
 			this._getToken()
 			this._getComDepart()
 			this._getComPersonList()
+      this.get_approval_user_info()
 		},
 		methods: {
       submitCom(){
@@ -1011,7 +1013,56 @@
           this.formShow = false
           this.approval_type = 12
         }
+        this.get_approval_user_info()
 			},
+      get_approval_user_info(){
+        this.user_info = []
+        let str = ''
+        switch (this.approval_type){
+          case 111:
+            str = 1
+            break;
+          case 1000:
+            str = 7
+            break;
+          case 1001:
+            str = 8
+            break;
+          case 5:
+            str = 5
+            break;
+          case 6:
+            str = 6
+            break;
+          case 11:
+            str = 11
+            break;
+          case 12:
+            str = 12
+            break;
+        }
+        let param = new URLSearchParams()
+        param.append('company_id',this.nowCompanyId)
+        param.append('type',str)
+        this.$http.post('index.php/Mobile/user/get_approval_user_info',param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              res.data.data.forEach((item)=>{
+                this.$set(item,'require',Array)
+                this.$set(item,'option',Array)
+                if(item.form_content){
+                  if(item.form_content.required){
+                    item.require = item.form_content.required
+                  }
+                  if(item.form_content.optional){
+                    item.option = item.form_content.optional
+                  }
+                }
+                this.user_info.push(item)
+              })
+            }
+          })
+      },
       get_ysd_type(){
 			  this.$http.post('index.php/Mobile/approval/inspection_list')
           .then((res)=>{

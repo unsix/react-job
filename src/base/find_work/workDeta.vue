@@ -64,7 +64,6 @@ export default {
           if(res.data.code == 0){
             this.moreInfo = res.data.data
             this.moreInfo.avatar = getAvatar(this.moreInfo.avatar)
-            console.log(this.moreInfo)
           }
         })
     },
@@ -75,6 +74,7 @@ export default {
       this.$parent.details_show = false
     },
     showMap(pr,se){
+      console.log(pr,se)
       this.deta = false
       this.map = true
       this.load = true
@@ -90,7 +90,7 @@ export default {
     _creatMap(pr,se){
       var map = new BMap.Map("map");
       if(pr != '' || se != ''){
-        var point = new BMap.Point(pr,se)
+        var point = new BMap.Point(se,pr)
       }else{
         var point = new BMap.Point(116.404, 39.915)
       }
