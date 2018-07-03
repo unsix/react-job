@@ -871,6 +871,11 @@
                   label:'公司列表',
                   index:'2-4',
                   route:{ path: '/work/company' }
+                },
+                {
+                  label:'创建群组',
+                  index:'2-5',
+                  route:{path:'/work/small'}
                 }
               ]
             },

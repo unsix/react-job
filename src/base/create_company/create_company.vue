@@ -404,7 +404,7 @@
 					      	}
 					      })
 			    	}else{
-			    		this.$message.error(res.data.data.m);
+			    		this.$message.error(res.data.message);
               this.$message.error('创建公司失败');
               return
 			    	}
