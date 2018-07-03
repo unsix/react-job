@@ -7,7 +7,7 @@
       </div>
       <div class="mains">
         <el-form :model="project_form" :rules="project_rules" ref="project_form" label-width="100px" class="demo-project_form">
-          <el-form-item label="所在公司" prop="company_id" v-show="handle">
+          <el-form-item label="所在公司" prop="company_id" v-if="handle">
             <el-select v-model="project_form.company_id" placeholder="请选择所在公司" style="display: block">
               <el-option v-for="item in com_list" :value="item.company_big_name" :key="item.company_big_id"></el-option>
             </el-select>
@@ -235,9 +235,16 @@ export default {
           this.loadingShow =false
           if(res.data.code == 0){
             this.$message.success('发布成功')
-            this.$router.push({
-              path: '/work/nearWork'
-            })
+            if(this.$route.path == '/work/nearWork'){
+              this.$parent.mains = true
+              this.$parent.projectShow = false
+              this.$parent.company_show =true
+              this.$parent._getList()
+            }else{
+              this.$router.push({
+                path: '/work/nearWork'
+              })
+            }
           }else{
             this.$message.error('发布失败')
           }
