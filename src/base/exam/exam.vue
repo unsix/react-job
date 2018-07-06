@@ -902,7 +902,8 @@
         many_enclosure:{},
         pity:{},
         is_agree:'',
-        change_type:''
+        change_type:'',
+        eflu:[]
 			}
 		},
 		computed: {
@@ -2000,6 +2001,7 @@
             this.reply = res.data.data.approval_id
             this.newCompany = res.data.data.company_id
 					})
+
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", item.approval_id);
@@ -2046,6 +2048,7 @@
             }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
+
         let mparam = new URLSearchParams()
         mparam.append('approval_id',item.approval_id)
         this.$http.post('index.php/Mobile/approval/find_sequence_attachment_new',mparam)
@@ -2064,6 +2067,26 @@
               this.describe = form.enclosure_describe
             }
           })
+
+        let cparam = new URLSearchParams()
+        cparam.append('uid',this.user.uid)
+        cparam.append('company_id',this.nowCompanyId)
+        this.$http.post('/index.php/Mobile/User/return_company_new',cparam)
+          .then((res)=>{
+            if(res.data.data.is_manage == 1){
+              let nparam = new URLSearchParams()
+              nparam.append('company_id',this.nowCompanyId)
+              nparam.append('approval_type',7)
+              nparam.append('target_uid',this.user.uid)
+              this.$http.post('index.php/Mobile/approval/find_sequence_attachment_appoint_new',nparam)
+                .then((res)=>{
+                  if(res.data.code == 1){
+                    this.eflu = res.data.data
+                  }
+                })
+            }
+          })
+
 			},
       reply_other(us,pr,name){
 			  this.wideShow = true

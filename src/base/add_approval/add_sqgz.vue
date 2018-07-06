@@ -2,7 +2,7 @@
 	<div class="shenqinggongzhang">
 		<el-form :model="sqgz_ruleForm" :rules="sqgz_rules" ref="sqgz_ruleForm" label-width="150px" class="demo-sqgz_ruleForm">
 			<el-form-item label="用章部门" prop="departmental">
-				<el-select v-model="sqgz_ruleForm.departmental" placeholder="请选择呈批部门">
+				<el-select v-model="sqgz_ruleForm.departmental" placeholder="请选择申请部门">
 					<el-option v-for="item in comDepartList" :value="item.department_name" :key="item.department_id"></el-option>
 				</el-select>
 			</el-form-item>
