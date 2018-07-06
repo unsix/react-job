@@ -10,7 +10,7 @@ import Login from './container/login/login'
 import Register from './container/register/register'
 import AuthRoute from './component/authroute/authroute'
 import reducers from './reducers'
-// import './config'
+import './config'
 import './index.css'
 
 

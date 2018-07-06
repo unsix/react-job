@@ -4,7 +4,7 @@ const ERROR_MSG = 'ERROR_MSG'
 
 const initState={
   msg:'',
-  isAuth:'',
+  isAuth:'false',
   user:'',
   pwd:'',
   type:''
@@ -26,7 +26,7 @@ function registerSuccess(data){
 function errorMSG(msg) {
   return {msg,type:ERROR_MSG }
 }
-export function register ({user,pwd,repeatpwd,type}) {
+export function regisger ({user,pwd,repeatpwd,type}) {
   if(!user||!pwd||!type) {
     return errorMSG('用户名密码必须输入')
   }
