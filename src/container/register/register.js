@@ -36,6 +36,7 @@ class Register extends React.Component {
       <div>
         <Logo></Logo>
         <List>
+				{this.props.msg?<p className ="err-msg">{this.props.msg}</p>:null}
         <InputItem
           onChange={v=>this.handleChange('user',v)}
         >用户名</InputItem>
