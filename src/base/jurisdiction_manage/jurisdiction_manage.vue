@@ -159,7 +159,7 @@ export default {
     as_click(pr){
       switch(pr) {
         case 0:
-          this.formType = 1
+          this.formType = 111
           break;
         case 1:
           this.formType = 7

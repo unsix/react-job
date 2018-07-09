@@ -1910,6 +1910,8 @@
 				this.gongzhang_show = false
         this.reply = ''
         this.list = ''
+        this.mands = []
+        this.choices = []
 			},
 			listCli(item,sta) {
 			  this.list = item
