@@ -80,8 +80,6 @@
 								</ul>
 							</div>
 						</div>
-
-
 						</transition>
 					</div>
 				</div>

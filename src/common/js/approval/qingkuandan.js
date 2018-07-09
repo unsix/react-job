@@ -21,6 +21,7 @@ export default class qingkuandan_list {
   	request_money_basis_type,
   	form_approval_id,
   	approval_type,
+    project_manager,
   	many_enclosure}) {
     this.contract_name = contract_name
     this.contract_name_new = contract_name_new
@@ -45,7 +46,7 @@ export default class qingkuandan_list {
     this.balance_subtotal = balance_subtotal
     this.approval_type = approval_type
     this.request_money_basis_type = request_money_basis_type
-
+    this.project_manager =project_manager
   }
 }
 export function create_qingkuandan_list(item) {
@@ -73,8 +74,8 @@ export function create_qingkuandan_list(item) {
 	    phone:item.phone,
 	    form_approval_id:item.form_approval_id,
 	    draw_money_name:item.draw_money_name,
-	    balance_subtotal:item.balance_subtotal
-
+	    balance_subtotal:item.balance_subtotal,
+    project_manager:item.project_manager
 	})
 }
 function get_manager_name(item){

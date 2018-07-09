@@ -65,7 +65,7 @@
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
-          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span></span>)</span>
+          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span>)</span>
         </li>
       </div>
 			<el-form-item>
@@ -345,6 +345,7 @@
 						this.psb_ruleForm.contract_id = this.form_Lista.contract_id
 						this.psb_ruleForm.project_manager_name = this.form_Lista.project_manager_name
             this.psb_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+            this.psb_ruleForm.project_manager = this.form_Lista.project_manager
             this.form_Lista.many_enclosure.forEach((item)=>{
               let img_name = item.name
               if (item.type === 3){
@@ -432,8 +433,9 @@
 			}),
 			psbSelectOk(tab) {
 			  this.handler = tab
+        this.psb_ruleForm.project_manager = {}
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.$set(this.psb_ruleForm.project_manager, 'uid', item.uid)
 					}
 				})
@@ -474,8 +476,6 @@
 				let d = date.getDate();
 				d = d < 10 ? ('0' + d) : d;
 				this.psb_ruleForm.arrive_time = y + '-' + m + '-' + d
-
-
 				let timestamp3 = Date.parse(new Date(this.psb_ruleForm.end_time));
 				let date1 = new Date();
 				date1.setTime(timestamp3);
@@ -485,8 +485,6 @@
 				let d1 = date1.getDate();
 				d1 = d1 < 10 ? ('0' + d1) : d1;
 				this.psb_ruleForm.end_time = y1 + '-' + m1 + '-' + d1
-
-        this.$set(this.psb_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

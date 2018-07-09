@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <jurisdictionItem class="other_item" v-show="jurisdictionItemShow" @_return="_return" :formType="formType" @reload="reload" :submitAddPersonShow="submitAddPersonShow" :jurisdictionFormList="jurisdictionFormList"></jurisdictionItem>
+    <jurisdictionItem class="other_item" :fuJias="fuJia" v-show="jurisdictionItemShow" @_return="_return" :formType="formType" @reload="reload" :submitAddPersonShow="submitAddPersonShow" :jurisdictionFormList="jurisdictionFormList"></jurisdictionItem>
   </div>
 </template>
 
@@ -130,6 +130,7 @@ export default {
       activeNames: ['0'],
       redactState: false,
       formRePersonIndex: '',
+      fuJia:[]
     }
   },
   methods:{
@@ -182,6 +183,14 @@ export default {
       this._getApproval()
     },
     _getApproval(){
+      if(this.formType == 7){
+        this.$http.post('index.php/Mobile/approval/get_form_auto_filled')
+          .then((res)=>{
+            res.data.data.forEach((item)=>{
+              this.fuJia.push(JSON.parse(item))
+            })
+          })
+      }
       let param = new URLSearchParams()
       param.append('company_id',this.nowCompanyId)
       param.append('type',this.formType)

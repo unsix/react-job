@@ -60,7 +60,7 @@
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
-          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span></span>)</span>
+          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span>)</span>
         </li>
       </div>
 			<el-form-item>
@@ -340,6 +340,7 @@
 						this.qkd_ruleForm.gain_reduction_subtotal = this.form_Lista.gain_reduction_subtotal
 						this.qkd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
             this.qkd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+            this.qkd_ruleForm.project_manager = this.form_Lista.project_manager
             this.form_Lista.many_enclosure.forEach((item)=>{
               let img_name = item.name
               if (item.type === 3){
@@ -475,7 +476,7 @@
 			qkdSelectOk(tab) {
 			  this.handler = tab
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
 					}
 				})
@@ -506,7 +507,6 @@
           this.$message.error('请上传附件')
           return false
         }
-        this.$set(this.qkd_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

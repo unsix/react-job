@@ -29,7 +29,7 @@
       <div class="jurisdictionFormList">
         <ul>
           <li v-for="(item,index) in jurisdictionFormList" :key="item.name">
-            <div class="info">s
+            <div class="info">
               <img :src="item.avatar" alt="" />
               <span>{{item.name}}</span>
               <span v-show="submitAddPersonShow">
@@ -66,6 +66,7 @@
           <i class="el-icon-close" @click="close_as"></i>
           <div class="mand">
             <p style="padding-bottom:5px">必填字段</p>
+            <el-tag style="margin-left: 5px" :key="item.id" v-for="item in fuJias" closable :disable-transitions="false" @close="mandClose(item)">{{item.name}}</el-tag>
             <el-tag style="margin-left: 5px" :key="item" v-for="item in form_content.required" closable :disable-transitions="false" @close="mandClose(item)">{{item}}</el-tag>
             <el-input class="input-new-tag" style="width: 90px;" v-if="mandVisible" v-model="mand_Value" ref="mand_tag" size="small" @keyup.enter.native="mands_con" @blur="mands_con"></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="show_mand" >新建</el-button>
@@ -119,7 +120,8 @@
         mandVisible: false,
         choiceVisible:false,
         mand_Value: '',
-        choice_Value:''
+        choice_Value:'',
+        people_arr:[],
 			}
 		},
 		props: {
@@ -129,7 +131,10 @@
 			},
 			formType: {
 				type: Number
-			}
+			},
+      fuJias:{
+
+      }
 		},
 		computed: {
 			...mapGetters([
@@ -191,6 +196,7 @@
 			  this.btn_show=true
         this.submitAddPersonShow = false
         this.activeNames = ['0']
+        this.jurisdictionFormList = this.originalJurisdictionFormList
       },
 			//			选择合同评审表人员
 			chooseContractApprovalPerson(item) {
@@ -259,6 +265,7 @@
         this.setting_show = false
         this.form_content.required = []
         this.form_content.optional = []
+        this.fuJia = []
         this.describe = ''
       },
       submit_mand(){
@@ -313,6 +320,8 @@
       },
       mandClose(tag) {
         this.form_content.required.splice(this.form_content.required.indexOf(tag), 1);
+        this.fuJia.splice(this.fuJia.indexOf(tag), 1);
+
       },
       show_mand() {
         this.mandVisible = true;

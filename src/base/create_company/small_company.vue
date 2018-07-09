@@ -41,8 +41,6 @@
             </el-form>
           </div>
           <div class="processThree" v-show="processThreeShow">
-
-
             <div class="sec" v-for="(item,nowIn) in department" >
               <div class="list" v-for="(group,inz) in item.type" :key="item.name">
 								<span class="title">
@@ -80,8 +78,6 @@
                   </ul>
                 </div>
               </div>
-
-
             </transition>
           </div>
         </div>
@@ -222,7 +218,7 @@
       }
     },
     mounted() {
-      if(this.$route.path === '/work/create_company') {
+      if(this.$route.path === '/work/small') {
         this.$emit('changeWorkIndex', '2-5')
       }
     },
@@ -281,11 +277,11 @@
             this.processTwoShow = true
             this.processThreeShow = false
           }
-
         }else if(this.active === 2){
           this.processOneShow = false
           this.processTwoShow = false
           this.processThreeShow = true
+
           document.getElementById('step').innerText = '完成'
         }else if(this.active === 3){
           this.creatOver()
@@ -452,7 +448,7 @@
                   }
                 })
             }else{
-              this.$message.error(res.data.data.message);
+              this.$message.error(res.data.message);
               this.$message.error('创建公司失败');
               return
             }
