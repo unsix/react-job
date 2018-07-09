@@ -187,7 +187,8 @@
         file_time:0,
         pic_time:0,
         change_type:'',
-        user_info:[]
+        user_info:[],
+        prc_index:''
 			}
 		},
 		computed: {
@@ -1094,7 +1095,8 @@
 					this.at_qingkuanShow = false
 					return
 				}else{
-					this._getExamList(index)
+				  this.prc_index = index
+					this._getExamList()
 					this.at_qingkuanShow = true
 					this.as_what_show = false
 				}
@@ -1113,15 +1115,14 @@
         this.as_what_show = !this.as_what_show
         this.ysdType = []
       },
-			_getExamList(index) {
+			_getExamList() {
 
 				let type
-        console.log(index)
-				if(index === 0) {
+				if(this.prc_index === 0) {
 					type = 3
-				} else if(index === 1) {
+				} else if(this.prc_index === 1) {
 					type = 1
-				} else if(index === 2) {
+				} else if(this.prc_index === 2) {
 					type = 6
 				} else {
 					type = -1

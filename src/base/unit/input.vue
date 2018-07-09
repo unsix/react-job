@@ -1,5 +1,5 @@
 <template>
-    <label>
+    <label class="label_input">
       <p>{{title}}</p><textarea v-model="result"></textarea>
     </label>
 </template>
@@ -20,10 +20,11 @@ export default {
 </script>
 
 <style lang="scss">
-  label{
+  .label_input{
     overflow: hidden;
     height: 55px;
     display: block;
+    margin: 10px 0;
     p{
       width: 15%;
       float: left;
