@@ -63,7 +63,7 @@
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
-          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span></span>)</span>
+          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span>)</span>
         </li>
       </div>
 			<el-form-item>
@@ -240,6 +240,7 @@
 						this.sqgz_ruleForm.department_id = this.form_Lista.department_id
 						this.sqgz_ruleForm.add = this.form_Lista.info
 						this.sqgz_ruleForm.project_manager_name = this.form_Lista.project_manager_name
+            this.sqgz_ruleForm.project_manager = this.form_Lista.project_manager
 						this.sqgz_ruleForm.add.forEach((item, index) => {
 							if(item.seal_type === '公章') {
 								this.sqgz_ruleForm.add[index].seal_type = '1'
@@ -351,7 +352,7 @@
 			sqgzSelectOk(tab) {
 			  this.handler = tab
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.$set(this.sqgz_ruleForm.project_manager, 'uid', item.uid)
 					}
 				})
@@ -412,7 +413,6 @@
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-        this.$set(this.sqgz_ruleForm.project_manager, 'uid', this.handler)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []

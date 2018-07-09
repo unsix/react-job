@@ -10,12 +10,15 @@ export default class qinggoudan_list {
   	request_buy_department,
   	arrival_time,
   	consignee,
+    consignee_uid,
+    buy_person_uid,
   	consignee_phone,
   	content,
   	project_manager_name,
   	enclosure_id,
   	total,
-  	many_enclosure}) {
+    project_manager,
+  	many_enclosure,}) {
     this.request_contract_address = request_contract_address
     this.contract_name_new = contract_name_new
     this.department_name = department_name
@@ -33,7 +36,9 @@ export default class qinggoudan_list {
     this.many_enclosure = many_enclosure
     this.enclosure_id = enclosure_id
     this.total = total
-  
+    this.consignee_uid  = consignee_uid
+    this.buy_person_uid = buy_person_uid
+    this.project_manager = project_manager
   }
 }
 export function create_qinggoudan_list(item) {
@@ -55,20 +60,22 @@ export function create_qinggoudan_list(item) {
 	    consignee_phone:item.consignee_phone,
 	    content:item.content,
 	    total:item.total,
-	    enclosure_id:get_enclosure_id(item)
-	   
+	    enclosure_id:get_enclosure_id(item),
+      buy_person_uid:item.buy_person_uid,
+      consignee_uid:item.consignee_uid,
+    project_manager:item.project_manager
 	})
 }
 function getTime(time){
 var timestamp2 = Date.parse(new Date(time));
 timestamp2 = timestamp2 / 1000 +86400
-		var date = new Date();  
-    date.setTime(timestamp2 * 1000);  
-    var y = date.getFullYear();      
-    var m = date.getMonth() + 1;      
-    m = m < 10 ? ('0' + m) : m;      
-    var d = date.getDate();      
-    d = d < 10 ? ('0' + d) : d;          
+		var date = new Date();
+    date.setTime(timestamp2 * 1000);
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
     return y + '-' + m + '-' + d
 }
 function get_manager_name(item){
@@ -78,7 +85,7 @@ function get_manager_name(item){
 	if(item.project_manager_name.name){
 		return item.project_manager_name.name
 	}
-	
+
 }
 function get_enclosure_id(item){
 	if(!item.enclosure_id){
@@ -86,6 +93,6 @@ function get_enclosure_id(item){
 	}else{
 		return item.enclosure_id
 	}
-	
-	
+
+
 }

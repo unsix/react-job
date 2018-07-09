@@ -58,7 +58,7 @@
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
-          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span></span>)</span>
+          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span>)</span>
         </li>
       </div>
       <el-form-item>
@@ -274,6 +274,7 @@
                 this.bxd_ruleForm.title = this.form_Lista.title
                 this.bxd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
                 this.bxd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+                this.bxd_ruleForm.project_manager = this.form_Lista.project_manager
                 this.form_Lista.many_enclosure.forEach((item)=>{
 
                   let img_name = item.name
@@ -378,7 +379,7 @@
           bxdSelectOk(tab){
             this.handler = tab
             this.comPersonList.forEach((item) => {
-              if(item.name === tab) {
+              if(item.uid === tab) {
                 this.$set(this.bxd_ruleForm.project_manager, 'uid', item.uid)
               }
             })
@@ -448,7 +449,6 @@
               d = d < 10 ? ('0' + d) : d;
               stuf[i].month_day = y + '-' + m + '-' + d
             }
-            this.$set(this.bxd_ruleForm.project_manager, 'uid', this.handler)
             this.pic_hash_arr = []
             this.afile_hash_arr = []
             this.file_hash_arr = []

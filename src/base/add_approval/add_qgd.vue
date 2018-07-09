@@ -118,7 +118,7 @@
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
-          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span></span>)</span>
+          <span>{{item.name}}(<span v-for="list in item.require">{{list}},</span><span v-for="pr in item.option">{{pr}},</span><span v-show="item.enclosure_describe">,附件:{{item.enclosure_describe}}</span>)</span>
         </li>
       </div>
 			<el-form-item>
@@ -413,6 +413,7 @@
             var judge = res.data.code
             getCro(judge,current)
 						this.form_Lista = create_qinggoudan_list(res.data.data)
+            console.log(this.form_Lista)
 						let department_name
 						setTimeout(() => {
 							this.comDepartList.forEach((item) => {
@@ -420,6 +421,9 @@
 									department_name = item.department_name
 								}
 							})
+              this.qgd_ruleForm.consignee_uid = this.form_Lista.consignee_uid
+              this.qgd_ruleForm.project_manager =this.form_Lista.project_manager
+              this.qgd_ruleForm.buy_person_uid = this.form_Lista.buy_person_uid
 							this.qgd_ruleForm.request_buy_department = department_name
 							this.qgd_ruleForm.contract_name_new = this.form_Lista.contract_name_new
 							this.qgd_ruleForm.contract_responsible = this.form_Lista.contract_responsible
@@ -584,14 +588,13 @@
 					if(item.uid === tab) {
 						this.qgd_ruleForm.consignee = item.name
 						this.qgd_ruleForm.consignee_phone = item.phone
-						return
 					}
 				})
 			},
 			qgdCaigou(tab) {
         this.qgd_ruleForm.buy_person_uid = tab
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.qgd_ruleForm.buy_person = item.name
 						this.qgd_ruleForm.buy_person_phone = item.phone
 						return
@@ -602,15 +605,14 @@
 			qgdLeader(tab) {
         this.handler = tab
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.$set(this.qgd_ruleForm.project_manager, 'uid', item.uid)
 					}
 				})
 			},
 			qgdPro(tab) {
-        console.log(tab)
 				this.comPersonList.forEach((item) => {
-					if(item.name === tab) {
+					if(item.uid === tab) {
 						this.qgd_ruleForm.contract_responsible = item.name
 						this.qgd_ruleForm.responsible_tel = item.phone
 						return
@@ -632,7 +634,7 @@
 
 			},
 			submitForm_qgd(formName) {
-				this.returnOk = false
+        this.returnOk = false
 
 				this.qgd_ruleForm.add.forEach((item) => {
 					if(item.model === '' || item.name === '' || item.num === '' || item.price === '' ||
@@ -699,8 +701,6 @@
 				d = d < 10 ? ('0' + d) : d;
 				this.qgd_ruleForm.arrival_time = y + '-' + m + '-' + d
 
-        this.$set(this.qgd_ruleForm.project_manager, 'uid', this.handler)
-        console.log(this.qgd_ruleForm.project_manager)
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -899,18 +899,6 @@
 					this.comDepartList.forEach((item) => {
 						if(item.department_name === this.qgd_ruleForm.request_buy_department) {
 							buy_depart_id = item.department_id
-						}
-					})
-					let consignee_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.consignee) {
-							this.qgd_ruleForm.consignee_uid = item.uid
-						}
-					})
-					let buy_person_uid
-					this.comPersonList.forEach((item) => {
-						if(item.name === this.qgd_ruleForm.buy_person) {
-							this.qgd_ruleForm.buy_person_uid = item.uid
 						}
 					})
 					let param = new URLSearchParams();

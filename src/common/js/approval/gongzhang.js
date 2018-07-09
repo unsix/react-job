@@ -1,7 +1,8 @@
 export default class gongzhang_list {
-  constructor({department_name,user_name,info,project_manager_name,many_enclosure}) {
+  constructor({department_name,user_name,info,project_manager_name,many_enclosure,project_manager}) {
     this.department_name = department_name
     this.user_name = user_name
+    this.project_manager = project_manager
     this.info = info
     this.project_manager_name = project_manager_name
     this.many_enclosure = many_enclosure
@@ -14,7 +15,8 @@ export function create_gongzhang_list(item) {
     user_name: item.user_name,
     info: get_info(item.info),
     project_manager_name:get_manager_name(item),
-    many_enclosure:item. many_enclosure
+    many_enclosure:item. many_enclosure,
+    project_manager:item.project_manager
 	})
 }
 

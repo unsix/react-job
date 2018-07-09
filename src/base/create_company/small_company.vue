@@ -277,11 +277,11 @@
             this.processTwoShow = true
             this.processThreeShow = false
           }
-
         }else if(this.active === 2){
           this.processOneShow = false
           this.processTwoShow = false
           this.processThreeShow = true
+
           document.getElementById('step').innerText = '完成'
         }else if(this.active === 3){
           this.creatOver()
