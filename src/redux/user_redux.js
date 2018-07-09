@@ -23,15 +23,15 @@ export function user(state=initState,action) {
 function registerSuccess(data){
   return {type:REGISTER_SUCCESS,payload:data}
 }
-function errorMSG(msg) {
+function errorMsg(msg) {
   return {msg,type:ERROR_MSG }
 }
 export function regisger ({user,pwd,repeatpwd,type}) {
   if(!user||!pwd||!type) {
-    return errorMSG('用户名密码必须输入')
+    return errorMsg('用户名密码必须输入')
   }
   if(pwd!==repeatpwd){
-    return errorMSG('密码和确认密码不同')
+    return errorMsg('密码和确认密码不同')
   }
   return dispatch=>{
     axios.post('/user/register',{user,pwd,type}).then(
@@ -40,7 +40,7 @@ export function regisger ({user,pwd,repeatpwd,type}) {
         if(res.status===200&&res.data.code===0){
             dispatch(registerSuccess({user,pwd,type}))
         }else{
-            dispatch(ERROR_MSG(res.data.msg))
+            dispatch(errorMsg(res.data.msg))
         }
       }
     )
