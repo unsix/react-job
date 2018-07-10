@@ -11,6 +11,15 @@ Router.get('/list',function(req,res){
     return res.json(doc)
   })
 })
+Router.post('/login',function(req,res){
+  const {user,pwd} = req.body
+  User.findOne({user,pwd:md5Pwd(pwd)},function(err,doc){
+    if(!doc) {
+      return res.json({code:1,msg:'用户名或者密码错误2'})
+    }
+    return res.json({code:0,data:doc})
+  })
+})
 
 Router.post('/register',function(req,res){
   console.log(req.body)
@@ -23,6 +32,7 @@ Router.post('/register',function(req,res){
       if(e){
         return res.json({code:1,msg:'后端出错了'})
       }
+      // res.cookie('userid',doc._id)
       return res.json({code:0})
     })
   })
