@@ -1155,36 +1155,30 @@
 				window.open('/index.php/Mobile/skey/look_draft?id=' + item.contract_id)
 			},
 			deleteForm(item){
-				this.$confirm('您确定删除文件？', '提示', {
-		        	confirmButtonText: '确定',
-		        	cancelButtonText: '取消',
-		        	type: 'warning'
-		       }).then(() => {
-		        	let param = new URLSearchParams();
-					param.append("uid", this.user.uid);
-					param.append("approval_id", item.approval_id);
-					param.append("company_id", this.nowCompanyId);
-					this.$http.post("/index.php/Mobile/find/del_approval", param)
-					.then((res)=>{
-            var current = this
-            var judge = res.data.code
-            getCro(judge,current)
-						if(res.data.code === 0){
-							this.$message({
-                message: '删除成功',
-                type: 'success'
-					        });
-					        this._getExamList()
-						}else{
-							this.$message.error(res.data.message);
-						}
-					})
-		        }).catch(() => {
-		        	this.$message({
-		            	type: 'info',
-		            	message: '已取消操作'
-		            });
-		        });
+				this.$confirm('您确定删除文件','提示',{
+				  confirmButtonText:'确定',
+          cancelButtonText:'取消',
+          type:'warning'
+        }).then(()=>{
+          let param = new URLSearchParams()
+          param.append('uid',this.user.uid)
+          param.append('approval_id',item.approval_id)
+          param.append('company_id',item.company_id)
+          this.$http.post('/index.php/Mobile/find/del_approval',param)
+            .then((res)=>{
+              var cur = this
+              var jud = res.data.code
+              getCro(jud,cur)
+              if(res.data.code == 0){
+                this.$message.success('删除成功')
+                this._getExamList()
+              }else{
+                this.$message.error(res.data.message)
+              }
+            })
+        }).catch(()=>{
+          this.$message.info('已取消操作')
+        })
 			},
 			repeal(){
 				this.$prompt('请输入撤销原因', '提示', {

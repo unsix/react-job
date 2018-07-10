@@ -14,6 +14,7 @@ export default class exam_list {
     this.participation_id = participation_id
     this.tagging = tagging
     this.approval_state_num = approval_state_num
+    this.company_id = company_id
   }
 }
 //获取时间
@@ -41,7 +42,8 @@ export function create_exam_list(item) {
     approval_state:get_state(item.approval_state),
     participation_id:item.participation_id,
     approval_state_num:item.approval_state,
-    tagging:getColor(item)
+    tagging:getColor(item),
+    company_id:item.company_id
   })
 }
 //标记颜色

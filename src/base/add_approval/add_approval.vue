@@ -691,6 +691,7 @@
               var judge = res.data.code
               getCro(judge,current)
               this.main_show = res.data.data
+              console.log(this.main_show)
               this.$refs.scse.showMe()
             })
           this.formShow = true
@@ -1118,6 +1119,7 @@
 			_getExamList() {
 
 				let type
+        console.log(this.prc_index)
 				if(this.prc_index === 0) {
 					type = 3
 				} else if(this.prc_index === 1) {
