@@ -359,7 +359,11 @@
                 //   index:'2-4',
                 //   route:{ path: '/work/jurisdictionManage' }
                 // },
-                //
+                {
+                  label:'申请加入公司',
+                  index:'2-6',
+                  route:{path:'/work/join'}
+                }
               ]
             },
             {
@@ -530,7 +534,11 @@
                 //   index:'2-4',
                 //   route:{ path: '/work/jurisdictionManage' }
                 // },
-                //
+                {
+                  label:'申请加入公司',
+                  index:'2-6',
+                  route:{path:'/work/join'}
+                }
               ]
             },
             {
@@ -701,7 +709,11 @@
                 //   index:'2-4',
                 //   route:{ path: '/work/jurisdictionManage' }
                 // },
-                //
+                {
+                  label:'申请加入公司',
+                  index:'2-6',
+                  route:{path:'/work/join'}
+                }
               ]
             },
             {
@@ -876,6 +888,11 @@
                   label:'创建群组',
                   index:'2-5',
                   route:{path:'/work/small'}
+                },
+                {
+                  label:'申请加入公司',
+                  index:'2-6',
+                  route:{path:'/work/join'}
                 }
               ]
             },

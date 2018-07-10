@@ -22,10 +22,10 @@
 				<el-input v-model="psb_ruleForm.executor"></el-input>
 			</el-form-item>
 			<el-form-item label="单价" prop="prive">
-				<el-input v-model="psb_ruleForm.prive"></el-input>
+				<el-input v-model="psb_ruleForm.prive" @change="check_prive(psb_ruleForm.prive)"></el-input>
 			</el-form-item>
 			<el-form-item label="总价" prop="total_prive">
-				<el-input v-model="psb_ruleForm.total_prive"></el-input>
+        <input type="tel" class="el-input__inner" @change="check_total(psb_ruleForm.total_prive)" v-model="psb_ruleForm.total_prive">
 			</el-form-item>
 			<el-form-item label="与投标价差异" prop="difference">
 				<el-input v-model="psb_ruleForm.difference"></el-input>
@@ -238,6 +238,28 @@
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
+      check_total(data){
+        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+        if(!priceReg.test(data)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          this.psb_ruleForm.total_prive = ''
+        }
+      },
+      check_prive(data){
+        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+        if(!priceReg.test(data)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          this.psb_ruleForm.prive = ''
+        }
+      },
 			handlePreview(file, fileList) {
         if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
