@@ -633,7 +633,10 @@
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               }
-              if(typeof item.replys == 'array'){
+              if(item.form_auto_filled_value){
+                item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
+              }
+              if(item.replys){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
@@ -852,11 +855,14 @@
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               }
-              if(typeof item.replys == 'array'){
+              if(item.replys){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
+              }
+              if(item.form_auto_filled_value){
+							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
 						})
 						this.form_Listb = create_approval_list(res.data.data)
@@ -1022,7 +1028,7 @@
         let str = ''
         switch (this.approval_type){
           case 111:
-            str = 1
+            str = 111
             break;
           case 1000:
             str = 7
@@ -1058,6 +1064,18 @@
                   }
                   if(item.form_content.optional){
                     item.option = item.form_content.optional
+                  }
+                }
+                if(item.auto_fill_fields){
+                  if(item.auto_fill_fields.required){
+                    item.auto_fill_fields.required.forEach((pr)=>{
+                      item.require.push(pr.name)
+                    })
+                  }
+                  if(item.auto_fill_fields.optional){
+                    item.auto_fill_fields.optional.forEach((pr)=>{
+                      item.option.push(pr.name)
+                    })
                   }
                 }
                 this.user_info.push(item)

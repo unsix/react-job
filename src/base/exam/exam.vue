@@ -67,7 +67,7 @@
 								<span>姓名：{{item.name}}</span>
 							</div>
 							<div class="title">
-								<span>标题：{{item.title}}</span>
+								<span style="width: 380px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">标题：{{item.title}}</span>
 							</div>
 							<div class="type">
 								<span>类型：{{item.type}}</span>
@@ -150,6 +150,8 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
+            <p></p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -167,6 +169,12 @@
                 </div>
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
+                </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
                 </div>
               </div>
             </div>
@@ -191,6 +199,8 @@
 					<div class="button" v-show="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
             <label>
               <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
@@ -283,6 +293,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -301,6 +312,12 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
               </div>
             </div>
             <p>审批时间:{{item.add_time}}</p>
@@ -311,6 +328,8 @@
 					<div class="button" v-show="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
             <label>
               <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
@@ -400,6 +419,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0"  class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -418,6 +438,12 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
               </div>
             </div>
             <p>审批时间:{{item.add_time}}</p>
@@ -428,6 +454,8 @@
 					<div class="button" v-show="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
             <label>
               <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
@@ -521,6 +549,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -539,6 +568,12 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
               </div>
             </div>
             <p>审批时间:{{item.add_time}}</p>
@@ -549,6 +584,8 @@
 					<div class="button" v-show="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
             <label>
               <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
@@ -608,6 +645,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -626,6 +664,12 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
               </div>
             </div>
             <p>审批时间:{{item.add_time}}</p>
@@ -636,6 +680,8 @@
           <div class="button" v-show="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
             <label>
               <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
@@ -695,6 +741,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -713,6 +760,12 @@
                 <div class="operation">
                   <span>{{res.reply_content}}</span>
                 </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
               </div>
             </div>
             <p>审批时间:{{item.add_time}}</p>
@@ -723,6 +776,8 @@
           <div class="button" v-show="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
             <label>
               <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             </label>
@@ -793,9 +848,7 @@
       <el-button type="success" size="small" style="float: right" @click="sure">确定</el-button>
     </div>
 
-    <div class="simpleText">
 
-    </div>
 	</div>
 </template>
 
@@ -804,7 +857,7 @@
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { getPic } from '@/common/js/pic.js'
-  import {getCro} from "@/common/js/crowd";
+  import { getCro } from "@/common/js/crowd";
   import { getAvatar } from '@/common/js/avatar.js'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang'
@@ -903,7 +956,12 @@
         pity:{},
         is_agree:'',
         change_type:'',
-        eflu:[]
+        option:[],
+        requir:[],
+        form_fill:{
+          optional:[],
+          required:[]
+        },
 			}
 		},
 		computed: {
@@ -959,12 +1017,12 @@
         }
       },
       pic_time(){
-			  if(this.picArr.length != 0){
+			  if(this.fileArr.length != 0){
           if(this.file_time == 0){
             return
           }
         }
-        if(this.file_time != 0 || this.pic_time != 0){
+        if(this.file_time != 0|| this.pic_time != 0){
 			    let param = new URLSearchParams()
           param.append('reply_content',this.content)
           param.append('participation_id',this.info)
@@ -1002,6 +1060,7 @@
           param.append('is_agree',this.is_agree)
           param.append('opinion',this.handle_txt)
           param.append('form_result',this.pity)
+          param.append('auto_fill_fields',this.form_fill)
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.$http.post('index.php/Mobile/find/approval_process',param)
             .then((res)=>{
@@ -1049,6 +1108,7 @@
           param.append('is_agree',this.is_agree)
           param.append('opinion',this.handle_txt)
           param.append('form_result',this.pity)
+          param.append('auto_fill_fields',this.form_fill)
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           this.$http.post('index.php/Mobile/find/approval_process',param)
             .then((res)=>{
@@ -1454,6 +1514,40 @@
       },
 			handle(){
         this.menuShow = !this.menuShow
+        if(this.menuShow){
+          let param = new URLSearchParams()
+          param.append('approval_id',this.reply)
+          this.$http.post('index.php/Mobile/approval/find_sequence_attachment_new',param)
+            .then((res)=>{
+              if(res.data.code == 0){
+                var form = res.data.data
+                if(form.auto_fill_fields){
+                  if(form.auto_fill_fields.optional){
+                    if(this.$refs.se){
+                      form.auto_fill_fields.optional.forEach((item)=>{
+                        this.$refs.se.forEach((pr)=>{
+                          if(item.id == pr.ids){
+                            pr.result = item.value
+                          }
+                        })
+                      })
+                    }
+                  }
+                  if(form.auto_fill_fields.required){
+                    if(this.$refs.de){
+                      form.auto_fill_fields.required.forEach((item)=>{
+                        this.$refs.de.forEach((pr)=>{
+                          if(item.id == pr.ids){
+                            pr.result = item.value
+                          }
+                        })
+                      })
+                    }
+                  }
+                }
+              }
+            })
+        }
         let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				this.$http.post("/index.php/Mobile/path/get_token", param)
@@ -1466,10 +1560,39 @@
 			},
       //审批
 			agree(){
+
+        //se 可选
+        //de 必选
+        let str = ''
+        let arr = new Array()
+        let arr1 = new Array()
+        if(this.$refs.se){
+          this.$refs.se.forEach((item)=>{
+            let obj3 = new Object()
+            obj3.id = item.ids
+            obj3.value = item.result
+            arr.push(obj3)
+          })
+        }
+        if(this.$refs.de){
+          this.$refs.de.forEach((item)=>{
+            let obj4 = new Object()
+            if(!item.result){
+              this.$message.warning(`${item.title}为必选项`)
+              str = item.title
+            }else{
+              obj4.id = item.ids
+              obj4.value = item.result
+              arr1.push(obj4)
+            }
+          })
+        }
+        this.form_fill.optional = arr
+        this.form_fill.required = arr1
+
         var obj = new Object()
         var obj2 = new Object()
         this.is_agree = '1'
-        let str = ''
         if(this.$refs.re){
           this.$refs.re.forEach((item)=>{
             if(!item.result){
@@ -1484,7 +1607,6 @@
         if(str != ''){
           return false
         }
-
         if(this.$refs.te){
           this.$refs.te.forEach((item)=>{
             if(item.result){
@@ -1494,6 +1616,7 @@
         }
         this.pity =  Object.assign(obj,obj2)
         this.pity = JSON.stringify(this.pity)
+        this.form_fill = JSON.stringify(this.form_fill)
         this.pic_hash_arr = []
         this.afile_hash_arr = []
         this.file_hash_arr = []
@@ -1524,6 +1647,7 @@
               param.append('is_agree',this.is_agree)
               param.append('opinion',this.handle_txt)
               param.append('form_result',this.pity)
+              param.append('auto_fill_fields',this.form_fill)
               this.$http.post('index.php/Mobile/find/approval_process',param)
                 .then((res)=>{
                   var current = this
@@ -1694,14 +1818,39 @@
         this.is_agree = '2'
         var obj = new Object()
         var obj2 = new Object()
-        this.$refs.re.forEach((item)=>{
-          obj[item.title] = item.result
-        })
-        this.$refs.re.forEach((item)=>{
-          obj2[item.title] = item.result
-        })
+        if(this.$refs.re){
+          this.$refs.re.forEach((item)=>{
+            obj[item.title] = item.result
+          })
+        }
+        if(this.$refs.te){
+          this.$refs.te.forEach((item)=>{
+            obj2[item.title] = item.result
+          })
+        }
+        let arr = new Array()
+        let arr1 = new Array()
+        if(this.$refs.se){
+          this.$refs.se.forEach((item)=>{
+            let obj3 = new Object()
+            obj3.id = item.ids
+            obj3.value = item.result
+            arr.push(obj3)
+          })
+        }
+        if(this.$refs.de){
+          this.$refs.de.forEach((item)=>{
+            let obj4 = new Object()
+            obj4.id = item.ids
+            obj4.value = item.result
+            arr1.push(obj4)
+          })
+        }
+        this.form_fill.optional = arr
+        this.form_fill.required = arr1
         this.pity = Object.assign(obj,obj2)
         this.pity = JSON.stringify(this.pity)
+        this.form_fill = JSON.stringify(this.form_fill)
         this.pic_hash_arr = []
         this.afile_hash_arr = []
         this.file_hash_arr = []
@@ -1906,6 +2055,10 @@
         this.list = ''
         this.mands = []
         this.choices = []
+        this.option = []
+        this.require = []
+        this.form_fill.optional = []
+        this.form_fill.required = []
 			},
 			listCli(item,sta) {
 			  this.list = item
@@ -2029,11 +2182,14 @@
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               }
-							if(typeof item.replys == 'array'){
+							if(item.replys){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
+              }
+              if(item.form_auto_filled_value){
+							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
 						})
             if(res.data.data.supply){
@@ -2043,6 +2199,7 @@
               })
             }
 						this.form_Listb = create_approval_list(res.data.data)
+            console.log(this.form_Listb)
 					})
 
         let mparam = new URLSearchParams()
@@ -2060,29 +2217,17 @@
               if(form.form_content.required.length > 0){
                 this.mands = form.form_content.required
               }
+              if(form.auto_fill_fields){
+                if(form.auto_fill_fields.optional){
+                  this.option = form.auto_fill_fields.optional
+                }
+                if(form.auto_fill_fields.required){
+                  this.requir = form.auto_fill_fields.required
+                }
+              }
               this.describe = form.enclosure_describe
             }
           })
-
-        let cparam = new URLSearchParams()
-        cparam.append('uid',this.user.uid)
-        cparam.append('company_id',this.nowCompanyId)
-        this.$http.post('/index.php/Mobile/User/return_company_new',cparam)
-          .then((res)=>{
-            if(res.data.data.is_manage == 1){
-              let nparam = new URLSearchParams()
-              nparam.append('company_id',this.nowCompanyId)
-              nparam.append('approval_type',7)
-              nparam.append('target_uid',this.user.uid)
-              this.$http.post('index.php/Mobile/approval/find_sequence_attachment_appoint_new',nparam)
-                .then((res)=>{
-                  if(res.data.code == 1){
-                    this.eflu = res.data.data
-                  }
-                })
-            }
-          })
-
 			},
       reply_other(us,pr,name){
 			  this.wideShow = true
@@ -2135,17 +2280,14 @@
         }
         this.$http.post("/index.php/Mobile/find/file_info")
           .then((res)=>{
-            var current = this
-            var judge = res.data.code
-            getCro(judge,current)
+            let str = attribute
             let attr = res.data.data.attribute
-            if(attr.indexOf(attribute) !=-1){
+            if(attr.indexOf(str) !=-1){
               this.fileList_a = fileList_a
             }else{
               this.$message.error('上传文件格式错误 请删除')
               this.fileList_a = fileList_a
             }
-
           })
       },
       submitCom(){
@@ -2153,7 +2295,7 @@
           this.$message.warning('请输入回复内容')
           return false
         }
-
+        this.sendShow = false
         this.picArr = []
         this.fileArr = []
         this.fileList.forEach((item)=>{
@@ -2390,6 +2532,7 @@
         if(!many_enclosure){
           return
         }
+
         if(typeof many_enclosure == 'string'){
           let param = new URLSearchParams()
           param.append('enclosure_id',many_enclosure)

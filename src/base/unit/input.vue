@@ -1,5 +1,5 @@
 <template>
-    <label class="label_input">
+    <label class="label_input" :lang="ids">
       <p>{{title}}</p><textarea v-model="result"></textarea>
     </label>
 </template>
@@ -14,6 +14,9 @@ export default {
   props:{
     title:{
       type:String
+    },
+    ids:{
+
     }
   }
 }
@@ -32,7 +35,6 @@ export default {
       vertical-align: middle;
       font-size: 14px;
       color: #5a5e66;
-      line-height: 40px;
       padding: 0 12px 0 0;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;

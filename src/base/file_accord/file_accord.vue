@@ -75,6 +75,7 @@
         <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+          <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
           <p v-show="item.many_enclosure" class="enclosure">
             <span style="display: block">附件列表</span>
@@ -92,6 +93,12 @@
               </div>
               <div class="operation">
                 <span>{{res.reply_content}}</span>
+              </div>
+              <div class="img">
+                <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+              </div>
+              <div>
+                <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
               </div>
             </div>
           </div>
@@ -187,6 +194,7 @@
         <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+          <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
           <p v-show="item.many_enclosure" class="enclosure">
             <span style="display: block">附件列表</span>
@@ -204,6 +212,12 @@
               </div>
               <div class="operation">
                 <span>{{res.reply_content}}</span>
+              </div>
+              <div class="img">
+                <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+              </div>
+              <div>
+                <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
               </div>
             </div>
           </div>
@@ -263,6 +277,7 @@
         <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+          <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
           <p v-show="item.many_enclosure" class="enclosure">
             <span style="display: block">附件列表</span>
@@ -280,6 +295,12 @@
               </div>
               <div class="operation">
                 <span>{{res.reply_content}}</span>
+              </div>
+              <div class="img">
+                <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+              </div>
+              <div>
+                <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
               </div>
             </div>
           </div>
@@ -441,11 +462,14 @@
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               }
-              if(typeof item.replys == 'array'){
+              if(item.replys){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
+              }
+              if(item.form_auto_filled_value){
+							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
 						})
             if(res.data.data.supply){

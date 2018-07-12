@@ -6,9 +6,7 @@
       </div>
       <div style="height: 50px;overflow: hidden">
         <div class="addPerson">
-          <el-button type="primary" round style="margin-right: 10px;" v-show="!btn_show" @click="save">保存修改</el-button>
-          <el-button type="primary" round @click="redact" v-show="btn_show">编辑</el-button>
-          <el-button type="primary" round @click="_returns" v-show="!btn_show" >取消</el-button>
+          <el-button type="primary" round style="margin-right: 10px;"  @click="save">保存修改</el-button>
         </div>
       </div>
       <div class="chooseApprovalPerson">
@@ -32,12 +30,10 @@
             <div class="info">
               <img :src="item.avatar" alt="" />
               <span>{{item.name}}</span>
-              <span v-show="submitAddPersonShow">
 							<i class="delete el-icon-error" @click="deletejurisdictionFormList(item,index)"></i>
 							<i class="up el-icon-caret-top" @click="upjurisdictionFormList(item,index)" v-show="index!=0"></i>
 							<i class="down el-icon-caret-bottom" @click="downjurisdictionFormList(item,index)" v-show="index != jurisdictionFormList.length-1"></i>
               <i class="setting" @click="setting(item,index)">设置</i>
-						</span>
             </div>
           </li>
         </ul>
@@ -66,7 +62,6 @@
           <i class="el-icon-close" @click="close_as"></i>
           <div class="mand">
             <p style="padding-bottom:5px">必填字段</p>
-            <el-tag style="margin-left: 5px" :key="item.id" v-for="item in fuJias" closable :disable-transitions="false" @close="mandClose(item)">{{item.name}}</el-tag>
             <el-tag style="margin-left: 5px" :key="item" v-for="item in form_content.required" closable :disable-transitions="false" @close="mandClose(item)">{{item}}</el-tag>
             <el-input class="input-new-tag" style="width: 90px;" v-if="mandVisible" v-model="mand_Value" ref="mand_tag" size="small" @keyup.enter.native="mands_con" @blur="mands_con"></el-input>
             <el-button v-else class="button-new-tag" size="small" @click="show_mand" >新建</el-button>
@@ -108,7 +103,7 @@
 				numOne: 0,
 				perIndex: -1,
 				arr: [],
-				activeNames: ['0'],
+				activeNames: ['1'],
         btn_show: true,
         setting_show:false,
         describe:'',
@@ -122,6 +117,10 @@
         mand_Value: '',
         choice_Value:'',
         people_arr:[],
+        form_fill:{
+				  optional:[],
+          required:[]
+        }
 			}
 		},
 		props: {
@@ -258,6 +257,20 @@
                   this.form_content.optional = obj.form_content.optional
                 }
               }
+              if(obj.auto_fill_fields){
+                if(obj.auto_fill_fields.required.length > 0){
+                  obj.auto_fill_fields.required.forEach((item)=>{
+                    this.form_content.required.push(item.name)
+                    this.form_fill.required.push(item.id)
+                  })
+                }
+                if(obj.auto_fill_fields.optional.length > 0){
+                  obj.auto_fill_fields.optional.forEach((item)=>{
+                    this.form_content.optional.push(item.name)
+                    this.form_fill.optional.push(item.id)
+                  })
+                }
+              }
             }
           })
       },
@@ -275,6 +288,7 @@
         param.append('target_uid',this.target_uid)
         param.append('form_content',JSON.stringify(this.form_content))
         param.append('enclosure_describe',this.describe)
+        param.append('auto_fill_fields',JSON.stringify(this.form_fill))
         this.$http.post('index.php/Mobile/approval/add_sequence_attachment',param)
           .then((res)=>{
             var current = this
@@ -475,7 +489,7 @@
 					}
 					.info {
 						display: block;
-						height: 30p;
+						height: 30px;
 						font-size: 0;
 						cursor: default;
 						position: relative;

@@ -287,15 +287,12 @@ export default {
     _submit(){
       this.$refs.indx.contentWindow.getCustomFormResult()
       let tips = this.$refs.indx.contentWindow.tips
+      let result = this.$refs.indx.contentWindow.result
       if(this.signImg == ''){
         this.$message.error('请签字')
         return false
       }
-      if(tips.length > 0){
-        this.$message.error(tips)
-        return false
-      }else{
-        let result = this.$refs.indx.contentWindow.result
+      if(result.length > 0){
         let formData = new FormData()
         formData.append('file',this.signImg)
         formData.append('token',this.token)
