@@ -459,6 +459,11 @@
                   label:'我收到的',
                   index:'7-2',
                   route:{ path: '/work/rece' }
+                },
+                {
+                  label:'合同列表',
+                  index:'7-3',
+                  route:{path:'/work/contr_list'}
                 }
               ]
             },
@@ -634,6 +639,11 @@
                   label:'我收到的',
                   index:'7-2',
                   route:{ path: '/work/rece' }
+                },
+                {
+                  label:'合同列表',
+                  index:'7-3',
+                  route:{path:'/work/contr_list'}
                 }
               ]
             },
@@ -809,6 +819,11 @@
                   label:'我收到的',
                   index:'7-2',
                   route:{ path: '/work/rece' }
+                },
+                {
+                  label:'合同列表',
+                  index:'7-3',
+                  route:{path:'/work/contr_list'}
                 }
               ]
             },
@@ -836,7 +851,7 @@
             }
           ]
 				}
-				if(m === 1 && f === 1) {
+				if(m === 1) {
 				// 	this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录','工人列表','工程列表','公司列表', '我发布的','我要发工资','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
           this.workList=[
             {
@@ -989,6 +1004,11 @@
                   label:'我收到的',
                   index:'7-2',
                   route:{ path: '/work/rece' }
+                },
+                {
+                  label:'合同列表',
+                  index:'7-3',
+                  route:{path:'/work/contr_list'}
                 }
               ]
             },
@@ -1041,7 +1061,7 @@
 				this.userOperationLeftShow = false
 			},
 			changeCompany(item, index) {
-				this.workIndex = 0
+				this.workIndex = '1-1'
 				this.setNowCompanyName(item.company_name)
 				this.userOperationLeftShow = false
 				this.setNowCompanyId(item.company_id)

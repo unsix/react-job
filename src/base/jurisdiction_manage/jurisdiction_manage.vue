@@ -15,7 +15,7 @@
       <ul>
         <h2>设置审批权限</h2>
         <i class="el-icon-close" @click="close_as"></i>
-        <li v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
+        <li v-for="(item,index) in asType" @click="as_click(item)">{{item}}</li>
       </ul>
     </div>
 
@@ -158,22 +158,22 @@ export default {
     },
     as_click(pr){
       switch(pr) {
-        case 0:
+        case '合同评审':
           this.formType = 111
           break;
-        case 1:
-          this.formType = 7
-          break;
-        case 2:
+        case '请款单':
           this.formType = 8
           break;
-        case 3:
+        case '请购单':
+          this.formType = 7
+          break;
+        case '申请公章':
           this.formType = 5
           break;
-        case 4:
+        case '呈批件':
           this.formType = 6
           break;
-        case 5:
+        case '报销单':
           this.formType = 11
           break;
       }

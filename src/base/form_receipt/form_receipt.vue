@@ -283,7 +283,7 @@
                   this.get_imgs(item.many_enclosure,item)
                   this.get_files(item.many_enclosure,item)
                 }
-                if(typeof item.replys == 'array'){
+                if(item.replys){
                   item.replys.forEach((pic)=>{
                     this.get_imgs(pic.many_enclosure,pic)
                     this.get_files(pic.many_enclosure,pic)

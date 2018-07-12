@@ -1,12 +1,5 @@
 <template>
   <div class="record">
-    <!--<div class="tab">-->
-      <!--<el-tabs v-model="activeNames" @tab-click="handleClick">-->
-        <!--<el-tab-pane label="工作记录" name="1"></el-tab-pane>-->
-        <!--<el-tab-pane label="工作提醒" name="2"></el-tab-pane>-->
-        <!--<el-tab-pane label="新建日志" name="3"></el-tab-pane>-->
-      <!--</el-tabs>-->
-    <!--</div>-->
 
     <div class="workList" >
       <div class="tabs">
