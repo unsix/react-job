@@ -24,7 +24,14 @@ class BossInfo extends React.Component{
             // <Icon key="1" type="ellipsis" />,
           ]}
       >BOSS完善信息页</NavBar>
-      <AvatarSelector></AvatarSelector>
+      <AvatarSelector
+        selectAvatar = {(imgname)=>{
+          this.setState({
+            avatar:imgname
+          })
+        }}
+      >
+      </AvatarSelector>
       <InputItem onChange={(v)=>this.onChange('title',v)}>
         招聘职位
       </InputItem>
@@ -40,7 +47,7 @@ class BossInfo extends React.Component{
         autoHeight
         title='职位要求'
       >
-      
+
       </TextareaItem>
 
       </div>)

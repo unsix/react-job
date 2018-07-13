@@ -12,8 +12,13 @@ class AvatarSelector extends React.Component{
                         }))
     return (
       <div>
-        <Grid data={avatarList} columnNum={5} />
-        头像选择
+        <Grid
+          data={avatarList}
+          columnNum={5}
+          onClick={elm=>{
+            this.props.selectAvatar(elm.text)
+          }}
+            />
       </div>)
   }
 }
