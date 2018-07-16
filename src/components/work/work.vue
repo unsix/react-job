@@ -1252,8 +1252,11 @@
         param.append('phone',this.user.phone)
         this.$http.post('/index.php/Mobile/worker/get_info_phone',param)
           .then((res)=>{
+            var str = process.env.NODE_ENV
+            var picLeader = ''
+            str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
             let arr = res.data.data
-            this.linked = 'http://bbsf-file.hzxb.net/'+arr.avatar
+            this.linked = picLeader+arr.avatar
             this.myInfo.name = arr.name
             this.myInfo.idCard = arr.idcard
             this.myInfo.type = arr.type_id
@@ -1268,9 +1271,9 @@
             this.myInfo.self_evaluation = arr.self_evaluation
             this.myInfo.bank_point = arr.bank_address
             this.myInfo.bank_account = arr.bank_name
-            arr.idcard_p = 'http://bbsf-file.hzxb.net/'+arr.idcard_p
+            arr.idcard_p = picLeader+arr.idcard_p
             this.pic_id = arr.idcard_p
-            this.home_id = 'http://bbsf-file.hzxb.net/' + arr.idcard_n
+            this.home_id = picLeader + arr.idcard_n
           })
       },
       _getType(){

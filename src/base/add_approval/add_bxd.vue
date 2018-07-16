@@ -289,13 +289,14 @@
                         res.data.data.picture.forEach((item) => {
                           //item 就是hash
                           let obj = {}
-                          let img_add = 'http://bbsf-file.hzxb.net/'+item
-                          console.log(img_add)
+                          var str = process.env.NODE_ENV
+                          var picLeader = ''
+                          str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                          let img_add = picLeader+item
                           obj.hash = item
                           obj.name = img_name
                           obj.url = img_add
                           this.fileList.push(obj)
-                          console.log(this.fileList)
                         })
                       })
                   }else if(item.type === 4){
@@ -308,7 +309,10 @@
                         getCro(judge,current)
                         let obj = {}
                         let file_data = res.data.data
-                        let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                        var str = process.env.NODE_ENV
+                        var picLeader = ''
+                        str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                        let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                         obj.name = file_data.file_name+'.'+file_data.attribute
                         obj.address = file_add
                         obj.hash = file_data.attachments

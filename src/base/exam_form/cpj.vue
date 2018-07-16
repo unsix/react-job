@@ -42,7 +42,7 @@
       <div v-for="item in form_Listb.content" class="exam_info">
         <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
         <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-        <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
+        <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
         <p>意见:<span>{{item.opinion}}</span></p>
         <p v-show="item.many_enclosure" class="enclosure">
           <span style="display: block">附件列表</span>
@@ -95,7 +95,7 @@
     </div>
     <div class="menu" v-show="handle_show">
       <el-button type="primary" plain @click="handle">处理</el-button>
-      <div class="button" v-show="menuShow">
+      <div class="button" v-if="menuShow">
         <label>
           <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
         </label>
