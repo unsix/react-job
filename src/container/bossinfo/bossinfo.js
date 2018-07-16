@@ -1,11 +1,22 @@
 import React from 'react'
-import { NavBar, Icon ,InputItem,TextareaItem} from 'antd-mobile';
+import { NavBar, Icon ,InputItem,TextareaItem,Button} from 'antd-mobile';
 import AvatarSelector from '../../component/avatar-selector/avatar-selector'
+import {connect} from 'react-redux'
+import {update} from '../../redux/user_redux'
+import {Redirect} from 'react-router-dom'
+
+@connect(
+  state=>state.user,
+  {update}
+)
 class BossInfo extends React.Component{
   constructor(props) {
     super(props)
     this.state = {
-      title:''
+      title:'',
+      company:'',
+      money:'',
+      desc:''
     }
   }
   onChange(key,val) {
@@ -14,8 +25,11 @@ class BossInfo extends React.Component{
     })
   }
   render() {
+    const path = this.props.location.pathname
+    const Redirect = this.props.redirectTo
     return (
       <div>
+      {Redirect&&Redirect!==path?<Redirect to={this.props.redirectTo} />:null}
         <NavBar
           mode="dark"
           leftContent="Back"
@@ -49,7 +63,9 @@ class BossInfo extends React.Component{
       >
 
       </TextareaItem>
-
+      <Button type="primary" onClick={()=>{this.props.update(this.state)}}>
+        保存
+      </Button>
       </div>)
   }
 }
