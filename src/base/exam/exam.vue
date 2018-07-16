@@ -150,7 +150,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
+            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p></p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
@@ -196,7 +196,7 @@
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
-					<div class="button" v-show="menuShow">
+					<div class="button" v-if="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -293,7 +293,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
+            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -325,7 +325,7 @@
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
-					<div class="button" v-show="menuShow">
+					<div class="button" v-if="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -419,7 +419,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0"  class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
+            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -451,7 +451,7 @@
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
-					<div class="button" v-show="menuShow">
+					<div class="button" v-if="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -549,7 +549,7 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
+            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -581,7 +581,7 @@
         </div>
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
-					<div class="button" v-show="menuShow">
+					<div class="button" v-if="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -677,7 +677,7 @@
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -773,7 +773,7 @@
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -800,7 +800,7 @@
         <iframe id="mom" class="win" ref="indx" :src="core" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             <!--<input name="token" type="hidden" :value="input_value">-->
             <!--<input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />-->
@@ -2199,7 +2199,6 @@
               })
             }
 						this.form_Listb = create_approval_list(res.data.data)
-            console.log(this.form_Listb)
 					})
 
         let mparam = new URLSearchParams()
@@ -2589,8 +2588,11 @@
                 var judge = res.data.code
                 getCro(judge,current)
 								let obj = {}
+                var str = process.env.NODE_ENV
+                var picLeader = ''
+                str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
 								let file_data = res.data.data
-								let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+								let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
 								obj.name = file_data.file_name+'.'+file_data.attribute
 								obj.address = file_add
 								this.file_arr.push(obj)
@@ -2616,8 +2618,11 @@
                 var judge = res.data.code
                 getCro(judge,current)
                 let obj = {}
+                var str = process.env.NODE_ENV
+                var picLeader = ''
+                str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
                 let file_data = res.data.data
-                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                 obj.name = file_data.file_name+'.'+file_data.attribute
                 obj.address = file_add
                 arr.push(obj)

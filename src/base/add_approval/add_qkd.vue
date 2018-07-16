@@ -354,9 +354,11 @@
                     var judge = res.data.code
                     getCro(judge,current)
                     res.data.data.picture.forEach((item) => {
-                      console.log(item)
                       let obj = {}
-                      let img_add = 'http://bbsf-file.hzxb.net/'+item
+                      var str = process.env.NODE_ENV
+                      var picLeader = ''
+                      str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                      let img_add = picLeader+item
                       obj.name = img_name
                       obj.url = img_add
                       obj.hash = item
@@ -373,7 +375,10 @@
                     getCro(judge,current)
                     let obj = {}
                     let file_data = res.data.data
-                    let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                    var str = process.env.NODE_ENV
+                    var picLeader = ''
+                    str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                    let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                     obj.name = file_data.file_name+'.'+file_data.attribute
                     obj.address = file_add
                     obj.hash = file_data.attachments
@@ -409,9 +414,12 @@
             var judge = res.data.code
             getCro(judge,current)
 						let arr = []
+            var str = process.env.NODE_ENV
+            var picLeader = ''
+            str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
 						res.data.data.picture.forEach((item) => {
 							if(item != '') {
-								arr.push('http://bbsf-file.hzxb.net/' + item)
+								arr.push(picLeader + item)
 							}
 
 						})
@@ -430,12 +438,15 @@
                 var judge = res.data.code
                 getCro(judge,current)
 								let arr = []
+                var str = process.env.NODE_ENV
+                var picLeader = ''
+                str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
 								res.data.data.picture.forEach((item) => {
 									if(item != '') {
 										if(item.indexOf('jpg') > 0 || item.indexOf('png') > 0 || item.indexOf('Enclos') > 0) {
 											arr.push('http://bbsf-file.hzxb.net/FvxX0Q9Xf_7jlhruiU9VVPntp0iA')
 										} else {
-											arr.push('http://bbsf-file.hzxb.net/' + item)
+											arr.push(picLeader + item)
 										}
 									}
 								})

@@ -156,7 +156,7 @@
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             <input name="token" type="hidden" :value="input_value">
             <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
@@ -261,7 +261,7 @@
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             <input name="token" type="hidden" :value="input_value">
             <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
@@ -367,7 +367,7 @@
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             <input name="token" type="hidden" :value="input_value">
             <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
@@ -442,7 +442,7 @@
         </div>
         <div class="menu" v-show="handle_show">
           <el-button type="primary" plain @click="handle">处理</el-button>
-          <div class="button" v-show="menuShow">
+          <div class="button" v-if="menuShow">
             <el-input type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
             <input name="token" type="hidden" :value="input_value">
             <input type="file" @change="getPic($event)" multiple="multiple" accept="image/png,image/jpeg" />
@@ -872,8 +872,11 @@ export default {
               var judge = res.data.code
               getCro(judge,current)
               let obj = {}
+              var str = process.env.NODE_ENV
+              var picLeader = ''
+              str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
               let file_data = res.data.data
-              let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+              let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
               obj.name = file_data.file_name+'.'+file_data.attribute
               obj.address = file_add
               this.file_arr.push(obj)

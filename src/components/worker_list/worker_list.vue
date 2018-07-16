@@ -8,13 +8,13 @@
 					<td width="130">联系方式</td>
 					<td width="90">工龄</td>
 					<td width="170">
-						<span>工种:<a ref="wkTypeTxt">全部</a></span>		
+						<span>工种:<a ref="wkTypeTxt">全部</a></span>
 						<img src="../../assets/downFFF.svg" alt="" @click.stop="wokerType"/>
 							<div class="choose_wrapper" v-show="wokerTypeShow">
 								<div class="choose">
 									<a v-for="(item,index) in workerType" @click="wokerTypeShowF(item)">{{item}}</a>
 								</div>
-							</div>					
+							</div>
 					</td>
 					<td width="170">
 						<span>籍贯:<a ref="hmTypeTxt">全国</a></span>
@@ -45,7 +45,7 @@
 					<td>{{item.hometown}}</td>
 					<td style="color: #FA5555; text-align: center" >1</td>
 					<td style="color: #67C23A; text-align: center">1</td>
-					
+
 				</tr>
 			</table>
 		</div>
@@ -54,7 +54,7 @@
 
 <script>
 import BScroll from '@/base/scroll/scroll'
-import {prefixStyle} from '@/common/js/dom' 
+import {prefixStyle} from '@/common/js/dom'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
 export default {
@@ -188,20 +188,23 @@ export default {
 	  	},
 	  	all(){
 			this.wokerTypeShow = false
-        	this.wokerHomeShow = false	  		
+        	this.wokerHomeShow = false
 	  	},
-    	getData(){	
+    	getData(){
 		    let rec=[]
+        var str = process.env.NODE_ENV
+        var picLeader = ''
+        str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
 		    let param = new URLSearchParams();
 		    param.append("uid","10000163");
 		    this.$http.post("/index/Mobile/Find/nearby_worker",param)
 		    .then((res)=>{
-		    	 for (let x in res.data.data.nworker)  
-				  {  
+		    	 for (let x in res.data.data.nworker)
+				  {
 				    if(res.data.data.nworker[x].avatar.indexOf('jpg')!== -1){
 				   		res.data.data.nworker[x].avatar = 'http://bbsf-file.hzxb.net/FnF0MmO7g-WONz-QYU6BsWMTwNR_'
 				    }else{
-				   	 	res.data.data.nworker[x].avatar = 'http://bbsf-file.hzxb.net/' + res.data.data.nworker[x].avatar
+				   	 	res.data.data.nworker[x].avatar = picLeader + res.data.data.nworker[x].avatar
 				    }
 				    if(res.data.data.nworker[x].type){
 				    	res.data.data.nworker[x].type = res.data.data.nworker[x].type[0]
@@ -218,7 +221,7 @@ export default {
 	/* Table Head */
 
 	.worker_list{
-		
+
 		width: 100%;
 		.list{
 			position:relative;
@@ -230,7 +233,7 @@ export default {
 					background:#FFF;
 				}
 				.tr{
-					
+
 					td{
 						text-indent: 6px;
 						line-height: 30px;
@@ -278,7 +281,7 @@ export default {
 					td{
 						line-height: 40px;
 						text-indent: 6px;
-						
+
 						img{
 							height: 36px;
 							vertical-align: middle;

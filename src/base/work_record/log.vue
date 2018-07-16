@@ -101,6 +101,7 @@
 
 <script>
   import datas from '@/base/unit/datas'
+  import {getAvatar} from '@/common/js/avatar.js'
   import sec from '@/base/unit/sec'
   import {getCro} from "@/common/js/crowd";
   import { create_depart_list } from 'common/js/initial/depart.js'

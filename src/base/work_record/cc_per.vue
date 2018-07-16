@@ -18,6 +18,7 @@
 
 <script>
   import {getCro} from "@/common/js/crowd";
+  import {getAvatar} from '@/common/js/avatar.js'
   export default {
     data(){
       return{
@@ -37,7 +38,7 @@
             var judge = res.data.code
             getCro(judge,current)
             res.data.data.forEach((item)=>{
-              item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar +'?imageView2/1/w/50/h/50'
+              item.avatar = getAvatar(item.avatar)
               this.cc_range.push(item)
             })
           })

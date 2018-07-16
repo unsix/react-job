@@ -566,8 +566,11 @@
                 var judge = res.data.code
                 getCro(judge,current)
                 let obj = {}
+                var str = process.env.NODE_ENV
+                var picLeader = ''
+                str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
                 let file_data = res.data.data
-                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                 obj.name = file_data.file_name+'.'+file_data.attribute
                 obj.address = file_add
                 this.file_arr.push(obj)
@@ -640,8 +643,11 @@
                 var judge = res.data.code
                 getCro(judge,current)
                 let obj = {}
+                var str = process.env.NODE_ENV
+                var picLeader = ''
+                str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
                 let file_data = res.data.data
-                let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                 obj.name = file_data.file_name+'.'+file_data.attribute
                 obj.address = file_add
                 arr.push(obj)

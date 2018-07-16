@@ -282,7 +282,7 @@ export default {
           var judge = res.data.code
           getCro(judge,current)
           res.data.data.forEach((item)=>{
-            item.avatar='http://bbsf-file.hzxb.net/' + item.avatar
+            item.avatar= getAvatar(item.avatar)
             this.$set(item,'log_form')
             let time = item.start_time
             var date = new Date();
@@ -711,7 +711,7 @@ export default {
           var judge = res.data.code
           getCro(judge,current)
           let ss = res.data.data
-          ss.avatar = 'http://bbsf-file.hzxb.net/' + ss.avatar
+          ss.avatar = getAvatar(ss.avatar)
           this.moreInfo = ss
           this.star = ss.form_data
           this.star.custom_form_elements.forEach((item)=>{
@@ -794,7 +794,7 @@ export default {
             this.comShow = false
           }else{
             res.data.data.forEach((item)=>{
-              item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
+              item.avatar = getAvatar(item.avatar)
               this.$set(item,'fujImg_list')
               this.$set(item,'fujFile')
               let arr=[]
@@ -830,8 +830,11 @@ export default {
                         var judge = res.data.code
                         getCro(judge,current)
                         let obj = {}
+                        var str = process.env.NODE_ENV
+                        var picLeader = ''
+                        str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
                         let file_data = res.data.data
-                        let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                        let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
                         obj.name = file_data.file_name+'.'+file_data.attribute
                         obj.address = file_add
                         let arr = []
@@ -903,8 +906,11 @@ export default {
               var judge = res.data.code
               getCro(judge,current)
               let obj = {}
+              var str = process.env.NODE_ENV
+              var picLeader = ''
+              str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
               let file_data = res.data.data
-              let file_add = 'http://bbsf-file.hzxb.net/' + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+              let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
               obj.name = file_data.file_name+'.'+file_data.attribute
               obj.address = file_add
               this.file_arr.push(obj)
@@ -926,7 +932,7 @@ export default {
             this.likeArr.splice(0,this.likeArr.length)
           }else{
             res.data.data.forEach((item)=>{
-              item.avatar = 'http://bbsf-file.hzxb.net/' + item.avatar
+              item.avatar = getAvatar(item.avatar)
               this.likeArr.push(item)
             })
           }
