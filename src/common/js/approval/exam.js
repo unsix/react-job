@@ -26,8 +26,7 @@ function get_data1(time){
 	if(!time){
 		return
 	}
-	return `${time.slice(0,4)}年${time.slice(5,7)}月${time.slice(8,10)}日
-	${time.slice(11)}`
+	return `${time.slice(0,4)}年${time.slice(5,7)}月${time.slice(8,10)}日${time.slice(11)}`
 }
 export function create_exam_list(item) {
   return new exam_list({
@@ -60,7 +59,6 @@ function getColor(item){
 	}else if(item.tagging === '#0000FF'||item.tagging === '0000FF'){
 		return 'rgba(0,0,255,0.1)'
 	}
-
 }
 //获取状态
 function get_state(state){

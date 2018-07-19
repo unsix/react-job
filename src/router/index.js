@@ -30,8 +30,8 @@ const small = () =>import('@/base/create_company/small_company')
 const join = () =>import('@/base/manage_company/join_company')
 const contr_list = () =>import('@/base/release/contract')
 Vue.use(Router)
-
 export default new Router({
+  // mode:'history',
 	routes: [{
 			path: '/',
 			redirect: '/login'

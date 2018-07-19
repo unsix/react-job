@@ -62,15 +62,17 @@
           <i class="el-icon-close" @click="close_as"></i>
           <div class="mand">
             <p style="padding-bottom:5px">必填字段</p>
-            <el-tag style="margin-left: 5px" :key="item" v-for="item in form_content.required" closable :disable-transitions="false" @close="mandClose(item)">{{item}}</el-tag>
-            <el-input class="input-new-tag" style="width: 90px;" v-if="mandVisible" v-model="mand_Value" ref="mand_tag" size="small" @keyup.enter.native="mands_con" @blur="mands_con"></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="show_mand" >新建</el-button>
+            <el-tag style="margin-left: 5px;margin-top: 5px" :key="item.id" v-for="item in form_fill.required" closable :disable-transitions="false" @close="mandClose(item)">{{item.name}}</el-tag>
+            <el-tag style="margin-left: 5px;margin-top: 5px" :key="item" v-for="item in form_content.required" closable :disable-transitions="false" @close="mandClose(item)">{{item}}</el-tag>
+            <!--<el-input class="input-new-tag" style="width: 90px;" v-if="mandVisible" v-model="mand_Value" ref="mand_tag" size="small" @keyup.enter.native="mands_con" @blur="mands_con"></el-input>-->
+            <el-button  style="margin-left: 5px;margin-top: 5px"  class="button-new-tag" size="small" @click="show_mand" >新建</el-button>
           </div>
           <div class="choice">
             <p style="padding-bottom:5px">可选字段</p>
-            <el-tag style="margin-left: 5px" :key="item" v-for="item in form_content.optional" closable :disable-transitions="false" @close="choiceClose(item)">{{item}}</el-tag>
-            <el-input class="input-new-tag" style="width: 90px;" v-if="choiceVisible" v-model="choice_Value" ref="choice_tag" size="small" @keyup.enter.native="choice_con" @blur="choice_con"></el-input>
-            <el-button v-else class="button-new-tag" size="small" @click="show_choice" >新建</el-button>
+            <el-tag style="margin-left: 5px;margin-top: 5px" :key="item.id" v-for="item in form_fill.optional" closable :disable-transitions="false" @close="choiceClose(item)">{{item.name}}</el-tag>
+            <el-tag style="margin-left: 5px;margin-top: 5px" :key="item" v-for="item in form_content.optional" closable :disable-transitions="false" @close="choiceClose(item)">{{item}}</el-tag>
+            <!--<el-input class="input-new-tag" style="width: 90px;" v-if="choiceVisible" v-model="choice_Value" ref="choice_tag" size="small" @keyup.enter.native="choice_con" @blur="choice_con"></el-input>-->
+            <el-button  style="margin-left: 5px;margin-top: 5px"  class="button-new-tag" size="small" @click="show_choice" >新建</el-button>
           </div>
           <div class="describe">
             <p>
@@ -80,6 +82,41 @@
           </div>
           <div style="height: 25px">
             <el-button type="info" style="float: right;margin-right: 30px" @click="submit_mand" size="small">提交</el-button>
+          </div>
+        </div>
+      </div>
+
+      <div class="add_shenpi" v-if="add_show">
+        <div>
+          <div class="tops">
+            <i class="el-icon-arrow-left" @click="not_show"></i>
+            <p>设置审批人输入项</p>
+            <b v-if="requ" @click="submit_req">完成</b>
+            <b v-else @click="submit_opt">完成</b>
+          </div>
+          <div class="ziding">
+            <p v-if="requ" @click="look_mand">自定义</p>
+            <p v-else @click="look_choice">自定义</p>
+            <el-input class="input-new-tag" style="width: 280px;" v-if="mandVisible" v-model="mand_Value" ref="mand_tag" size="small" @keyup.enter.native="mands_con" @blur="mands_con"></el-input>
+            <el-input class="input-new-tag" style="width: 280px;" v-if="choiceVisible" v-model="choice_Value" ref="choice_tag" size="small" @keyup.enter.native="choice_con" @blur="choice_con"></el-input>
+          </div>
+          <div class="bottom">
+            <div v-if="requ">
+              <el-checkbox-group v-for="(item,index) in auto_fill" v-model="auto_fills.required" :key="index">
+                <el-checkbox :label="item.id" >{{item.name}}</el-checkbox>
+              </el-checkbox-group>
+              <el-checkbox-group v-for="(item,index) in form_content.required" v-model="auto_fills.requireds" :key="index">
+                <el-checkbox :label="item" >{{item}}</el-checkbox>
+              </el-checkbox-group>
+            </div>
+            <div v-else>
+              <el-checkbox-group v-for="(item,index) in auto_fill" v-model="auto_fills.optional" :key="index">
+                <el-checkbox :label="item.id" >{{item.name}}</el-checkbox>
+              </el-checkbox-group>
+              <el-checkbox-group v-for="(item,index) in form_content.optional" v-model="auto_fills.optionals" :key="index">
+                <el-checkbox :label="item" >{{item}}</el-checkbox>
+              </el-checkbox-group>
+            </div>
           </div>
         </div>
       </div>
@@ -120,7 +157,17 @@
         form_fill:{
 				  optional:[],
           required:[]
-        }
+        },
+        auto_fills:{
+          optional:[],
+          required:[],
+          optionals:[],
+          requireds:[],
+        },
+        sequence_id:'',
+        add_show:false,
+        auto_fill:[],
+        requ:true
 			}
 		},
 		props: {
@@ -235,10 +282,16 @@
       setting(item,index){
         this.setting_show = true
         this.target_uid =item.uid
+        if(!item.sequence_id){
+          this.$message.warning('请先保存修改')
+          return false
+        }
+        this.sequence_id = item.sequence_id
         let param = new URLSearchParams()
         param.append('company_id',this.nowCompanyId)
         param.append('approval_type',this.formType)
         param.append('target_uid',item.uid)
+        param.append('sequence_id',item.sequence_id)
         this.$http.post('index.php/Mobile/approval/find_sequence_attachment_appoint_new',param)
           .then((res)=>{
             var current = this
@@ -260,14 +313,12 @@
               if(obj.auto_fill_fields){
                 if(obj.auto_fill_fields.required.length > 0){
                   obj.auto_fill_fields.required.forEach((item)=>{
-                    this.form_content.required.push(item.name)
-                    this.form_fill.required.push(item.id)
+                    this.form_fill.required.push(item)
                   })
                 }
                 if(obj.auto_fill_fields.optional.length > 0){
                   obj.auto_fill_fields.optional.forEach((item)=>{
-                    this.form_content.optional.push(item.name)
-                    this.form_fill.optional.push(item.id)
+                    this.form_fill.optional.push(item)
                   })
                 }
               }
@@ -278,17 +329,29 @@
         this.setting_show = false
         this.form_content.required = []
         this.form_content.optional = []
+        this.form_fill.required = []
+        this.form_fill.optional = []
         this.fuJia = []
         this.describe = ''
       },
       submit_mand(){
+        let obj = {}
+        obj.required = []
+        obj.optional = []
+        this.form_fill.required.forEach((item)=>{
+          obj.required.push(item.id)
+        })
+        this.form_fill.optional.forEach((item)=>{
+          obj.optional.push(item.id)
+        })
         let param = new URLSearchParams()
         param.append('company_id',this.nowCompanyId)
         param.append('type',this.formType)
         param.append('target_uid',this.target_uid)
+        param.append('sequence_id',this.sequence_id)
         param.append('form_content',JSON.stringify(this.form_content))
         param.append('enclosure_describe',this.describe)
-        param.append('auto_fill_fields',JSON.stringify(this.form_fill))
+        param.append('auto_fill_fields',JSON.stringify(obj))
         this.$http.post('index.php/Mobile/approval/add_sequence_attachment',param)
           .then((res)=>{
             var current = this
@@ -334,39 +397,101 @@
       },
       mandClose(tag) {
         this.form_content.required.splice(this.form_content.required.indexOf(tag), 1);
-        this.fuJia.splice(this.fuJia.indexOf(tag), 1);
-
+        this.form_fill.required.splice(this.form_fill.required.indexOf(tag),1)
+      },
+      choiceClose(tag){
+        this.form_content.optional.splice(this.form_content.optional.indexOf(tag), 1);
+        this.form_fill.optional.splice(this.form_fill.optional.indexOf(tag),1)
       },
       show_mand() {
-        this.mandVisible = true;
-        this.$nextTick(_ => {
-          this.$refs.mand_tag.$refs.input.focus();
-        });
+        this.auto_fills.required = []
+        this.auto_fills.requireds = []
+        this.add_show = true
+        this.requ = true
+        this.form_fill.required.forEach((item)=>{
+          this.auto_fills.required.push(item.id)
+        })
+        this.auto_fills.requireds = this.form_content.required
       },
       mands_con() {
         let inputValue = this.mand_Value;
         if (inputValue) {
-          this.form_content.required.push(inputValue);
+          this.auto_fills.requireds.push(inputValue);
         }
         this.mandVisible = false;
         this.mand_Value = '';
       },
-      choiceClose(tag){
-        this.form_content.optional.splice(this.form_content.optional.indexOf(tag), 1);
+      choice_con(){
+        let inputValue = this.choice_Value;
+        if (inputValue) {
+          this.auto_fills.optionals.push(inputValue);
+        }
+        this.choiceVisible = false;
+        this.choice_Value = '';
       },
       show_choice(){
-        this.choiceVisible = true;
+        console.log(this.auto_fill)
+        this.form_fill.optional = []
+        this.auto_fills.optionals = []
+        this.add_show = true
+        this.requ = false
+        this.form_fill.optional.forEach((item)=>{
+          this.auto_fills.optional.push(item.id)
+        })
+        this.auto_fills.optionals = this.form_content.optional
+      },
+      not_show(){
+        this.add_show = false
+        this.auto_fills.optionals = []
+        this.auto_fills.optional = []
+        this.auto_fills.required = []
+        this.auto_fills.requireds = []
+      },
+      submit_req(){
+        this.form_fill.required = []
+        this.form_content.required = []
+        this.auto_fill.forEach((pr)=>{
+          this.auto_fills.required.forEach((re)=>{
+            if(re == pr.id){
+              this.form_fill.required.push(pr)
+            }
+          })
+        })
+        this.form_content.required = this.auto_fills.requireds
+        this.add_show = false
+      },
+      submit_opt(){
+        this.form_fill.optional = []
+        this.form_content.optional = []
+        this.auto_fill.forEach((pr)=>{
+          this.auto_fills.optional.forEach((re)=>{
+            if(re == pr.id){
+              this.form_fill.optional.push(pr)
+            }
+          })
+        })
+        this.form_content.optional = this.auto_fills.optionals
+        this.add_show = false
+      },
+      look_mand(){
+        this.mandVisible = true
+        this.$nextTick(_ => {
+          this.$refs.mand_tag.$refs.input.focus();
+        });
+      },
+      look_choice(){
+        this.choiceVisible = true
         this.$nextTick(_ => {
           this.$refs.choice_tag.$refs.input.focus();
         });
       },
-      choice_con(){
-        let inputValue = this.choice_Value;
-        if (inputValue) {
-          this.form_content.optional.push(inputValue);
-        }
-        this.choiceVisible = false;
-        this.choice_Value = '';
+      get_form_auto_filled(){
+        this.$http.post('index.php/Mobile/approval/get_form_auto_filled')
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.auto_fill = res.data.data
+            }
+          })
       }
 		},
 		watch: {
@@ -381,6 +506,7 @@
     created(){
       this._getUserCompanyList()
       this._getComPersonList()
+      this.get_form_auto_filled()
     }
 	}
 </script>
@@ -630,6 +756,62 @@
         }
         &:last-child{
           border: none;
+        }
+      }
+    }
+  }
+
+  .add_shenpi{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    >div{
+      width: 400px;
+      background: #FFFFFF;
+      margin: 200px auto;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      .tops{
+        font-size: 14px;
+        position: relative;
+        i{
+          cursor: pointer;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        p{
+          text-align: center;
+        }
+        b{
+          cursor: pointer;
+          position: absolute;
+          top: 0;
+          right: 0;
+          color: #409EFF;
+        }
+      }
+      .ziding{
+        margin-top: 10px;
+        border-top: 1px solid #e3e4e9;
+        border-bottom:1px solid #e3e4e9 ;
+        position: relative;
+        p{
+          padding: 10px 50px;
+          cursor: pointer;
+        }
+        .el-input{
+          position: absolute;
+          top: 1px;
+          left: 105px;
         }
       }
     }

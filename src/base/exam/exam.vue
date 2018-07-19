@@ -1670,7 +1670,9 @@
                   }
                   this.fileList = []
                   this.fileList_a = []
+                  this.form_fill = JSON.parse(this.form_fill)
                   this._getExamList()
+                  this.return_list()
                   if(res.data.code == 0){
                     this.$message.success(res.data.message)
                   }else{
@@ -2057,6 +2059,7 @@
         this.choices = []
         this.option = []
         this.require = []
+        console.log(this.form_fill)
         this.form_fill.optional = []
         this.form_fill.required = []
 			},
