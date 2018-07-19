@@ -1279,13 +1279,15 @@
       _getType(){
         this.$http.post('/index.php/Mobile/find/worker_type_list')
           .then((res)=>{
-            var obj1 = new Object()
-            obj1.label = '工人类'
-            obj1.options = res.data.data.no_manage
-            var obj2 = new Object()
-            obj2.label = '管理类'
-            obj2.options = res.data.data.is_manage
-            this.work_type.push(obj1,obj2)
+            if(res.data.code == 0){
+              var obj1 = new Object()
+              obj1.label = '工人类'
+              obj1.options = res.data.data.no_manage
+              var obj2 = new Object()
+              obj2.label = '管理类'
+              obj2.options = res.data.data.is_manage
+              this.work_type.push(obj1,obj2)
+            }
           })
         this.list = this.province.map(item=>{
           return { value: item, label: item };
