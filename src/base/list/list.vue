@@ -69,7 +69,6 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import { create_depart_list } from 'common/js/initial/depart.js'
-  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import detail from "@/base/list/detail"
   export default {
@@ -124,11 +123,12 @@
         setCompanyList: 'SET_COMPANYLIST',
       }),
       _getType(){
-        this.$http.post('/index.php/Mobile/Find/worker_type')
+        let httpUrl = this.$test('/index.php/Mobile/Find/worker_type')
+        this.$http.post(httpUrl)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 this.work_type.push(item)
@@ -177,11 +177,12 @@
         }
         param.append('hometown',this.home)
         param.append('order',this.orders)
-        this.$http.post('/index.php/Mobile/Find/nearby_worker_list',param)
+        let httpUrl = this.$test('/index.php/Mobile/Find/nearby_worker_list')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             var arr = res.data.data.nworker
             for(var sr in arr){
               arr[sr].avatar = getAvatar(arr[sr].avatar)
@@ -214,11 +215,12 @@
             this.loading = false;
             let param = new URLSearchParams()
             param.append('keyword',res)
-            this.$http.post('index.php/Mobile/worker/search_worker',param)
+            let httpUrl = this.$test('/index.php/Mobile/worker/search_worker')
+            this.$http.post(httpUrl,param)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 res.data.data.forEach((item)=>{
                   item.avatar = getAvatar(item.avatar)
                   item.distance = (item.distance/1000).toFixed(2)
@@ -287,11 +289,12 @@
           this.$refs.detail.star = true
           let nparam = new URLSearchParams()
           nparam.append('target_uid',pr)
-          this.$http.post('index.php/Mobile/alisun/view_power',nparam)
+          let httpUrl = this.$test('/index.php/Mobile/alisun/view_power')
+          this.$http.post(httpUrl,nparam)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               if(res.data.data.status == 1){
                 this.mains = false
                 this.detail_show = true
@@ -304,11 +307,12 @@
                 }).then(()=>{
                   let param = new URLSearchParams()
                   param.append('target_uid',pr)
-                  this.$http.post('index.php/Mobile/alisun/view_payment',param)
+                  let httpUrl = this.$test('/index.php/Mobile/alisun/view_payment')
+                  this.$http.post(httpUrl,param)
                     .then((res)=>{
                       var current = this
                       var judge = res.data.code
-                      getCro(judge,current)
+                      this.$testLogin(judge,current)
                       if(res.data.code == 0){
                         this.mains = false
                         this.detail_show = true
@@ -340,11 +344,12 @@
           this.$refs.detail.star = true
           let nparam = new URLSearchParams()
           nparam.append('target_uid',pr)
-          this.$http.post('index.php/Mobile/alisun/view_power',nparam)
+          let httpUrl = this.$test('/index.php/Mobile/alisun/view_power')
+          this.$http.post(httpUrl,nparam)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               if(res.data.data.status == 1){
                 this.mains = false
                 this.detail_show = true
@@ -357,11 +362,12 @@
                 }).then(()=>{
                   let param = new URLSearchParams()
                   param.append('target_uid',pr)
-                  this.$http.post('index.php/Mobile/alisun/view_payment',param)
+                  let httpUrl = this.$test('/index.php/Mobile/alisun/view_payment')
+                  this.$http.post(httpUrl,param)
                     .then((res)=>{
                       var current = this
                       var judge = res.data.code
-                      getCro(judge,current)
+                      this.$testLogin(judge,current)
                       if(res.data.code == 0){
                         this.mains = false
                         this.detail_show = true
@@ -385,11 +391,12 @@
       _getComDepart() {
         let param = new URLSearchParams();
         param.append("company_id", this.nowCompanyId);
-        this.$http.post("/index.php/Mobile/user/get_department_lest", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_department_lest")
+        this.$http.post(httpUrl, param)
           .then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let arr = []
             res.data.data.forEach((item) => {
               arr.push(create_depart_list(item))
@@ -400,7 +407,8 @@
       _getToken() {
         let nparam = new URLSearchParams();
         nparam.append("uid", this.user.uid);
-        this.$http.post("/index.php/Mobile/path/get_token", nparam)
+        let httpUrl = this.$test("/index.php/Mobile/path/get_token")
+        this.$http.post(httpUrl, nparam)
           .then((res) => {
             localStorage.token = JSON.stringify(res.data.data);
           })
@@ -408,22 +416,24 @@
       _getUserCompanyList() {
         let param = new URLSearchParams();
         param.append("uid", this.user.uid);
-        this.$http.post("/index.php/Mobile/user/companies_list", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/companies_list")
+        this.$http.post(httpUrl, param)
           .then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             this.setCompanyList(res.data.data)
           })
       },
       _getComPersonList(){
         let newparam = new URLSearchParams();
         newparam.append("company_id",this.nowCompanyId);
-        this.$http.post("/index.php/Mobile/user/get_company_personnel",newparam)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_company_personnel")
+        this.$http.post(httpUrl,newparam)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let reaDa=[]
             res.data.data.forEach((item)=>{
               item.avatar = getAvatar(item.avatar)

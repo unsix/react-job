@@ -24,7 +24,6 @@
 
 <script>
 	import { create_depart_list } from 'common/js/initial/depart.js'
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -87,11 +86,12 @@
 				param.append("phone", this.form.phone);
 				param.append("company_id", this.nowCompanyId);
 				param.append("department_id", departId);
-				this.$http.post("/index.php/Mobile/User/add_personnel", param)
+        let str = this.$test("/index.php/Mobile/User/add_personnel")
+				this.$http.post(str, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.loadingShow = false
 						this.$emit('close')
 						if(res.data.code === 0) {
@@ -109,22 +109,24 @@
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index.php/Mobile/user/companies_list", param)
+        let str = this.$test("/index.php/Mobile/user/companies_list")
+				this.$http.post(str, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
 			_getComDepart() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
+        let str = this.$test("/index.php/Mobile/user/get_department_lest")
+				this.$http.post(str, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))

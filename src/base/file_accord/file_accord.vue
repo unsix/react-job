@@ -336,7 +336,6 @@
 <script>
 	import {getPic} from '@/common/js/pic.js'
   import { getAvatar } from '@/common/js/avatar.js'
-  import { getCro } from "@/common/js/crowd";
   import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
@@ -404,11 +403,12 @@
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", this.form_approval_id);
-				this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
+        let str = this.$test("/index.php/Mobile/approval/approval_process_show")
+				this.$http.post(str, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						if(this.type === '呈批件') {
 							this.cpjShow = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
@@ -435,21 +435,23 @@
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", this.form_approval_id);
 				nparam.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/approval/approval_process_personnel", nparam)
+        let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
+				this.$http.post(httpUrl, nparam)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						res.data.data.content.forEach((item, index) => {
 							if(item.picture) {
 								let arr = []
 								let zparam = new URLSearchParams();
 								zparam.append("enclosure_id", item.picture);
-								this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
+                let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+								this.$http.post(str, zparam)
 									.then((res) => {
                     var current = this
                     var judge = res.data.code
-                    getCro(judge,current)
+                    this.$testLogin(judge,current)
 										res.data.data.picture.forEach((item) => {
 											if(item != '') {
 												arr.push(getPic(item))
@@ -486,11 +488,12 @@
               }
               let zparam = new URLSearchParams();
               zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
-              this.$http.post("/index.php/Mobile/approval/look_enclosure", zparam)
+              let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+              this.$http.post(str, zparam)
                 .then((res) => {
                   var current = this
                   var judge = res.data.code
-                  getCro(judge,current)
+                  this.$testLogin(judge,current)
                   let arr = []
                   res.data.data.picture.forEach((item) => {
                     if(item != '') {
@@ -511,11 +514,12 @@
         if(typeof many_enclosure == 'string'){
           let param = new URLSearchParams();
           param.append("enclosure_id", many_enclosure);
-          this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+          let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+          this.$http.post(str, param)
             .then((res) => {
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               let arr = []
               res.data.data.picture.forEach((item) => {
                 if(item != '') {
@@ -530,11 +534,12 @@
             if(item.type === 3) {
               let param = new URLSearchParams();
               param.append("enclosure_id", item.contract_id);
-              this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+              let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+              this.$http.post(str, param)
                 .then((res) => {
                   var current = this
                   var judge = res.data.code
-                  getCro(judge,current)
+                  this.$testLogin(judge,current)
                   let arr = []
                   res.data.data.picture.forEach((item) => {
                     if(item != '') {
@@ -560,11 +565,12 @@
           if(item.type === 4) {
             let param = new URLSearchParams();
             param.append("attachments_id", item.contract_id);
-            this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+            let str = this.$test("/index.php/Mobile/approval/look_attachments")
+            this.$http.post(str, param)
               .then((res) => {
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 let obj = {}
                 var str = process.env.NODE_ENV
                 var picLeader = ''
@@ -593,11 +599,12 @@
         if(typeof many_enclosure == 'string'){
           let param = new URLSearchParams()
           param.append('enclosure_id',many_enclosure)
-          this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
+          let str = this.$test('/index.php/Mobile/approval/look_enclosure')
+          this.$http.post(str,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               let arr = []
               res.data.data.picture.forEach((item)=>{
                 if(item != ''){
@@ -611,7 +618,8 @@
             if(item.type == 3){
               let param = new URLSearchParams()
               param.append('enclosure_id',item.contract_id)
-              this.$http.post('/index.php/Mobile/approval/look_enclosure',param)
+              let str = this.$test('/index.php/Mobile/approval/look_enclosure')
+              this.$http.post(str,param)
                 .then((res)=>{
                   let arr = []
                   res.data.data.picture.forEach((item)=>{
@@ -637,11 +645,12 @@
           if(item.type == 4){
             let param = new URLSearchParams()
             param.append('attachments_id',item.contract_id)
-            this.$http.post('/index.php/Mobile/approval/look_attachments',param)
+            let str = this.$test('/index.php/Mobile/approval/look_attachments')
+            this.$http.post(str,param)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 let obj = {}
                 var str = process.env.NODE_ENV
                 var picLeader = ''

@@ -40,7 +40,6 @@
 
 <script>
   import {getAvatar} from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -56,11 +55,12 @@ export default {
       let param = new URLSearchParams()
       param.append('uid',re)
       param.append('iid',pr)
-      this.$http.post('/index.php/Mobile/Myinfo/workDetails',param)
+      let str = this.$test('/index.php/Mobile/Myinfo/workDetails')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.moreInfo = res.data.data
             this.moreInfo.avatar = getAvatar(this.moreInfo.avatar)

@@ -246,7 +246,8 @@
         nparam.append('phone',this.sender)
         nparam.append('password',password)
         nparam.append('check_password',check)
-        this.$http.post("/index.php/Mobile/skey/setPassword",nparam)
+        let httpUrl = this.$test("/index.php/Mobile/skey/setPassword")
+        this.$http.post(httpUrl,nparam)
           .then((res)=>{
             if(res.data.code === 0 ){
               this.$message({
@@ -282,7 +283,8 @@
         }
         let nparam = new URLSearchParams()
         nparam.append("sender",this.sender)
-        this.$http.post('/index.php/Mobile/skey/sendValidate',nparam)
+        let httpUrl = this.$test('/index.php/Mobile/skey/sendValidate')
+        this.$http.post(httpUrl,nparam)
           .then((res)=>{
             if(res.data.code === 0){
               this.$message({
@@ -332,7 +334,8 @@
         }
         let mparam = new URLSearchParams()
         mparam.append('sender',this.ster_ruleForm.phone)
-        this.$http.post('/index.php/Mobile/skey/send_validate_code',mparam)
+        let httpUrl = this.$test('/index.php/Mobile/skey/send_validate_code')
+        this.$http.post(httpUrl,mparam)
           .then((res)=>{
             if(res.data.code === 0){
               this.$message({
@@ -379,7 +382,8 @@
           console.log(this.ster_ruleForm.phone)
           param.append('password',password)
           param.append('check_password',check)
-          this.$http.post('/index.php/Mobile/skey/register',param)
+          let httpUrl = this.$test('/index.php/Mobile/skey/register')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               console.log(res)
               if(res.data.code === 0){
@@ -447,7 +451,8 @@
 			    param.append("phone",this.account_num );
 			    param.append("password",password_num);
 			    param.append("phone_type",'web');
-			    this.$http.post("/index.php/Mobile/skey/login",param)
+        let httpUrl = this.$test("/index.php/Mobile/skey/login")
+			    this.$http.post(httpUrl,param)
 			    .then((res)=>{
 					if(res.data.code === 0){
 						let avatar = getAvatar(res.data.data.avatar)
@@ -476,7 +481,8 @@
 				let param = new URLSearchParams();
 				param.append("company_id",this.nowCompanyId);
 				param.append("uid",this.user.uid);
-			    this.$http.post("/index.php/Mobile/User/return_company_new",param)
+        let httpUrl = this.$test("/index.php/Mobile/User/return_company_new")
+			    this.$http.post(httpUrl,param)
 			    .then((res)=>{
 			    	let is_manage = parseInt(res.data.data.is_manage)
 			    	let is_finance = parseInt(res.data.data.is_finance)
@@ -489,7 +495,8 @@
 			_getComDepart(){
 				let param = new URLSearchParams();
 				param.append("company_id",this.nowCompanyId);
-			    this.$http.post("/index.php/Mobile/user/get_department_lest",param)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_department_lest")
+			    this.$http.post(httpUrl,param)
 			    .then((res)=>{
 			    	let arr=[]
 			    	res.data.data.forEach((item)=>{
@@ -501,7 +508,8 @@
 			_getUserCompanyList(uid){
 				let param = new URLSearchParams();
 				param.append("uid",uid);
-				this.$http.post("/index.php/Mobile/user/companies_list",param)
+        let httpUrl = this.$test("/index.php/Mobile/user/companies_list")
+				this.$http.post(httpUrl,param)
 				.then((res)=>{
 					this.setCompanyList(res.data.data)
 					this.setNowCompanyId(res.data.data[0].company_id)

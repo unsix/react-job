@@ -197,7 +197,6 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import { getCro } from "@/common/js/crowd"
   import {getAvatar} from "../../common/js/avatar";
   import {getPic} from '@/common/js/pic.js'
   import { create_personal_list } from '@/common/js/approval/personal'
@@ -296,11 +295,12 @@
       let param = new URLSearchParams()
       param.append('uid',pr)
       param.append('user_id',re)
-      this.$http.post('/index.php/Mobile/Find/worker_info',param)
+      let str = this.$test('/index.php/Mobile/Find/worker_info')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.moreInfo = res.data.data.worker
             this.moreInfo.avatar = getAvatar(this.moreInfo.avatar)
@@ -376,11 +376,12 @@
     _get_contract(){
       let param = new URLSearchParams()
       param.append('type',2)
-      this.$http.post('index.php/Mobile/find/select_contract_companty_types',param)
+      let str = this.$test('/index.php/Mobile/find/select_contract_companty_types')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.list_con = res.data.data
             this.wideShow = true
@@ -398,7 +399,8 @@
     },
     sel_con(res,tip){
       this.contract_type_id = res
-      let str = 'index.php/Mobile/skey/look_draft?id='+ res +'&operation=1&view=1'
+      let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+      str = str+ res +'&operation=1&view=1'
       this.core = str
       this.wideShow = false
       this.contr = false
@@ -414,7 +416,8 @@
     _getToken(uid) {
       let nparam = new URLSearchParams();
       nparam.append("uid", this.user.uid);
-      this.$http.post("/index.php/Mobile/path/get_token", nparam)
+      let str = this.$test("/index.php/Mobile/path/get_token")
+      this.$http.post(str, nparam)
         .then((res) => {
           this.setToken(res.data.data)
         })
@@ -431,7 +434,8 @@
       this.insert = ''
     },
     _right(){
-      this.sign_link = 'index.php/Mobile/find/sign'
+      let str = this.$test('/index.php/Mobile/find/sign')
+      this.sign_link = str
       this.signature = true
       this.wideShow = true
     },
@@ -461,18 +465,19 @@
           setTimeout(()=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let param = new URLSearchParams()
             param.append('content_json',result)
             param.append('contract_type_id',this.contract_type_id)
             param.append('worker_id',this.u_id)
             param.append('signatory_a',res.data.hash)
             this.loadingShow = true
-            this.$http.post('index.php/Mobile/find/addcontract_new',param)
+            let str = this.$test('/index.php/Mobile/find/addcontract_new')
+            this.$http.post(str,param)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 if(res.data.code == 0){
                   this.loadingShow = false
                   this._returned()
@@ -502,11 +507,12 @@
         param.append('worker_id',this.u_id)
         param.append('uid',this.user.uid)
         param.append('status','1')
-        this.$http.post('/index.php/Mobile/Find/collect',param)
+        let str = this.$test('/index.php/Mobile/Find/collect')
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.$message.success('收藏成功')
               this.$refs.star.style.color = 'red'
@@ -520,11 +526,12 @@
         param.append('worker_id',this.u_id)
         param.append('uid',this.user.uid)
         param.append('status','0')
-        this.$http.post('/index.php/Mobile/Find/collect',param)
+        let str = this.$test('/index.php/Mobile/Find/collect')
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.$message.success('取消收藏成功')
               this.$refs.star.style.color = 'orange'
@@ -591,7 +598,8 @@
     get_opus(){
       let param = new URLSearchParams()
       param.append('uid',this.u_id)
-      this.$http.post('/index.php/Mobile/works/works',param)
+      let str = this.$test('/index.php/Mobile/works/works')
+      this.$http.post(str,param)
         .then((res)=>{
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
@@ -682,11 +690,12 @@
       param.append('each',10)
       param.append('approval_state',1)
       param.append('type',2)
-      this.$http.post('index.php/Mobile/personal/select_personal_approval',param)
+      let str = this.$test('/index.php/Mobile/personal/select_personal_approval')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             let arr = []
             res.data.data.forEach((item) => {
@@ -710,11 +719,12 @@
       let param = new URLSearchParams()
       param.append('uid',this.user.uid)
       param.append('approval_personal_id',item.approval_personal_id)
-      this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
+      let str = this.$test('/index.php/Mobile/Personal/approval_personal_process_show')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(item.type == '呈批件'){
             this.if_cpj = true
             this.$refs.cpj_a.insert = '6'
@@ -733,11 +743,12 @@
             let arr = []
             let zparam = new URLSearchParams()
             zparam.append('enclosure_id',adobe.picture_enclosure)
-            this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
+            let str = this.$test('/index.php/Mobile/approval/look_enclosure')
+            this.$http.post(str,zparam)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 res.data.data.picture.forEach((item)=>{
                   if(item != ''){
                     arr.push(getPic(item))
@@ -781,11 +792,12 @@
       if(typeof many_enclosure == 'string'){
         let param = new URLSearchParams();
         param.append("enclosure_id", many_enclosure);
-        this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+        let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+        this.$http.post(str, param)
           .then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let arr = []
             res.data.data.picture.forEach((item) => {
               if(item != '') {
@@ -800,11 +812,12 @@
           if(item.type === 3) {
             let param = new URLSearchParams();
             param.append("enclosure_id", item.contract_id);
-            this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+            let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+            this.$http.post(str, param)
               .then((res) => {
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 let arr = []
                 res.data.data.picture.forEach((item) => {
                   if(item != '') {
@@ -830,11 +843,12 @@
         if(item.type === 4) {
           let param = new URLSearchParams();
           param.append("attachments_id", item.contract_id);
-          this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+          let str = this.$test("/index.php/Mobile/approval/look_attachments")
+          this.$http.post(str, param)
             .then((res) => {
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               let obj = {}
               var str = process.env.NODE_ENV
               var picLeader = ''
@@ -875,11 +889,12 @@
       this.chooseTemShow = false
       let param = new URLSearchParams()
       param.append('approval_personal_id',item.approval_personal_id)
-      this.$http.post('/index.php/Mobile/Personal/approval_personal_process_show',param)
+      let str = this.$test('/index.php/Mobile/Personal/approval_personal_process_show')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(title == '呈批件'){
             this.if_cpj = true
             this.form_Lista = create_cengpijian_list(res.data.data)
@@ -906,11 +921,12 @@
             let arr = []
             let zparam = new URLSearchParams()
             zparam.append('enclosure_id',item.picture_enclosure)
-            this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
+            let str = this.$test('/index.php/Mobile/approval/look_enclosure')
+            this.$http.post(str,zparam)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 res.data.data.picture.forEach((item)=>{
                   if(item != ''){
                     arr.push(getPic(item))

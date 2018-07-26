@@ -43,9 +43,6 @@
           </el-form-item>
         </el-form>
       </div>
-
-
-
       <el-upload class="upload-demo" id="picc" v-model="bxd_ruleForm.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <i class="el-icon-plus"></i>
         <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
@@ -63,7 +60,6 @@
       </div>
       <el-form-item>
         <el-button type="primary" @click="submitForm_bxd('bxd_ruleForm')">立即添加</el-button>
-        <!--<el-button @click="resetForm('cpj_ruleForm')">重置</el-button>-->
       </el-form-item>
     </el-form>
     <loading v-show="loadingShow"></loading>
@@ -74,7 +70,6 @@
   import loading from '@/base/loading/loading'
   import { getPic } from '@/common/js/pic.js'
   import { getAvatar } from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
   import { create_baoxiaodan_list } from '@/common/js/approval/baoxiaodan'
   import { mapGetters, mapMutations } from 'vuex'
       export default {
@@ -187,11 +182,12 @@
             if(attribute.substr(0,1)=='.'){
               attribute=attribute.substr(1)
             }
-            this.$http.post("/index.php/Mobile/find/file_info")
+            let str = this.$test("/index.php/Mobile/find/file_info")
+            this.$http.post(str)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 let attr = res.data.data.attribute
                 if(attr.indexOf(attribute) !=-1){
                   this.fileList_a = fileList_a
@@ -256,12 +252,12 @@
             let param = new URLSearchParams();
             param.append("uid",this.user.uid);
             param.append("approval_id",this.approval_id)
-            console.log(this.approval_id)
-            this.$http.post("/index.php/Mobile/approval/approval_process_show", param)
+            let str = this.$test("/index.php/Mobile/approval/approval_process_show")
+            this.$http.post(str, param)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 this.form_Lista = create_baoxiaodan_list(res.data.data)
                 var str = 0
                 var sub = this.form_Lista.content
@@ -281,11 +277,12 @@
                   if (item.type === 3){
                     let param = new URLSearchParams();
                     param.append("enclosure_id", item.contract_id);
-                    this.$http.post("index.php/Mobile/approval/look_enclosure",param)
+                    let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+                    this.$http.post(str,param)
                       .then((res)=>{
                         var current = this
                         var judge = res.data.code
-                        getCro(judge,current)
+                        this.$testLogin(judge,current)
                         res.data.data.picture.forEach((item) => {
                           //item 就是hash
                           let obj = {}
@@ -302,11 +299,12 @@
                   }else if(item.type === 4){
                     let param = new URLSearchParams();
                     param.append("attachments_id", item.contract_id);
-                    this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+                    let str = this.$test("/index.php/Mobile/approval/look_attachments")
+                    this.$http.post(str, param)
                       .then((res) => {
                         var current = this
                         var judge = res.data.code
-                        getCro(judge,current)
+                        this.$testLogin(judge,current)
                         let obj = {}
                         let file_data = res.data.data
                         var str = process.env.NODE_ENV
@@ -368,11 +366,12 @@
           _getToken(){
             let nparam = new URLSearchParams();
             nparam.append("uid", this.user.uid);
-            this.$http.post("/index.php/Mobile/path/get_token", nparam)
+            let str = this.$test("/index.php/Mobile/path/get_token")
+            this.$http.post(str, nparam)
               .then((res) => {
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 localStorage.token = JSON.stringify(res.data.data);
                 this.setToken(res.data.data)
               })
@@ -475,11 +474,12 @@
                 param.append("money",this.bxd_ruleForm.money)
                 param.append("big_money",this.bxd_ruleForm.big_money)
                 param.append("content", JSON.stringify(this.bxd_ruleForm.add));
-                this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
+                let str = this.$test("/index.php/Mobile/approval/add_baoxiao")
+                this.$http.post(str,param)
                   .then((res)=>{
                     var current = this
                     var judge = res.data.code
-                    getCro(judge,current)
+                    this.$testLogin(judge,current)
                     this.loading_show = false
                     if (res.data.code ===0){
                       this.add_ok()
@@ -530,11 +530,12 @@
                       let nparam = new URLSearchParams()
                       nparam.append("uid", this.user.uid);
                       nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                      this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                      let str = this.$test("/index.php/Mobile/approval/upload_enclosure_new")
+                      this.$http.post(str, nparam)
                         .then((res)=>{
                           var current = this
                           var judge = res.data.code
-                          getCro(judge,current)
+                          this.$testLogin(judge,current)
                           this.afile_hash_arr.push({
                             "type": 3,
                             "contract_id": res.data.data.enclosure_id,
@@ -572,11 +573,12 @@
                       param.append("attribute", attribute);
                       param.append("attachments", this.fileArr[i].hash);
                       param.append("file_name", file_name);
-                      this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                      let str = this.$test("/index.php/Mobile/approval/add_attachments")
+                      this.$http.post(str, param)
                         .then((res) => {
                           var current = this
                           var judge = res.data.code
-                          getCro(judge,current)
+                          this.$testLogin(judge,current)
                           this.file_hash_arr.push({
                             "type": 4,
                             "contract_id": res.data.data.attachments_id,
@@ -594,11 +596,12 @@
                       if (attribute.substr(0, 1) == '.') {
                         attribute = attribute.substr(1)
                       }
-                      this.$http.post("/index.php/Mobile/find/file_info")
+                      let str = this.$test("/index.php/Mobile/find/file_info")
+                      this.$http.post(str)
                         .then((res) => {
                           var current = this
                           var judge = res.data.code
-                          getCro(judge,current)
+                          this.$testLogin(judge,current)
                           let maxSize = res.data.data.max
                           let attr = res.data.data.attribute
                           if (attr.indexOf(attribute) != -1) {
@@ -610,11 +613,12 @@
                                 param.append("attribute", attribute);
                                 param.append("attachments", res.data.hash);
                                 param.append("file_name", file_name);
-                                this.$http.post("/index.php/Mobile/approval/add_attachments", param)
+                                let str = this.$test("/index.php/Mobile/approval/add_attachments")
+                                this.$http.post(str, param)
                                   .then((res) => {
                                     var current = this
                                     var judge = res.data.code
-                                    getCro(judge,current)
+                                    this.$testLogin(judge,current)
                                     this.file_hash_arr.push({
                                       "type": 4,
                                       "contract_id": res.data.data.attachments_id,
@@ -665,11 +669,12 @@
               param.append("content", JSON.stringify(this.bxd_ruleForm.add));
               param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
               param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-              this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
+              let str = this.$test("/index.php/Mobile/approval/add_baoxiao")
+              this.$http.post(str,param)
                 .then((res)=>{
                   var current = this
                   var judge = res.data.code
-                  getCro(judge,current)
+                  this.$testLogin(judge,current)
                   this.loadingShow = false
                   if(res.data.code === 0) {
                     this.add_ok()
@@ -702,11 +707,12 @@
               param.append("content", JSON.stringify(this.bxd_ruleForm.add));
               param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
               param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
-              this.$http.post("index.php/Mobile/approval/add_baoxiao",param)
+              let str = this.$test("/index.php/Mobile/approval/add_baoxiao")
+              this.$http.post(str,param)
                 .then((res)=>{
                   var current = this
                   var judge = res.data.code
-                  getCro(judge,current)
+                  this.$testLogin(judge,current)
                   this.loadingShow = false
                   if(res.data.code === 0) {
                     this.add_ok()

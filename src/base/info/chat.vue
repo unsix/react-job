@@ -27,7 +27,8 @@ export default {
       this.$parent.chatShow = false
     },
     showList(){
-      this.$http.post('index.php/Mobile/personal/my_group_list')
+      let str = this.$test('/index.php/Mobile/personal/my_group_list')
+      this.$http.post(str)
         .then((res)=>{
           if(res.data.code == 250){
             this.$message.error('暂无数据')

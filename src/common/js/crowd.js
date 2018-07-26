@@ -1,4 +1,4 @@
-export function getCro(jud,cur) {
+export default function getCro(jud,cur) {
   if(jud === 251){
     localStorage.removeItem('nowCompanyId');
     localStorage.removeItem('nowCompanyName');

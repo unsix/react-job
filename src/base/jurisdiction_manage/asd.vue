@@ -70,7 +70,6 @@
 <script>
 	import { getPic } from '@/common/js/pic.js'
 	import { getAvatar } from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
   import { createJurisdictionList } from 'common/js/jurisdiction_list.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	import { createPersonInfo } from 'common/js/person_info'
@@ -189,7 +188,7 @@
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						if(res.data.code === 0) {
 							this._getHuizhi()
 							this.formRePersonIndex = -1
@@ -243,7 +242,7 @@
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -254,7 +253,7 @@
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						let reaDa = []
 						res.data.data.forEach((item) => {
 							item.avatar = getAvatar(item.avatar)
@@ -271,7 +270,7 @@
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						res.data.data.forEach((item) => {
 							if(item.type === 1) {
 								let arr = []
@@ -303,7 +302,7 @@
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						res.data.data.approval.forEach((item) => {
 							if(item.type === this.formType) {
 								if(item.list.length != 0) {

@@ -25,7 +25,6 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
   import { create_yanshoudan_list } from "@/common/js/approval/yanshoudan";
 
@@ -76,11 +75,12 @@
     _getComPersonList() {
       let newparam = new URLSearchParams();
       newparam.append("company_id", this.nowCompanyId);
-      this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+      let str = this.$test("/index.php/Mobile/user/get_company_personnel")
+      this.$http.post(str, newparam)
         .then((res) => {
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           let reaDa = []
           res.data.data.forEach((item) => {
             item.avatar = 'http://bbsf-file.hzxb.net/Fvq9PpSmgcA_xvWbzzIjcZ2rCrns'
@@ -100,11 +100,12 @@
         param.append('approval_persons',this.ccPer_arr)
         param.append('inspection_type_id',this.inspection_type_id)
         param.append('content',this.result)
-        this.$http.post('index.php/Mobile/approval/add_inspection',param)
+        let str = this.$test('/index.php/Mobile/approval/add_inspection')
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             this.loadingShow = false
             if(res.data.code == 0){
               this.person_show = false
@@ -128,13 +129,15 @@
       let param = new URLSearchParams()
       param.append('uid',this.user.uid)
       param.append('approval_id',this.approval_id)
-      this.$http.post('/index.php/Mobile/approval/approval_process_show',param)
+      let str = this.$test('/index.php/Mobile/approval/approval_process_show')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           this.form_Lista = create_yanshoudan_list(res.data.data)
-          this.linked = `/index.php/Mobile/skey/look_inspection_company?type_id=${this.form_Lista.type_id}&form_id=${this.form_Lista.form_id}`
+          let str = this.$test('/index.php/Mobile/skey/look_inspection_company?type_id')
+          this.linked = `${str}=${this.form_Lista.type_id}&form_id=${this.form_Lista.form_id}`
         })
     }
   },
@@ -165,7 +168,8 @@
   },
   watch:{
     inspection_type_id(){
-      this.linked = `/index.php/Mobile/skey/look_inspection_company?type_id=${this.inspection_type_id}&form_id=`
+      let str = this.$test('/index.php/Mobile/skey/look_inspection_company?type_id')
+      this.linked = `${str}=${this.inspection_type_id}&form_id=`
     }
   }
 }

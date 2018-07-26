@@ -474,7 +474,6 @@
 </template>
 
 <script>
-  import {getCro} from "@/common/js/crowd";
   import {getPic} from '@/common/js/pic.js'
   import { getAvatar } from '@/common/js/avatar.js'
   import rece from '@/base/received/rece'
@@ -597,11 +596,12 @@ export default {
       param.append('type',this.activeName)
       param.append('each',10)
       param.append('p',this.pageIndex)
-      this.$http.post('/index.php/Mobile/personal/see_approval_personal_list',param)
+      let str = this.$test('/index.php/Mobile/personal/see_approval_personal_list')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           let arr = []
           res.data.data.forEach((item)=>{
             arr.push(create_personal_list(item))
@@ -633,11 +633,12 @@ export default {
       }).then(()=>{
         let param = new URLSearchParams()
         param.append('approval_personal_id',pr)
-        this.$http.post('index.php/Mobile/Personal/del_approval_personal',param)
+        let str = this.$test('/index.php/Mobile/Personal/del_approval_personal')
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.$message.success('删除成功')
               this._getExamList()
@@ -675,11 +676,12 @@ export default {
       param.append('p',this.pageIndex)
       param.append('each',10)
       param.append('type',parseInt(this.classRadio))
-      this.$http.post('index.php/Mobile/personal/select_personal_approval',param)
+      let str = this.$test('/index.php/Mobile/personal/select_personal_approval')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             let arr = []
             res.data.data.forEach((item) => {
@@ -738,11 +740,12 @@ export default {
       let param = new URLSearchParams()
       param.append('uid',this.user.uid)
       param.append('approval_personal_id',item.approval_personal_id)
-      this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
+      let str = this.$test('/index.php/Mobile/Personal/approval_personal_process_show')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(item.type == '呈批件'){
             this.form_Lista = create_cengpijian_list(res.data.data)
             this.get_img(this.form_Lista.many_enclosure)
@@ -765,11 +768,12 @@ export default {
             let arr = []
             let zparam = new URLSearchParams()
             zparam.append('enclosure_id',adobe.picture_enclosure)
-            this.$http.post('/index.php/Mobile/approval/look_enclosure',zparam)
+            let str = this.$test('/index.php/Mobile/approval/look_enclosure')
+            this.$http.post(str,zparam)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 res.data.data.picture.forEach((item)=>{
                   if(item != ''){
                     arr.push(getPic(item))
@@ -802,12 +806,14 @@ export default {
       let param = new URLSearchParams()
       param.append('approval_id',this.reply)
       param.append('type',1)
-      this.$http.post('index.php/Mobile/find/get_download_token',param)
+      let str = this.$test('/index.php/Mobile/find/get_download_token')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
-          this.downUrl = '/index.php/Mobile/skey/aaampd_picture?token=' + res.data.data
+          this.$testLogin(judge,current)
+          let str = this.$test('/index.php/Mobile/skey/aaampd_picture?token=')
+          this.downUrl = str + res.data.data
         })
     },
     get_img(many_enclosure) {
@@ -817,11 +823,12 @@ export default {
       if(typeof many_enclosure == 'string'){
         let param = new URLSearchParams();
         param.append("enclosure_id", many_enclosure);
-        this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+        let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+        this.$http.post(str, param)
           .then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let arr = []
             res.data.data.picture.forEach((item) => {
               if(item != '') {
@@ -836,11 +843,12 @@ export default {
           if(item.type === 3) {
             let param = new URLSearchParams();
             param.append("enclosure_id", item.contract_id);
-            this.$http.post("/index.php/Mobile/approval/look_enclosure", param)
+            let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+            this.$http.post(str, param)
               .then((res) => {
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 let arr = []
                 res.data.data.picture.forEach((item) => {
                   if(item != '') {
@@ -866,11 +874,12 @@ export default {
         if(item.type === 4) {
           let param = new URLSearchParams();
           param.append("attachments_id", item.contract_id);
-          this.$http.post("/index.php/Mobile/approval/look_attachments", param)
+          let str = this.$test("/index.php/Mobile/approval/look_attachments")
+          this.$http.post(str, param)
             .then((res) => {
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               let obj = {}
               var str = process.env.NODE_ENV
               var picLeader = ''
@@ -902,11 +911,12 @@ export default {
           param.append('approval_personal_id',this.reply)
           param.append('approval_state','2')
           param.append('opinion',this.handle_txt)
-          this.$http.post('index.php/Mobile/personal/personal_approval',param)
+          let str = this.$test('/index.php/Mobile/personal/personal_approval')
+          this.$http.post(str,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               this.loadingShow = false
               this.handle_txt = ''
               this.main_If = true
@@ -944,22 +954,24 @@ export default {
                 let nparam = new URLSearchParams()
                 nparam.append('uid',this.user.uid)
                 nparam.append('picture',JSON.stringify(this.pic_hash_arr))
-                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                let str = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
+                this.$http.post(str,nparam)
                   .then((res)=>{
                     var current = this
                     var judge = res.data.code
-                    getCro(judge,current)
+                    this.$testLogin(judge,current)
                     let param = new URLSearchParams()
                     param.append('uid',this.user.uid)
                     param.append('approval_personal_id',this.reply)
                     param.append('approval_state','2')
                     param.append('opinion',this.handle_txt)
                     param.append('picture_enclosure',res.data.data.enclosure_id)
-                    this.$http.post('index.php/Mobile/personal/personal_approval',param)
+                    let str = this.$test('/index.php/Mobile/personal/personal_approval')
+                    this.$http.post(str,param)
                       .then((res)=>{
                         var current = this
                         var judge = res.data.code
-                        getCro(judge,current)
+                        this.$testLogin(judge,current)
                         this.loadingShow = false
                         this.handle_txt = ''
                         this.main_If = true
@@ -996,11 +1008,12 @@ export default {
           param.append('approval_personal_id',this.reply)
           param.append('approval_state','1')
           param.append('opinion',this.handle_txt)
-          this.$http.post('index.php/Mobile/personal/personal_approval',param)
+          let str = this.$test('/index.php/Mobile/personal/personal_approval')
+          this.$http.post(str,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               this.loadingShow = false
               this.handle_txt = ''
               this.main_If = true
@@ -1038,22 +1051,24 @@ export default {
                 let nparam = new URLSearchParams()
                 nparam.append('uid',this.user.uid)
                 nparam.append('picture',JSON.stringify(this.pic_hash_arr))
-                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                let str = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
+                this.$http.post(str,nparam)
                   .then((res)=>{
                     var current = this
                     var judge = res.data.code
-                    getCro(judge,current)
+                    this.$testLogin(judge,current)
                     let param = new URLSearchParams()
                     param.append('uid',this.user.uid)
                     param.append('approval_personal_id',this.reply)
                     param.append('approval_state','1')
                     param.append('opinion',this.handle_txt)
                     param.append('picture_enclosure',res.data.data.enclosure_id)
-                    this.$http.post('index.php/Mobile/personal/personal_approval',param)
+                    let str = this.$test('/index.php/Mobile/personal/personal_approval')
+                    this.$http.post(str,param)
                       .then((res)=>{
                         var current = this
                         var judge = res.data.code
-                        getCro(judge,current)
+                        this.$testLogin(judge,current)
                         this.loadingShow = true
                         this.main_If = true
                         this.formShow = false
@@ -1082,7 +1097,8 @@ export default {
       }
       let param = new URLSearchParams()
       param.append("uid", this.user.uid)
-      this.$http.post('/index.php/Mobile/path/get_token',param)
+      let str = this.$test('/index.php/Mobile/path/get_token')
+      this.$http.post(str,param)
         .then((res)=>{
           this.input_value = res.data.data
         })

@@ -56,7 +56,6 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
   import browsePic from '@/base/browse_pic/browse_pic'
   import loading from '@/base/loading/loading'
 export default {
@@ -115,11 +114,12 @@ export default {
       }else if(this.insert == 6){
         param.append('uid',this.worker_id)
       }
-      this.$http.post('/index.php/Mobile/works/works',param)
+      let httpUrl = this.$test('/index.php/Mobile/works/works')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.untreated.push(item)
@@ -234,11 +234,12 @@ export default {
           param.append('works_end_time',this.work.works_end_time)
         }
         param.append('picture',JSON.stringify(this.pic_hash_arr))
-        this.$http.post('/index.php/Mobile/works/upload_works_new',param)
+        let httpUrl = this.$test('/index.php/Mobile/works/upload_works_new')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.loadingShow = false
               this.upload = false
@@ -267,11 +268,12 @@ export default {
         this.loadingShow = true
         let param = new URLSearchParams()
         param.append('works_id',pr)
-        this.$http.post('/index.php/Mobile/works/del_works',param)
+        let httpUrl = this.$test('/index.php/Mobile/works/del_works')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.$message.success('删除成功')
               this._getInfo()

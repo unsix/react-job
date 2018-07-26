@@ -72,7 +72,6 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import workDe from '@/base/find_work/workDeta'
   import pro from '@/base/find_work/rele_project'
@@ -126,11 +125,12 @@ export default {
         param.append('wid',this.typed)
       }
       param.append('order',this.orders)
-      this.$http.post('/index.php/Mobile/Find/find_work_personal',param)
+      let str = this.$test('/index.php/Mobile/Find/find_work_personal')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           var arr = res.data.data
           for(var sr in arr){
             arr[sr].avatar = getAvatar(arr[sr].avatar)
@@ -152,11 +152,12 @@ export default {
         })
     },
     _getType(){
-      this.$http.post('/index.php/Mobile/Find/worker_type')
+      let str = this.$test('/index.php/Mobile/Find/worker_type')
+      this.$http.post(str)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.work_type.push(item)
@@ -211,11 +212,12 @@ export default {
           this.loading = false
           let param = new URLSearchParams()
           param.append('keyword',res)
-          this.$http.post('index.php/Mobile/Task/get_work_list',param)
+          let str = this.$test('/index.php/Mobile/Task/get_work_list')
+          this.$http.post(str,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               res.data.data.forEach((item)=>{
                 item.avatar = getAvatar(item.avatar)
                 item.distance = (item.distance / 1000).toFixed(2)

@@ -24,7 +24,6 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import detail from "@/base/list/detail"
 export default {
@@ -49,11 +48,12 @@ export default {
     }),
     _getInfo(){
       this.list = []
-      this.$http.post('/index.php/Mobile/Myinfo/myCollection')
+      let httpUrl = this.$test('/index.php/Mobile/Myinfo/myCollection')
+      this.$http.post(httpUrl)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               item.worker.avatar = getAvatar(item.worker.avatar)
@@ -66,11 +66,12 @@ export default {
     re_cheer(pr){
       let param = new URLSearchParams()
       param.append('worker_id',pr)
-      this.$http.post('/index.php/Mobile/Find/collect',param)
+      let httpUrl = this.$test('/index.php/Mobile/Find/collect')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.$message.success('取消收藏成功')
             this._getInfo()

@@ -37,7 +37,6 @@
 <script>
   import { create_personal_list } from '@/common/js/approval/personal'
   import { mapGetters } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
 
   export default {
     data() {
@@ -81,11 +80,12 @@
         param.append('approval_persona_type',this.approval_type)
         param.append('p',this.pageIndex)
         param.append('each',10)
-        this.$http.post('index.php/Mobile/personal/see_approval_personal_list',param)
+        let httpUrl = this.$test('/index.php/Mobile/personal/see_approval_personal_list')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let arr = []
             res.data.data.forEach((item)=>{
               arr.push(create_personal_list(item))
