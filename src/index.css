@@ -1,9 +1,9 @@
-body {
+/* body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
   min-height: 100vh
-}
+} */
 .am-tab-bar{
 	position: fixed;
 	bottom: 0;
@@ -13,4 +13,10 @@ body {
 .err-msg {
   color:#f50;
 
+}
+.fixd-header.am-navbar{
+	position: fixed;
+	top: 0;
+	width: 100%;
+  z-index:9999
 }
