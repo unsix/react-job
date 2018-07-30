@@ -11,15 +11,10 @@ import UserCard from '../usercard/usercard'
 
 class Genius extends React.Component{
   componentDidMount(){
-    this.props.getUserList('genius')
+    this.props.getUserList('boss')
   }
   render(){
-    const Header = Card.Header
-    const Body = Card.Body
-    console.log(this.state)
-    return(
-      <UserCard userlist={this.props.userlist}></UserCard>
-    )
+    return <UserCard  userlist={this.props.userlist}></UserCard>
   }
 
 }
