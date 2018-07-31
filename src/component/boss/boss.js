@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import {getUserList} from '../../redux/chatuser_redux'
 import UserCard from '../usercard/usercard'
 
+
 @connect (
   state=>state.chatuser,
   {getUserList}
