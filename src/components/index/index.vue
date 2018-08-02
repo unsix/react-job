@@ -211,23 +211,8 @@
 					})
 			},
       //判断状态
-			judgeState() {
-				let m = this.userState.manage
-				let f = this.userState.finance
-				if(m === 0 && f === 0) {
-					this.workList = ['审批', '发起审批', '通讯录']
-				}
-				if(m === 1 && f === 0) {
-					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '邀请同事', '通讯录']
-				}
-				if(m === 0 && f === 1) {
-					this.workList = ['审批', '发起审批', '表单回执', '邀请同事', '通讯录']
-				}
-				if(m === 1 && f === 1) {
-					this.workList = ['审批', '发起审批', '公司管理', '权限管理', '表单回执', '邀请同事', '通讯录']
-				}
-			},
-      //获取当前用户公司列表
+
+      //获取当前用户最近公司
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);

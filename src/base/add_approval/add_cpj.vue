@@ -276,7 +276,6 @@
             var judge = res.data.code
             this.$testLogin(judge,current)
 						this.form_Lista = create_cengpijian_list(res.data.data)
-
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
 						this.cpj_ruleForm.department_name = this.form_Lista.department_name
             this.cpj_ruleForm.project_manager = this.form_Lista.project_manager
@@ -389,6 +388,9 @@
 			}),
 			cpjSelectOk(tab) {
         this.handler = tab
+        if(!this.cpj_ruleForm.project_manager){
+          this.cpj_ruleForm.project_manager = new Object()
+        }
 				this.comPersonList.forEach((item) => {
 					if(item.uid === tab) {
 						this.$set(this.cpj_ruleForm.project_manager, 'uid', item.uid)
@@ -424,7 +426,6 @@
         this.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
-
 				this.pic_hash_arr = []
 				this.afile_hash_arr = []
 				this.file_hash_arr = []
@@ -434,9 +435,10 @@
 				setTimeout(() => {
           if(this.picArr.length === 0 && this.fileArr.length === 0) {
 						let param = new URLSearchParams();
-						if(this.cpj_ruleForm.project_manager.uid) {
-							param.append("project_manager", JSON.stringify(this.cpj_ruleForm.project_manager));
-						}
+						let todo = JSON.stringify(this.cpj_ruleForm.project_manager)
+            if(todo != 'null'){
+              param.append("project_manager", todo);
+            }
 						param.append("uid", this.user.uid);
 						param.append("company_id", this.nowCompanyId);
 						param.append("department_id", this.cpj_ruleForm.department_id);

@@ -364,7 +364,7 @@
         }
         function remove(arr,val) {
           for(var i=0; i<arr.length; i++) {
-            if(arr[i] == val) {
+            if(arr[i] === val) {
               arr.splice(i, 1);
               break;
             }
@@ -387,8 +387,8 @@
         let str = this.$test("/index.php/Mobile/find/file_info")
         this.$http.post(str)
           .then((res)=>{
-            var current = this
-            var judge = res.data.code
+            let current = this
+            let judge = res.data.code
             this.$testLogin(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
@@ -397,7 +397,6 @@
               this.$message.error('上传文件格式错误 请删除')
               this.fileList_a = fileList_a
             }
-
           })
       },
 		},

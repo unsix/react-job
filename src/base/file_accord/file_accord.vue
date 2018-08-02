@@ -3,6 +3,7 @@
 		<div class="form" name="请购单" v-if="qgdShow">
 			<div class="close">
 				<el-button type="danger" plain @click="close">关闭</el-button>
+        <a :href="downUrl" @click="show_tips" target="_blank" class="fileDown" download="" mce_href='#'>下载</a>
 			</div>
 			<div class="top">
 				<span class="title">请购单</span>
@@ -117,6 +118,7 @@
 		<div class="form" name="合同评审表" v-if="psbShow">
 			<div class="close">
 				<el-button type="danger" plain @click="close">关闭</el-button>
+        <a :href="downUrl" @click="show_tips" target="_blank" class="fileDown" download="" mce_href='#'>下载</a>
 			</div>
 			<div class="top">
 				<span class="title">合同评审表</span>
@@ -236,7 +238,8 @@
 		<div class="form" name="呈批件" v-if="cpjShow">
 			<div class="close">
 				<el-button type="danger" plain @click="close">关闭</el-button>
-			</div>
+        <a :href="downUrl" @click="show_tips" target="_blank" class="fileDown" download="" mce_href='#'>下载</a>
+      </div>
 			<div class="top">
 				<span class="title">呈批件</span>
 			</div>
@@ -374,6 +377,7 @@
         pic_index: 0,
         pic_show: false,
         arr_list: [],
+        downUrl:''
 			}
 
 		},
@@ -387,6 +391,7 @@
 		methods: {
 			zz() {
         this.getData()
+        this.getAdd()
 				if(!this.request_money_basis_type) {
 					this.type = '请购单'
 				} else {
@@ -396,6 +401,24 @@
 			close() {
 				this.$emit('closeAcc')
 			},
+      getAdd(){
+			  let param = new URLSearchParams
+        param.append('uid',this.user.uid)
+        param.append('company_id',this.nowCompanyId)
+        param.append('approval_id',this.form_approval_id)
+        let str = this.$test('/index.php/Mobile/find/get_download_token')
+        this.$http.post(str,param)
+          .then((res)=>{
+            var cur = this
+            var jud = res.data.code
+            this.$testLogin(jud,cur)
+            let str = this.$test('/index.php/Mobile/skey/aaampd_picture?token=')
+            this.downUrl = str + res.data.data
+          })
+      },
+      show_tips(){
+			  this.$message.info('请等待浏览器响应')
+      },
 			getData() {
 				this.qgdShow = false
 				this.psbShow = false
@@ -913,4 +936,11 @@
 			}
 		}
 	}
+  .fileDown{
+    display: inline-block;
+    color: black;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-left: 15px;
+  }
 </style>

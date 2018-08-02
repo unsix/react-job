@@ -12,7 +12,7 @@
 					<el-tab-pane label="呈批件"></el-tab-pane>
           <el-tab-pane label="报销单"></el-tab-pane>
           <el-tab-pane label="验收单"></el-tab-pane>
-          <el-tab-pane label="工资单"></el-tab-pane>
+          <!--<el-tab-pane label="工资单"></el-tab-pane>-->
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -1557,7 +1557,7 @@
 				.el-tabs__item {
 					font-size: 12px;
 					font-weight: 700;
-					width: 74px;
+					width: 85px;
 					text-align: center;
 				}
 			}
@@ -1571,7 +1571,6 @@
 	.el-radio+.el-radio {
 		margin-left: 10px;
 	}
-
 	.el-form-item {
 		margin-bottom: 20px;
 	}

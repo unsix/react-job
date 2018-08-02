@@ -2,7 +2,7 @@
   <div>
     <div class="company" v-show="company_show">
       <div class="top">
-        <p>公司列表</p>
+        <p>最近公司</p>
         <b style="cursor: pointer" @click="look_project">发布工程</b>
       </div>
       <div class="main">

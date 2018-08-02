@@ -329,7 +329,7 @@
             let str = this.$test("/index.php/Mobile/user/get_company_personnel")
             this.$http.post(str, newparam)
               .then((res)=>{
-                var current = this
+                let current = this
                 var judge = res.data.code
                 this.$testLogin(judge,current)
                 this.workerInfo = res.data.data

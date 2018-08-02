@@ -465,7 +465,7 @@
             setTimeout(()=>{
               if(this.picArr.length === 0 && this.fileArr.length === 0){
                 let param = new URLSearchParams();
-                if (this.bxd_ruleForm.project_manager.uid){
+                if(this.bxd_ruleForm.project_manager.uid){
                   param.append("project_manager", JSON.stringify(this.bxd_ruleForm.project_manager));
                 }
                 param.append("uid",this.user.uid)

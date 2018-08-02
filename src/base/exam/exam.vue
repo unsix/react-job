@@ -931,7 +931,7 @@
 				downApproId:'',
 				downPartId:'',
 				downAddress:'',
-				examComName:'',
+				examComName:'全部',
 				downUrl:'',
         arr_list:[],
         reply:'',
@@ -1295,6 +1295,7 @@
 				this.fileAccordShow = false
 			},
 			fileAccord(item) {
+        console.log(item)
 				if(item.approval_type === -1) {
 					this.$message({
 						message: '没有附件或者无法查看',
@@ -1348,8 +1349,9 @@
       //搜索
 			doSearch() {
 				let param = new URLSearchParams();
-				param.append("uid", this.user.uid);
-				param.append("company_id", this.nowCompanyId);
+				if(this.examComName!='全部'){
+          param.append("company_id", this.nowCompanyId);
+        }
 				param.append("select", this.searchInfo);
 				param.append("type", parseInt(this.classRadio));
 				param.append("each", '10');
@@ -1575,7 +1577,6 @@
 			},
       //审批
 			agree(){
-
         //se 可选
         //de 必选
         let str = ''
@@ -1601,6 +1602,9 @@
               arr1.push(obj4)
             }
           })
+        }
+        if(typeof this.form_fill != 'object'){
+          this.form_fill = JSON.parse(this.form_fill)
         }
         this.form_fill.optional = arr
         this.form_fill.required = arr1

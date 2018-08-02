@@ -2,7 +2,7 @@
   <div>
     <div class="rele" v-show="rele">
       <div class="top">
-        <p>工程列表</p>
+        <p>最新工程</p>
         <el-tabs v-model="activeName" @tab-click="handClick">
           <el-tab-pane label="进行中" name="fir"></el-tab-pane>
           <el-tab-pane label="已结束" name="sec"></el-tab-pane>
