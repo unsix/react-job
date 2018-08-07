@@ -2,7 +2,7 @@
   <div>
     <div class="company" v-show="company_show">
       <div class="top">
-        <p>公司列表</p>
+        <p>最近公司</p>
         <b style="cursor: pointer" @click="look_project">发布工程</b>
       </div>
       <div class="main">
@@ -105,7 +105,6 @@
 
 <script>
   import {getAvatar} from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
   import workDe from '@/base/find_work/workDeta'
   import pro from '@/base/find_work/rele_project'
   import { mapGetters, mapMutations } from 'vuex'
@@ -155,7 +154,8 @@
         let param = new URLSearchParams()
         param.append('p',this.pageIndex)
         param.append('each',10)
-        this.$http.post('index.php/Mobile/find/all_big_company_list',param)
+        let str = this.$test('/index.php/Mobile/find/all_big_company_list')
+        this.$http.post(str,param)
           .then((res)=>{
             if(res.data.code == 0){
               this.untreated = res.data.data
@@ -188,7 +188,8 @@
       look_detail(pr){
         let param = new URLSearchParams()
         param.append('company_id',pr)
-        this.$http.post('index.php/Mobile/company/get_company_info',param)
+        let str = this.$test('/index.php/Mobile/company/get_company_info')
+        this.$http.post(str,param)
           .then((res)=>{
             if(res.data.code == 0){
               this.details = res.data.data
@@ -214,7 +215,8 @@
           let param = new URLSearchParams()
           param.append('company_id',this.details.company_id)
           param.append('content',value)
-          this.$http.post('index.php/Mobile/find/request_join_company',param)
+          let str = this.$test('/index.php/Mobile/find/request_join_company')
+          this.$http.post(str,param)
             .then((res)=>{
               if(res.data.code == 0){
                 this.$message.success('提交加入公司申请成功，请等候管理员处理')
@@ -240,7 +242,8 @@
         param.append('order',this.orders)
         param.append('p',this.pageIndexs)
         param.append('each',10)
-        this.$http.post('index.php/Mobile/Find/find_work',param)
+        let str = this.$test('/index.php/Mobile/Find/find_work')
+        this.$http.post(str,param)
           .then((res)=>{
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
@@ -268,11 +271,12 @@
             this.loading = false
             let param = new URLSearchParams()
             param.append('keyword',res)
-            this.$http.post('index.php/Mobile/Task/get_work_list',param)
+            let str = this.$test('/index.php/Mobile/Task/get_work_list')
+            this.$http.post(str,param)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 res.data.data.forEach((item)=>{
                   item.avatar = getAvatar(item.avatar)
                   item.distance = (item.distance / 1000).toFixed(2)
@@ -305,11 +309,12 @@
         }
       },
       _getType(){
-        this.$http.post('/index.php/Mobile/Find/worker_type')
+        let str = this.$test('/index.php/Mobile/Find/worker_type')
+        this.$http.post(str)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 this.work_type.push(item)

@@ -75,7 +75,6 @@
 </template>
 
 <script>
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
   import moment from 'moment'
   import { mapGetters, mapMutations } from 'vuex'
@@ -156,11 +155,12 @@ export default {
     _getType(){
       let param = new URLSearchParams()
       param.append('type',2)
-      this.$http.post('/index.php/Mobile/Find/worker_type',param)
+      let str = this.$test('/index.php/Mobile/Find/worker_type')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.$set(item,'num',1)
@@ -230,7 +230,8 @@ export default {
       param.append('longitude',this.langs)
       param.append('latitude',this.caors)
       param.append('remark',this.project_form.remark)
-      this.$http.post('index.php/Mobile/Find/release',param)
+      let httpUrl = this.$test('/index.php/Mobile/Find/release')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           this.loadingShow =false
           if(res.data.code == 0){
@@ -263,7 +264,8 @@ export default {
     _getInfo(){
       let param = new URLSearchParams()
       param.append('uid',this.user.uid)
-      this.$http.post('index.php/Mobile/Find/worker_info',param)
+      let str = this.$test('/index.php/Mobile/Find/worker_info')
+      this.$http.post(str,param)
         .then((res)=>{
           if(res.data.code == 0){
             let info = res.data.data.worker
@@ -346,7 +348,8 @@ export default {
       }
     },
     _getCompany(){
-      this.$http.post('index.php/Mobile/find/get_my_big_company')
+      let str = this.$test('/index.php/Mobile/find/get_my_big_company')
+      this.$http.post(str)
         .then((res)=>{
           this.com_list = res.data.data
         })

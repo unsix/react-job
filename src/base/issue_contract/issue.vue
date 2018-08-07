@@ -62,7 +62,6 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -107,11 +106,12 @@ export default {
       param.append('identity','1')
       param.append('p',this.pageIndex)
       param.append('each',10)
-      this.$http.post('/index.php/Mobile/find/contract_list',param)
+      let str = this.$test('/index.php/Mobile/find/contract_list')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.$set(item,'log')
@@ -177,7 +177,8 @@ export default {
     },
     getMoreInfo(pr){
       this.store = false
-      this.linked = 'index.php/Mobile/skey/look_draft?id=' + pr +'&operation=2&view=1'
+      let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+      this.linked = str + pr +'&operation=2&view=1'
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
@@ -205,11 +206,12 @@ export default {
       param.append('contract_id',pr)
       param.append('each',10)
       param.append('p',1)
-      this.$http.post('index.php/Mobile/find/apply_history',param)
+      let str = this.$test('/index.php/Mobile/find/apply_history')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == '0'){
              if(res.data.data.length < 1){
                this.$message.info('没有数据')
@@ -227,7 +229,8 @@ export default {
     },
     look_accept(pr){
       this.check = false
-      this.linked = 'index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id='+pr
+      let str = this.$test('/index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id=')
+      this.linked = str+pr
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
@@ -237,7 +240,8 @@ export default {
     },
     look_settlement(pr){
       this.check = false
-      this.linked = 'index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id='+pr
+      let str = this.$test('/index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id=')
+      this.linked = str+pr
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true

@@ -125,7 +125,6 @@
 
 <script>
 	import {getPic} from '@/common/js/pic.js'
-  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   import { mapGetters, mapMutations } from 'vuex'
 	import { createPersonInfo } from 'common/js/person_info'
@@ -164,6 +163,7 @@
           optionals:[],
           requireds:[],
         },
+
         sequence_id:'',
         add_show:false,
         auto_fill:[],
@@ -215,11 +215,12 @@
 				param.append("company_id", this.nowCompanyId);
 				param.append("type", this.formType);
 				param.append("sequence", JSON.stringify(this.arr));
-				this.$http.post("/index.php/Mobile/approval/set_sequence", param)
+        let str = this.$test("/index.php/Mobile/approval/set_sequence")
+				this.$http.post(str, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.submitAddPersonShow = false
 						this.$emit('reload')
 						if(res.data.code === 0) {
@@ -292,11 +293,12 @@
         param.append('approval_type',this.formType)
         param.append('target_uid',item.uid)
         param.append('sequence_id',item.sequence_id)
-        this.$http.post('index.php/Mobile/approval/find_sequence_attachment_appoint_new',param)
+        let str = this.$test('/index.php/Mobile/approval/find_sequence_attachment_appoint_new')
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               let obj = res.data.data
               if(obj.enclosure_describe){
@@ -352,11 +354,12 @@
         param.append('form_content',JSON.stringify(this.form_content))
         param.append('enclosure_describe',this.describe)
         param.append('auto_fill_fields',JSON.stringify(obj))
-        this.$http.post('index.php/Mobile/approval/add_sequence_attachment',param)
+        let str = this.$test('/index.php/Mobile/approval/add_sequence_attachment')
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.setting_show = false
               this.$message.success(res.data.message)
@@ -368,22 +371,24 @@
       _getUserCompanyList() {
         let param = new URLSearchParams();
         param.append("uid", this.user.uid);
-        this.$http.post("/index.php/Mobile/user/companies_list", param)
+        let str = this.$test("/index.php/Mobile/user/companies_list")
+        this.$http.post(str, param)
           .then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             this.setCompanyList(res.data.data)
           })
       },
       _getComPersonList() {
         let newparam = new URLSearchParams();
         newparam.append("company_id", this.nowCompanyId);
-        this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+        let str = this.$test("/index.php/Mobile/user/get_company_personnel")
+        this.$http.post(str, newparam)
           .then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let reaDa = []
             res.data.data.forEach((item) => {
               item.avatar = getAvatar(item.avatar)
@@ -486,7 +491,8 @@
         });
       },
       get_form_auto_filled(){
-        this.$http.post('index.php/Mobile/approval/get_form_auto_filled')
+        let str = this.$test('/index.php/Mobile/approval/get_form_auto_filled')
+        this.$http.post(str)
           .then((res)=>{
             if(res.data.code == 0){
               this.auto_fill = res.data.data
@@ -496,7 +502,7 @@
 		},
 		watch: {
 			jurisdictionFormList() {
-//				this.submitAddPersonShow = false
+//				this.submitAddPersonShowZXD= false
 				this.activeNames = ['0']
 			},
       formType(){
@@ -512,7 +518,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.dialog_wrapper {
+	.dialog_wrapper{
 		position: fixed;
 		top: 0;
 		left: 0;

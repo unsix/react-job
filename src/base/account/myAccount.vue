@@ -62,7 +62,6 @@
 
 <script>
   import {getAvatar} from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
 export default {
   data(){
     return{
@@ -76,11 +75,12 @@ export default {
   },
   methods:{
     _get_money(){
-      this.$http.post('index.php/Mobile/Myinfo/money')
+      let str = this.$test('/index.php/Mobile/Myinfo/money')
+      this.$http.post(str)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.balance = res.data.data.withdraw
             this.cash_amount = res.data.data.withdraw - res.data.data.no_withdraw
@@ -88,11 +88,12 @@ export default {
         })
     },
     _get_order(){
-      this.$http.post('index.php/Mobile/order/get_all_order')
+      let str = this.$test('/index.php/Mobile/order/get_all_order')
+      this.$http.post(str)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               if(item.amount_type == 0){
@@ -106,11 +107,12 @@ export default {
         })
     },
     look_record(){
-      this.$http.post('index.php/Mobile/Myinfo/withdraw_recording')
+      let str = this.$test('/index.php/Mobile/Myinfo/withdraw_recording')
+      this.$http.post(str)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             if(!res.data.data){
               this.$message.error('没有数据')
@@ -126,13 +128,14 @@ export default {
         inputErrorMessage:'只能输入数字，且为小数点后两位',
         inputPlaceholder:`最高提现金额为${this.cash_amount}元`
       }).then(({value})=>{
+        let str = this.$test('/index.php/Mobile/myinfo/withdraw')
         let param = new URLSearchParams()
         param.append('money',value)
-        this.$http.post('index.php/Mobile/myinfo/withdraw',param)
+        this.$http.post(str,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.$message.success(res.data.message)
               this._get_money()
@@ -151,11 +154,12 @@ export default {
       let param = new URLSearchParams()
       param.append('order_num',pr)
       param.append('amount_type',re)
-      this.$http.post('index.php/Mobile/order/get_pay_detail',param)
+      let str = this.$test('/index.php/Mobile/order/get_pay_detail')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.detail = true
             this.account = false

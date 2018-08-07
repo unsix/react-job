@@ -2,7 +2,7 @@
   <div>
     <div class="rele" v-show="rele">
       <div class="top">
-        <p>工程列表</p>
+        <p>最新工程</p>
         <el-tabs v-model="activeName" @tab-click="handClick">
           <el-tab-pane label="进行中" name="fir"></el-tab-pane>
           <el-tab-pane label="已结束" name="sec"></el-tab-pane>
@@ -92,7 +92,6 @@
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from '@/common/js/avatar.js'
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -151,11 +150,12 @@ export default {
       param.append('uid',this.user.uid)
       param.append('each','10')
       param.append('p',this.pageIndex)
-      this.$http.post('/index.php/Mobile/Myinfo/myRelease',param)
+      let httpUrl = this.$test('/index.php/Mobile/Myinfo/myRelease')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.list.push(item)
@@ -185,11 +185,12 @@ export default {
       this._lookUser(pr)
       let param = new URLSearchParams()
       param.append('iid',pr)
-      this.$http.post('/index.php/Mobile/Myinfo/releaseDetail',param)
+      let httpUrl = this.$test('/index.php/Mobile/Myinfo/releaseDetail')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.moreInfo = res.data.data
           }
@@ -215,11 +216,12 @@ export default {
       let param = new URLSearchParams()
       param.append('iid',pr)
       param.append('type',this.activeNames)
-      this.$http.post('/index.php/Mobile/Myinfo/lookUser',param)
+      let httpUrl = this.$test('/index.php/Mobile/Myinfo/lookUser')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               item.avatar = getAvatar(item.avatar)
@@ -232,11 +234,12 @@ export default {
       this.u_id = pr
       let param = new URLSearchParams()
       param.append('type',2)
-      this.$http.post('index.php/Mobile/find/select_contract_companty_types',param)
+      let httpUrl = this.$test('/index.php/Mobile/find/select_contract_companty_types')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             this.list_con = res.data.data
             this.wideShow = true
@@ -253,7 +256,8 @@ export default {
     },
     sel_con(res,tip){
       this.contract_type_id = res
-      let str = 'index.php/Mobile/skey/look_draft?id=' + res +'&operation=1&view=1'
+      let httpUrl = this.$test('/index.php/Mobile/skey/look_draft?id=')
+      let str = httpUrl + res +'&operation=1&view=1'
       this.core = str
       this.wideShow = false
       this.contr = false
@@ -275,7 +279,8 @@ export default {
       this.core = ''
     },
     _right(){
-      this.sign_link = 'index.php/Mobile/find/sign'
+      let httpUrl = this.$test('/index.php/Mobile/find/sign')
+      this.sign_link = httpUrl
       this.signature = true
       this.wideShow = true
     },
@@ -309,11 +314,12 @@ export default {
             param.append('worker_id',this.u_id)
             param.append('signatory_a',res.data.hash)
             this.loadingShow = true
-            this.$http.post('index.php/Mobile/find/addcontract_new',param)
+            let httpUrl = this.$test('/index.php/Mobile/find/addcontract_new')
+            this.$http.post(httpUrl,param)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 if(res.data.code == 0){
                   this.loadingShow = false
                   this._returned()
@@ -340,7 +346,8 @@ export default {
     _getToken(uid) {
       let nparam = new URLSearchParams();
       nparam.append("uid", this.user.uid);
-      this.$http.post("/index.php/Mobile/path/get_token", nparam)
+      let httpUrl = this.$test("/index.php/Mobile/path/get_token")
+      this.$http.post(httpUrl, nparam)
         .then((res) => {
           this.setToken(res.data.data)
         })
@@ -353,11 +360,12 @@ export default {
       }).then(()=>{
         let param = new URLSearchParams()
         param.append('iid',pr)
-        this.$http.post('/index.php/Mobile/myinfo/end_enter',param)
+        let httpUrl = this.$test('/index.php/Mobile/myinfo/end_enter')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.$message.success('结束招工成功')
               this._return()

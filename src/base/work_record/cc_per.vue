@@ -17,7 +17,6 @@
 </template>
 
 <script>
-  import {getCro} from "@/common/js/crowd";
   import {getAvatar} from '@/common/js/avatar.js'
   export default {
     data(){
@@ -32,11 +31,12 @@
         this.cc_range = []
         let param = new URLSearchParams()
         param.append('publish_id',this.pub)
-        this.$http.post('/index.php/Mobile/company/look_cc_user_name',param)
+        let httpUrl = this.$test('/index.php/Mobile/company/look_cc_user_name')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             res.data.data.forEach((item)=>{
               item.avatar = getAvatar(item.avatar)
               this.cc_range.push(item)

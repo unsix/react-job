@@ -65,7 +65,7 @@
         let param = new URLSearchParams()
         param.append('uid',this.user.uid)
         param.append('approval_id',this.form_approval_id)
-        this.$http.post('index.php/Mobile/Personal/approval_personal_process_show',param)
+        this.$http.post('/index.php/Mobile/Personal/approval_personal_process_show',param)
           .then((res)=>{
             if(this.type == '请购单'){
               this.qgdShow = true

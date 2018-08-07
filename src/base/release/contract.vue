@@ -86,7 +86,8 @@
           let param = new URLSearchParams()
           param.append('type',1)
           param.append('each',10)
-          this.$http.post('index.php/Mobile/find/select_contract_companty_types',param)
+          let httpUrl = this.$test('/index.php/Mobile/find/select_contract_companty_types')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               if(res.data.code == 0){
                 this.contract_list = res.data.data
@@ -96,7 +97,8 @@
           let param = new URLSearchParams()
           param.append('p',this.pageIndex)
           param.append('each',10)
-          this.$http.post('index.php/Mobile/find/draft_list',param)
+          let httpUrl = this.$test('/index.php/Mobile/find/draft_list')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               if(res.data.code == 0){
                 this.contract_list = res.data.data
@@ -122,7 +124,8 @@
       },
       look_contract(pr,re,ed){
         this.type_id = pr
-        this.downUrl = `/index.php/Mobile/skey/word_contract?type=${ed}`
+        let httpUrl = this.$test('/index.php/Mobile/skey/word_contract?type')
+        this.downUrl = `${httpUrl}=${ed}`
         let key = ''
         var str = document.cookie.split(';');
         str.forEach((item)=>{
@@ -131,7 +134,8 @@
           }
         })
         key = key.substring(key.lastIndexOf('=')+1, key.length)
-        this.core = `index.php/Mobile/Find/show_form?info=null&type_id=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null&skey=${key}&skey_uid=${this.user.uid}`
+        let httpUrls = this.$test('/index.php/Mobile/Find/show_form?info=null&type_id')
+        this.core = `${httpUrls}=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null&skey=${key}&skey_uid=${this.user.uid}`
         this.contr_show = false
         this.detail_show = true
         this.con_title = re
@@ -145,7 +149,8 @@
       write_contract(){
         this.detail_show = false
         this.details_show = true
-        this.cores = `index.php/Mobile/skey/look_draft?id=${this.type_id}&operation=1&view=2`
+        let httpUrl = this.$test('/index.php/Mobile/skey/look_draft?id')
+        this.cores = `${httpUrl}=${this.type_id}&operation=1&view=2`
       },
       _returned(){
         this.detail_show = true
@@ -160,7 +165,8 @@
           let param = new URLSearchParams()
           param.append('contract_type_id',this.type_id)
           param.append('content_json',result)
-          this.$http.post('index.php/Mobile/find/add_draft',param)
+          let httpUrl = this.$test('/index.php/Mobile/find/add_draft')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               if(res.data.code == 0){
                 this.details_show = false

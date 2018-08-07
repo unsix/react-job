@@ -76,7 +76,6 @@
   import { mapGetters, mapMutations } from 'vuex'
   import {getAvatar} from '@/common/js/avatar.js'
   import {create_depart_list} from 'common/js/initial/depart.js'
-  import {getCro} from "@/common/js/crowd";
   export default {
     data(){
       return{
@@ -115,7 +114,8 @@
         param.append('company_id',this.nowCompanyId)
         param.append('p',this.pageIndex)
         param.append('each',10)
-        this.$http.post('index.php/Mobile/find/request_join_list',param)
+        let httpUrl = this.$test('/index.php/Mobile/find/request_join_list')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
@@ -153,7 +153,8 @@
             param.append('deal_with_id',re.deal_with_id)
             param.append('is_agree',2)
             param.append('company_id',re.company_id)
-            this.$http.post('/index.php/Mobile/find/deal_with_request_join',param)
+            let httpUrl = this.$test('/index.php/Mobile/find/deal_with_request_join')
+            this.$http.post(httpUrl,param)
               .then((res)=>{
                 if(res.data.code == 0){
                   this.$message.success('拒绝成功')
@@ -202,7 +203,8 @@
         this.cur_departent = {}
         let param = new URLSearchParams()
         param.append('company_id',this.nowCompanyId)
-        this.$http.post('/index.php/Mobile/user/get_department_lest',param)
+        let httpUrl = this.$test('/index.php/Mobile/user/get_department_lest')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             if(res.data.code == 0){
               this.departmentList = res.data.data
@@ -230,7 +232,8 @@
         }
         param.append('is_agree',1)
         param.append('request_id',this.request_id)
-        this.$http.post('index.php/Mobile/find/deal_with_request_join',param)
+        let httpUrl = this.$test('/index.php/Mobile/find/deal_with_request_join')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             if(res.data.code == 0){
               this.$message.success('处理成功')
@@ -251,7 +254,8 @@
             param.append('company_name',res)
             param.append('p',1)
             param.append('each',20)
-            this.$http.post('index.php/Mobile/find/select_company_list',param)
+            let httpUrl = this.$test('/index.php/Mobile/find/select_company_list')
+            this.$http.post(httpUrl,param)
               .then((res)=>{
                 if(res.data.code == 0){
                   this.listed = res.data.data
@@ -276,7 +280,8 @@
           let param = new URLSearchParams()
           param.append('company_id',res.company_id)
           param.append('content',value)
-          this.$http.post('index.php/Mobile/find/request_join_company',param)
+          let httpUrl = this.$test('/index.php/Mobile/find/request_join_company')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               this.shoe()
               if(res.data.code == 0){

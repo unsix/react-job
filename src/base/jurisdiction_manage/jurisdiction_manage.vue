@@ -76,7 +76,6 @@
   import { createJurisdictionList } from 'common/js/jurisdiction_list.js'
   import {getAvatar} from '@/common/js/avatar.js'
   import { mapGetters, mapMutations } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
 export default {
   data(){
     return{
@@ -184,7 +183,8 @@ export default {
     },
     _getApproval(){
       if(this.formType == 7){
-        this.$http.post('index.php/Mobile/approval/get_form_auto_filled')
+        let str = this.$test('/index.php/Mobile/approval/get_form_auto_filled')
+        this.$http.post(str)
           .then((res)=>{
             res.data.data.forEach((item)=>{
               this.fuJia.push(JSON.parse(item))
@@ -194,11 +194,12 @@ export default {
       let param = new URLSearchParams()
       param.append('company_id',this.nowCompanyId)
       param.append('type',this.formType)
-      this.$http.post('index.php/Mobile/approval/can_set_sequence',param)
+      let str = this.$test('/index.php/Mobile/approval/can_set_sequence')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             if(res.data.data == 1){
               this.manage_show = false
@@ -216,11 +217,12 @@ export default {
       let param = new URLSearchParams()
       param.append('company_id',this.nowCompanyId)
       param.append('type',this.formType)
-      this.$http.post('index.php/Mobile/user/get_approval_user_info',param)
+      let str = this.$test('/index.php/Mobile/user/get_approval_user_info')
+      this.$http.post(str,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.jurisdictionFormList.push(createJurisdictionList(item))
@@ -231,22 +233,24 @@ export default {
     _getUserCompanyList() {
       let param = new URLSearchParams();
       param.append("uid", this.user.uid);
-      this.$http.post("/index.php/Mobile/user/companies_list", param)
+      let str = this.$test("/index.php/Mobile/user/companies_list")
+      this.$http.post(str, param)
         .then((res) => {
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           this.setCompanyList(res.data.data)
         })
     },
     _getComPersonList() {
       let newparam = new URLSearchParams();
       newparam.append("company_id", this.nowCompanyId);
-      this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+      let str = this.$test("/index.php/Mobile/user/get_company_personnel")
+      this.$http.post(str, newparam)
         .then((res) => {
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           let reaDa = []
           res.data.data.forEach((item) => {
             item.avatar = getAvatar(item.avatar)
@@ -263,11 +267,12 @@ export default {
       let param = new URLSearchParams();
       param.append("company_id", this.nowCompanyId);
       param.append("uid", this.user.uid);
-      this.$http.post("/index.php/Mobile/find/finance_personnel_list", param)
+      let str = this.$test("/index.php/Mobile/find/finance_personnel_list")
+      this.$http.post(str, param)
         .then((res) => {
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           res.data.data.forEach((item) => {
             console.log(item)
             if(item.type === 1) {
@@ -350,11 +355,12 @@ export default {
       param.append("type", zz);
       param.append("personnel", JSON.stringify(narr));
       param.append("uid", this.user.uid);
-      this.$http.post("/index.php/Mobile/user/give_finance_new", param)
+      let str = this.$test("/index.php/Mobile/user/give_finance_new")
+      this.$http.post(str, param)
         .then((res) => {
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code === 0) {
             this._getHuizhi()
             this.formRePersonIndex = -1

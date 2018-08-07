@@ -1,6 +1,5 @@
-export function getPost(way) {
-  let fw = Process.env.argv
-  console.log(fw)
+export default function getPost(way) {
+  let fw = process.env.argv
   if(fw){
     return fw + way
   }else{

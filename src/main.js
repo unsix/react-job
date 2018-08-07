@@ -12,10 +12,13 @@ import md5 from 'js-md5';
 import Vuex from 'vuex'
 import store from './store'
 import Calendar from 'vue-calendar-component'
-// import $ from 'jquery'
 import VueJsonp from 'vue-jsonp'
 import 'vue-croppa/dist/vue-croppa.css'
 import croppa from 'vue-croppa'
+import getPost from '@/common/js/http'
+import getCro from '@/common/js/crowd'
+Vue.prototype.$test = getPost
+Vue.prototype.$testLogin = getCro
 Vue.use(croppa)
 Vue.use(Vuex)
 Vue.use(VueJsonp)

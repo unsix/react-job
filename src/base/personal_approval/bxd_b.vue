@@ -94,7 +94,6 @@
 <script>
   import loading from '@/base/loading/loading'
   import browsePic from '@/base/browse_pic/browse_pic'
-  import {getCro} from "@/common/js/crowd";
   import { mapGetters } from 'vuex'
   export default {
     data(){
@@ -166,11 +165,12 @@
         this.menuShow = true
         let param = new URLSearchParams()
         param.append("uid",this.user.uid)
-        this.$https.post("/index.php/Mobile/path/get_token", param)
+        let httpUrl = this.$test("/index.php/Mobile/path/get_token")
+        this.$http.post(httpUrl, param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             this.input_value = res.data.data
           })
       },
@@ -212,26 +212,28 @@
             let nparam = new URLSearchParams()
             nparam.append("uid",this.user.uid)
             nparam.append("company_id",this.nowCompanyId)
-            this.$http.post("/index.php/Mobile/User/return_company_new",nparam)
+            let httpUrl = this.$test("/index.php/Mobile/User/return_company_new")
+            this.$http.post(httpUrl,nparam)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 this.now_personnel_id = res.data.data.personnel_id
                 if(this.now_personnel_id = res.data.data.personnel_id){
-                  let nparam = new URLSearchParams()
-                  nparam.append("uid",this.user.uid)
-                  nparam.append("approval_id",this.psb_approval_id)
+                  let param = new URLSearchParams()
+                  param.append("uid",this.user.uid)
+                  param.append("approval_id",this.psb_approval_id)
                   param.append("personnel_id", this.now_personnel_id);
                   param.append("company_id", this.nowCompanyId);
                   param.append("finance_state", 1);
-                  param.append("receipt_content", '111');
+                  param.append("receipt_content", this.handle_txt);
                   param.append("receipt_pic", res.data.data.enclosure_id);
-                  this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+                  let httpUrl = this.$test("/index.php/Mobile/find/finance_receipt")
+                  this.$http.post(httpUrl, param)
                     .then((res)=>{
                       var current = this
                       var judge = res.data.code
-                      getCro(judge,current)
+                      this.$testLogin(judge,current)
                       this.loading_show = false
                       if(res.data.code === 0){
                         this.$message({
@@ -261,11 +263,12 @@
           nparam.append("company_id", this.nowCompanyId);
           nparam.append("finance_state", 1);
           nparam.append("receipt_content", this.handle_txt);
-          this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+          let httpUrl = this.$test("/index.php/Mobile/find/finance_receipt")
+          this.$http.post(httpUrl, param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               this.loading_show = false
               if(res.data.code === 0) {
                 this.$message({
@@ -297,17 +300,19 @@
             let mparam = new URLSearchParams();
             mparam.append("uid",this.user.uid)
             mparam.append("company_id",this.nowCompanyId)
-            this.$http.post("/index.php/Mobile/User/return_company_new", mparam)
+            let httpUrl = this.$test("/index.php/Mobile/User/return_company_new")
+            this.$http.post(httpUrl, mparam)
               .then((res)=>{
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
                 this.now_personnel_id = res.data.data.personnel_id
                 if(this.now_personnel_id === res.data.data.personnel_id) {
                   let nparam = new URLSearchParams();
                   nparam.append("uid", this.user.uid);
                   nparam.append("picture", JSON.stringify(this.pic_hash_arr));
-                  this.$http.post("/index.php/Mobile/approval/upload_enclosure_new", nparam)
+                  let httpUrl = this.$test("/index.php/Mobile/approval/upload_enclosure_new")
+                  this.$http.post(httpUrl, nparam)
                     .then((res) => {
                       let param = new URLSearchParams();
                       param.append("uid", this.user.uid);
@@ -315,13 +320,14 @@
                       param.append("personnel_id", this.now_personnel_id);
                       param.append("company_id", this.nowCompanyId);
                       param.append("finance_state", 1);
-                      param.append("receipt_content", '111');
+                      param.append("receipt_content", this.handle_txt);
                       param.append("receipt_pic", res.data.data.enclosure_id);
-                      this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+                      let httpUrl = this.$test("/index.php/Mobile/find/finance_receipt")
+                      this.$http.post(httpUrl, param)
                         .then((res) => {
                           var current = this
                           var judge = res.data.code
-                          getCro(judge,current)
+                          this.$testLogin(judge,current)
                           this.loading_show = false
                           if(res.data.code === 0) {
                             this.$message({

@@ -113,7 +113,6 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import {getCro} from "@/common/js/crowd";
   import loading from '@/base/loading/loading'
 export default {
   data(){
@@ -170,11 +169,12 @@ export default {
       param.append('identity','2')
       param.append('p',this.pageIndex)
       param.append('each',10)
-      this.$http.post('/index.php/Mobile/find/contract_list',param)
+      let httpUrl = this.$test('/index.php/Mobile/find/contract_list')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == 0){
             res.data.data.forEach((item)=>{
               this.$set(item,'log')
@@ -257,7 +257,8 @@ export default {
     },
     getMoreInfo(pr){
       this.store = false
-      this.linked = 'index.php/Mobel/skey/look_draft?id='+pr+'&operation=2&view=1'
+      let httpUrl = this.$test('/index.php/Mobel/skey/look_draft?id=')
+      this.linked = httpUrl+pr+'&operation=2&view=1'
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
@@ -277,7 +278,8 @@ export default {
     },
     once(pr,res){
       if(pr == '同意'){
-        this.sign_link = 'index.php/Mobile/find/sign'
+        let httpUrl = this.$test('/index.php/Mobile/find/sign')
+        this.sign_link = httpUrl
         this.wideShow = true
         this.signature = true
         this.insert = res
@@ -286,11 +288,12 @@ export default {
         this.store = false
         let param = new URLSearchParams()
         param.append('contract_id',res)
-        this.$http.post('index.php/Mobile/find/look_apply_content',param)
+        let httpUrl = this.$test('/index.php/Mobile/find/look_apply_content')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
               if(res.data.code == 0) {
                 this.$set(res.data.data,'log')
                 this.$set(res.data.data,'ion')
@@ -328,11 +331,12 @@ export default {
         this.store = false
         let param = new URLSearchParams()
         param.append('contract_id',res)
-        this.$http.post('index.php/Mobile/find/look_apply_content',param)
+        let httpUrl = this.$test('/index.php/Mobile/find/look_apply_content')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             if(res.data.code == 0) {
               this.$set(res.data.data,'log')
               this.$set(res.data.data,'ion')
@@ -383,11 +387,12 @@ export default {
           let param = new URLSearchParams()
           param.append('status',2)
           param.append('contract_id',res)
-          this.$http.post('index.php/Mobile/Find/audit_new',param)
+          let httpUrl = this.$test('/index.php/Mobile/Find/audit_new')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 this.$message.warning('合同退回成功')
                 this._getInfo()
@@ -407,11 +412,12 @@ export default {
         }).then(()=>{
           let param = new URLSearchParams()
           param.append('contract_id',res)
-          this.$http.post('index.php/Mobile/find/examine_apply',param)
+          let httpUrl = this.$test('/index.php/Mobile/find/examine_apply')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 this.$message.success('等待雇主处理')
                 this._getInfo()
@@ -434,11 +440,12 @@ export default {
           let param = new URLSearchParams()
           param.append('status',3)
           param.append('contract_id',res)
-          this.$http.post('index.php/Mobile/Find/audit_new',param)
+          let httpUrl = this.$test('/index.php/Mobile/Find/audit_new')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 this.$message.warning('拒绝成功')
                 this._getInfo()
@@ -457,11 +464,12 @@ export default {
       param.append('contract_id',pr)
       param.append('each',10)
       param.append('p',1)
-      this.$http.post('index.php/Mobile/find/apply_history',param)
+      let httpUrl = this.$test('/index.php/Mobile/find/apply_history')
+      this.$http.post(httpUrl,param)
         .then((res)=>{
           var current = this
           var judge = res.data.code
-          getCro(judge,current)
+          this.$testLogin(judge,current)
           if(res.data.code == '0'){
             if(res.data.data.length < 1){
               this.$message.info('没有数据')
@@ -507,11 +515,12 @@ export default {
           param.append('contract_id',this.insert)
           param.append('signatory_b',res.data.hash)
           this.loadingShow = true
-          this.$http.post('index.php/Mobile/Find/audit_new',param)
+          let httpUrl = this.$test('/index.php/Mobile/Find/audit_new')
+          this.$http.post(httpUrl,param)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 this.loadingShow = false
                 this.wideShow = false
@@ -533,7 +542,8 @@ export default {
     },
     _right(pr){
       this.accept = false
-      this.linked = 'index.php/Mobel/skey/look_draft?id='+pr+'&operation=2&view=1'
+      let httpUrl = this.$test('/index.php/Mobel/skey/look_draft?id=')
+      this.linked = httpUrl+pr+'&operation=2&view=1'
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
@@ -544,7 +554,8 @@ export default {
     look_accept(){
       if(this.pubg.apply_content){
         this.accept = false
-        this.linked = 'index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id='+this.pubg.apply_content.inspection_id
+        let httpUrl = this.$test('/index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id=')
+        this.linked = httpUrl+this.pubg.apply_content.inspection_id
         this.loadingShow = true
         setTimeout(()=>{
           this.contract = true
@@ -552,11 +563,12 @@ export default {
           this.con_title = '验收单'
         },500)
       }else{
-        this.$http.post('index.php/Mobile/find/inspection_list')
+        let httpUrl = this.$test('/index.php/Mobile/find/inspection_list')
+        this.$http.post(httpUrl)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             this.addShow = true
             this.wideShow = true
             this.sec_title = '选择验收单类型'
@@ -567,7 +579,8 @@ export default {
     look_settlement(){
       if(this.pubg.apply_content){
         this.accept = false
-        this.linked = 'index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id='+this.pubg.apply_content.settlement_id
+        let httpUrl = this.$test('/index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id=')
+        this.linked = httpUrl+this.pubg.apply_content.settlement_id
         this.loadingShow = true
         setTimeout(()=>{
           this.contract = true
@@ -575,11 +588,12 @@ export default {
           this.con_title = '结算单'
         },500)
       }else{
-        this.$http.post('/index.php/Mobile/find/seelement_list')
+        let httpUrl = this.$test('/index.php/Mobile/find/seelement_list')
+        this.$http.post(httpUrl)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             this.addShow = true
             this.wideShow = true
             this.sec_title = '选择结算单类型'
@@ -590,7 +604,8 @@ export default {
     look_accepted(pr){
       this.accept = false
       this.check = false
-      this.linked = 'index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id='+pr
+      let httpUrl = this.$test('/index.php/Mobile/skey/look_inspection?type=1&operation=2&form_id=')
+      this.linked = httpUrl+pr
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
@@ -601,7 +616,8 @@ export default {
     look_settlemented(pr){
       this.accept = false
       this.check = false
-      this.linked = 'index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id='+pr
+      let httpUrl = this.$test('/index.php/Mobile/skey/look_inspection?type=2&operation=2&form_id=')
+      this.linked = httpUrl+pr
       this.loadingShow = true
       setTimeout(()=>{
         this.contract = true
@@ -623,10 +639,12 @@ export default {
       this.accept = false
       this.contract = true
       if(this.sec_title == '选择验收单类型'){
-        this.linked = 'index.php/Mobile/skey/look_inspection?type=1&form_type_id=2&operation=1&form_id=' + pr
+        let httpUrl = this.$test('/index.php/Mobile/skey/look_inspection?type=1&form_type_id=2&operation=1&form_id=')
+        this.linked = httpUrl + pr
         this.con_title = '填写验收单'
       }else{
-        this.linked = 'index.php/Mobile/skey/look_inspection?type=2&form_type_id=1&operation=1&form_id=' + pr
+        let httpUrl = this.$test('/index.php/Mobile/skey/look_inspection?type=2&form_type_id=1&operation=1&form_id=')
+        this.linked = httpUrl + pr
         this.con_title = '填写结算单'
       }
 

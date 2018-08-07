@@ -110,7 +110,6 @@
 <script>
 	import { createPersonInfo } from 'common/js/person_info'
 	import { getPic } from '@/common/js/pic.js'
-  import {getCro} from "@/common/js/crowd";
   import { getAvatar } from '@/common/js/avatar.js'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -199,11 +198,12 @@
 		    let param = new URLSearchParams()
         param.append('uid',this.user.uid)
         param.append('company_id',this.nowCompanyId)
-        this.$http.post("/index.php/Mobile/User/return_company_new",param)
+        let httpUrl = this.$test("/index.php/Mobile/User/return_company_new")
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             let item = res.data.data
             this.m = item.is_manage
             this.personnel_id = item.personnel_id
@@ -213,11 +213,12 @@
                 mparam.append('personnel_id',this.personnel_id)
                 mparam.append('uid',this.user.uid)
                 mparam.append('company_id',this.nowCompanyId)
-                this.$http.post("/index.php/Mobile/User/quit_company",mparam)
+                let httpUrl = this.$test("/index.php/Mobile/User/quit_company")
+                this.$http.post(httpUrl,mparam)
                   .then((res)=>{
                     var current = this
                     var judge = res.data.code
-                    getCro(judge,current)
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       this.$message({
                         message: '操作成功',
@@ -225,11 +226,12 @@
                       })
                       let param = new URLSearchParams();
                       param.append("uid", this.user.uid);
-                      this.$http.post("/index.php/Mobile/user/companies_list", param)
+                      let httpUrl = this.$test("/index.php/Mobile/user/companies_list")
+                      this.$http.post(httpUrl, param)
                         .then((res)=>{
                           var current = this
                           var judge = res.data.code
-                          getCro(judge,current)
+                          this.$testLogin(judge,current)
                           this.setNowCompanyId(res.data.data[0].company_id)
                           this.setNowCompanyName(res.data.data[0].company_name)
                           localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
@@ -264,11 +266,12 @@
 					param.append("uid", this.user.uid);
 					param.append("department_name", this.newDepartmentName);
 					param.append("company_id", this.nowCompanyId);
-					this.$http.post("/index.php/Mobile/User/add_department", param)
+          let httpUrl = this.$test("/index.php/Mobile/User/add_department")
+					this.$http.post(httpUrl, param)
 						.then((res) => {
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
 							this._getComPartPersonList()
 							if(res.data.code === 0) {
 								this.activeName = '1'
@@ -301,11 +304,12 @@
           nparam.append("uid",this.user.uid)
           nparam.append("project_name",this.newProjectName)
           nparam.append("company_id",this.nowCompanyId)
-          this.$http.post("/index.php/Mobile/company/add_company_project",nparam)
+          let httpUrl = this.$test("/index.php/Mobile/company/add_company_project")
+          this.$http.post(httpUrl,nparam)
             .then((res)=>{
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
               this._getProjectList()
               if(res.data.code === 0){
                 this.project = true
@@ -371,11 +375,12 @@
 				param.append("uid", this.user.uid);
 				param.append("personnel_id", JSON.stringify(arr));
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/User/give_manage", param)
+        let httpUrl = this.$test("/index.php/Mobile/User/give_manage")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.activeName1 = ['1']
 						this.activeName2 = '0'
 						if(res.data.code === 0) {
@@ -403,11 +408,12 @@
 						param.append("my_personnel_id", JSON.parse(localStorage.personnelId));
 						param.append("personnel_id", item.personnel_id);
 						param.append("company_id", this.nowCompanyId);
-						this.$http.post("/index.php/Mobile/User/del_manage", param)
+            let httpUrl = this.$test("/index.php/Mobile/User/del_manage")
+						this.$http.post(httpUrl, param)
 							.then((res) => {
                 var current = this
                 var judge = res.data.code
-                getCro(judge,current)
+                this.$testLogin(judge,current)
 								if(res.data.code === 1) {
 									this.$message.error(res.data.message);
 								} else if(res.data.code === 0) {
@@ -432,11 +438,12 @@
 					param.append("uid", this.user.uid);
 					param.append("personnel_id", item.personnel_id);
 					param.append("company_id", this.nowCompanyId);
-					this.$http.post("/index.php/Mobile/user/del_company_personnel", param)
+          let httpUrl = this.$test("/index.php/Mobile/user/del_company_personnel")
+					this.$http.post(httpUrl, param)
 						.then((res) => {
               var current = this
               var judge = res.data.code
-              getCro(judge,current)
+              this.$testLogin(judge,current)
 							if(res.data.code === 0) {
 								this._getComPartPersonList()
 								this._getAdmin()
@@ -469,11 +476,12 @@
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index.php/Mobile/user/companies_list", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/companies_list")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.setCompanyList(res.data.data)
 					})
 			},
@@ -482,11 +490,12 @@
 				this.ComPartPersonList = []
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_department_lest")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -498,11 +507,12 @@
 							let newparam = new URLSearchParams();
 							newparam.append("company_id", this.nowCompanyId);
 							newparam.append("department_id", resData[j].department_id);
-							this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+              let httpUrl = this.$test("/index.php/Mobile/user/get_company_personnel")
+							this.$http.post(httpUrl, newparam)
 								.then((res) => {
                   var current = this
                   var judge = res.data.code
-                  getCro(judge,current)
+                  this.$testLogin(judge,current)
 									let reaDa = []
 									res.data.data.forEach((item) => {
 										reaDa.push(createPersonInfo(item))
@@ -520,11 +530,12 @@
         let mparam = new URLSearchParams()
         mparam.append('uid',this.user.uid)
         mparam.append('company_id',this.nowCompanyId)
-        this.$http.post("/index.php/Mobile/company/company_project_list",mparam)
+        let httpUrl = this.$test("/index.php/Mobile/company/company_project_list")
+        this.$http.post(httpUrl,mparam)
           .then((res)=>{
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
             res.data.data.forEach((item)=>{
               this.comProjectList.push(item)
             })
@@ -535,11 +546,12 @@
 				let mparam = new URLSearchParams();
 				mparam.append("company_id", this.nowCompanyId);
 				mparam.append("department_id", -1);
-				this.$http.post("/index.php/Mobile/user/get_company_personnel", mparam)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_company_personnel")
+				this.$http.post(httpUrl, mparam)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						if(res.data.data.length != 0) {
 							res.data.data.forEach((list) => {
 								let mewObj = {}

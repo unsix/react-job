@@ -153,7 +153,6 @@
 	import { mapMutations } from 'vuex'
 	import Date from '@/base/date/date'
   import {getAvatar} from '@/common/js/avatar.js'
-  import { getCro } from '@/common/js/crowd'
 	import { prefixStyle } from '@/common/js/dom'
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
@@ -312,7 +311,7 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-				// 	this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录','工人列表','工程列表','公司列表', '我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+				// 	this.workList = ['处理审批', '发起审批','创建公司', '工作记录','通讯录','工人列表','最新工程','最近公司', '我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
           this.workList=[
             {
               title:'审批相关',
@@ -345,7 +344,7 @@
                   route:{ path: '/work/create_company' }
                 },
                 {
-                  label:'公司列表',
+                  label:'最近公司',
                   index:'2-2',
                   route:{ path: '/work/company' }
                 },
@@ -413,7 +412,7 @@
               index:'5',
               children:[
                 {
-                  label:'工程列表',
+                  label:'最新工程',
                   index:'5-1',
                   route:{ path: '/work/nearWork' }
                 },
@@ -492,7 +491,7 @@
           ]
 				}
 				if(m === 1 && f === 0) {
-				// 	this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录','工人列表','工程列表','公司列表', '我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+				// 	this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '邀请同事', '工作记录', '通讯录','工人列表','最新工程','最近公司', '我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
           this.workList=[
             {
               title:'审批相关',
@@ -525,7 +524,7 @@
                   route:{ path: '/work/create_company' }
                 },
                 {
-                  label:'公司列表',
+                  label:'最近公司',
                   index:'2-2',
                   route:{ path: '/work/company' }
                 },
@@ -593,7 +592,7 @@
               index:'5',
               children:[
                 {
-                  label:'工程列表',
+                  label:'最新工程',
                   index:'5-1',
                   route:{ path: '/work/nearWork' }
                 },
@@ -672,7 +671,7 @@
           ]
 				}
 				if(m === 0 && f === 1) {
-				// 	this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录','工人列表','工程列表','公司列表', '我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+				// 	this.workList = ['处理审批', '发起审批', '表单回执','创建公司', '邀请同事', '工作记录', '通讯录','工人列表','最新工程','最近公司', '我发布的','我要充值','我的账户','我要发工资','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
           this.workList=[
             {
               title:'审批相关',
@@ -705,7 +704,7 @@
                   route:{ path: '/work/create_company' }
                 },
                 {
-                  label:'公司列表',
+                  label:'最近公司',
                   index:'2-2',
                   route:{ path: '/work/company' }
                 },
@@ -773,7 +772,7 @@
               index:'5',
               children:[
                 {
-                  label:'工程列表',
+                  label:'最新工程',
                   index:'5-1',
                   route:{ path: '/work/nearWork' }
                 },
@@ -852,7 +851,7 @@
           ]
 				}
 				if(m === 1) {
-				// 	this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录','工人列表','工程列表','公司列表', '我发布的','我要发工资','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
+				// 	this.workList = ['处理审批', '发起审批', '公司管理', '创建公司', '权限管理', '表单回执', '工作记录', '邀请同事', '通讯录','工人列表','最新工程','最近公司', '我发布的','我要发工资','我要充值','我的账户','我发出的合同','我收到的合同','我的作品','我的收藏','消息提醒']
           this.workList=[
             {
               title:'审批相关',
@@ -895,7 +894,7 @@
                   route:{ path: '/work/jurisdictionManage' }
                 },
                 {
-                  label:'公司列表',
+                  label:'最近公司',
                   index:'2-4',
                   route:{ path: '/work/company' }
                 },
@@ -958,7 +957,7 @@
               index:'5',
               children:[
                 {
-                  label:'工程列表',
+                  label:'最新工程',
                   index:'5-1',
                   route:{ path: '/work/nearWork' }
                 },
@@ -1108,7 +1107,7 @@
           case '工人列表':
             this.$router.push({path:'/work/list'})
             break;
-          case '工程列表':
+          case '最新工程':
             this.$router.push({path:'/work/nearWork'})
             break;
           case '我发布的':
@@ -1138,7 +1137,7 @@
           case '我要发工资':
             this.$router.push({path:'/work/wage'})
             break;
-          case '公司列表':
+          case '最近公司':
             this.$router.push({path:'/work/company'})
             break;
 				}
@@ -1147,11 +1146,12 @@
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
 				param.append("uid", this.user.uid);
-				this.$http.post("/index.php/Mobile/User/return_company_new", param)
+        let httpUrl = this.$test("/index.php/Mobile/User/return_company_new")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.setUserState({
 							'manage': parseInt(res.data.data.is_manage),
 							'finance': parseInt(res.data.data.is_finance),
@@ -1162,7 +1162,8 @@
 			_getToken(uid) {
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
-				this.$http.post("/index.php/Mobile/path/get_token", nparam)
+        let httpUrl = this.$test("/index.php/Mobile/path/get_token")
+				this.$http.post(httpUrl, nparam)
 					.then((res) => {
 						this.setToken(res.data.data)
 					})
@@ -1170,11 +1171,12 @@
 			_getComPartPersonList() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_department_lest")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						let resData = res.data.data
 						for(let j = 0, len = resData.length; j < len; j++) {
 							if(this.numOne >= len) {
@@ -1185,7 +1187,8 @@
 							let newparam = new URLSearchParams();
 							newparam.append("company_id", this.nowCompanyId);
 							newparam.append("department_id", resData[j].department_id);
-							this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+              let httpUrl = this.$test("/index.php/Mobile/user/get_company_personnel")
+							this.$http.post(httpUrl, newparam)
 								.then((res) => {
 									let reaDa = []
 									res.data.data.forEach((item) => {
@@ -1202,11 +1205,12 @@
 			_getComDepart() {
 				let param = new URLSearchParams();
 				param.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/user/get_department_lest", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_department_lest")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
 					  var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						let arr = []
 						res.data.data.forEach((item) => {
 							arr.push(create_depart_list(item))
@@ -1217,11 +1221,12 @@
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
-				this.$http.post("/index.php/Mobile/user/companies_list", param)
+        let httpUrl = this.$test("/index.php/Mobile/user/companies_list")
+				this.$http.post(httpUrl, param)
 					.then((res) => {
             var current = this
             var judge = res.data.code
-            getCro(judge,current)
+            this.$testLogin(judge,current)
 						this.setNowCompanyId(res.data.data[0].company_id)
 						this.setCompanyList(res.data.data)
 						this.setNowCompanyName(res.data.data[0].company_name)
@@ -1231,7 +1236,8 @@
 			_getComPersonList() {
 				let newparam = new URLSearchParams();
 				newparam.append("company_id", this.nowCompanyId);
-				this.$http.post("/index.php/Mobile/user/get_company_personnel", newparam)
+        let httpUrl = this.$test("/index.php/Mobile/user/get_company_personnel")
+				this.$http.post(httpUrl, newparam)
 					.then((res) => {
 						let reaDa = []
 						res.data.data.forEach((item) => {
@@ -1250,7 +1256,8 @@
       _inited(){
         let param = new URLSearchParams()
         param.append('phone',this.user.phone)
-        this.$http.post('/index.php/Mobile/worker/get_info_phone',param)
+        let httpUrl = this.$test('/index.php/Mobile/worker/get_info_phone')
+        this.$http.post(httpUrl,param)
           .then((res)=>{
             var str = process.env.NODE_ENV
             var picLeader = ''
@@ -1277,7 +1284,8 @@
           })
       },
       _getType(){
-        this.$http.post('/index.php/Mobile/find/worker_type_list')
+        let httpUrl = this.$test('/index.php/Mobile/find/worker_type_list')
+        this.$http.post(httpUrl)
           .then((res)=>{
             if(res.data.code == 0){
               var obj1 = new Object()
@@ -1332,7 +1340,8 @@
             let param = new URLSearchParams()
             param.append('uid',this.user.uid)
             param.append('picture',JSON.stringify(this.pic_hash))
-            this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',param)
+            let httpUrl = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
+            this.$http.post(httpUrl,param)
               .then((res)=>{
                 console.log(res)
               })
@@ -1387,7 +1396,8 @@
                 param.append('bank_name',this.myInfo.bank_account)
                 param.append('idcard_p',this.pic_hash)
                 param.append('idcard_n',this.asd_hash)
-                this.$http.post('/index.php/Mobile/User/update_user_info_new',param)
+                let httpUrl = this.$test('/index.php/Mobile/User/update_user_info_new')
+                this.$http.post(httpUrl,param)
                   .then((res)=>{
                     if(res.data.code == 0){
                       this.loadingShow = false

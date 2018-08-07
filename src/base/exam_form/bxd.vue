@@ -105,7 +105,6 @@
 
 <script>
   import loading from '@/base/loading/loading'
-  import {getCro} from "@/common/js/crowd";
   import browsePic from '@/base/browse_pic/browse_pic'
   import { mapGetters } from 'vuex'
       export default {
@@ -186,7 +185,8 @@
             this.menuShow = !this.menuShow
             let param = new URLSearchParams()
             param.append("uid",this.user.uid)
-            this.$http.post("/index.php/Mobile/path/get_token", param)
+            let str = this.$test("/index.php/Mobile/path/get_token")
+            this.$http.post(str, param)
               .then((res)=>{
                 this.input_value = res.data.data
               })
@@ -210,7 +210,8 @@
             let nparam = new URLSearchParams()
             nparam.append("uid",this.user.uid)
             nparam.append("company_id",this.nowCompanyId)
-            this.$http.post("/index.php/Mobile/User/return_company_new",nparam)
+            let str = this.$test("/index.php/Mobile/User/return_company_new")
+            this.$http.post(str,nparam)
               .then((res)=>{
                 if(res.data.code == 0){
                   this.personnel_id = res.data.data.personnel_id
@@ -248,7 +249,8 @@
                 let nparam = new URLSearchParams()
                 nparam.append('uid',this.user.uid)
                 nparam.append('picture',JSON.stringify(this.pic_hash_arr))
-                this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                let str = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
+                this.$http.post(str,nparam)
                   .then((res)=>{
                     this.enclosure_id = res.data.data.enclosure_id
                     this.pic_time = Date.parse(new Date())
@@ -265,7 +267,8 @@
             let nparam = new URLSearchParams()
             nparam.append("uid",this.user.uid)
             nparam.append("company_id",this.nowCompanyId)
-            this.$http.post("/index.php/Mobile/User/return_company_new",nparam)
+            let str = this.$test("/index.php/Mobile/User/return_company_new")
+            this.$http.post(str,nparam)
               .then((res)=>{
                 if(res.data.code == 0){
                   this.personnel_id = res.data.data.personnel_id
@@ -279,11 +282,12 @@
               param.append("company_id", this.nowCompanyId);
               param.append("finance_state", 1);
               param.append("receipt_content", this.handle_txt);
-              this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+              let str = this.$test("/index.php/Mobile/find/finance_receipt")
+              this.$http.post(str, param)
                 .then((res) => {
                   var current = this
                   var judge = res.data.code
-                  getCro(judge,current)
+                  this.$testLogin(judge,current)
                   this.loading_show = false
                   if(res.data.code === 0) {
                     this.$message({
@@ -329,7 +333,8 @@
                   let nparam = new URLSearchParams()
                   nparam.append('uid',this.user.uid)
                   nparam.append('picture',JSON.stringify(this.pic_hash_arr))
-                  this.$http.post('/index.php/Mobile/approval/upload_enclosure_new',nparam)
+                  let str = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
+                  this.$http.post(str,nparam)
                     .then((res)=>{
                       this.enclosure_id = res.data.data.enclosure_id
                       this.pic_time = Date.parse(new Date())
@@ -372,7 +377,8 @@
             param.append("finance_state", this.finance_state);
             param.append("receipt_content", this.handle_txt);
             param.append("receipt_pic", this.enclosure_id);
-            this.$http.post("/index.php/Mobile/find/finance_receipt", param)
+            let str = this.$test("/index.php/Mobile/find/finance_receipt")
+            this.$http.post(str, param)
               .then((res)=>{
                 this.loading_show = false
                 if(res.data.code === 0) {
