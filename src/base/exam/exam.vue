@@ -2188,7 +2188,7 @@
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", item.approval_id);
-				nparam.append("company_id", this.nowCompanyId);
+				nparam.append("company_id", item.company_id);
         let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
 				this.$http.post(httpUrl, nparam)
 					.then((res) => {
