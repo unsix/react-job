@@ -29,6 +29,7 @@ const log = () =>import('@/base/work_record/log')
 const small = () =>import('@/base/create_company/small_company')
 const join = () =>import('@/base/manage_company/join_company')
 const contr_list = () =>import('@/base/release/contract')
+const person_qk = () =>import('@/base/person_qk/qk_main')
 Vue.use(Router)
 export default new Router({
   // mode:'history',
@@ -151,6 +152,10 @@ export default new Router({
         {
           path:'contr_list',
           component:contr_list
+        },
+        {
+          path:'person_qk',
+          component:person_qk
         }
 			]
 		},

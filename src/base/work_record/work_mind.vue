@@ -1,35 +1,54 @@
 <template>
   <div class="work_mind">
-    <ul class="zhuti" v-show="mainShow">
-      <li @click="record_mind">
-        <el-badge :value="obj1.unread_num" class="item">
-          <span><i class="el-icon-edit"></i></span>
-        </el-badge>
-        <span>日志提醒</span>
-        <span v-show="rec">您有{{obj1.unread_num}}篇日志需要点评</span>
-      </li>
-      <li @click="reply" >
-        <el-badge :value="obj2.unread_num" class="item">
-          <span><i class="iconfont icon-xiaoxi"></i></span>
-        </el-badge>
-        回复我的
-        <span v-show="sce">({{obj2.name}} 回复: {{obj2.description}})</span>
-      </li>
-      <li @click="like_me">
-        <el-badge :value="obj3.unread_num" class="item">
-          <span><i class="iconfont icon-danzan"></i></span>
-        </el-badge>
-        我收到的赞
-        <span v-show="scd">({{obj3.name}} 赞了我的工作)</span>
-      </li>
-      <li @click="my_record">
-        <el-badge :value="obj4.unread_num" class="item">
-          <span><i class="el-icon-edit-outline"></i></span>
-        </el-badge>
-        我发出的工作
-        <span v-show="scf">({{obj4.name}}点评了我的日志:{{obj4.description}})</span>
-      </li>
-    </ul>
+    <div v-show="mainShow">
+      <div class="top">
+        <p>消息提醒</p>
+      </div>
+      <ul class="zhuti">
+        <li @click="record_mind">
+          <el-badge :value="obj1.unread_num" class="item">
+            <span><i class="el-icon-edit"></i></span>
+          </el-badge>
+          <span>日志提醒</span>
+          <span v-show="rec">您有{{obj1.unread_num}}篇日志需要点评</span>
+        </li>
+        <li @click="reply" >
+          <el-badge :value="obj2.unread_num" class="item">
+            <span><i class="iconfont icon-xiaoxi"></i></span>
+          </el-badge>
+          回复我的
+          <span v-show="sce">({{obj2.name}} 回复: {{obj2.description}})</span>
+        </li>
+        <li @click="like_me">
+          <el-badge :value="obj3.unread_num" class="item">
+            <span><i class="iconfont icon-danzan"></i></span>
+          </el-badge>
+          我收到的赞
+          <span v-show="scd">({{obj3.name}} 赞了我的工作)</span>
+        </li>
+        <li @click="my_record">
+          <el-badge :value="obj4.unread_num" class="item">
+            <span><i class="el-icon-edit-outline"></i></span>
+          </el-badge>
+          我发出的工作
+          <span v-show="scf">({{obj4.name}}点评了我的日志:{{obj4.description}})</span>
+        </li>
+        <li>
+          <el-badge :value="obj5.unread_num" class="item">
+            <span><i class="iconfont icon-xiaoxi"></i></span>
+          </el-badge>
+          审批回复提醒
+          <span v-show="approval">{{obj5.name}}回复了我的审批：{{obj5.description}}</span>
+        </li>
+        <li @click="show_qkd">
+          <el-badge :value="obj6.unread_num" class="item">
+            <span><i class="el-icon-bell"></i></span>
+          </el-badge>
+          工资请款确认单
+          <span v-show="qkd">{{obj6.description}}</span>
+        </li>
+      </ul>
+    </div>
 
     <mind ref="mind" v-show="mindShow"></mind>
 
@@ -38,6 +57,8 @@
     <remy ref="remy" v-show="remyShow"></remy>
 
     <like ref="like" v-show="like_show"></like>
+
+    <per v-if="per_show"></per>
   </div>
 </template>
 
@@ -49,6 +70,7 @@
   import reply from '@/base/work_record/replyMe'
   import remy from '@/base/work_record/remy'
   import like from '@/base/work_record/liked'
+  import per from '@/base/work_record/person_qkd'
   export default {
     data(){
       return{
@@ -58,6 +80,7 @@
         mindShow:false,
         remyShow: false,
         like_show: false,
+        per_show:false,
         obj1:{
           name:'',
           unread_num:'',
@@ -78,10 +101,22 @@
           unread_num:'',
           description:''
         },
+        obj5:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
+        obj6:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
         rec:true,
         sce:true,
         scd:true,
-        scf:true
+        scf:true,
+        approval:true,
+        qkd:true,
       }
     },
     methods:{
@@ -123,6 +158,10 @@
         this.$refs.like.likedShow = true
         this.$refs.like.pageShow = true
         this.$refs.like._get_like_list()
+      },
+      show_qkd(){
+        this.mainShow = false
+        this.per_show = true
       },
       _get_notification_list(){
         let param = new URLSearchParams()
@@ -172,6 +211,24 @@
               this.obj4.unread_num = this.list.wait_reviewed.unread_num
               this.obj4.description = this.list.wait_reviewed.description
             }
+            if(this.list.reply_me_approval == null){
+              this.approval = false
+              this.list.reply_me_approval = this.obj5
+              this.obj5.unread_num = '0'
+            }else{
+              this.obj5.name = this.list.reply_me_approval.name
+              this.obj5.unread_num = this.list.reply_me_approval.unread_num
+              this.obj5.description = this.list.reply_me_approval.description
+            }
+            if(this.list.salary_remind == null){
+              this.qkd = false
+              this.list.salary_remind = this.obj6
+              this.obj6.unread_num = '0'
+            }else{
+              this.obj6.name = this.list.salary_remind.name
+              this.obj6.unread_num = this.list.salary_remind.unread_num
+              this.obj6.description = this.list.salary_remind.description
+            }
           })
       },
 
@@ -199,7 +256,8 @@
       mind,
       reply,
       remy,
-      like
+      like,
+      per
     },
     watch:{
 
@@ -210,6 +268,30 @@
 <style lang="scss">
   .work_mind{
     width: 100%;
+    .top {
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      background: #fff;
+      .el-button {
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
+      }
+      p {
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b {
+        position: absolute;
+        top: 13px;
+        right: 13px;
+        cursor: pointer;
+      }
+    }
     .zhuti{
       background: #FFF;
       margin-top: 3px;

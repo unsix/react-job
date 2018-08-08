@@ -512,7 +512,6 @@ export default {
   }
   .other_item{
     width: 100%;
-    height: 700px;
     background: #Fff;
   }
   .setFormRePer {
