@@ -619,7 +619,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/wage') {
-        this.$emit('changeWorkIndex', '6-1')
+        this.$emit('changeWorkIndex', '5-5')
       }
     },
     components:{

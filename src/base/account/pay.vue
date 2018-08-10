@@ -49,7 +49,7 @@ export default {
   },
   mounted(){
     if(this.$route.path === '/work/pay') {
-      this.$emit('changeWorkIndex', '6-2')
+      this.$emit('changeWorkIndex', '5-4')
     }
   }
 }

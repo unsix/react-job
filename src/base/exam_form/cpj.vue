@@ -131,6 +131,7 @@
         status:'1',
         picArr:[],
         fileList: [],
+        fileList_a:[],
         many_enclosure:{},
         personnel_id:'',
         pic_time:0,

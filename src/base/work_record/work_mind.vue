@@ -247,7 +247,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/workMind') {
-        this.$emit('changeWorkIndex', '3-2')
+        this.$emit('changeWorkIndex', '4-10')
       }
     },
     components:{

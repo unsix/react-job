@@ -32,7 +32,7 @@
 
         <detail_ele v-if="detail_ele_show" :content="detail_data" :handle="btn_show"></detail_ele>
 
-        <detail_fix v-if="detail_fix_show" :content="detail_data"></detail_fix>
+        <detail_fix v-if="detail_fix_show" :content="detail_data" :handle="btn_show"></detail_fix>
       </div>
 
     </div>

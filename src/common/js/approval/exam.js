@@ -100,5 +100,7 @@ function get_type(type){
     return '报销单'
   } else if(type == '12'){
 	  return '验收单'
+  } else if(type == '13'){
+	  return '个人请款单'
   }
 }

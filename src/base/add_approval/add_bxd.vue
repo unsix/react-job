@@ -272,7 +272,6 @@
                 this.bxd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
                 this.bxd_ruleForm.project_manager = this.form_Lista.project_manager
                 this.form_Lista.many_enclosure.forEach((item)=>{
-
                   let img_name = item.name
                   if (item.type === 3){
                     let param = new URLSearchParams();
