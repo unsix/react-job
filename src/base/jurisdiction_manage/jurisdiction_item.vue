@@ -606,6 +606,7 @@
 		.jurisdictionFormList {
 			margin-top: 10px;
 			width: 300px;
+      min-height: 600px;
 			ul {
 				li {
 					.group {

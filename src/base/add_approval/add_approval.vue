@@ -12,7 +12,7 @@
 					<el-tab-pane label="呈批件"></el-tab-pane>
           <el-tab-pane label="报销单"></el-tab-pane>
           <el-tab-pane label="验收单"></el-tab-pane>
-          <!--<el-tab-pane label="工资单"></el-tab-pane>-->
+          <el-tab-pane label="工资单"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -76,7 +76,7 @@
 		<qkd :form_approval_id="form_approval_id" :change_type="change_type" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
 	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
-
+    <gzd v-if="gzd_if" :form_Lista="form_Lista" ref="gzds" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></gzd>
     <div class="sendsd" v-show="sendShow">
       <div>
         <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
@@ -112,6 +112,7 @@
 	import sqgz from '@/base/exam_form/sqgz'
   import bxd from '@/base/exam_form/bxd'
   import ysd from '@/base/exam_form/ysd'
+  import gzd from '@/base/exam_form/gzd'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
@@ -145,6 +146,7 @@
 				sqgz_if: false,
         bxd_if: false,
         ysd_if:false,
+        gzd_if:false,
 				formShow: true,
 				chooseTemShow: false,
 				as_what_show: false,
@@ -693,11 +695,7 @@
 			},
       //使用
 			qkUser(item,index){
-        if(item.type == '呈批件'){
-          this.sendShow = true
-          this.form_approval_id = item.approval_id
-          this.at_qingkuanShow = false
-        }else{
+
           this.request_money_basis_type = item.type;
           this.form_approval_id = ''
           this.at_qingkuanShow = false
@@ -715,7 +713,6 @@
             })
           this.formShow = true
           this.qkd_show = true
-        }
 			},
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
@@ -750,6 +747,7 @@
 				this.approval_id5 = ''
         this.approval_id6 = ''
         this.approval_id7 = ''
+        this.approval_id8 = ''
 				this.formShow = true
 				this.qkd_show = false
 				this.qgd_show = false
@@ -781,6 +779,9 @@
         } else if(item.type === '验收单'){
 				  this.approval_id7 = item.approval_id
           this.ysd_show = true
+        } else if(item.type === '个人请款单'){
+          this.approval_id8 = item.approval_id
+          this.gzd_show = true
         }
 			},
 			viewInfo(item) {
@@ -791,6 +792,7 @@
 				this.sqgz_show = false
         this.bxd_show = false
         this.ysd_show = false
+        this.gzd_show = false
 				this.chooseTemShow = false
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
@@ -807,7 +809,6 @@
 						if(item.type === '呈批件') {
 							this.cpj_if = true
 							this.form_Lista = create_cengpijian_list(res.data.data)
-              console.log(this.form_Lista)
 							this.get_img(this.form_Lista.many_enclosure)
 							this.get_file(this.form_Lista.many_enclosure)
 						} else if(item.type === '合同评审表') {
@@ -838,6 +839,12 @@
             } else if(item.type == '验收单'){
               this.ysd_if = true
               this.form_Lista = create_yanshoudan_list(res.data.data)
+            } else if (item.type == '个人请款单'){
+						  this.gzd_if = true
+              this.form_Lista = res.data.data
+              this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
             }
 					})
 				let nparam = new URLSearchParams();
@@ -972,6 +979,7 @@
 				this.sqgz_if = false
         this.bxd_if = false
         this.ysd_if = false
+        this.gzd_if = false
 				this.chooseTemShow = true
 			},
 			returnForm() {
@@ -989,9 +997,11 @@
 				this.cpj_show = false
         this.bxd_show = false
         this.ysd_show = false
+        this.gzd_show = false
 			},
       //tab 切換
 			handleClick(tab) {
+        this.user_info = []
 				this.approval_id1 = ''
 				this.approval_id2 = ''
 				this.approval_id3 = ''
@@ -1017,6 +1027,8 @@
         this.qkd_if= false
         this.sqgz_if= false
         this.bxd_if= false
+        this.gzd_if = false
+        this.forms = true
 				this.chooseTemShow = false
 				this.formShow = true
         this.at_qingkuanShow = false
@@ -1048,7 +1060,7 @@
           this.approval_type = 12
         }else if(this.navIndex === 7){
 				  this.gzd_show = true
-
+          this.approval_type = 13
         }
         this.get_approval_user_info()
 			},
@@ -1076,6 +1088,9 @@
             break;
           case 12:
             str = 12
+            break;
+          case 13:
+            str = 13
             break;
         }
         let param = new URLSearchParams()
@@ -1306,6 +1321,7 @@
 			sqgz,
       bxd,
       ysd,
+      gzd,
 			addPsb,
 			addQgd,
 			addCpj,
@@ -1557,7 +1573,7 @@
 				.el-tabs__item {
 					font-size: 12px;
 					font-weight: 700;
-					width: 85px;
+					width: 75px;
 					text-align: center;
 				}
 			}
