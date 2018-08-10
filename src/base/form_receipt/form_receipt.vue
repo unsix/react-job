@@ -51,7 +51,9 @@
     <sqgz v-if="gz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb"></sqgz>
 
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb"></bxd>
-	</div>
+
+    <gzd style="background: #FFF" v-if="gzd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="handle_show" :psb_approval_id="psb_approval_id" @return_psb="return_psb"></gzd>
+  </div>
 </template>
 
 <script>
@@ -61,6 +63,7 @@
   import cpj from '@/base/exam_form/cpj'
   import sqgz from '@/base/exam_form/sqgz'
   import bxd from '@/base/exam_form/bxd'
+  import gzd from '@/base/exam_form/gzd'
   import {getAvatar} from '@/common/js/avatar.js'
 	import {getPic} from '@/common/js/pic.js'
   import { create_exam_list } from '@/common/js/approval/exam'
@@ -68,7 +71,7 @@
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
-  import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan";
+  import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan"
 	import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { mapGetters ,mapMutations} from 'vuex'
@@ -84,6 +87,7 @@
         cpj_if:false,
         bxd_if:false,
         qkd_if: false,
+        gzd_if:false,
         gz_if:false,
 				listShow: true,
 				nextPageShow: true,
@@ -192,25 +196,13 @@
         this.bxd_if = false
         this.cpj_if = false
         this.gz_if = false
+        this.gzd_if = false
 				this.listShow = true
 				this._get_data()
 			},
 			listCli(item) {
 				this.listShow = false
 				this.psb_approval_id = item.approval_id
-        if(item.type === '呈批件') {
-          this.cpj_if = true
-        } else if(item.type === '请款单') {
-          this.qkd_if = true
-        } else if(item.type === '请购单') {
-          this.qgd_if = true
-        } else if(item.type === '合同评审表') {
-          this.psb_if = true
-        } else if(item.type === '申请公章') {
-          this.gz_if = true
-        } else if(item.type === '报销单'){
-          this.bxd_if = true
-        }
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
 				param.append("approval_id", item.approval_id);
@@ -221,10 +213,12 @@
             var judge = res.data.code
             this.$testLogin(judge,current)
             if(item.type === '呈批件') {
+              this.cpj_if = true
               this.form_Lista = create_cengpijian_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             } else if(item.type === '合同评审表') {
+              this.psb_if = true
               this.form_Lista = create_hetongpingshen_list(res.data.data)
               if(this.form_Lista.many_enclosure){
                 this.get_img(this.form_Lista.many_enclosure)
@@ -234,19 +228,29 @@
                 this.get_file(this.form_Lista.enclosure_id)
               }
             } else if(item.type === '请款单') {
+              this.qkd_if = true
               this.form_Lista = create_qingkuandan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             } else if(item.type === '申请公章') {
+              this.gz_if = true
               this.form_Lista = create_gongzhang_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             } else if(item.type === '请购单') {
+              this.qgd_if = true
               this.form_Lista = create_qinggoudan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             } else if(item.type === '报销单'){
+              this.bxd_if = true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            } else if(item.type === '个人请款单'){
+              this.gzd_if = true
+              this.form_Lista = res.data.data
+              this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
             }
@@ -292,6 +296,9 @@
                     this.get_files(pic.many_enclosure,pic)
                   })
                 }
+                if(item.form_auto_filled_value){
+                  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
+                }
               })
               if(res.data.data.supply){
                 res.data.data.supply.forEach((item,index)=>{
@@ -301,7 +308,33 @@
               }
               this.form_Listb = create_approval_list(res.data.data)
 						}
-
+            let mparam = new URLSearchParams()
+            mparam.append('approval_id',item.approval_id)
+            let httpUrls = this.$test('/index.php/Mobile/approval/find_sequence_attachment_new')
+            this.$http.post(httpUrls,mparam)
+              .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                this.$testLogin(judge,current)
+                if(res.data.code == 0){
+                  let form = res.data.data
+                  if(form.form_content.optional.length > 0){
+                    this.choices = form.form_content.optional
+                  }
+                  if(form.form_content.required.length > 0){
+                    this.mands = form.form_content.required
+                  }
+                  if(form.auto_fill_fields){
+                    if(form.auto_fill_fields.optional){
+                      this.option = form.auto_fill_fields.optional
+                    }
+                    if(form.auto_fill_fields.required){
+                      this.requir = form.auto_fill_fields.required
+                    }
+                  }
+                  this.describe = form.enclosure_describe
+                }
+              })
 						if(res.data.data.finance) {
 							if(res.data.data.finance.finance_state === '1') {
 								res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
@@ -520,7 +553,8 @@
 			qkd,
       cpj,
       sqgz,
-      bxd
+      bxd,
+      gzd
 		}
 	}
 </script>

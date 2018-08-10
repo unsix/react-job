@@ -16,7 +16,6 @@
 				<el-input v-model="cpj_ruleForm.content"></el-input>
 			</el-form-item>
 			<el-form-item label="项目负责人(部门经理)">
-
 				<el-select v-model="cpj_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
 					<el-option v-for="item in comPersonList"
                      :key="item.personnel_id"  :label="item.name" :value="item.uid">
@@ -27,10 +26,10 @@
 				</el-select>
 			</el-form-item>
 
-			<el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+      <el-upload class="upload-demo" id="picc" v-model="cpj_ruleForm.many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
         <i class="el-icon-plus"></i>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
-			</el-upload>
+      </el-upload>
       <el-upload class="upload-demo_a" v-model="cpj_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
         <el-button size="small" type="info" plain>上传文本</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>

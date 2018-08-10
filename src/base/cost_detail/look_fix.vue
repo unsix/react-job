@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div>
+      <el-button style="margin-left: 50px" type="primary" size="small" v-if="btnShow" @click="_return">返回</el-button>
+    </div>
     <div class="box">
       <div class="title">
         <p>类型：{{title}}</p>
@@ -56,11 +59,18 @@
           </li>
         </ul>
       </div>
+      <div class="choose_btn" v-if="handle">
+        <el-button type='warning' size="small" @click="refuse(content.payroll_id)">拒绝</el-button>
+        <el-button type="success" size="small" @click="agree(content.payroll_id)">确认</el-button>
+      </div>
     </div>
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
+    <loading v-show="loadingShow"></loading>
   </div>
 </template>
 
 <script>
+  import loading from '@/base/loading/loading'
   import { getAvatar } from '@/common/js/avatar.js'
   import browsePic from '@/base/browse_pic/browse_pic'
   export default {
@@ -71,6 +81,7 @@
         pic_index: 0,
         pic_show: false,
         arr_list: [],
+        loadingShow:false
       }
     },
     methods:{
@@ -85,6 +96,9 @@
             this.get_imgs(this.detail.many_enclosure,this.detail)
           }
         }
+      },
+      _return(){
+        this.$emit('return_per')
       },
       get_imgs(many_enclosure,info){
         if(!many_enclosure){
@@ -170,6 +184,65 @@
         this.pic_index = index
         this.pic_show = true
       },
+      refuse(data){
+        this.$prompt('请输入拒绝原因', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern:/.+/,
+          inputErrorMessage:'拒绝原因不能为空'
+        }).then(({ value })=>{
+          this.loadingShow = true
+          let param = new URLSearchParams()
+          param.append('payroll_id',data)
+          param.append('reason',value)
+          param.append('operation',2)
+          let str = this.$test('/index.php/Mobile/payroll/confirm_payroll')
+          this.$http.post(str,param)
+            .then((res)=>{
+              this.loadingShow = false
+              if(res.data.code == 0){
+                this.$message.success('处理成功')
+              }else{
+                this.$message.error(res.data.data)
+              }
+              this.$parent.get_data()
+              this.$parent._return()
+            })
+        }).catch(()=>{
+          this.$message({
+            type: 'info',
+            message: '取消操作'
+          });
+        })
+      },
+      agree(data){
+        this.$confirm('确定同意此工资条么', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(()=>{
+          this.loadingShow = true
+          let param = new URLSearchParams()
+          param.append('payroll_id',data)
+          param.append('operation',1)
+          let str = this.$test('/index.php/Mobile/payroll/confirm_payroll')
+          this.$http.post(str,param)
+            .then((res)=>{
+              this.loadingShow = false
+              if(res.data.code == 0){
+                this.$message.success('处理成功')
+              }else{
+                this.$message.error(res.data.data)
+              }
+              this.$parent.get_data()
+              this.$parent._return()
+            })
+        }).catch(()=>{
+          this.$message({
+            type: 'info',
+            message: '取消操作'
+          });
+        })
+      }
     },
     created(){
       this.change_data()
@@ -177,10 +250,17 @@
     props:{
       content:{
 
-      }
+      },
+      btnShow:{
+
+      },
+      handle:{
+
+      },
     },
     components:{
-      browsePic
+      browsePic,
+      loading
     }
 
   }

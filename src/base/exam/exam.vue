@@ -809,6 +809,154 @@
           </div>
         </div>
       </div>
+      <!--工资单展示-->
+      <div class="form" name="个人请款单" v-if="gongzidan_show" >
+        <div class="top">
+          <span class="title">个人请款单</span>
+        </div>
+        <div>
+          <span>工程名称：</span><span>{{form_Lista.project_name}}</span>
+        </div>
+        <div>
+          <span>合同名称：</span><span>{{form_Lista.contract_name}}</span>
+        </div>
+        <div>
+          <span>工种：</span><span>{{form_Lista.work_type}}</span>
+        </div>
+        <div>
+          <span>请款单位：</span><span>{{form_Lista.request_unit}}</span>
+        </div>
+        <div>
+          <span @click="show_contract" style="color:black;padding: 5px 0;cursor: pointer">工人工资/个人承包款公司代付承诺书</span>
+        </div>
+        <div>
+          <span>请款人姓名：</span><span>{{form_Lista.request_name}}</span>
+        </div>
+        <div>
+          <span>联系方式：</span><span>{{form_Lista.request_phone}}</span>
+        </div>
+        <div>
+          <span>合同执行进度：</span><span>{{form_Lista.contract_process}}</span>
+        </div>
+        <div>
+          <span>请款内容：</span><span>{{form_Lista.request_content}}</span>
+        </div>
+        <div>
+          <span>合同金额：</span><span>{{form_Lista.contract_money}}</span>
+        </div>
+        <div>
+          <span>已领金额：</span><span>{{form_Lista.receive_money}}</span>
+        </div>
+        <div>
+          <span>本次请款：</span><span>{{form_Lista.request_money}}</span>
+        </div>
+        <div>
+          <span>项目负责人：</span><span></span>
+        </div>
+        <div>
+          <span>本次请款清单：</span><span style="color: red;" v-show="form_Lista.sum_money > 0">(￥{{form_Lista.sum_money}})</span>
+          <ul class="salary_items" v-show="untreateds.length > 0">
+            <li v-for="item in untreateds" @click="get_detail(item)">
+              <img :src="item.avatar" alt="">
+              <div class="name">
+                <p>{{item.name}}</p>
+                <p>{{item.phone}}</p>
+              </div>
+              <div class="price">
+                <p>请款月份：{{item.month}}</p>
+                <p>应付金额：{{item.pay_amount}}</p>
+              </div>
+              <div class="status">
+                <p>{{item.add_time}}</p>
+                <p v-html="item.pryroll_status"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <span>附件列表：</span>
+          <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+        </div>
+        <div>
+          <span>图片附件：</span>
+          <a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+            <img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
+          </a>
+        </div>
+        <div>
+          <span>发起人：</span><span>{{form_Listb.found_name}}</span>
+        </div>
+        <div>
+          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444;">{{item}}
+						</span>
+        </div>
+        <div>
+          <span>审批：</span>
+          <div v-for="item in form_Listb.content" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
+              </div>
+            </div>
+            <p>审批时间:{{item.add_time}}</p>
+          </div>
+        </div>
+        <div v-if="form_Listb.finance">
+          <span>表单回执：</span>
+          <br />
+          <span style="color: #444444;">
+						<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
+			<div><img style="width: 50px;height: 50px;border: 1px solid #e3e4e9;" :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" /></div>
+			</span>
+        </div>
+        <div class="menu" v-show="handle_show">
+          <el-button type="primary" plain @click="handle">处理</el-button>
+          <div class="button" v-if="menuShow">
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
+            <label>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文本</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
+          </div>
+        </div>
+      </div>
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
@@ -848,11 +996,21 @@
       <el-button type="success" size="small" style="float: right" @click="sure">确定</el-button>
     </div>
 
+    <div class="fra" v-if="fra_show">
+      <div>
+        <el-button type="primary" size="small" @click="_return">返回</el-button>
+      </div>
+      <iframe  class="win" ref="indx" scrolling="yes" height="100%" :src="linked" seamless frameborder="0"></iframe>
+    </div>
 
+    <detail_ele style="background: #FFF" v-if="detail_ele_show" :content="detail_data" :btnShow="btnShow" @return_per="return_per"></detail_ele>
+    <detail_fix style="background: #FFF" v-if="detail_fix_show" :content="detail_data" :btnShow="btnShow" @return_per="return_per"></detail_fix>
 	</div>
 </template>
 
 <script>
+  import detail_ele from '@/base/cost_detail/look_ele'
+  import detail_fix from '@/base/cost_detail/look_fix'
 	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
 	import browsePic from '@/base/browse_pic/browse_pic'
@@ -867,13 +1025,18 @@
   import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
 	import { mapGetters, mapMutations } from 'vuex'
+  import moment from 'moment'
   import simpleText from '@/base/unit/input'
 	export default {
 		data() {
 			return {
+        fra_show:false,
+        detail_data:{},
+        btnShow:false,
         sendShow:false,
 				ifDownShow:false,
 				untreated: [],
+				untreateds: [],
 				now_type_name: '',
 				handle_txt: '',
 				nowType: 1,
@@ -887,8 +1050,9 @@
 				pingshenbiao_show: false,
 				gongzhang_show: false,
         baoxiaodan_show:false,
-				form_Lista: [],
-				form_Listb: [],
+        gongzidan_show:false,
+				form_Lista: {},
+				form_Listb: {},
 				menuShow: false,
 				ilaunched: true,
 				searchShow: false,
@@ -923,7 +1087,7 @@
 				classValue: '',
 				approval_type: 0,
 				classIndex: -1,
-				group: ['合同评审表', '请购单', '请款单', '呈批件', '申请公章','报销单'],
+				group: ['合同评审表', '请购单', '请款单', '呈批件', '申请公章','报销单','验收单','个人工资单'],
 				form_approval_id: '',
 				request_money_basis_type: '',
 				fileAccordShow: false,
@@ -961,6 +1125,8 @@
           optional:[],
           required:[]
         },
+        detail_ele_show:false,
+        detail_fix_show:false
 			}
 		},
 		computed: {
@@ -1168,7 +1334,10 @@
 			browsePic,
 			loading,
 			fileAccord,
-      simpleText
+      simpleText,
+      moment,
+      detail_fix,
+      detail_ele
 		},
 		methods: {
       ...mapMutations({
@@ -1182,6 +1351,53 @@
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST'
       }),
+      show_contract(){
+        this.fra_show = true
+        this.formShow = false
+        let str = this.$test('/index.php/Mobile/index/letter_invitation?token=')
+        this.linked = `${str}${this.form_Lista.letter_invitation_token}`
+      },
+      get_detail(data){
+        this.btnShow = true
+        this.formShow = false
+        let param = new URLSearchParams()
+        param.append('payroll_id',data.payroll_id)
+        let str = this.$test('/index.php/Mobile/payroll/get_detail_payroll')
+        this.$http.post(str,param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.detail_data = res.data.data
+              var that = this
+              change_Data(this.detail_data.type,that)
+            }else{
+              this.$message.error(res.data.message)
+              this._return()
+            }
+          })
+        function change_Data(pr,that) {
+          switch (pr) {
+            case '1':
+              that.detail_fix_show = true
+              break;
+            case '2':
+              that.detail_ele_show = true
+              break;
+            case '3':
+              that.detail_ele_show = true
+              break;
+          }
+        }
+      },
+      return_per(){
+        this.detail_ele_show = false
+        this.detail_fix_show = false
+        this.formShow = true
+      },
+      _return(){
+        this.fra_show = false
+        this.formShow = true
+        this.linked = ''
+      },
 			sureDown(){
 				this.ifDownShow = false
 			},
@@ -1295,7 +1511,6 @@
 				this.fileAccordShow = false
 			},
 			fileAccord(item) {
-        console.log(item)
 				if(item.approval_type === -1) {
 					this.$message({
 						message: '没有附件或者无法查看',
@@ -1315,7 +1530,6 @@
 				this.form_approval_id = item.form_approval_id
 			},
 			classButton(item, index) {
-			  console.log(item)
 				this.pageIndex = 1
 				this.classIndex = index
 				if(item === '合同评审表') {
@@ -1330,6 +1544,10 @@
 					this.approval_type = 7
 				} else if(item === '报销单'){
 				  this.approval_type = 11
+        } else if(item === '验收单'){
+				  this.approval_type = 12
+        } else if(item === '个人工资单'){
+				  this.approval_type = 13
         }
 				this.doSearch()
 			},
@@ -2088,9 +2306,9 @@
         this.choices = []
         this.option = []
         this.require = []
-        console.log(this.form_fill)
         this.form_fill.optional = []
         this.form_fill.required = []
+        this.untreateds = []
 			},
 			listCli(item,sta) {
 			  this.list = item
@@ -2121,121 +2339,119 @@
 				this.gongzhang_show = false,
         this.yanshou_show = false,
 				this.now_type_name = item.type
-				if(item.type === '呈批件') {
-					this.cengpijian_show = true
-				} else if(item.type === '请款单') {
-					this.qingkuandan_show = true
-				} else if(item.type === '请购单') {
-					this.qinggoudan_show = true
-				} else if(item.type === '合同评审表') {
-					this.pingshenbiao_show = true
-				} else if(item.type === '申请公章') {
-					this.gongzhang_show = true
-				} else if(item.type === '报销单'){
-			    this.baoxiaodan_show = true
-        } else if(item.type == '验收单'){
-			    this.yanshou_show = true
-        }
-				let param = new URLSearchParams();
-				param.append("uid", this.user.uid);
-				param.append("approval_id", item.approval_id);
+        let param = new URLSearchParams();
+        param.append("uid", this.user.uid);
+        param.append("approval_id", item.approval_id);
         let str = this.$test("/index.php/Mobile/approval/approval_process_show")
-				this.$http.post(str, param)
-					.then((res) => {
+        this.$http.post(str, param)
+          .then((res) => {
             var current = this
             var judge = res.data.code
             this.$testLogin(judge,current)
             if(res.data.data.change_type){
               this.change_type = res.data.data.change_type
             }
-						if(item.type === '呈批件') {
-							this.form_Lista = create_cengpijian_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
-						} else if(item.type === '合同评审表') {
-							this.form_Lista = create_hetongpingshen_list(res.data.data)
-							if(this.form_Lista.many_enclosure){
+            if(item.type === '呈批件') {
+              this.form_Lista = create_cengpijian_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+              this.cengpijian_show = true
+            } else if(item.type === '合同评审表') {
+              this.form_Lista = create_hetongpingshen_list(res.data.data)
+              if(this.form_Lista.many_enclosure){
                 this.get_img(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
               }else{
                 this.get_img(this.form_Lista.enclosure_id)
                 this.get_file(this.form_Lista.enclosure_id)
               }
-						} else if(item.type === '请款单') {
-							this.form_Lista = create_qingkuandan_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
-						} else if(item.type === '申请公章') {
-							this.form_Lista = create_gongzhang_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
-						} else if(item.type === '请购单') {
-							this.form_Lista = create_qinggoudan_list(res.data.data)
-							this.get_img(this.form_Lista.many_enclosure)
-							this.get_file(this.form_Lista.many_enclosure)
-						} else if(item.type === '报销单'){
+              this.pingshenbiao_show = true
+            } else if(item.type === '请款单') {
+              this.form_Lista = create_qingkuandan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+              this.qingkuandan_show = true
+            } else if(item.type === '申请公章') {
+              this.form_Lista = create_gongzhang_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+              this.gongzhang_show = true
+            } else if(item.type === '请购单') {
+              this.form_Lista = create_qinggoudan_list(res.data.data)
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+              this.qinggoudan_show = true
+            } else if(item.type === '报销单'){
               this.form_Lista = create_baoxiaodan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.baoxiaodan_show = true
             } else if(item.type == '验收单'){
               let str = this.$test('/index.php/Mobile/skey/look_inspection_company?approval_id=')
               this.core = str+res.data.data.approval_id
+              this.yanshou_show = true
+            } else if(item.type == '个人请款单'){
+              this.form_Lista = res.data.data
+              this.get_item_data()
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+              this.gongzidan_show = true
             }
             this.reply = res.data.data.approval_id
             this.newCompany = res.data.data.company_id
-					})
+          })
 
-				let nparam = new URLSearchParams();
-				nparam.append("uid", this.user.uid);
-				nparam.append("approval_id", item.approval_id);
-				nparam.append("company_id", item.company_id);
+        let nparam = new URLSearchParams();
+        nparam.append("uid", this.user.uid);
+        nparam.append("approval_id", item.approval_id);
+        nparam.append("company_id", item.company_id);
         let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
-				this.$http.post(httpUrl, nparam)
-					.then((res) => {
+        this.$http.post(httpUrl, nparam)
+          .then((res) => {
             var current = this
             var judge = res.data.code
             this.$testLogin(judge,current)
-						res.data.data.content.forEach((item, index) => {
-							if(item.picture) {
-								let arr = []
-								let zparam = new URLSearchParams();
-								zparam.append("enclosure_id", item.picture);
+            res.data.data.content.forEach((item, index) => {
+              if(item.picture) {
+                let arr = []
+                let zparam = new URLSearchParams();
+                zparam.append("enclosure_id", item.picture);
                 let str = this.$test("/index.php/Mobile/approval/look_enclosure")
-								this.$http.post(str, zparam)
-									.then((res) => {
+                this.$http.post(str, zparam)
+                  .then((res) => {
                     var current = this
                     var judge = res.data.code
                     this.$testLogin(judge,current)
-										res.data.data.picture.forEach((item) => {
-											if(item != '') {
-												arr.push(getAvatar(item))
-											}
-										})
-									})
-								res.data.data.content[index].picture = arr
-							}
-							if(item.many_enclosure){
+                    res.data.data.picture.forEach((item) => {
+                      if(item != '') {
+                        arr.push(getAvatar(item))
+                      }
+                    })
+                  })
+                res.data.data.content[index].picture = arr
+              }
+              if(item.many_enclosure){
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               }
-							if(item.replys){
+              if(item.replys){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
               }
               if(item.form_auto_filled_value){
-							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
+                item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
-						})
+            })
             if(res.data.data.supply){
               res.data.data.supply.forEach((item,index)=>{
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               })
             }
-						this.form_Listb = create_approval_list(res.data.data)
-					})
+            this.form_Listb = create_approval_list(res.data.data)
+          })
 
         let mparam = new URLSearchParams()
         mparam.append('approval_id',item.approval_id)
@@ -2265,6 +2481,29 @@
             }
           })
 			},
+      get_item_data(){
+        if(this.form_Lista.salary_items){
+          this.form_Lista.salary_items.forEach((item)=>{
+            item.avatar = getAvatar(item.avatar)
+            item.month = moment(item.month).format('YYYY年MM月')
+            item.pryroll_status = get_state(item.pryroll_status)
+            this.untreateds.push(item)
+            function get_state(state){
+              if(state === '0'){
+                return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+              }else if(state === '1'){
+                return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+              }else if(state === '2'){
+                return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+              }else if(state === '-1'){
+                return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+              }else if(state === '99'){
+                return '<span style="color:#67C23A">已完结<i class="el-icon-success" style="margin-left:4px"></i></span>'
+              }
+            }
+          })
+        }
+      },
       reply_other(us,pr,name){
 			  this.wideShow = true
 			  this.sendShow = true
@@ -3369,7 +3608,14 @@
 			}
 		}
 	}
-
+  .fra{
+    width: 100%;
+    background: #FFF;
+    .win{
+      width: 100%;
+      height: 700px;
+    }
+  }
   .send{
     width: 450px;
     background: #ffffff;
@@ -3509,5 +3755,42 @@
   .simpleText{
     width: 100%;
     background: #FFF;
+  }
+  .salary_items{
+    width: 100%;
+    li{
+      background: #FFF;
+      margin-top: 5px;
+      overflow: hidden;
+      padding:5px 0px 5px 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      cursor: default;
+      border-bottom: 1px solid #DDDDDD;
+      transition: .3s;
+      oz-box-shadow: 1px 1px 2px #999999;
+      -webkit-box-shadow: 1px 1px 2px #999999;
+      box-shadow: 1px 1px 2px #999999;
+      margin-bottom: 5px;
+      margin-left: 0px !important;
+      img{
+        width: 50px !important;
+        height: 50px;
+        display: block;
+        float: left;
+      }
+      .name{
+        width: 85px;
+        float: left;
+        margin: 0 10px;
+        line-height: 20px;
+      }
+      .price{
+        width: 180px;
+        float: left;
+        margin: 0 15px;
+      }
+    }
   }
 </style>

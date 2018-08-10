@@ -79,7 +79,7 @@
 export default {
   data(){
     return{
-      asType:['合同评审','请款单','请购单','申请公章','呈批件','报销单'],
+      asType:['合同评审','请款单','请购单','申请公章','呈批件','报销单','个人请款单'],
       as_what_show:false,
       manage_show:true,
       jurisdictionItemShow:false,
@@ -118,9 +118,9 @@ export default {
           type:11,
           groups:[]
         },
-        yanshou:{
-          name:'验收单',
-          type:12,
+        gongzi:{
+          name:'个人请款单',
+          type:13,
           groups:[]
         }
       },
@@ -174,6 +174,9 @@ export default {
           break;
         case '报销单':
           this.formType = 11
+          break;
+        case '个人请款单':
+          this.formType = 13
           break;
       }
       this._getApproval()
@@ -317,6 +320,12 @@ export default {
                 arr.push(createJurisdictionList(list))
               })
               this.$set(this.setFormRe.yanshou, 'groups', arr)
+            }else if(item.type === 13){
+              let arr = []
+              item.list.forEach((list)=>{
+                arr.push(createJurisdictionList(list))
+              })
+              this.$set(this.setFormRe.gongzi,'groups',arr)
             }
           })
         })
@@ -345,6 +354,8 @@ export default {
         zz = 11
       } else if(this.formRePersonIndex == 'yanshou'){
         zz = 12
+      } else if(this.formRePersonIndex == 'gongzi'){
+        zz = 13
       }
       let narr = []
       this.setFormRe[this.formRePersonIndex].groups.forEach((item) => {
@@ -516,7 +527,6 @@ export default {
   }
   .setFormRePer {
     width: 100%;
-    height: 700px;
     overflow: hidden;
     background: #FFF;
     .top {

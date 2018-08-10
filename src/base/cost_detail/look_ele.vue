@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div>
+      <el-button style="margin-left: 50px" type="primary" size="small" v-if="btnShow" @click="_return">返回</el-button>
+    </div>
     <div class="box">
       <div class="title">
         <p>类型：{{title}}</p>
@@ -83,6 +86,9 @@
             this.get_imgs(this.detail.many_enclosure,this.detail)
           }
         }
+      },
+      _return(){
+        this.$emit('return_per')
       },
       get_imgs(many_enclosure,info){
         if(!many_enclosure){
@@ -236,6 +242,9 @@
 
       },
       handle:{
+
+      },
+      btnShow:{
 
       }
     },
