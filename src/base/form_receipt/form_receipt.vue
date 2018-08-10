@@ -189,6 +189,14 @@
 						}
 					})
 			},
+      rec_pic(item, index) {
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
 			return_psb() {
 				this.psb_if = false
 				this.qgd_if = false
@@ -306,6 +314,29 @@
                   this.get_files(item.many_enclosure,item)
                 })
               }
+              if(res.data.data.finance) {
+                if(res.data.data.finance.finance_state === '1') {
+                  res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+                } else {
+                  res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+                }
+                let zparam = new URLSearchParams();
+                zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+                let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+                this.$http.post(str, zparam)
+                  .then((res) => {
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
+                    let arr = []
+                    res.data.data.picture.forEach((item) => {
+                      if(item != '') {
+                        arr.push(getPic(item))
+                      }
+                    })
+                    this.$set(this.form_Listb, 're_pic', arr)
+                  })
+              }
               this.form_Listb = create_approval_list(res.data.data)
 						}
             let mparam = new URLSearchParams()
@@ -362,6 +393,7 @@
 					})
 
 			},
+
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',

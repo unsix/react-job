@@ -236,7 +236,7 @@
           }else if(state === '-1'){
             return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
           }else if(state === '99'){
-            return '<span style="color:#67C23A">已完结<i class="el-icon-success" style="margin-left:4px"></i></span>'
+            return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
           }
         }
       },

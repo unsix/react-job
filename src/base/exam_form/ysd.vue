@@ -62,6 +62,14 @@
       ])
     },
     methods:{
+      rec_pic(item,index){
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
       return_() {
         this.$emit('return_psb')
         this.handle_txt === ''

@@ -12,7 +12,7 @@
 					<el-tab-pane label="呈批件"></el-tab-pane>
           <el-tab-pane label="报销单"></el-tab-pane>
           <el-tab-pane label="验收单"></el-tab-pane>
-          <el-tab-pane label="工资单"></el-tab-pane>
+          <el-tab-pane label="个人请款单"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -693,6 +693,7 @@
 					})
 
 			},
+
       //使用
 			qkUser(item,index){
 
@@ -890,6 +891,35 @@
 							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
 						})
+            if(res.data.data.supply){
+              res.data.data.supply.forEach((item,index)=>{
+                this.get_imgs(item.many_enclosure,item)
+                this.get_files(item.many_enclosure,item)
+              })
+            }
+            if(res.data.data.finance) {
+              if(res.data.data.finance.finance_state === '1') {
+                res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+              } else {
+                res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+              }
+              let zparam = new URLSearchParams();
+              zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+              let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+              this.$http.post(str, zparam)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getPic(item))
+                    }
+                  })
+                  this.$set(this.form_Listb, 're_pic', arr)
+                })
+            }
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
@@ -1573,7 +1603,7 @@
 				.el-tabs__item {
 					font-size: 12px;
 					font-weight: 700;
-					width: 75px;
+					width: 71px;
 					text-align: center;
 				}
 			}

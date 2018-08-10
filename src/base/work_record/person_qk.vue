@@ -32,7 +32,7 @@
 
         <detail_ele v-if="detail_ele_show" :content="detail_data" :handle="btn_show"></detail_ele>
 
-        <detail_fix v-if="detail_fix_show" :content="detail_data" :handle="btn_show"></detail_fix>
+        <detail_fix v-if="detail_fix_show" :content="detail_data"></detail_fix>
       </div>
 
     </div>
@@ -118,9 +118,6 @@
         ++this.pageIndex
       },
       get_detail(data){
-        if(data.pryroll_status.indexOf('待处理') == -1){
-          this.btn_show =false
-        }
         this.title = '工资单详情'
         this.listShow = false
         let param = new URLSearchParams()
