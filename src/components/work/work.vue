@@ -41,14 +41,61 @@
 						<span>{{user.name}}</span>
 					</a>
 				</div>
-				<div class="work_wrapper">
-          <el-menu style="overflow: hidden" class="el-menu-vertical-demo" @select="choosen"  :default-active="workIndex" router :default-openeds="default_open" unique-opened>
-            <el-submenu  v-for="(item,index) in workList" :index="item.index" :key="index">
+				<div class="work_wrapper" style="overflow: hidden">
+          <el-menu class="el-menu-vertical-demo" @select="choosen"  :default-active="workIndex" router  unique-opened>
+            <el-menu-item index="1" :route="{path: '/work/list'}">
+              <span slot="title">找工人</span>
+            </el-menu-item>
+            <el-menu-item index="2" :route="{ path: '/work/company' }">
+              <span slot="title">最近公司</span>
+            </el-menu-item>
+            <el-menu-item index="3" :route="{path: '/work/nearWork'}">
+              <span slot="title">最近工程</span>
+            </el-menu-item>
+            <el-submenu index="4">
               <template slot="title">
-                <span>{{item.title}}</span>
+                <span>日常办公</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item v-for="(list,pr) in item.children" :index="list.index" :route="list.route" :key="pr">{{list.label}}</el-menu-item>
+                <el-menu-item index="4-1" :route="{ path: '/work/create_company' }">创建公司</el-menu-item>
+                <el-menu-item index="4-2" :route="{path:'/work/join'}">申请加入公司</el-menu-item>
+                <el-menu-item index="4-3" :route="{ path: '/work/inviteCol' }">邀请同事</el-menu-item>
+                <el-menu-item index="4-4" v-show="setting_show" :route="{ path: '/work/jurisdictionManage' }">设置</el-menu-item>
+                <el-menu-item index="4-5" :route="{ path: '/work/addressBook' }">通讯录</el-menu-item>
+                <el-menu-item index="4-6" :route="{path:'/work/contr_list'}">公司合同</el-menu-item>
+                <el-submenu index="4-7">
+                  <template slot="title">公司审批</template>
+                  <el-menu-item index="4-7-1" :route="{path:'/work/exam'}">处理审批</el-menu-item>
+                  <el-menu-item index="4-7-2" :route="{ path: '/work/formReceipt' }">审批回执</el-menu-item>
+                  <el-menu-item index="4-7-3" :route="{ path: '/work/addApproval' }">发起审批</el-menu-item>
+                </el-submenu>
+                <el-menu-item index="4-8" :route="{path:'/work/person_qk'}">制作个人工资请款单</el-menu-item>
+                <el-submenu index="4-9">
+                  <template slot="title">工作记录</template>
+                  <el-menu-item index="4-9-1" :route="{ path: '/work/record' }">工作日志</el-menu-item>
+                  <el-menu-item index="4-9-2" :route="{ path: '/work/log' }">发布日志</el-menu-item>
+                </el-submenu>
+                <el-menu-item index="4-10" :route="{ path: '/work/workMind' }">消息提醒</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+            <el-submenu index="5">
+              <template slot="title">
+                <span>个人中心</span>
+              </template>
+              <el-menu-item-group>
+                <el-menu-item index="5-1" :route="{ path: '/work/release' }">我发布的工程</el-menu-item>
+                <el-submenu index="5-2">
+                  <template slot="title">个人合同</template>
+                  <el-menu-item index="5-2-1" :route="{ path: '/work/rece' }">我收到的</el-menu-item>
+                  <el-menu-item index="5-2-2" :route="{ path: '/work/issue' }">我发出的</el-menu-item>
+                </el-submenu>
+                <el-menu-item index="5-3" :route="{ path: '/work/account' }">我的账户</el-menu-item>
+                <el-menu-item index="5-4" :route="{ path: '/work/pay' }">充值</el-menu-item>
+                <el-menu-item index="5-5" :route="{ path: '/work/wage' }">发工资</el-menu-item>
+                <el-submenu index="5-6">
+                  <template slot="title">通知</template>
+                  <el-menu-item index="5-6-1" :route="{ path: '/work/infos' }">系统消息</el-menu-item>
+                </el-submenu>
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
@@ -63,7 +110,7 @@
 			</div>
 			<div class="info_main">
 
-				<router-view @changeWorkIndex="changeWorkIndex" :workList="workList">
+				<router-view @changeWorkIndex="changeWorkIndex" >
 
 				</router-view>
 			</div>
@@ -212,7 +259,7 @@
 				userOperationLeftShow: false,
 				ComPartPersonList: [],
 				workList:[],
-				workIndex:'1-1',
+				workIndex:'1',
         myInfo: {
           name: '',
           idCard: '',
@@ -272,7 +319,9 @@
         pic_hash:'',
         loadingShow:false,
         asd_hash:'',
-        default_open:['1']
+        setting_show:true
+        // default_open:['1'],
+        // default_open:[]
       }
 		},
 		methods: {
@@ -288,7 +337,7 @@
         setCompanyList: 'SET_COMPANYLIST'
       }),
 			logOut(){
-				this.workIndex = '1-1'
+				this.workIndex = '1'
 				this.userOperationShow = false
 				localStorage.removeItem('nowCompanyId');
 				localStorage.removeItem('nowCompanyName');
@@ -311,729 +360,16 @@
 				let m = this.userState.manage
 				let f = this.userState.finance
 				if(m === 0 && f === 0) {
-          this.workList=[
-            {
-              title:'审批相关',
-              index:'1',
-              children:[
-                {
-                  label:'处理审批',
-                  index:'1-1',
-                  route:{path:'/work/exam'}
-                },
-                {
-                  label:'发起审批',
-                  index:'1-2',
-                  route:{ path: '/work/addApproval' }
-                },
-                {
-                  label:'表单回执',
-                  index:'1-3',
-                  route:{ path: '/work/formReceipt' }
-                }
-              ]
-            },
-            {
-              title:'公司相关',
-              index:'2',
-              children:[
-                {
-                  label:'创建公司',
-                  index:'2-1',
-                  route:{ path: '/work/create_company' }
-                },
-                {
-                  label:'最近公司',
-                  index:'2-2',
-                  route:{ path: '/work/company' }
-                },
-                // {
-                //   label:'公司管理',
-                //   index:'2-3',
-                //   route:{ path: '/work/manageCompany' }
-                // },
-                // {
-                //   label:'权限管理',
-                //   index:'2-4',
-                //   route:{ path: '/work/jurisdictionManage' }
-                // },
-                {
-                  label:'申请加入公司',
-                  index:'2-6',
-                  route:{path:'/work/join'}
-                }
-              ]
-            },
-            {
-              title:'日志相关',
-              index:'3',
-              children:[
-                {
-                  label:'工作记录',
-                  index:'3-1',
-                  route:{ path: '/work/record' }
-                },
-                {
-                  label:'工作提醒',
-                  index:'3-2',
-                  route:{ path: '/work/workMind' }
-                },
-                {
-                  label: '新建日志',
-                  index: '3-3',
-                  route:{ path: '/work/log' }
-                }
-              ]
-            },
-            {
-              title:'工人相关',
-              index:'4',
-              children:[
-                {
-                  label:'邀请同事',
-                  index:'4-1',
-                  route:{ path: '/work/inviteCol' }
-                },
-                {
-                  label:'工人列表',
-                  index:'4-2',
-                  route:{ path: '/work/list' }
-                },
-                {
-                  label:'通讯录',
-                  index:'4-3',
-                  route:{ path: '/work/addressBook' }
-                }
-              ]
-            },
-            {
-              title:'工程相关',
-              index:'5',
-              children:[
-                {
-                  label:'最新工程',
-                  index:'5-1',
-                  route:{ path: '/work/nearWork' }
-                },
-                {
-                  label:'我发布的',
-                  index:'5-2',
-                  route:{ path: '/work/release' }
-                }
-              ]
-            },
-            {
-              title:'账户相关',
-              index:'6',
-              children:[
-                {
-                  label:'发工资',
-                  index:'6-1',
-                  route:{ path: '/work/wage' }
-                },
-                {
-                  label:'充值',
-                  index:'6-2',
-                  route:{ path: '/work/pay' }
-                },
-                {
-                  label:'我的账户',
-                  index:'6-3',
-                  route:{ path: '/work/account' }
-                }
-              ]
-
-            },
-            {
-              title:'合同',
-              index:'7',
-              children:[
-                {
-                  label:'我发出的',
-                  index:'7-1',
-                  route:{ path: '/work/issue' }
-                },
-                {
-                  label:'我收到的',
-                  index:'7-2',
-                  route:{ path: '/work/rece' }
-                },
-                {
-                  label:'合同列表',
-                  index:'7-3',
-                  route:{path:'/work/contr_list'}
-                }
-              ]
-            },
-            {
-              title:'个人',
-              index:'8',
-              children:[
-                {
-                  label:'我的作品',
-                  index:'8-1',
-                  route:{ path: '/work/opus' }
-                },
-                {
-                  label:'我的收藏',
-                  index:'8-2',
-                  route:{ path: '/work/collect' }
-                },
-                {
-                  label:'消息提醒',
-                  index:'8-3',
-                  route:{ path: '/work/infos' }
-                }
-
-              ]
-            }
-          ]
+          this.setting_show = false
 				}
 				if(m === 1 && f === 0) {
-          this.workList=[
-            {
-              title:'审批相关',
-              index:'1',
-              children:[
-                {
-                  label:'处理审批',
-                  index:'1-1',
-                  route:{path:'/work/exam'}
-                },
-                {
-                  label:'发起审批',
-                  index:'1-2',
-                  route:{ path: '/work/addApproval' }
-                },
-                {
-                  label:'表单回执',
-                  index:'1-3',
-                  route:{ path: '/work/formReceipt' }
-                }
-              ]
-            },
-            {
-              title:'公司相关',
-              index:'2',
-              children:[
-                {
-                  label:'创建公司',
-                  index:'2-1',
-                  route:{ path: '/work/create_company' }
-                },
-                {
-                  label:'最近公司',
-                  index:'2-2',
-                  route:{ path: '/work/company' }
-                },
-                // {
-                //   label:'公司管理',
-                //   index:'2-3',
-                //   route:{ path: '/work/manageCompany' }
-                // },
-                // {
-                //   label:'权限管理',
-                //   index:'2-4',
-                //   route:{ path: '/work/jurisdictionManage' }
-                // },
-                {
-                  label:'申请加入公司',
-                  index:'2-6',
-                  route:{path:'/work/join'}
-                }
-              ]
-            },
-            {
-              title:'日志相关',
-              index:'3',
-              children:[
-                {
-                  label:'工作记录',
-                  index:'3-1',
-                  route:{ path: '/work/record' }
-                },
-                {
-                  label:'工作提醒',
-                  index:'3-2',
-                  route:{ path: '/work/workMind' }
-                },
-                {
-                  label: '新建日志',
-                  index: '3-3',
-                  route:{ path: '/work/log' }
-                }
-              ]
-            },
-            {
-              title:'工人相关',
-              index:'4',
-              children:[
-                {
-                  label:'邀请同事',
-                  index:'4-1',
-                  route:{ path: '/work/inviteCol' }
-                },
-                {
-                  label:'工人列表',
-                  index:'4-2',
-                  route:{ path: '/work/list' }
-                },
-                {
-                  label:'通讯录',
-                  index:'4-3',
-                  route:{ path: '/work/addressBook' }
-                }
-              ]
-            },
-            {
-              title:'工程相关',
-              index:'5',
-              children:[
-                {
-                  label:'最新工程',
-                  index:'5-1',
-                  route:{ path: '/work/nearWork' }
-                },
-                {
-                  label:'我发布的',
-                  index:'5-2',
-                  route:{ path: '/work/release' }
-                }
-              ]
-            },
-            {
-              title:'账户相关',
-              index:'6',
-              children:[
-                {
-                  label:'发工资',
-                  index:'6-1',
-                  route:{ path: '/work/wage' }
-                },
-                {
-                  label:'充值',
-                  index:'6-2',
-                  route:{ path: '/work/pay' }
-                },
-                {
-                  label:'我的账户',
-                  index:'6-3',
-                  route:{ path: '/work/account' }
-                }
-              ]
-
-            },
-            {
-              title:'合同',
-              index:'7',
-              children:[
-                {
-                  label:'我发出的',
-                  index:'7-1',
-                  route:{ path: '/work/issue' }
-                },
-                {
-                  label:'我收到的',
-                  index:'7-2',
-                  route:{ path: '/work/rece' }
-                },
-                {
-                  label:'合同列表',
-                  index:'7-3',
-                  route:{path:'/work/contr_list'}
-                }
-              ]
-            },
-            {
-              title:'个人',
-              index:'8',
-              children:[
-                {
-                  label:'我的作品',
-                  index:'8-1',
-                  route:{ path: '/work/opus' }
-                },
-                {
-                  label:'我的收藏',
-                  index:'8-2',
-                  route:{ path: '/work/collect' }
-                },
-                {
-                  label:'消息提醒',
-                  index:'8-3',
-                  route:{ path: '/work/infos' }
-                }
-
-              ]
-            }
-          ]
+          this.setting_show = false
 				}
 				if(m === 0 && f === 1) {
-          this.workList=[
-            {
-              title:'审批相关',
-              index:'1',
-              children:[
-                {
-                  label:'处理审批',
-                  index:'1-1',
-                  route:{path:'/work/exam'}
-                },
-                {
-                  label:'发起审批',
-                  index:'1-2',
-                  route:{ path: '/work/addApproval' }
-                },
-                {
-                  label:'表单回执',
-                  index:'1-3',
-                  route:{ path: '/work/formReceipt' }
-                }
-              ]
-            },
-            {
-              title:'公司相关',
-              index:'2',
-              children:[
-                {
-                  label:'创建公司',
-                  index:'2-1',
-                  route:{ path: '/work/create_company' }
-                },
-                {
-                  label:'最近公司',
-                  index:'2-2',
-                  route:{ path: '/work/company' }
-                },
-                // {
-                //   label:'公司管理',
-                //   index:'2-3',
-                //   route:{ path: '/work/manageCompany' }
-                // },
-                // {
-                //   label:'权限管理',
-                //   index:'2-4',
-                //   route:{ path: '/work/jurisdictionManage' }
-                // },
-                {
-                  label:'申请加入公司',
-                  index:'2-6',
-                  route:{path:'/work/join'}
-                }
-              ]
-            },
-            {
-              title:'日志相关',
-              index:'3',
-              children:[
-                {
-                  label:'工作记录',
-                  index:'3-1',
-                  route:{ path: '/work/record' }
-                },
-                {
-                  label:'工作提醒',
-                  index:'3-2',
-                  route:{ path: '/work/workMind' }
-                },
-                {
-                  label: '新建日志',
-                  index: '3-3',
-                  route:{ path: '/work/log' }
-                }
-              ]
-            },
-            {
-              title:'工人相关',
-              index:'4',
-              children:[
-                {
-                  label:'邀请同事',
-                  index:'4-1',
-                  route:{ path: '/work/inviteCol' }
-                },
-                {
-                  label:'工人列表',
-                  index:'4-2',
-                  route:{ path: '/work/list' }
-                },
-                {
-                  label:'通讯录',
-                  index:'4-3',
-                  route:{ path: '/work/addressBook' }
-                }
-              ]
-            },
-            {
-              title:'工程相关',
-              index:'5',
-              children:[
-                {
-                  label:'最新工程',
-                  index:'5-1',
-                  route:{ path: '/work/nearWork' }
-                },
-                {
-                  label:'我发布的',
-                  index:'5-2',
-                  route:{ path: '/work/release' }
-                }
-              ]
-            },
-            {
-              title:'账户相关',
-              index:'6',
-              children:[
-                {
-                  label:'发工资',
-                  index:'6-1',
-                  route:{ path: '/work/wage' }
-                },
-                {
-                  label:'充值',
-                  index:'6-2',
-                  route:{ path: '/work/pay' }
-                },
-                {
-                  label:'我的账户',
-                  index:'6-3',
-                  route:{ path: '/work/account' }
-                }
-              ]
-
-            },
-            {
-              title:'合同',
-              index:'7',
-              children:[
-                {
-                  label:'我发出的',
-                  index:'7-1',
-                  route:{ path: '/work/issue' }
-                },
-                {
-                  label:'我收到的',
-                  index:'7-2',
-                  route:{ path: '/work/rece' }
-                },
-                {
-                  label:'合同列表',
-                  index:'7-3',
-                  route:{path:'/work/contr_list'}
-                }
-              ]
-            },
-            {
-              title:'个人',
-              index:'8',
-              children:[
-                {
-                  label:'我的作品',
-                  index:'8-1',
-                  route:{ path: '/work/opus' }
-                },
-                {
-                  label:'我的收藏',
-                  index:'8-2',
-                  route:{ path: '/work/collect' }
-                },
-                {
-                  label:'消息提醒',
-                  index:'8-3',
-                  route:{ path: '/work/infos' }
-                }
-
-              ]
-            }
-          ]
+          this.setting_show = false
 				}
 				if(m === 1) {
-          this.workList=[
-            {
-              title:'审批相关',
-              index:'1',
-              children:[
-                {
-                  label:'处理审批',
-                  index:'1-1',
-                  route:{path:'/work/exam'}
-                },
-                {
-                  label:'发起审批',
-                  index:'1-2',
-                  route:{ path: '/work/addApproval' }
-                },
-                {
-                  label:'表单回执',
-                  index:'1-3',
-                  route:{ path: '/work/formReceipt' }
-                }
-              ]
-            },
-            {
-              title:'公司相关',
-              index:'2',
-              children:[
-                {
-                  label:'创建公司',
-                  index:'2-1',
-                  route:{ path: '/work/create_company' }
-                },
-                {
-                  label:'公司管理',
-                  index:'2-2',
-                  route:{ path: '/work/manageCompany' }
-                },
-                {
-                  label:'权限管理',
-                  index:'2-3',
-                  route:{ path: '/work/jurisdictionManage' }
-                },
-                {
-                  label:'最近公司',
-                  index:'2-4',
-                  route:{ path: '/work/company' }
-                },
-                {
-                  label:'创建群组',
-                  index:'2-5',
-                  route:{path:'/work/small'}
-                },
-                {
-                  label:'申请加入公司',
-                  index:'2-6',
-                  route:{path:'/work/join'}
-                }
-              ]
-            },
-            {
-              title:'日志相关',
-              index:'3',
-              children:[
-                {
-                  label:'工作记录',
-                  index:'3-1',
-                  route:{ path: '/work/record' }
-                },
-                {
-                  label:'工作提醒',
-                  index:'3-2',
-                  route:{ path: '/work/workMind' }
-                },
-                {
-                  label: '新建日志',
-                  index: '3-3',
-                  route:{ path: '/work/log' }
-                }
-              ]
-            },
-            {
-              title:'工人相关',
-              index:'4',
-              children:[
-                {
-                  label:'邀请同事',
-                  index:'4-1',
-                  route:{ path: '/work/inviteCol' }
-                },
-                {
-                  label:'工人列表',
-                  index:'4-2',
-                  route:{ path: '/work/list' }
-                },
-                {
-                  label:'通讯录',
-                  index:'4-3',
-                  route:{ path: '/work/addressBook' }
-                }
-              ]
-            },
-            {
-              title:'工程相关',
-              index:'5',
-              children:[
-                {
-                  label:'最新工程',
-                  index:'5-1',
-                  route:{ path: '/work/nearWork' }
-                },
-                {
-                  label:'我发布的',
-                  index:'5-2',
-                  route:{ path: '/work/release' }
-                }
-              ]
-            },
-            {
-              title:'账户相关',
-              index:'6',
-              children:[
-                {
-                  label:'发工资',
-                  index:'6-1',
-                  route:{ path: '/work/wage' }
-                },
-                {
-                  label:'充值',
-                  index:'6-2',
-                  route:{ path: '/work/pay' }
-                },
-                {
-                  label:'我的账户',
-                  index:'6-3',
-                  route:{ path: '/work/account' }
-                }
-              ]
-
-            },
-            {
-              title:'合同',
-              index:'7',
-              children:[
-                {
-                  label:'我发出的',
-                  index:'7-1',
-                  route:{ path: '/work/issue' }
-                },
-                {
-                  label:'我收到的',
-                  index:'7-2',
-                  route:{ path: '/work/rece' }
-                },
-                {
-                  label:'合同列表',
-                  index:'7-3',
-                  route:{path:'/work/contr_list'}
-                }
-              ]
-            },
-            {
-              title:'个人',
-              index:'8',
-              children:[
-                {
-                  label:'我的作品',
-                  index:'8-1',
-                  route:{ path: '/work/opus' }
-                },
-                {
-                  label:'我的收藏',
-                  index:'8-2',
-                  route:{ path: '/work/collect' }
-                },
-                {
-                  label:'消息提醒',
-                  index:'8-3',
-                  route:{ path: '/work/infos' }
-                },
-                {
-                  label:'制作个人工资条',
-                  index:'8-4',
-                  route:{path:'/work/person_qk'}
-                }
-              ]
-            }
-          ]
+          this.setting_show = true
 				}
 			},
  			changeWorkIndex(num){
@@ -1060,7 +396,7 @@
 				this.userOperationLeftShow = false
 			},
 			changeCompany(item, index) {
-				this.workIndex = '1-1'
+				this.workIndex = '1'
 				this.setNowCompanyName(item.company_name)
 				this.userOperationLeftShow = false
 				this.setNowCompanyId(item.company_id)
@@ -1494,7 +830,7 @@
 			this.setNowCompanyName(JSON.parse(localStorage.nowCompanyName))
 			this._getToken()
 			this._getUserState()
-      this.workIndex = '1-1'
+      this.workIndex = '1'
 		},
 		watch: {
 			nowCompanyId() {

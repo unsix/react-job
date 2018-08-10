@@ -345,7 +345,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/company') {
-        this.$emit('changeWorkIndex', '2-4')
+        this.$emit('changeWorkIndex', '2')
       }
     },
     watch:{

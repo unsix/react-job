@@ -1544,7 +1544,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/record') {
-        this.$emit('changeWorkIndex', '3-1')
+        this.$emit('changeWorkIndex', '4-9-1')
       }
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
       this.$refs.wide.style.height = h + 'px'

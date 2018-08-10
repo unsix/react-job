@@ -274,7 +274,7 @@ export default {
   },
   mounted(){
     if(this.$route.path === '/work/issue') {
-      this.$emit('changeWorkIndex', '7-1')
+      this.$emit('changeWorkIndex', '5-2-2')
     }
   }
 }

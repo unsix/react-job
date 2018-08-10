@@ -846,7 +846,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/log') {
-        this.$emit('changeWorkIndex', '3-3')
+        this.$emit('changeWorkIndex', '4-9-2')
       }
     },
     watch:{

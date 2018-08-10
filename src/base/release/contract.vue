@@ -183,6 +183,11 @@
     created(){
       this._get_Data()
     },
+    mounted() {
+      if(this.$route.path === '/work/contr_list') {
+        this.$emit('changeWorkIndex', '4-6')
+      }
+    },
     watch:{
       pageIndex(){
         this._get_Data()

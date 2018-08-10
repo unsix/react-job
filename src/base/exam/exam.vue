@@ -1314,7 +1314,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/exam') {
-				this.$emit('changeWorkIndex', '1-1')
+				this.$emit('changeWorkIndex', '4-7-1')
 			}
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
       this.$refs.wide.style.height = h + 'px'
@@ -2293,6 +2293,7 @@
 				this.handle_txt = ''
 				this.formShow = false
 				this.listShow = true
+        this.gongzidan_show = false
 				this.menuShow = false
 				this.qingkuandan_show = false
 				this.qinggoudan_show = false

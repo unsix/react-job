@@ -236,7 +236,7 @@
                           this.setNowCompanyName(res.data.data[0].company_name)
                           localStorage.nowCompanyId = JSON.stringify(res.data.data[0].company_id);
                           localStorage.nowCompanyName = JSON.stringify(res.data.data[0].company_name);
-                          this.$router.push('/work');
+                          this.$router.push('/list');
                         })
                     }
                   })

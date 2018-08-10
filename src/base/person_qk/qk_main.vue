@@ -662,6 +662,11 @@
     created(){
       this._getComPersonList()
     },
+    mounted() {
+      if(this.$route.path === '/work/person_qk') {
+        this.$emit('changeWorkIndex', '4-8')
+      }
+    },
     watch:{
       pageIndex() {
         this.get_Data()
