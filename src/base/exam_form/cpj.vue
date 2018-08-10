@@ -175,11 +175,14 @@
         this.$emit('return_psb')
         this.handle_txt === ''
       },
-			rec_pic(item, index) {
-				this.img_arr = item
-				this.pic_index = index
-				this.pic_show = true
-			},
+      rec_pic(item,index){
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
 			cl_pic(item, index) {
 				this.img_arr = item.picture
 				this.pic_index = index

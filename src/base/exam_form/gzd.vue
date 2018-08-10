@@ -203,6 +203,14 @@
             this.input_value = res.data.data
           })
       },
+      rec_pic(item,index){
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
       handleRemove(file, fileList) {
         this.fileList = fileList
       },

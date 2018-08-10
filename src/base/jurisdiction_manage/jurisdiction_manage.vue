@@ -8,12 +8,12 @@
       <div class="manage_sons">
         <ul>
           <li @click="choose_small"><span>添加群组</span></li>
-          <li @click="choose_approval"><span>表单审批</span></li>
-          <li @click="choose_receipt"><span>表单回执</span></li>
-          <li @click="choose_manage"><span>人员管理</span></li>
           <li @click="choose_depart"><span>添加部门</span></li>
-          <li @click="choose_info"><span>设置信息共享</span></li>
           <li @click="choose_project"><span>添加工程项目</span></li>
+          <li @click="choose_manage"><span>人员管理</span></li>
+          <li @click="choose_receipt"><span>表单回执</span></li>
+          <li @click="choose_approval"><span>表单审批</span></li>
+          <li @click="choose_info"><span>设置信息共享</span></li>
         </ul>
       </div>
     </div>

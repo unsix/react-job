@@ -3,7 +3,7 @@
     <div class="main" v-show="mains">
       <div class="top" v-show="mean">
         <el-button type="success" size="small" @click="show_sea">搜索</el-button>
-        <p>最新工程</p>
+        <p>最近工程</p>
         <b @click="look_project">发布工程</b>
       </div>
       <div class="miss" v-show="miss">

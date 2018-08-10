@@ -851,7 +851,7 @@
           <span>本次请款：</span><span>{{form_Lista.request_money}}</span>
         </div>
         <div>
-          <span>项目负责人：</span><span></span>
+          <span>项目负责人：</span><span>{{form_Lista.project_manager_name}}</span>
         </div>
         <div>
           <span>本次请款清单：</span><span style="color: red;" v-show="form_Lista.sum_money > 0">(￥{{form_Lista.sum_money}})</span>
@@ -2393,6 +2393,7 @@
               this.yanshou_show = true
             } else if(item.type == '个人请款单'){
               this.form_Lista = res.data.data
+              this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
               this.get_item_data()
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
@@ -2451,6 +2452,29 @@
                 this.get_files(item.many_enclosure,item)
               })
             }
+            if(res.data.data.finance) {
+              if(res.data.data.finance.finance_state === '1') {
+                res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+              } else {
+                res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+              }
+              let zparam = new URLSearchParams();
+              zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+              let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+              this.$http.post(str, zparam)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  let arr = []
+                  res.data.data.picture.forEach((item) => {
+                    if(item != '') {
+                      arr.push(getPic(item))
+                    }
+                  })
+                  this.$set(this.form_Listb, 're_pic', arr)
+                })
+            }
             this.form_Listb = create_approval_list(res.data.data)
           })
 
@@ -2482,6 +2506,14 @@
             }
           })
 			},
+      rec_pic(item, index) {
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
       get_item_data(){
         if(this.form_Lista.salary_items){
           this.form_Lista.salary_items.forEach((item)=>{
@@ -2499,7 +2531,7 @@
               }else if(state === '-1'){
                 return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
               }else if(state === '99'){
-                return '<span style="color:#67C23A">已完结<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
               }
             }
           })
