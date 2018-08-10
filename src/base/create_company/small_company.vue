@@ -1,5 +1,9 @@
 <template>
   <div class="create_qun">
+    <div class="top">
+      <el-button type="primary" size="small" @click="return_">返回</el-button>
+      <p>添加群组</p>
+    </div>
     <div class="create_qunzu">
       <div class="step">
         <el-steps :active="active" finish-status="success">
@@ -246,6 +250,9 @@
         this.active = 0
         document.getElementById('step').innerText = '下一步'
       },
+      return_(){
+        this.$router.push({path:'/work/jurisdictionManage'})
+      },
       next() {
         if (this.active++ > 2) this.active = 0;
         if(this.active===0){
@@ -480,6 +487,30 @@
     height: 100%;
     background: rgba(0,0,0,0.5);
     z-index: 20;
+    .top {
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      background: #fff;
+      .el-button {
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
+      }
+      p {
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b {
+        position: absolute;
+        top: 13px;
+        right: 13px;
+        cursor: pointer;
+      }
+    }
     .create_qunzu{
       position: relative;
       background: #FFFFFF;

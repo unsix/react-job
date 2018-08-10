@@ -113,7 +113,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/formReceipt') {
-				this.$emit('changeWorkIndex', '1-3')
+				this.$emit('changeWorkIndex', '4-7-2')
 			}
 		},
 		created() {

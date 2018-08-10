@@ -185,7 +185,7 @@ export default {
   },
   mounted(){
     if(this.$route.path === '/work/account') {
-      this.$emit('changeWorkIndex', '6-3')
+      this.$emit('changeWorkIndex', '5-3')
     }
   }
 }

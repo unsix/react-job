@@ -47,11 +47,15 @@ export default new Router({
 			children: [
 				{
 					path: '',
-					component: exam
+					component: list
 				},
+        {
+          path: 'exam',
+          component: exam
+        },
 				{
-					path: 'exam',
-					component: exam
+					path: 'list',
+					component: list
 				},
 				{
 					path: 'inviteCol',

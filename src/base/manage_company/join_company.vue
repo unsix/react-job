@@ -316,7 +316,7 @@
     },
     mounted(){
       if(this.$route.path === '/work/join') {
-        this.$emit('changeWorkIndex', '2-6')
+        this.$emit('changeWorkIndex', '4-2')
       }
     }
   }

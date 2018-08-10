@@ -1139,7 +1139,7 @@ export default {
   },
   mounted(){
     if(this.$route.path === '/work/infos') {
-      this.$emit('changeWorkIndex', '8-3')
+      this.$emit('changeWorkIndex', '5-6-1')
     }
   },
   watch:{

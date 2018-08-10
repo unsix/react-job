@@ -241,7 +241,7 @@ export default {
     this._getType()
     this._getList()
     if(this.$route.path === '/work/nearWork') {
-      this.$emit('changeWorkIndex', '5-1')
+      this.$emit('changeWorkIndex', '3')
     }
   },
   watch:{

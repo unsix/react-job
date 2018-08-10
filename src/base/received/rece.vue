@@ -682,7 +682,7 @@ export default {
   },
   mounted(){
     if(this.$route.path === '/work/rece') {
-      this.$emit('changeWorkIndex', '7-2')
+      this.$emit('changeWorkIndex', '5-2-1')
     }
     let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
     this.$refs.wide.style.height = h + 'px'
