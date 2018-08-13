@@ -33,7 +33,7 @@
           我发出的工作
           <span v-show="scf">({{obj4.name}}点评了我的日志:{{obj4.description}})</span>
         </li>
-        <li>
+        <li @click="show_approval_list">
           <el-badge :value="obj5.unread_num" class="item">
             <span><i class="iconfont icon-xiaoxi"></i></span>
           </el-badge>
@@ -59,6 +59,8 @@
     <like ref="like" v-show="like_show"></like>
 
     <per v-if="per_show"></per>
+
+    <list ref="list" v-if="list_show_once"></list>
   </div>
 </template>
 
@@ -71,6 +73,7 @@
   import remy from '@/base/work_record/remy'
   import like from '@/base/work_record/liked'
   import per from '@/base/work_record/person_qkd'
+  import list from '@/base/work_record/replyList'
   export default {
     data(){
       return{
@@ -117,6 +120,7 @@
         scf:true,
         approval:true,
         qkd:true,
+        list_show_once:false
       }
     },
     methods:{
@@ -131,6 +135,10 @@
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST',
       }),
+      show_approval_list(){
+        this.mainShow = false
+        this.list_show_once = true
+      },
       record_mind(){
         this.mainShow = false
         this.mindShow = true
@@ -257,7 +265,8 @@
       reply,
       remy,
       like,
-      per
+      per,
+      list
     },
     watch:{
 

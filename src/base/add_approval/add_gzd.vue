@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="request_phone	">
-          <el-input v-model="gzd_ruleForm.request_phone" :disabled="true"></el-input>
+          <el-input v-model="gzd_ruleForm.request_phone"></el-input>
         </el-form-item>
         <el-form-item label="合同执行进度" prop="contract_process">
           <el-input v-model="gzd_ruleForm.contract_process"></el-input>
@@ -32,14 +32,14 @@
         <el-form-item label="请款内容" prop="request_content">
           <el-input v-model="gzd_ruleForm.request_content"></el-input>
         </el-form-item>
-        <el-form-item label="合同金额" prop="contract_money">
-          <el-input v-model="gzd_ruleForm.contract_money"></el-input>
+        <el-form-item label="合同金额" prop="contract_money" >
+          <el-input v-model="gzd_ruleForm.contract_money" @change="check_money(gzd_ruleForm.contract_money,1)"></el-input>
         </el-form-item>
         <el-form-item label="已领金额" prop="receive_money">
-          <el-input v-model="gzd_ruleForm.receive_money"></el-input>
+          <el-input v-model="gzd_ruleForm.receive_money" @change="check_money(gzd_ruleForm.receive_money,2)"></el-input>
         </el-form-item>
         <el-form-item label="本次请款" prop="request_money">
-          <el-input v-model="gzd_ruleForm.request_money"></el-input>
+          <el-input v-model="gzd_ruleForm.request_money" @change="check_money(gzd_ruleForm.request_money,3)"></el-input>
         </el-form-item>
         <el-form-item label="项目负责人" prop="project_manager_name">
           <el-select v-model="gzd_ruleForm.project_manager_name" placeholder="请选择" @change="gzdSelectOk">
@@ -269,6 +269,23 @@
         this.fra_show = true
         this.form_show = false
         this.$parent.forms = false
+      },
+      check_money(data,pr){
+        let str = /^[1-9]\d*$/
+        if(!str.test(data)){
+          this.$message.error('只能输入数字')
+          switch (pr) {
+            case 1:
+              this.gzd_ruleForm.contract_money = '0'
+              break;
+            case 2:
+              this.gzd_ruleForm.receive_money = '0'
+              break;
+            case 3:
+              this.gzd_ruleForm.request_money = '0'
+              break;
+          }
+        }
       },
       gzd_submit(){
         this.loadingShow = true
