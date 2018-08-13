@@ -2,8 +2,8 @@
   <div name="工资单">
     <div class="form" v-show="mainShow">
       <div class="top">
-        <el-button type="info" plain @click="return_" v-if="!qk_return">返回列表</el-button>
-        <span class="title">个人请款单</span>
+        <el-button size="small" type="info" plain @click="return_" v-if="!qk_return">返回列表</el-button>
+        <p class="title">个人请款单</p>
       </div>
       <div>
         <span>工程名称：</span><span>{{form_Lista.project_name}}</span>
@@ -561,20 +561,27 @@
     padding: 10px;
     color: #999999;
     >.top {
-      width: 100%;
-      display: block;
-      button {
-        margin-left: 10px;
-        margin-top: 10px;
-        display: inline-block;
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      background: #fff;
+      .el-button {
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
       }
-      .title {
-        font-size: 16px;
-        width: 100%;
-        display: inline-block;
+      p {
+        width: 500px;
+        margin: 0 auto;
         text-align: center;
-        height: 30px;
-        line-height: 30px;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b {
+        position: absolute;
+        top: 13px;
+        right: 13px;
+        cursor: pointer;
       }
     }
     .exam_info {
