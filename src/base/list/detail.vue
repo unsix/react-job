@@ -318,6 +318,9 @@
             this.moreInfo.type = str
             this.x = this.moreInfo.longitude
             this.y = this.moreInfo.latitude
+          }else{
+            this.$message.error(res.data.message)
+            this._return()
           }
         })
     },
