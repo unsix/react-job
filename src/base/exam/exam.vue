@@ -150,7 +150,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p></p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
@@ -293,7 +292,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -419,7 +417,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0"  class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -549,7 +546,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -645,7 +641,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -741,7 +736,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -895,7 +889,6 @@
           <div v-for="item in form_Listb.content" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -2441,9 +2434,6 @@
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
-              }
-              if(item.form_auto_filled_value){
-                item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
             })
             if(res.data.data.supply){

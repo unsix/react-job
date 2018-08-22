@@ -650,9 +650,6 @@
                 this.get_imgs(item.many_enclosure,item)
                 this.get_files(item.many_enclosure,item)
               }
-              if(item.form_auto_filled_value){
-                item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
-              }
               if(item.replys){
                 item.replys.forEach((pic)=>{
                   this.get_imgs(pic.many_enclosure,pic)
@@ -886,9 +883,6 @@
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
-              }
-              if(item.form_auto_filled_value){
-							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
 						})
             if(res.data.data.supply){
