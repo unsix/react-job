@@ -76,7 +76,6 @@
         <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-          <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
           <p v-show="item.many_enclosure" class="enclosure">
             <span style="display: block">附件列表</span>
@@ -196,7 +195,6 @@
         <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-          <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
           <p v-show="item.many_enclosure" class="enclosure">
             <span style="display: block">附件列表</span>
@@ -280,7 +278,6 @@
         <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
           <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
           <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-          <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
           <p>意见:<span>{{item.opinion}}</span></p>
           <p v-show="item.many_enclosure" class="enclosure">
             <span style="display: block">附件列表</span>
@@ -354,7 +351,10 @@
 			form_approval_id: {
 				type: String,
 				default: '0'
-			}
+			},
+      company_ids:{
+
+      }
 		},
 		created() {
 			setTimeout(() => {
@@ -457,7 +457,11 @@
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", this.form_approval_id);
-				nparam.append("company_id", this.nowCompanyId);
+				if(this.company_ids){
+          nparam.append("company_id", this.company_ids);
+        }else{
+          nparam.append("company_id", this.nowCompanyId);
+        }
         let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
 				this.$http.post(httpUrl, nparam)
 					.then((res) => {
@@ -492,9 +496,6 @@
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
-              }
-              if(item.form_auto_filled_value){
-							  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
 						})
             if(res.data.data.supply){

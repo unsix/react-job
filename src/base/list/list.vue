@@ -324,6 +324,7 @@
                         }
                       }else{
                         this.$message.warning(res.data.message)
+                        this.$refs.detail._return()
                       }
                     })
                 }).catch(()=>{

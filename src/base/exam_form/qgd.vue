@@ -76,7 +76,6 @@
       <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
         <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
         <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-        <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
         <p>意见:<span>{{item.opinion}}</span></p>
         <p v-show="item.many_enclosure" class="enclosure">
           <span style="display: block">附件列表</span>

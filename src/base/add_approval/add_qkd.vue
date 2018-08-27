@@ -204,7 +204,8 @@
 				pic_enclosure_id: '',
 				fileAccordShow: false,
         str:'',
-        handler:''
+        handler:'',
+        company_ids:''
 			}
 		},
 		props: {
@@ -289,9 +290,7 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(()=>{
-          console.log(this.main_show)
           this.qkd_ruleForm.bank_card = this.main_show.bank_card
-          console.log(this.qkd_ruleForm.bank_card)
           this.qkd_ruleForm.subtotal = this.main_show.subtotal
           this.qkd_ruleForm.account_name = this.main_show.account_name
           this.qkd_ruleForm.balance_subtotal = this.main_show.balance_subtotal
@@ -493,6 +492,7 @@
 				setToken: 'SET_TOKEN'
 			}),
 			qkdSelectOk(tab) {
+        this.qkd_ruleForm.project_manager = {}
 			  this.handler = tab
 				this.comPersonList.forEach((item) => {
 					if(item.uid === tab) {

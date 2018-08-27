@@ -304,9 +304,6 @@
                     this.get_files(pic.many_enclosure,pic)
                   })
                 }
-                if(item.form_auto_filled_value){
-                  item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
-                }
               })
               if(res.data.data.supply){
                 res.data.data.supply.forEach((item,index)=>{

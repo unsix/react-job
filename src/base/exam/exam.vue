@@ -150,7 +150,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p></p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
@@ -293,7 +292,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -419,7 +417,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0"  class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -549,7 +546,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -645,7 +641,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -741,7 +736,6 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(val, key, index) in item.form_auto_filled_value">{{key}}:{{val}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -895,7 +889,6 @@
           <div v-for="item in form_Listb.content" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p v-for="(vals, keys, index) in item.form_auto_filled_value">{{keys}}:{{vals}}</p>
             <p>意见:<span>{{item.opinion}}</span></p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
@@ -960,7 +953,7 @@
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
-		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
+		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :company_ids="company_ids" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
 		<div class="ifDown" v-show="ifDownShow">
 			<div class="info">
 				<div class="title">
@@ -1126,7 +1119,8 @@
           required:[]
         },
         detail_ele_show:false,
-        detail_fix_show:false
+        detail_fix_show:false,
+        company_ids:''
 			}
 		},
 		computed: {
@@ -1526,8 +1520,8 @@
 				} else {
 					this.request_money_basis_type = '呈批件'
 				}
-
 				this.form_approval_id = item.form_approval_id
+
 			},
 			classButton(item, index) {
 				this.pageIndex = 1
@@ -2312,6 +2306,7 @@
         this.untreateds = []
 			},
 			listCli(item,sta) {
+        this.company_ids = item.company_id
 			  this.list = item
         if(sta.indexOf('已通过') == '-1'){
           this.status = '2'
@@ -2441,9 +2436,6 @@
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
-              }
-              if(item.form_auto_filled_value){
-                item.form_auto_filled_value = JSON.parse(item.form_auto_filled_value)
               }
             })
             if(res.data.data.supply){
