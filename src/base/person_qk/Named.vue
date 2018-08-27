@@ -121,7 +121,7 @@
         param.append('order','d')
         param.append('p',this.pageIndex)
         param.append('each',10)
-        let str = this.$test('index.php/Mobile/Find/nearby_worker_list')
+        let str = this.$test('/index.php/Mobile/Find/nearby_worker_list')
         this.$http.post(str,param)
           .then((res)=>{
             if(res.data.code == 0){

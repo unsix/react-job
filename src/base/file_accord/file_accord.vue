@@ -351,7 +351,10 @@
 			form_approval_id: {
 				type: String,
 				default: '0'
-			}
+			},
+      company_ids:{
+
+      }
 		},
 		created() {
 			setTimeout(() => {
@@ -454,7 +457,11 @@
 				let nparam = new URLSearchParams();
 				nparam.append("uid", this.user.uid);
 				nparam.append("approval_id", this.form_approval_id);
-				nparam.append("company_id", this.nowCompanyId);
+				if(this.company_ids){
+          nparam.append("company_id", this.company_ids);
+        }else{
+          nparam.append("company_id", this.nowCompanyId);
+        }
         let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
 				this.$http.post(httpUrl, nparam)
 					.then((res) => {

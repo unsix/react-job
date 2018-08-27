@@ -953,7 +953,7 @@
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
-		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
+		<fileAccord v-if="fileAccordShow" :request_money_basis_type="request_money_basis_type" :company_ids="company_ids" :form_approval_id="form_approval_id" @closeAcc="closeAcc"></fileAccord>
 		<div class="ifDown" v-show="ifDownShow">
 			<div class="info">
 				<div class="title">
@@ -1119,7 +1119,8 @@
           required:[]
         },
         detail_ele_show:false,
-        detail_fix_show:false
+        detail_fix_show:false,
+        company_ids:''
 			}
 		},
 		computed: {
@@ -1519,8 +1520,8 @@
 				} else {
 					this.request_money_basis_type = '呈批件'
 				}
-
 				this.form_approval_id = item.form_approval_id
+
 			},
 			classButton(item, index) {
 				this.pageIndex = 1
@@ -2305,6 +2306,7 @@
         this.untreateds = []
 			},
 			listCli(item,sta) {
+        this.company_ids = item.company_id
 			  this.list = item
         if(sta.indexOf('已通过') == '-1'){
           this.status = '2'
