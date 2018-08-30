@@ -20,3 +20,9 @@
 	width: 100%;
   z-index:9999
 }
+.stick-footer{
+	z-index:10;
+	position: absolute;
+	bottom: 0;
+	width:100%;
+}
