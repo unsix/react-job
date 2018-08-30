@@ -44,7 +44,7 @@
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
       </el-upload>
       <el-upload class="upload-demo_a" v-model="bxd_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-        <el-button size="small" type="info" plain>上传文本</el-button>
+        <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
 
@@ -147,7 +147,7 @@
         }
       },
       handlePreview(file,fileList){
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -365,6 +365,7 @@
         setToken:'SET_TOKEN'
       }),
       bxdSelectOk(tab){
+        this.bxd_ruleForm.project_manager={}
         this.comPersonList.forEach((item) => {
           if(item.name === tab) {
             this.$set(this.bxd_ruleForm.project_manager, 'uid', item.uid)

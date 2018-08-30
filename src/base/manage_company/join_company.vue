@@ -252,7 +252,7 @@
             this.loading = false
             let param = new URLSearchParams()
             param.append('company_name',res)
-            param.append('p',1)
+            param.append('p',this.pageIndex)
             param.append('each',20)
             let httpUrl = this.$test('/index.php/Mobile/find/select_company_list')
             this.$http.post(httpUrl,param)

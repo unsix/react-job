@@ -4,12 +4,14 @@
       <el-button type="info" size="small" plain @click="return_" v-if="!qk_return">返回列表</el-button>
       <el-button type="info" size="small" plain @click="return_qk" v-if="qk_return">返回列表</el-button>
 			<p class="title">合同评审表</p>
+      <a style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
 		</div>
 		<div v-if="form_Lista.contract_name">
 			<span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
 		</div>
 		<div v-if="form_Lista.contract_name_new">
 			<span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
+      <a style="font-size: 14px;margin-left: 330px;line-height: 23px;cursor: pointer" :href="insdent" target="_blank" v-if="form_Lista.contract_temp_id">查看附件</a>
 		</div>
 		<div v-if="form_Lista.contract_num">
 			<span>合同编号：</span><span>{{form_Lista.contract_num}}</span>
@@ -154,12 +156,14 @@
         arr_list: [],
         picArr:[],
         fileList: [],
+        downUrl:'',
         many_enclosure:{},
         personnel_id:'',
         pic_time:0,
         enclosure_id:'',
         finance_state:'',
-        status:'1'
+        status:'1',
+        insdent:''
 			}
 		},
 		props: {
@@ -388,7 +392,7 @@
         this.fileList = fileList
       },
       handlePreview(file, fileList) {
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -403,7 +407,30 @@
         remove(fileList,this.str)
         this.fileList = fileList
       },
+      add_html(){
+        setTimeout(()=>{
+          let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+          this.insdent =str + this.form_Lista.contract_temp_id+'&operation=2&view=4'
+          let param = new URLSearchParams
+          param.append('uid',this.user.uid)
+          param.append('company_id',this.form_Lista.company_id)
+          param.append('approval_id',this.form_Lista.approval_id)
+          let src = this.$test('/index.php/Mobile/find/get_download_token')
+          this.$http.post(src,param)
+            .then((res)=>{
+              console.log(res)
+              var cur = this
+              var jud = res.data.code
+              this.$testLogin(jud,cur)
+              let str = this.$test('/index.php/Mobile/skey/aaampd_picture?token=')
+              this.downUrl = str + res.data.data
+            })
+        },500)
+      }
 		},
+    created(){
+		  this.add_html()
+    },
 		components: {
 			browsePic,
 			loading
@@ -459,11 +486,12 @@
         font-weight: bolder;
         padding: 15px 0;
       }
-      b {
+      a {
         position: absolute;
         top: 13px;
         right: 13px;
         cursor: pointer;
+        color: #000;
       }
     }
     .exam_info {

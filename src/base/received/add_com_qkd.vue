@@ -1,94 +1,64 @@
 <template>
   <div>
-    <div class="contract_list" v-show="contr_show">
-      <div class="tabs">
-        <el-tabs v-model="activeCard" @tab-click="handle">
-          <el-tab-pane label="合同模板" name="1"></el-tab-pane>
-          <el-tab-pane label="拟呈批合同" name="2"></el-tab-pane>
-        </el-tabs>
-      </div>
-      <div class="lists">
-        <ul>
-          <li v-for="(item,index) in contract_list" @click="look_contract(item.contract_type_id,item.contract_name,item.type)">
-            <p>{{item.contract_name}}</p>
-          </li>
-        </ul>
-        <div class="pages" v-show="pageShow">
-          <span @click="first_page">首页</span>
-          <span @click="last_page" v-show="pageIndex > 1">上一页</span>
-          <span @click="next_page" v-show="nextPageShow">下一页</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="detail" v-show="detail_show">
+    <div class="forms" v-if="form_show">
       <div class="top">
         <el-button type="primary" size="small" @click="_return">返回</el-button>
-        <p>{{con_title}}</p>
-        <b @click="write_contract()"><i class="el-icon-edit"></i></b>
-        <a style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
+        <p>{{qkd_status}}</p>
+        <b @click="show_sign">去复制</b>
       </div>
-      <iframe :src="core" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
+      <addQkd v-if="qkd_show" :userList="user_info" :approval_id="approval_id" :btn_show="false" :contract_name="contract_name" :contract="inset" ref="scse"  @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
+      <qkds class="qkd_s" :contract_name="contract_name" :contract="inset" :approval_id="approval_id" :btn_show="false" :request_money_basis_type="request_money_basis_type" ref="qkd" v-if="qkd_if"></qkds>
     </div>
+    <choose v-if="chooseShow" :link="true"  ref="choosetem" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></choose>
+    <chooseTemplate v-if="chooseTemShow" :link="true" style="background: #FFF"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
 
-    <div class="detail" v-if="details_show">
-      <div class="top">
-        <el-button type="primary" size="small" @click="_returned">返回</el-button>
-        <p>编写-{{con_title}}</p>
-        <b @click="submit()">提交</b>
-      </div>
-      <iframe ref="win" :src="cores" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
-    </div>
-
-    <div class="box" v-if="psb_show">
-      <div class="top">
-        <el-button type="primary" size="small" @click="_returns">返回</el-button>
-        <p>{{contr_name}}</p>
-        <b @click="show_sea">去复制</b>
-      </div>
-      <addPsb :userList="user_info" :approval_id="approval_id1" :tode="todo" @return_exam="return_Add"></addPsb>
-    </div>
-    <chooseTemplate v-if="chooseTemShow"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
-    <psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="false" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
+    <qkd v-if="if_qkd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
+    <comQkd :change_type="change_type" v-if="qkd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" :pset="false" @return_psb="returnList" :file_arr="file_arr"></comQkd>
   </div>
 </template>
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
-  import psb from '@/base/exam_form/psb'
-  import addPsb from '@/base/add_approval/add_psb'
+  import qkd from '@/base/personal_approval/qkd_b'
+  import comQkd from '@/base/exam_form/qkd'
+  import qkds from '@/base/personal_approval/qkd_a'
   import {getPic} from '@/common/js/pic.js'
-  import {getAvatar} from '@/common/js/avatar.js'
+  import addQkd from '@/base/add_approval/add_qkd'
+  import choose from '@/base/personal_approval/inital'
   import chooseTemplate from '@/base/add_approval/choose_template'
+  import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
   import { create_approval_list } from '@/common/js/approval/approval_list'
-  import { create_hetongpingshen_list } from '@/common/js/approval/hetongpingshen'
+  import {getAvatar} from '@/common/js/avatar.js'
   export default {
     data(){
       return{
-        activeCard:'1',
-        contract_list:[],
-        pageIndex:1,
-        pageShow:false,
-        nextPageShow:true,
-        contr_show:true,
-        detail_show:false,
-        con_title:'',
-        core:'',
-        type_id:'',
-        cores:'',
-        details_show:false,
-        downUrl:'',
-        psb_show: false,
-        approval_id1:'',
+        form_show:true,
+        qkd_show:false,
         user_info:[],
-        contr_name:'合同评审表',
-        todo:{},
+        approval_id:'',
+        request_money_basis_type:'',
+        form_approval_id:'',
+        qkd_if:false,
+        chooseShow:false,
         chooseTemShow:false,
-        approval_type:111,
-        psb_if:false,
+        approval_type:'',
+        if_qkd:false,
         form_Lista:{},
         form_Listb:{},
-        file_arr:[]
+        file_arr:[],
+        qkd_show_if:false,
+        change_type:''
+      }
+    },
+    props:{
+      inset:{
+
+      },
+      qkd_status:{
+
+      },
+      contract_name:{
+
       }
     },
     methods:{
@@ -101,138 +71,25 @@
         setNowCompanyName: 'SET_NOWCOMPANY_NAME',
         setToken: 'SET_TOKEN',
         setUserState: 'SET_USERSTATE',
-        setCompanyList: 'SET_COMPANYLIST',
+        setCompanyList: 'SET_COMPANYLIST'
       }),
-      handle(tab){
-        let index = JSON.parse(tab.index)
-        this.activeCard = (index+1).toString()
-        this._get_Data()
-      },
-      _get_Data(){
-        this.contract_list = []
-        if(this.activeCard == '1'){
-          this.pageShow = false
-          let param = new URLSearchParams()
-          param.append('type',1)
-          param.append('each',10)
-          let httpUrl = this.$test('/index.php/Mobile/find/select_contract_companty_types')
-          this.$http.post(httpUrl,param)
-            .then((res)=>{
-              if(res.data.code == 0){
-                this.contract_list = res.data.data
-              }
-            })
-        }else if(this.activeCard == '2'){
-          let param = new URLSearchParams()
-          param.append('p',this.pageIndex)
-          param.append('each',10)
-          let httpUrl = this.$test('/index.php/Mobile/find/draft_list')
-          this.$http.post(httpUrl,param)
-            .then((res)=>{
-              if(res.data.code == 0){
-                this.contract_list = res.data.data
-                if(this.contract_list.length == 0){
-                  this.pageShow = false
-                }else if(this.contract_list.length < 10){
-                  this.nextPageShow = false
-                }
-              }
-            })
+      change_types(){
+        switch (this.qkd_status) {
+          case '请款单':
+            this.qkd_show = true
+            this.get_user()
+            break;
+          case '个人请款单':
+            this.qkd_if = true
+            break;
         }
       },
-
-      first_page() {
-        this.pageIndex = 1
-      },
-      last_page() {
-        this.nextPageShow = true
-        --this.pageIndex
-      },
-      next_page() {
-        ++this.pageIndex
-      },
-      look_contract(pr,re,ed){
-        this.type_id = pr
-        let httpUrl = this.$test('/index.php/Mobile/skey/word_contract?type')
-        this.downUrl = `${httpUrl}=${ed}`
-        let key = ''
-        var str = document.cookie.split(';');
-        str.forEach((item)=>{
-          if(item.indexOf('key') != -1){
-            key = item
-          }
-        })
-        key = key.substring(key.lastIndexOf('=')+1, key.length)
-        let httpUrls = this.$test('/index.php/Mobile/Find/show_form?info=null&type_id')
-        this.core = `${httpUrls}=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null&skey=${key}&skey_uid=${this.user.uid}`
-        this.contr_show = false
-        this.detail_show = true
-        this.con_title = re
-      },
-      _return(){
-        this.contr_show = true
-        this.detail_show = false
-        this.con_title = ''
-        this.core = ''
-      },
-      write_contract(){
-        this.detail_show = false
-        this.details_show = true
-        let httpUrl = this.$test('/index.php/Mobile/skey/look_draft?id')
-        this.cores = `${httpUrl}=${this.type_id}&operation=1&view=2`
-      },
-      _returned(){
-        this.detail_show = true
-        this.details_show = false
-      },
-      submit(){
-        var obj = this.$refs.win.contentWindow
-        obj.getCustomFormResult()
-        let tips = obj.tips
-        let result = obj.result
-        if(result){
-          this.$confirm('确认发起评审么','提示',{
-            confirmButtonText:'确认',
-            cancelButtonText:'取消',
-            type:'warning'
-          }).then(()=>{
-            let param = new URLSearchParams()
-            param.append('contract_type_id',this.type_id)
-            param.append('content_json',result)
-            let httpUrl = this.$test('/index.php/Mobile/find/add_temp_draft')
-            this.$http.post(httpUrl,param)
-              .then((res)=>{
-                if(res.data.code == 0){
-                  this.todo = res.data.data
-                  this.getlist()
-                  this.$message.success('添加成功')
-                  this.details_show = false
-                  this.psb_show = true
-                }else{
-                  this.$message.error(res.data.message)
-                }
-              })
-          }).catch(()=>{
-            this.$message.error('已取消操作')
-          })
-        }
-      },
-      _returns(){
-        this.details_show = true
-        this.psb_show = false
-        this.user_info = []
-        this.approval_id1 = ''
-      },
-      show_sea(){
-        this.psb_show = false
-        this.chooseTemShow = true
-      },
-      getlist(){
+      get_user(){
         let param = new URLSearchParams()
         param.append('company_id',this.nowCompanyId)
-        param.append('type',111)
-        let str = this.$test('/index.php/Mobile/user/get_approval_user_info')
-        this.$http.post(str,param)
+        param.append('type',8)
+        let src = this.$test('/index.php/Mobile/user/get_approval_user_info')
+        this.$http.post(src,param)
           .then((res)=>{
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
@@ -263,30 +120,42 @@
             }
           })
       },
-      returnForm(){
-        this.psb_show = true
-        this.chooseTemShow = false
+      return_Add(){
+        this.form_show = false
+        this.$parent.store = true
+        this.approval_id = ''
+        this.$parent.add_qkd_show_cr = false
       },
-      viewInfo(item) {
-        this.psb_if = false
+      _reInfo(){
+        this.form_show = false
+        this.$parent.store = true
+        this.approval_id = ''
+        this.$parent.add_qkd_show_cr = false
+      },
+      returnForm(){
         this.chooseTemShow = false
-        let param = new URLSearchParams();
-        param.append("uid", this.user.uid);
-        param.append("approval_id", item.approval_id);
-        let str = this.$test("/index.php/Mobile/approval/approval_process_show")
-        this.$http.post(str, param)
-          .then((res)=>{
-            this.psb_if = true
-            this.form_Lista = create_hetongpingshen_list(res.data.data)
-            this.get_img(this.form_Lista.many_enclosure)
-            this.get_file(this.form_Lista.many_enclosure)
-          })
-        let nparam = new URLSearchParams();
-        nparam.append("uid", this.user.uid);
-        nparam.append("approval_id", item.approval_id);
-        nparam.append("company_id", item.company_id);
+        this.chooseShow = false
+        this.form_show = true
+        this.approval_type = ''
+        switch (this.qkd_status) {
+          case '请款单':
+            this.qkd_show = true
+            break;
+          case '个人请款单':
+            this.qkd_if = true
+            break;
+        }
+      },
+      viewInfo(item){
+        this.chooseTemShow = false
+        this.chooseShow = false
+        this.if_qkd = false
+        this.qkd_show_if = false
+        let mparam = new URLSearchParams();
+        mparam.append("approval_id", item.approval_id);
+        mparam.append("company_id", item.company_id);
         let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
-        this.$http.post(httpUrl, nparam)
+        this.$http.post(httpUrl, mparam)
           .then((res) => {
             var current = this
             var judge = res.data.code
@@ -352,15 +221,86 @@
             }
             this.form_Listb = create_approval_list(res.data.data)
           })
+        switch (this.qkd_status) {
+          case '请款单':
+            let nparam = new URLSearchParams();
+            nparam.append("approval_id", item.approval_id);
+            let src = this.$test("/index.php/Mobile/approval/approval_process_show")
+            this.$http.post(src, nparam)
+              .then((res)=>{
+                if(res.data.data.change_type){
+                  this.change_type = res.data.data.change_type
+                }
+                this.qkd_show_if = true
+                this.form_Lista = create_qingkuandan_list(res.data.data)
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+              })
+            break;
+          case '个人请款单':
+            let param = new URLSearchParams()
+            param.append('approval_personal_id',item.approval_personal_id)
+            let str = this.$test('/index.php/Mobile/Personal/approval_personal_process_show')
+            this.$http.post(str,param)
+              .then((res)=>{
+                this.if_qkd = true
+                this.form_Lista = create_qingkuandan_list(res.data.data)
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+              })
+            break;
+        }
       },
       useInfo(item){
-        this.approval_id1 = item.approval_id
-        this.psb_show = true
+        this.approval_id = ''
         this.chooseTemShow = false
+        this.chooseShow = false
+        this.qkd_show = false
+        this.qkd_if = false
+        this.form_show = true
+        switch (this.qkd_status) {
+          case '请款单':
+            this.qkd_show = true
+            this.approval_id = item.approval_id
+            break;
+          case '个人请款单':
+            this.qkd_if = true
+            this.approval_id = item.approval_personal_id
+            break;
+        }
+      },
+      _return(){
+        this.user_info = []
+        this.form_show = false
+        this.$parent.store = true
+        this.$parent.add_qkd_show_cr = false
+      },
+      show_sign(){
+        this.qkd_show = false
+        this.qkd_if = false
+        this.form_show = false
+        switch (this.qkd_status) {
+          case '请款单':
+            this.chooseTemShow = true
+            this.approval_type = 8
+            break;
+          case '个人请款单':
+            this.chooseShow = true
+            this.approval_type = 2
+            break;
+        }
       },
       returnList(){
-        this.chooseTemShow = true
-        this.psb_if = false
+        switch (this.qkd_status) {
+          case '请款单':
+            this.chooseTemShow = true
+            this.qkd_show_if = false
+            break;
+          case '个人请款单':
+            this.chooseShow = true
+            this.if_qkd = false
+            break;
+        }
       },
       get_img(many_enclosure) {
         if(!many_enclosure) {
@@ -515,46 +455,36 @@
           }
         })
       },
-      return_Add(){
-        this.detail_show = true
-        this.psb_show = false
-        this.user_info = []
-        this.approval_id1 = ''
-      }
     },
     created(){
-      this._get_Data()
+      this.change_types()
     },
-    mounted() {
-      if(this.$route.path === '/work/contr_list') {
-        this.$emit('changeWorkIndex', '4-6')
-      }
-    },
-    watch:{
-      pageIndex(){
-        this._get_Data()
-      }
-    },
-    computed:{
+    computed: {
       ...mapGetters([
-        'comPersonList',
         'user',
+        'token',
+        'nowCompanyName',
+        'userState',
         'nowCompanyId',
         'comDepartList',
-        'token'
+        'companyList'
       ])
     },
     components:{
-      addPsb,
-      psb,
+      qkds,
+      qkd,
+      addQkd,
+      choose,
+      comQkd,
       chooseTemplate
     }
   }
 </script>
 
 <style lang="scss">
-  .box{
+  .forms{
     background: #FFF;
+    width: 100%;
     .top{
       position: relative;
       border-bottom: 1px solid #e3e4e9;
@@ -579,104 +509,37 @@
         right: 13px;
       }
     }
-    .add_psb{
-      width: 95%;
-      margin: 20px auto 0;
-    }
-  }
-  .choose_template{
-    background: #FFF;
-  }
-  .contract_list{
-    width: 100%;
-    .tabs{
-      width: 100%;
-      height: 40px;
-      overflow: hidden;
-      background: #ffffff;
-      .el-tabs__header{
-        margin-bottom: 5px;
-      }
-      .el-tabs__active-bar {
-        width: 50%;
-      }
-      .el-tabs__nav {
-        width: 100%;
-      }
-      .el-tabs__item {
-        font-size: 15px;
-        font-weight: 700;
-        width: 50%;
-        text-align: center;
-      }
-    }
-    .lists{
-      width: 100%;
-      li{
-        background: #ffffff;
-        margin-bottom: 5px;
-        padding: 10px 20px ;
-        overflow: hidden;
-        oz-box-shadow: 1px 1px 2px #999999;
-        -webkit-box-shadow: 1px 1px 2px #999999;
-        box-shadow: 1px 1px 2px #999999;
-        &:hover{
-          background: #e3e4e9;
-        }
-        p{
-          cursor: pointer;
-        }
-      }
-      .pages {
-        width: 100%;
-        padding: 4px;
-        text-align: center;
-        background: #FFF;
-        span {
-          cursor: pointer;
-          font-size: 12px;
-          &:hover {
-            color: #409EFF;
+    .qingkuan{
+      width: 96%;
+      margin:  0 auto;
+      #picc{
+        ul{
+          li{
+            width: 85px;
+            height: 85px;
           }
         }
       }
-    }
-  }
-  .detail{
-    width: 100%;
-    background: #FFF;
-    .top{
-      position: relative;
-      border-bottom: 1px solid #e3e4e9;
-      .el-button{
-        position: absolute;
-        top: 8px;
-        left: 5px;
-        margin: 0 !important;
+      .el-upload--picture-card{
+        width: 85px;
+        height: 85px;
+        .el-upload-list__item.is-success{
+          width: 85px;
+          height: 85px;
+        }
       }
-      p{
-        width: 500px;
-        margin: 0 auto;
-        text-align: center;
-        font-weight: bolder;
-        padding: 15px 0;
+      .el-icon-plus{
+        position: relative;
+        top: -25px;
       }
-      b{
-        position: absolute;
-        cursor: pointer;
-        top: 13px;
-        right: 40px;
-      }
-      a{
-        position: absolute;
-        cursor: pointer;
-        top: 13px;
-        right: 13px;
+      .upload-demo_a{
+        margin-top: 20px;
       }
     }
-    .win{
-      width: 100%;
-      height: 800px;
+    .qkd_s{
+      .as{
+        margin-top: 0px!important;
+      }
     }
   }
 </style>

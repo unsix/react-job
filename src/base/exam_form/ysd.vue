@@ -3,8 +3,9 @@
     <div class="top">
       <el-button size="small" type="primary" plain @click="return_">返回列表</el-button>
       <p class="title">验收单</p>
+      <a v-if="form_Lista.approval_id && down_show" style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
     </div>
-    <iframe id="mom" class="win" ref="indx" scrolling="yes" height="100%" :src="linked" seamless frameborder="0"></iframe>
+    <iframe id="mom" class="win" ref="indx" width="100%" style="height: 600px" scrolling="yes" height="100%" :src="linked" seamless frameborder="0"></iframe>
     <div class="menu" v-show="handle_show">
       <el-button type="primary" plain @click="handle">处理</el-button>
       <div class="button" v-show="menuShow">
@@ -35,7 +36,8 @@
         now_personnel_id: 0,
         pic_hash_arr: [],
         arr_list: [],
-        linked:''
+        linked:'',
+        downUrl:''
       }
     },
     props:{
@@ -53,6 +55,12 @@
       },
       file_arr: {
         type: Array
+      },
+      form_approval_id:{
+
+      },
+      down_show:{
+
       }
     },
     computed: {
@@ -62,6 +70,22 @@
       ])
     },
     methods:{
+      add_html(){
+        let param = new URLSearchParams
+        param.append('uid',this.user.uid)
+        param.append('company_id',this.nowCompanyId)
+        param.append('type',2)
+        param.append('approval_id',this.form_Lista.approval_id)
+        let str = this.$test('/index.php/Mobile/find/get_download_token')
+        this.$http.post(str,param)
+          .then((res)=>{
+            var cur = this
+            var jud = res.data.code
+            this.$testLogin(jud,cur)
+            let str = this.$test('/index.php/Mobile/skey/aaampd_picture?token=')
+            this.downUrl = str + res.data.data
+          })
+      },
       rec_pic(item,index){
         item.forEach((res)=>{
           let current = res.indexOf('?')
@@ -278,6 +302,7 @@
     },
     created(){
       this.initial_data()
+      this.add_html()
     }
   }
 </script>
@@ -304,7 +329,7 @@
         font-weight: bolder;
         padding: 15px 0;
       }
-      b {
+      a {
         position: absolute;
         top: 13px;
         right: 13px;

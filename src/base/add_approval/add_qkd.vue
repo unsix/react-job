@@ -8,7 +8,8 @@
 				<el-input v-model="qkd_ruleForm.contract_name"></el-input>
 			</el-form-item>
 			<el-form-item label="合同名称" prop="contract_name_new">
-				<el-input v-model="qkd_ruleForm.contract_name_new"></el-input>
+				<el-input v-model="qkd_ruleForm.contract_name_new" style="width:195px;"></el-input>
+        <el-button type="info" plain @click="viewHt" v-if="!btn_show" style="float: right;margin-right: 5px;" >查看合同</el-button>
 			</el-form-item>
 			<el-form-item label="工种" prop="worker_type">
 				<el-input v-model="qkd_ruleForm.worker_type"></el-input>
@@ -54,7 +55,7 @@
 			</el-upload>
 
       <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-        <el-button size="small" type="info" plain>上传文本</el-button>
+        <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
@@ -224,7 +225,19 @@
       },
       userList:{
 
-      }
+      },
+      contract:{
+
+      },
+      contract_name:{
+
+      },
+      btn_show:{
+        default:true
+      },
+      link:{
+        default:false
+      },
 		},
 
 		computed: {
@@ -241,11 +254,20 @@
 			fileAccord
 		},
 		methods: {
+      viewHt(){
+        if(this.link){
+          let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+          window.open( str+this.contract+'&operation=2&view=4')
+        }else{
+          let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+          window.open( str+this.contract+'&operation=2&view=1')
+        }
+      },
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
 			handlePreview(file, fileList) {
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -312,6 +334,9 @@
 				this.fileAccordShow = true
 			},
 			initial_data() {
+        if(this.contract_name){
+          this.qkd_ruleForm.contract_name_new = this.contract_name
+        }
 				if(!this.approval_id) {
 					return
 				}
@@ -555,13 +580,15 @@
 						param.append("request_subtotal", this.qkd_ruleForm.request_subtotal);
 						param.append("request_content", this.qkd_ruleForm.request_content);
 						param.append("request_num", this.qkd_ruleForm.request_num);
-						param.append("type", '2');
-						if(this.form_approval_id != '0') {
+						if(this.form_approval_id != '') {
 							param.append("form_approval_id", this.form_approval_id);
 						}
 						param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
 						param.append("contract_state", this.qkd_ruleForm.contract_state);
 						param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
+						if(this.contract_name){
+						  param.append('contract_request_id',this.contract)
+            }
             let str = this.$test("/index.php/Mobile/approval/add_request_money")
 						this.$http.post(str, param)
 							.then((res) => {
@@ -714,6 +741,7 @@
 			},
 		},
     created() {
+		  this.viewHt()
       this._getToken()
       this.initial_data();
     },
@@ -744,8 +772,7 @@
 					param.append("request_subtotal", this.qkd_ruleForm.request_subtotal);
 					param.append("request_content", this.qkd_ruleForm.request_content);
 					param.append("request_num", this.qkd_ruleForm.request_num);
-					param.append("type", '2');
-					if(this.form_approval_id != '0') {
+					if(this.form_approval_id != '') {
 						param.append("form_approval_id", this.form_approval_id);
 					}
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
@@ -753,6 +780,9 @@
 					param.append("contract_state", this.qkd_ruleForm.contract_state);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          if(this.contract_name){
+            param.append('contract_request_id',this.contract)
+          }
           let str = this.$test("/index.php/Mobile/approval/add_request_money")
 					this.$http.post(str, param)
 						.then((res) => {
@@ -797,11 +827,13 @@
 					param.append("request_subtotal", this.qkd_ruleForm.request_subtotal);
 					param.append("request_content", this.qkd_ruleForm.request_content);
 					param.append("request_num", this.qkd_ruleForm.request_num);
-					param.append("type", '2');
           param.append('change_type',2)
-					if(this.form_approval_id != '0') {
+					if(this.form_approval_id != '') {
 						param.append("form_approval_id", this.form_approval_id);
 					}
+          if(this.contract_name){
+            param.append('contract_request_id',this.contract)
+          }
 					param.append("balance_subtotal", this.qkd_ruleForm.balance_subtotal);
 					param.append("draw_money_name", this.qkd_ruleForm.draw_money_name);
 					param.append("gain_reduction_subtotal", this.qkd_ruleForm.gain_reduction_subtotal);

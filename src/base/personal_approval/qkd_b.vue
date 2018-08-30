@@ -1,8 +1,9 @@
 <template>
   <div class="form" name="请款单">
     <div class="top">
-      <el-button type="info" plain @click="return_">返回列表</el-button>
-      <span class="title">请款单</span>
+      <el-button type="info" size="small" plain @click="return_">返回列表</el-button>
+      <p class="title">请款单</p>
+      <a  target="_blank" :href="insdent" v-if="form_Lista.contract_id">查看附件</a>
     </div>
     <div v-if="form_Lista.contract_name">
       <span>工程名称：</span><span>{{form_Lista.contract_name}}</span>
@@ -140,7 +141,8 @@
         pic_hash: '',
         now_personnel_id: 0,
         pic_hash_arr: [],
-        arr_list: []
+        arr_list: [],
+        insdent:""
       }
     },
     props: {
@@ -162,6 +164,7 @@
     },
     created() {
       this._getToken()
+      this.add_html()
     },
     computed: {
       ...mapGetters([
@@ -171,6 +174,10 @@
       ])
     },
     methods: {
+      add_html(){
+        let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+        this.insdent =str + this.form_Lista.contract_id+'&operation=2&view=1'
+      },
       rec_pic(item, index) {
         item.forEach((res)=>{
           let current = res.indexOf('?')
@@ -430,20 +437,28 @@
       }
     }
     >.top {
-      width: 100%;
-      display: block;
-      button {
-        margin-left: 10px;
-        margin-top: 10px;
-        display: inline-block;
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      background: #fff;
+      .el-button {
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
       }
-      .title {
-        font-size: 16px;
-        width: 100%;
-        display: inline-block;
+      p {
+        width: 500px;
+        margin: 0 auto;
         text-align: center;
-        height: 30px;
-        line-height: 30px;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      a {
+        position: absolute;
+        top: 13px;
+        right: 13px;
+        cursor: pointer;
+        color: #000;
       }
     }
     .exam_info {

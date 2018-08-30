@@ -31,6 +31,7 @@ function get_state(state){
   }
 }
 function get_type(type){
+  console.log(type)
   if(type === '1'){
     return '请购单'
   }else if(type == '2'){
