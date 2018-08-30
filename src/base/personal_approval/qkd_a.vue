@@ -8,7 +8,8 @@
         <el-input v-model="qkd_ruleForm.contract_name"></el-input>
       </el-form-item>
       <el-form-item label="合同名称" prop="contract_name_new">
-        <el-input v-model="qkd_ruleForm.contract_name_new"></el-input>
+        <el-input v-model="qkd_ruleForm.contract_name_new" style="width:195px;"></el-input>
+        <el-button type="info" plain @click="viewHt" v-if="!btn_show" style="float: right;margin-right: 5px;" >查看合同</el-button>
       </el-form-item>
       <el-form-item label="工种" prop="worker_type">
         <el-input v-model="qkd_ruleForm.worker_type"></el-input>
@@ -61,7 +62,7 @@
       </el-upload>
 
       <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/" :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-        <el-button size="small" type="info" plain>上传文本</el-button>
+        <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
 
@@ -221,11 +222,22 @@
       request_money_basis_type: {
         type: String
       },
+      link:{
+        default:false
+      },
       main_show:{
+
+      },
+      btn_show:{
+        default:true
+      },
+      contract:{
+
+      },
+      contract_name:{
 
       }
     },
-
     computed: {
       ...mapGetters([
         'comPersonList',
@@ -240,11 +252,20 @@
       fileAccord
     },
     methods: {
+      viewHt(){
+        if(this.link){
+          let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+          window.open( str+this.contract+'&operation=2&view=4')
+        }else{
+          let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+          window.open( str+this.contract+'&operation=2&view=1')
+        }
+      },
       handleRemove(file, fileList) {
         this.fileList = fileList
       },
       handlePreview(file, fileList) {
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -311,6 +332,9 @@
         this.fileAccordShow = true
       },
       initial_data() {
+        if(this.contract_name){
+          this.qkd_ruleForm.contract_name_new = this.contract_name
+        }
         if(!this.approval_id) {
           return
         }
@@ -490,6 +514,7 @@
         setToken: 'SET_TOKEN'
       }),
       qkdSelectOk(tab) {
+        this.qkd_ruleForm.project_manager={}
         this.comPersonList.forEach((item) => {
           if(item.name === tab) {
             this.$set(this.qkd_ruleForm.project_manager, 'uid', item.uid)
@@ -558,6 +583,9 @@
             param.append('contract_name_new',this.qkd_ruleForm.contract_name_new)
             param.append('handler_uid',this.$parent.u_id)
             param.append('balance_subtotal',this.qkd_ruleForm.balance_subtotal)
+            if(!this.btn_show){
+              param.append('contract_id',this.contract)
+            }
             let httpUrl = this.$test('/index.php/Mobile/personal/add_request_money_personal')
             this.$http.post(httpUrl,param)
               .then((res)=>{
@@ -849,6 +877,9 @@
           param.append('handler_uid',this.$parent.u_id)
           param.append('balance_subtotal',this.qkd_ruleForm.balance_subtotal)
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
+          if(!this.btn_show){
+            param.append('contract_id',this.contract)
+          }
           let httpUrl = this.$test('/index.php/Mobile/personal/add_request_money_personal')
           this.$http.post(httpUrl,param)
             .then((res)=>{
@@ -892,6 +923,9 @@
           param.append('handler_uid',this.$parent.u_id)
           param.append('balance_subtotal',this.qkd_ruleForm.balance_subtotal)
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr,...this.afile_hash_arr]))
+          if(!this.btn_show){
+            param.append('contract_id',this.contract)
+          }
           let httpUrl = this.$test('/index.php/Mobile/personal/add_request_money_personal')
           this.$http.post(httpUrl,param)
             .then((res)=>{
@@ -1084,5 +1118,28 @@
         }
       }
     }
+  }
+  .el-upload--picture-card{
+    width: 85px;
+    height: 85px;
+    .el-upload-list__item.is-success{
+      width: 85px;
+      height: 85px;
+    }
+  }
+  #picc{
+    ul{
+      li{
+        width: 85px;
+        height: 85px;
+      }
+    }
+  }
+  .el-icon-plus{
+    position: relative;
+    top: -25px;
+  }
+  .upload-demo_a{
+    margin-top: 20px;
   }
 </style>

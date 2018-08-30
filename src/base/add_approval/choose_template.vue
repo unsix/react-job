@@ -2,7 +2,7 @@
 	<div class="choose_template">
 		<div class="list">
 			<ul>
-				<!--<el-button type="primary" v-if="insert == '0'" plain @click="returnForm">返回</el-button>-->
+				<el-button type="primary" v-if="insert == '0'" plain @click="returnForm">返回</el-button>
 				<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list" :style="{background:item.tagging}">
 					<div class="edit">
 						<el-button type="primary" round @click="viewInfo(item,index)">查看</el-button>
@@ -44,13 +44,15 @@
 				untreated: [],
 				pageIndex: 1,
 				nextPageShow: true,
-        insert:'0'
 			}
 		},
 		props: {
 			approval_type: {
 
-			}
+			},
+      insert:{
+
+      }
 		},
 		methods: {
 			first_page() {

@@ -6,7 +6,7 @@
 			</el-form-item>
 			<el-form-item label="合同名称" prop="contract_name_new">
 				<el-input v-model="psb_ruleForm.contract_name_new" style="width:195px;"></el-input>
-				<el-button type="info" plain @click="chooseHetong" style="float: right;">选择合同</el-button>
+				<el-button type="info" plain @click="chooseHetong" style="float: right;" v-show="psb_ruleForm.contract_id == ''">选择合同</el-button>
 				<el-button type="info" plain @click="viewHt" style="float: right;margin-right: 5px;" v-show="psb_ruleForm.contract_id != '' ">查看合同</el-button>
 			</el-form-item>
 			<el-form-item label="合同编号" prop="contract_num">
@@ -59,7 +59,7 @@
 			</el-upload>
 
       <el-upload class="upload-demo_a" multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-        <el-button size="small" type="info" plain>上传文本</el-button>
+        <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
@@ -215,6 +215,9 @@
 			},
       userList:{
 
+      },
+      tode:{
+
       }
 		},
 		computed: {
@@ -229,11 +232,20 @@
 		created() {
 			this._getToken()
 			this.initial_data()
+      this.check_title()
 		},
 		components: {
 			loading
 		},
 		methods: {
+		  check_title(){
+		    if(this.tode){
+          if(this.tode.contract_temp_id){
+            this.psb_ruleForm.contract_name_new = this.tode.contract_name
+            this.psb_ruleForm.contract_id = this.tode.contract_temp_id
+          }
+        }
+      },
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
@@ -260,7 +272,7 @@
         }
       },
 			handlePreview(file, fileList) {
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -306,7 +318,7 @@
       },
 			viewHt() {
         let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
-				window.open( str+ this.psb_ruleForm.contract_id)
+				window.open( str+this.psb_ruleForm.contract_id+'&operation=2&view=3')
 			},
 			userHetong(item) {
 				this.hetongListShow = false
@@ -351,7 +363,6 @@
             this.psb_ruleForm.arrive_time = this.form_Lista.arrive_time
             if(this.psb_ruleForm.arrive_time){
               let strDate = this.psb_ruleForm.arrive_time
-              console.log(strDate)
               var time = new Date(strDate)
               this.psb_ruleForm.arrive_time = time
             }
@@ -366,9 +377,11 @@
 						this.psb_ruleForm.difference = this.form_Lista.difference
 						this.psb_ruleForm.pay_method = this.form_Lista.pay_method
 						this.psb_ruleForm.executor = this.form_Lista.executor
-						this.psb_ruleForm.contract_name_new = this.form_Lista.contract_name_new
+            this.psb_ruleForm.contract_name_new = this.form_Lista.contract_name_new
+						if(!this.tode.contract_temp_id){
+              this.psb_ruleForm.contract_id = this.form_Lista.contract_id
+            }
 						this.psb_ruleForm.remarks = this.form_Lista.remarks
-						this.psb_ruleForm.contract_id = this.form_Lista.contract_id
 						this.psb_ruleForm.project_manager_name = this.form_Lista.project_manager_name
             this.psb_ruleForm.many_enclosure = this.form_Lista.many_enclosure
             this.psb_ruleForm.project_manager = this.form_Lista.project_manager
@@ -546,7 +559,7 @@
 						param.append("end_time", this.psb_ruleForm.end_time);
 						param.append("executor", this.psb_ruleForm.executor);
 						param.append("remarks", this.psb_ruleForm.remarks);
-						param.append("contract_id", this.psb_ruleForm.contract_id);
+						param.append("contract_temp_id", this.psb_ruleForm.contract_id);
 						param.append("contract_num", this.psb_ruleForm.contract_num);
 						param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
             let str = this.$test("/index.php/Mobile/approval/add_approval_conyract_company_new")
@@ -733,7 +746,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_id", this.psb_ruleForm.contract_id);
+					param.append("contract_temp_id", this.psb_ruleForm.contract_id);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
@@ -779,7 +792,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_id", this.psb_ruleForm.contract_id);
+					param.append("contract_temp_id", this.psb_ruleForm.contract_id);
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);

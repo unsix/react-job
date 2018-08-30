@@ -205,7 +205,7 @@ export default {
       let param = new URLSearchParams()
       param.append('contract_id',pr)
       param.append('each',10)
-      param.append('p',1)
+      param.append('p',this.pageIndex)
       let str = this.$test('/index.php/Mobile/find/apply_history')
       this.$http.post(str,param)
         .then((res)=>{

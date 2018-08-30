@@ -5,7 +5,8 @@
           <el-input v-model="gzd_ruleForm.project_name"></el-input>
         </el-form-item>
         <el-form-item label="合同名称" prop="contract_name">
-          <el-input v-model="gzd_ruleForm.contract_name"></el-input>
+          <el-input v-model="gzd_ruleForm.contract_name" style="width:195px;"></el-input>
+          <el-button type="info" plain @click="viewHt" v-if="!btn_show" style="float: right;margin-right: 5px;" >查看合同</el-button>
         </el-form-item>
         <el-form-item label="工种" prop="work_type">
           <el-input v-model="gzd_ruleForm.work_type"></el-input>
@@ -76,7 +77,7 @@
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
         </el-upload>
         <el-upload class="upload-demo_a" v-model="gzd_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-          <el-button size="small" type="info" plain>上传文本</el-button>
+          <el-button size="small" type="info" plain>上传文件</el-button>
           <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
         </el-upload>
         <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
@@ -247,6 +248,10 @@
           }
         });
       },
+      viewHt(){
+        let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+        window.open( str+this.contract+'&operation=2&view=1')
+      },
       show_chennuo(){
         let httpUrl = this.$test('/index.php/Mobile/index/letter_invitation?')
         let preview_arg = {}
@@ -323,6 +328,9 @@
             param.append('salary_item_ids',JSON.stringify(this.gzd_ruleForm.salary_item_ids))
             param.append('project_manager',JSON.stringify(this.gzd_ruleForm.project_manager))
             param.append('sum_money',this.gzd_ruleForm.sum_money)
+            if(!this.btn_show){
+              param.append('contract_request_id',this.contract)
+            }
             let str =this.$test('/index.php/Mobile/approval/add_payroll')
             this.$http.post(str,param)
               .then((res)=>{
@@ -332,9 +340,13 @@
                 this.loadingShow = false
                 if(res.data.code == 0){
                   this.$message.success('添加成功')
-                  this.$router.push({
-                    path: '/work/exam'
-                  })
+                  if(this.btn_show){
+                    this.$router.push({
+                      path: '/work/exam'
+                    })
+                  }else{
+                    this.$emit('return_exam')
+                  }
                 }else{
                   this.$message.error(res.data.message)
                 }
@@ -536,6 +548,7 @@
 
       },
       gzdSelectOk(tab){
+        this.gzd_ruleForm.project_manager={}
         this.comPersonList.forEach((item) => {
           if(item.uid === tab) {
             this.$set(this.gzd_ruleForm.project_manager, 'uid', item.uid)
@@ -554,7 +567,7 @@
         this.fileList = fileList
       },
       handlePreview(file, fileList) {
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -734,6 +747,12 @@
       },
       userList:{
 
+      },
+      contract:{
+
+      },
+      btn_show:{
+        default:true
       }
     },
     watch:{
@@ -770,9 +789,13 @@
               this.loadingShow = false
               if(res.data.code == 0){
                 this.$message.success('添加成功')
-                this.$router.push({
-                  path: '/work/exam'
-                })
+                if(this.btn_show){
+                  this.$router.push({
+                    path: '/work/exam'
+                  })
+                }else{
+                  this.$emit('return_exam')
+                }
               }else{
                 this.$message.error(res.data.message)
               }
@@ -804,6 +827,9 @@
           param.append('sum_money',this.gzd_ruleForm.sum_money)
           param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
           let str =this.$test('/index.php/Mobile/approval/add_payroll')
+          if(!this.btn_show){
+            param.append('contract_request_id',this.contract)
+          }
           this.$http.post(str,param)
             .then((res)=>{
               var current = this
@@ -812,9 +838,13 @@
               this.loadingShow = false
               if(res.data.code == 0){
                 this.$message.success('添加成功')
-                this.$router.push({
-                  path: '/work/exam'
-                })
+                if(this.btn_show){
+                  this.$router.push({
+                    path: '/work/exam'
+                  })
+                }else{
+                  this.$emit('return_exam')
+                }
               }else{
                 this.$message.error(res.data.message)
               }

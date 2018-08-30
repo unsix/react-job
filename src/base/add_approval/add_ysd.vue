@@ -100,6 +100,9 @@
         param.append('approval_persons',this.ccPer_arr)
         param.append('inspection_type_id',this.inspection_type_id)
         param.append('content',this.result)
+        if(this.insdent){
+          param.append('contract_request_id',this.insdent)
+        }
         let str = this.$test('/index.php/Mobile/approval/add_inspection')
         this.$http.post(str,param)
           .then((res)=>{
@@ -139,15 +142,21 @@
           let str = this.$test('/index.php/Mobile/skey/look_inspection_company?type_id')
           this.linked = `${str}=${this.form_Lista.type_id}&form_id=${this.form_Lista.form_id}`
         })
+    },
+    add_html(){
+      let str = this.$test('/index.php/Mobile/skey/look_inspection_company?type_id')
+      this.linked = `${str}=${this.inspection_type_id}&form_id=`
     }
   },
   props:{
-
     inspection_type_id:{
 
     },
     approval_id:{
       type: String
+    },
+    insdent:{
+
     }
   },
   computed: {
@@ -163,11 +172,14 @@
     loading
   },
   created(){
+    console.log(this.insdent)
+    this.add_html()
     this._getComPersonList()
     this.initial_data()
   },
   watch:{
     inspection_type_id(){
+      console.log(this.inspection_type_id)
       let str = this.$test('/index.php/Mobile/skey/look_inspection_company?type_id')
       this.linked = `${str}=${this.inspection_type_id}&form_id=`
     }

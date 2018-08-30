@@ -104,7 +104,7 @@
 				<el-button type="primary" plain @click="repeal()" v-show="repealShow">撤销</el-button>
 				<div class="as">
 					<el-button type="primary" plain @click="fileAccord(form_Lista)" v-show="now_type_name === '请款单'">依据附件</el-button>
-					<el-button type="primary" plain @click="viewHt(form_Lista)" v-if="form_Lista.contract_id">合同附件</el-button>
+					<el-button type="primary" plain @click="viewHt(form_Lista)" v-if="form_Lista.contract_temp_id">合同附件</el-button>
 				</div>
 				<span class="title">{{now_type_name}}</span>
 			</div>
@@ -209,7 +209,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -337,7 +337,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -462,7 +462,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -546,7 +546,9 @@
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
             <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
             <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
-            <p>意见:<span>{{item.opinion}}</span></p>
+            <p>意见:<span>{{item.opinion}}</span>
+              <a :href="item.link" class="file" target="_blank" v-if="item.contract_temp_id">{{item.contract_content.contract_name}}</a>
+            </p>
             <p v-show="item.many_enclosure" class="enclosure">
               <span style="display: block">附件列表</span>
               <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
@@ -578,6 +580,17 @@
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-if="menuShow">
+            <div class="box" v-if="recent.content_json">
+              <p><span>合同</span><a v-if="form_Listb.is_final == 1" target="_blank" :href="insdent">{{recent.contract_name}}</a><b style="cursor: pointer" @click="look_html" v-if="form_Listb.is_final == 0">{{recent.contract_name}}</b></p>
+              <div class="toped" v-if="form_Listb.is_final == 0">
+                <el-button type="info" size="small" @click="return_status" v-if="statused != '暂未修改合同'">还原</el-button>
+                <b v-if="form_Listb.is_final == 0">{{statused}}</b>
+              </div>
+              <div class="choose" v-if="form_Listb.is_final == 1">
+                <p>选择合同乙方</p>
+                <p @click="show_name" class="rese"><img :src="other.avatar" alt=""><span>{{other_people}}</span></p>
+              </div>
+            </div>
             <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
             <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
@@ -591,7 +604,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -686,7 +699,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -781,7 +794,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -942,7 +955,7 @@
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
             </el-upload>
             <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文本</el-button>
+              <el-button size="small" type="info" plain>上传文件</el-button>
               <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
             </el-upload>
             <el-button type="primary" round @click="agree">同意</el-button>
@@ -990,14 +1003,17 @@
     </div>
 
     <div class="fra" v-if="fra_show">
-      <div>
+      <div class="top">
         <el-button type="primary" size="small" @click="_return">返回</el-button>
+        <b v-if="form_Listb.is_final == 0" @click="modify_html">保存</b>
       </div>
       <iframe  class="win" ref="indx" scrolling="yes" height="100%" :src="linked" seamless frameborder="0"></iframe>
     </div>
 
     <detail_ele style="background: #FFF" v-if="detail_ele_show" :content="detail_data" :btnShow="btnShow" @return_per="return_per"></detail_ele>
     <detail_fix style="background: #FFF" v-if="detail_fix_show" :content="detail_data" :btnShow="btnShow" @return_per="return_per"></detail_fix>
+
+    <name v-if="name_show"  @transet="transet"></name>
 	</div>
 </template>
 
@@ -1006,6 +1022,7 @@
   import detail_fix from '@/base/cost_detail/look_fix'
 	import fileAccord from '@/base/file_accord/file_accord'
 	import loading from '@/base/loading/loading'
+  import name from '@/base/exam/name'
 	import browsePic from '@/base/browse_pic/browse_pic'
 	import { getPic } from '@/common/js/pic.js'
   import { getAvatar } from '@/common/js/avatar.js'
@@ -1120,7 +1137,14 @@
         },
         detail_ele_show:false,
         detail_fix_show:false,
-        company_ids:''
+        company_ids:'',
+        recent:{},
+        insdent:'',
+        other_people:'选择合同乙方',
+        other:{},
+        name_show:false,
+        statused:'暂未修改合同',
+        modify:{}
 			}
 		},
 		computed: {
@@ -1222,6 +1246,15 @@
           param.append('opinion',this.handle_txt)
           param.append('form_result',this.pity)
           param.append('auto_fill_fields',this.form_fill)
+          if(this.is_agree == '1'){
+            if(this.list.type == '合同评审表'){
+              if(this.statused == '暂未修改合同'){
+                param.append('contract_temp_id',this.recent.contract_temp_id)
+              }else{
+                param.append('contract_temp_id',this.modify.contract_temp_id)
+              }
+            }
+          }
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           let str = this.$test('/index.php/Mobile/find/approval_process')
           this.$http.post(str,param)
@@ -1271,6 +1304,15 @@
           param.append('opinion',this.handle_txt)
           param.append('form_result',this.pity)
           param.append('auto_fill_fields',this.form_fill)
+          if(this.is_agree == '1'){
+            if(this.list.type == '合同评审表'){
+              if(this.statused == '暂未修改合同'){
+                param.append('contract_temp_id',this.recent.contract_temp_id)
+              }else{
+                param.append('contract_temp_id',this.modify.contract_temp_id)
+              }
+            }
+          }
           param.append('many_enclosure',JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]))
           let str = this.$test('/index.php/Mobile/find/approval_process')
           this.$http.post(str,param)
@@ -1331,7 +1373,8 @@
       simpleText,
       moment,
       detail_fix,
-      detail_ele
+      detail_ele,
+      name
 		},
 		methods: {
       ...mapMutations({
@@ -1345,6 +1388,61 @@
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST'
       }),
+      return_status(){
+        let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+        this.linked = str + this.recent.contract_temp_id+'&operation=3&view=4'
+        this.statused = '暂未修改合同'
+      },
+      modify_html(){
+        this.$confirm('确认保存对合同的修改么?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
+          var obj = this.$refs.indx.contentWindow
+          obj.getCustomFormResult()
+          let tips = obj.tips
+          let result = obj.result
+          if(result){
+            let param = new URLSearchParams()
+            param.append('contract_request_id',this.recent.contract_temp_id)
+            param.append('content_json',result)
+            let str = this.$test('/index.php/Mobile/find/update_temp_contact')
+            this.$http.post(str,param)
+              .then((res)=>{
+                if(res.data.code == 0){
+                  let obj = res.data.data
+                  this.modify = obj
+                  let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+                  this.linked = str + obj.contract_temp_id+'&operation=3&view=4'
+                  this.statused = '合同已修改'
+                  this._return()
+                  this.$message.success('修改成功')
+                }else{
+                  this.$message.error(res.data.message)
+                }
+              })
+          }
+        }).catch(()=>{
+          this.$message.warning('已取消操作')
+        })
+      },
+      look_html(){
+        this.fra_show = true
+        this.formShow = false
+        let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+        this.linked = str + this.recent.contract_temp_id+'&operation=3&view=4'
+      },
+      show_name(){
+        this.formShow = false
+        this.name_show = true
+      },
+      transet(res){
+        this.formShow = true
+        this.name_show = false
+        this.other = res
+        this.other_people = res.name
+      },
       show_contract(){
         this.fra_show = true
         this.formShow = false
@@ -1427,7 +1525,7 @@
 			},
 			viewHt(item){
         let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
-				window.open(str + item.contract_id)
+				window.open(str + item.contract_temp_id+'&operation=2&view=4')
 			},
 			deleteForm(item){
 				this.$confirm('您确定删除文件','提示',{
@@ -1791,6 +1889,12 @@
 			agree(){
         //se 可选
         //de 必选
+        if(this.form_Listb.is_final == '1'){
+          if(this.other_people == '选择合同乙方'){
+            this.$message.error('请选择合同乙方')
+            return false
+          }
+        }
         let str = ''
         let arr = new Array()
         let arr1 = new Array()
@@ -1863,12 +1967,22 @@
         })
         this.file_times = 0
         this.pic_times = 0
+        if(this.form_Listb.is_final == 1){
+          this.agreed()
+        }else{
+          this.add_agree()
+        }
+			},
+      add_agree(){
         this.$confirm('是否提交审批?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           this.loading_show = true
+          if(this.form_Listb.is_final == 1){
+            this.add_others()
+          }
           setTimeout(()=>{
             if(this.picArr.length == 0 && this.fileArr.length == 0){
               let param = new URLSearchParams()
@@ -1879,6 +1993,13 @@
               param.append('opinion',this.handle_txt)
               param.append('form_result',this.pity)
               param.append('auto_fill_fields',this.form_fill)
+              if(this.list.type == '合同评审表'){
+                if(this.statused == '暂未修改合同'){
+                  param.append('contract_temp_id',this.recent.contract_temp_id)
+                }else{
+                  param.append('contract_temp_id',this.modify.contract_temp_id)
+                }
+              }
               let str = this.$test('/index.php/Mobile/find/approval_process')
               this.$http.post(str,param)
                 .then((res)=>{
@@ -2046,13 +2167,22 @@
             message: '已取消操作'
           });
         });
-			},
+      },
       //拒絕
 			refuse(){
+        if(this.recent.contract_temp_id){
+          if(this.other_people == '选择合同乙方'){
+            this.$message.error('请选择合同乙方')
+            return false
+          }
+        }
 				if(this.handle_txt === '') {
 					this.$message.error('请填写审批意见');
 					return
 				}
+        if(typeof this.form_fill != 'object'){
+          this.form_fill = JSON.parse(this.form_fill)
+        }
         this.is_agree = '2'
         var obj = new Object()
         var obj2 = new Object()
@@ -2282,6 +2412,34 @@
           this.$message.info('已取消操作')
         })
 			},
+      add_others(){
+        let formData = new FormData()
+        formData.append('file',this.signImg)
+        formData.append('token',this.token)
+        let config = {
+          headers:{
+            'Content-Type':'multipart/form-data'
+          }
+        }
+        this.$http.post('https://up.qbox.me',formData,config)
+          .then((res)=>{
+            let param = new URLSearchParams()
+            param.append('approval_id',this.reply)
+            param.append('signatory_a',res.data.hash)
+            param.append('reveived_uid',this.other.uid)
+            param.append('company_id', this.company_ids)
+            let str = this.$test("/index.php/Mobile/find/send_temp_contract")
+            this.$http.post(str, param)
+              .then((res)=>{
+                if(res.data.code == 0){
+                  this.$message.success('合同发送成功')
+                }else{
+                  this.$message.error(res.data.message)
+                  return false
+                }
+              })
+          })
+      },
 			return_list() {
 				this.downShow = false
 				this.handle_txt = ''
@@ -2398,6 +2556,18 @@
             this.newCompany = res.data.data.company_id
           })
 
+        let sparam = new URLSearchParams()
+        sparam.append('approval_id',item.approval_id)
+        let src = this.$test('/index.php/mobile/find/get_recent_contract')
+        this.$http.post(src,sparam)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.recent = res.data.data
+              let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+              this.insdent = str + this.recent.contract_temp_id+'&operation=2&view=4'
+            }
+          })
+
         let nparam = new URLSearchParams();
         nparam.append("uid", this.user.uid);
         nparam.append("approval_id", item.approval_id);
@@ -2436,6 +2606,14 @@
                   this.get_imgs(pic.many_enclosure,pic)
                   this.get_files(pic.many_enclosure,pic)
                 })
+              }
+              if(item.contract_temp_id){
+                this.$set(item,'link')
+                let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+                item.link = str + item.contract_temp_id+'&operation=3&view=4'
+              }
+              if(item.contract_content.contract_name == ''){
+                item.contract_content.contract_name = '暂未修改'
               }
             })
             if(res.data.data.supply){
@@ -2552,7 +2730,7 @@
         this.fileList = fileList
       },
       handlePreview(file, fileList) {
-        if(file.name.indexOf('jpg') == '-1' && file.name.indexOf('png') == '-1'){
+        if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
           this.str = file
         }
@@ -2630,7 +2808,6 @@
                 if(res.data.code == '0'){
                   this.$message.success(res.data.message)
                   this.closeSend()
-                  console.log(this.list)
                   this.listCli(this.list,this.list.approval_state)
                 }else{
                   this.$message.error(res.data.message)
@@ -3023,7 +3200,15 @@
         this.signImg = this.$refs.sign.contentWindow.ss
         this.signature = false
         this.wideShow = false
-        this.submit()
+        if(this.form_Listb.is_final == '1'){
+          if(this.signImg == ''){
+            this.$message.error('请签字')
+            return false
+          }
+          this.add_agree()
+        }else{
+          this.submit()
+        }
       },
       agreed(){
         let str = this.$test('/index.php/Mobile/find/sign')
@@ -3560,7 +3745,6 @@
 					.button {
 						margin-top: 10px;
 						display: block;
-						font-size: 0;
 						z-index: 2;
 						width: 100%;
 						>button {
@@ -3591,6 +3775,86 @@
                 &:focus{
                   outline: 0;
                   border-color: #5393ff;
+                }
+              }
+            }
+            .box{
+              overflow: hidden;
+              font-size: 14px;
+              p{
+                span{
+                  display: block;
+                  margin-left: 30px;
+                }
+                a{
+                  font-size: 14px;
+                  margin: 4px auto;
+                  display: block;
+                  height: 24px;
+                  width: 80%;
+                  line-height: 24px;
+                  color: #5A5E66;
+                  border: 1px solid #F9F9F9;
+                  border-radius: 4px;
+                  background: #DDDDDD;
+                  text-align: center;
+                }
+                b{
+                  font-size: 14px;
+                  margin: 4px auto;
+                  display: block;
+                  height: 24px;
+                  width: 80%;
+                  line-height: 24px;
+                  color: #5A5E66;
+                  border: 1px solid #F9F9F9;
+                  border-radius: 4px;
+                  background: #DDDDDD;
+                  text-align: center;
+                }
+              }
+              .toped {
+                position: relative;
+                border-bottom: 1px solid #e3e4e9;
+                height: 45px;
+                background: #fff;
+                .el-button {
+                  position: absolute;
+                  top: -35px;
+                  right: 1px;
+                  margin: 0 !important;
+                }
+                p {
+                  width: 500px;
+                  margin: 0 auto;
+                  text-align: center;
+                  font-weight: bolder;
+                  padding: 15px 0;
+                }
+                b {
+                  position: absolute;
+                  top: 13px;
+                  right: 13px;
+                  cursor: pointer;
+                }
+              }
+              .choose{
+                p{
+                  margin-left: 30px;
+                }
+                .rese{
+                  overflow: hidden;
+                  img{
+                    width: 50px;
+                    height: 50px;
+                    border: 1px solid #e3e4e9;
+                    margin: 10px 30px;
+                    float: left;
+                  }
+                  span{
+                    float: left;
+                    margin-top: 25px;
+                  }
                 }
               }
             }
@@ -3636,6 +3900,30 @@
   .fra{
     width: 100%;
     background: #FFF;
+    .top {
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      background: #fff;
+      .el-button {
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
+      }
+      p {
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b {
+        position: absolute;
+        top: 13px;
+        right: 25px;
+        cursor: pointer;
+      }
+    }
     .win{
       width: 100%;
       height: 700px;
