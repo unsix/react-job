@@ -1,3 +1,5 @@
+项目构建脚手架create-react-app,react全家桶+node.js+mongodb
+
 安装与运行程序
 克隆项目
 
