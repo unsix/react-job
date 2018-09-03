@@ -21,8 +21,7 @@ io.on('connection',function(socket){
 		Chat.create({chatid,from,to,content:msg},function(err,doc){
 			io.emit('recvmsg', Object.assign({},doc._doc))
 		})
-		console.log(data)
-		io.emit('recvmsg',data)
+		// io.emit('recvmsg',data)
 	})
 })
 app.use(cookieParser())
