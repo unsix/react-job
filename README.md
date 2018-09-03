@@ -1,34 +1,29 @@
 安装与运行程序
 克隆项目
 
-> $ git clone https://github.com/CanFoo/react.git
-分别进入react目录和server目录下安装依赖包
+> $ git clone hhttps://github.com/unsix/react-job.git
+分别进入react-job目录和server目录下安装依赖包
 
 > $ npm install
-在server目录下启动后台服务
+在server目录下启动后台服务 nodemon server.js
 
-> $ npm run start
+> $ npm  start
 在react目录下启动webpack服务
-
-> $ npm run dev
-发布项目文件命令
-
-> $ npm run build
-执行完npm run dev命令后，打开浏览器 http://localhost:8080/运行项目，后台服务端口为 3000
+执行完命令后，打开浏览器 http://localhost:3000/运行项目，后台服务端口为 9093
 
 后台接口（jsonp请求）
-轮播图模块
+登入
 
-http://localhost:3000/data/swiper
-更多服务功能
+http://localhost:9093/user/login
+注册
 
-http://localhost:3000/data/otherapp
-秒杀折扣
+http://localhost:9093/user/register
+更新信息
 
-http://localhost:3000/data/spike
-更多种类选择
+http://localhost:9093/user/update
+聊天信息列表获取
 
-http://localhost:3000/data/more
-猜你喜欢
+http://localhost:9093/user/getmsglist
+验证登入权限
 
-http://localhost:3000/data/like
+http://localhost:9093/user/info
