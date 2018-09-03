@@ -14,18 +14,13 @@
 执行完命令后，打开浏览器 http://localhost:3000/运行项目，后台服务端口为 9093
 
 后台接口（jsonp请求）
-登入
 
-http://localhost:9093/user/login
-注册
+http://localhost:9093/user/login 登入
 
-http://localhost:9093/user/register
-更新信息
+http://localhost:9093/user/register 注册
 
-http://localhost:9093/user/update
-聊天信息列表获取
+http://localhost:9093/user/update 更新信息
 
-http://localhost:9093/user/getmsglist
-验证登入权限
+http://localhost:9093/user/getmsglist 聊天信息列表获取
 
-http://localhost:9093/user/info
+http://localhost:9093/user/info  验证登入权限
