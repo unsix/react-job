@@ -19,6 +19,8 @@ http://localhost:9093/user/login 登入
 
 http://localhost:9093/user/register 注册
 
+http://localhost:9093/user/list 用户列表
+
 http://localhost:9093/user/update 更新信息
 
 http://localhost:9093/user/getmsglist 聊天信息列表获取
