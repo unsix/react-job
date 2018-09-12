@@ -163,8 +163,9 @@
           }
         })
         key = key.substring(key.lastIndexOf('=')+1, key.length)
+        //拿到cookie
         let httpUrls = this.$test('/index.php/Mobile/Find/show_form?info=null&type_id')
-        this.core = `${httpUrls}=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null&skey=${key}&skey_uid=${this.user.uid}`
+        this.core = `${httpUrls}=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null`
         this.contr_show = false
         this.detail_show = true
         this.con_title = re

@@ -1889,7 +1889,7 @@
 			agree(){
         //se 可选
         //de 必选
-        if(this.form_Listb.is_final == '1'){
+        if(this.form_Listb.is_final == '1' && this.recent.content_json){
           if(this.other_people == '选择合同乙方'){
             this.$message.error('请选择合同乙方')
             return false
@@ -1967,7 +1967,7 @@
         })
         this.file_times = 0
         this.pic_times = 0
-        if(this.form_Listb.is_final == 1){
+        if(this.form_Listb.is_final == 1 && this.recent.content_json){
           this.agreed()
         }else{
           this.add_agree()
@@ -1980,7 +1980,7 @@
           type: 'warning'
         }).then(() => {
           this.loading_show = true
-          if(this.form_Listb.is_final == 1){
+          if(this.form_Listb.is_final == 1 && this.recent.content_json){
             this.add_others()
           }
           setTimeout(()=>{
@@ -1993,7 +1993,7 @@
               param.append('opinion',this.handle_txt)
               param.append('form_result',this.pity)
               param.append('auto_fill_fields',this.form_fill)
-              if(this.list.type == '合同评审表'){
+              if(this.list.type == '合同评审表' && this.recent.content_json){
                 if(this.statused == '暂未修改合同'){
                   param.append('contract_temp_id',this.recent.contract_temp_id)
                 }else{
@@ -2464,6 +2464,7 @@
         this.untreateds = []
 			},
 			listCli(item,sta) {
+        this.recent = {}
         this.company_ids = item.company_id
 			  this.list = item
         if(sta.indexOf('已通过') == '-1'){
@@ -2612,8 +2613,10 @@
                 let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
                 item.link = str + item.contract_temp_id+'&operation=3&view=4'
               }
-              if(item.contract_content.contract_name == ''){
-                item.contract_content.contract_name = '暂未修改'
+              if(item.contract_content){
+                if(item.contract_content.contract_name == ''){
+                  item.contract_content.contract_name = '暂未修改'
+                }
               }
             })
             if(res.data.data.supply){
