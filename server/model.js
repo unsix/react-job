@@ -22,7 +22,8 @@ const models = {
 		'to':{'type':String,'require':true},
 		'read':{'type':Boolean,default:false},
 		'content':{'type':String,'require':true,'default':''},
-		'create_time':{'type':Number,'default':new Date().getTime()}
+    // 'create_time':{'type':Number,'default':new Date().getTime()} //时间不改变
+    'create_time':{'type':Number,'default':Date.now}
   }
 }
 
