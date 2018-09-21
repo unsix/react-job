@@ -15,14 +15,14 @@ import imoocFrom from '../../component/imooc-form/imooc-form.js'
 class Login extends React.Component {
   constructor(props){
     super(props);
-    this.register = this.register.bind(this)
-    this.handleLogin = this.handleLogin.bind(this)
+    // this.register = this.register.bind(this)
+    // this.handleLogin = this.handleLogin.bind(this)
   }
-  register(){
+  register =()=>{
     console.log(this.props)
     this.props.history.push('./register')
   }
-  handleLogin(){
+  handleLogin =()=>{
     this.props.login(this.props.state)
   }
   render(){
@@ -54,3 +54,27 @@ class Login extends React.Component {
 }
 
 export default Login
+
+// class Login extends React.Component{
+//   constructor(props){
+//     super(props)
+//     this.state = {
+//       num:1
+//     }
+//     // this.handleClick = this.handleClick.bind(this)
+//   }
+//   handleClick =()=>{
+//     this.setState({
+//       num:this.state.num+1
+//     })
+//   }
+//   render(){
+//     return(
+//       <div>
+//         <p>{this.state.num} </p>
+//         <button onClick={this.handleClick}>click</button>
+//       </div>
+//     )
+//   }
+// }
+// export default Login
