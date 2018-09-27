@@ -13,7 +13,7 @@
 在react目录下启动webpack服务
 执行完命令后，打开浏览器 http://localhost:3000/运行项目，后台服务端口为 9093
 
-后台接口（jsonp请求）
+后台接口（jsonp请求） //基于node  mongodb
 
 http://localhost:9093/user/login 登入
 
