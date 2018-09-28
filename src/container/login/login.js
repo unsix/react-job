@@ -13,11 +13,6 @@ import imoocFrom from '../../component/imooc-form/imooc-form.js'
 )
 @imoocFrom
 class Login extends React.Component {
-  constructor(props){
-    super(props);
-    // this.register = this.register.bind(this)
-    // this.handleLogin = this.handleLogin.bind(this)
-  }
   register =()=>{
     console.log(this.props)
     this.props.history.push('./register')

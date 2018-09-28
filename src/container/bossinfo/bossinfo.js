@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavBar, Icon ,InputItem,TextareaItem,Button} from 'antd-mobile';
+import { NavBar,InputItem,TextareaItem,Button} from 'antd-mobile';
 import AvatarSelector from '../../component/avatar-selector/avatar-selector'
 import {connect} from 'react-redux'
 import {update} from '../../redux/user_redux'

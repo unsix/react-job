@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid,List,Button } from 'antd-mobile';
+import { Grid,List} from 'antd-mobile';
 
 class AvatarSelector extends React.Component{
   constructor(props) {

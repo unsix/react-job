@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import {connect} from 'react-redux'
 import {getUserList} from '../../redux/chatuser_redux'
 import UserCard from '../usercard/usercard'
