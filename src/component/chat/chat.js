@@ -3,6 +3,7 @@ import {List,InputItem, NavBar,Icon,Grid} from 'antd-mobile'
 import {connect} from 'react-redux'
 import {getMsgList, sendMsg, recvMsg,readMsg} from '../../redux/chat_redux'
 import {getChatId} from '../../util'
+import QueueAnim from 'rc-queue-anim'
 // const socket = io('ws://localhost:9093')
 
 @connect(
@@ -77,6 +78,7 @@ class Chat extends React.Component{
                 >
                    {users[userid].name}
                 </NavBar>
+                <QueueAnim>
                 {chatmsgs.map(v=>{
                     const avatar = require(`../img/${users[v.from].avatar}.png`)
                     return v.from==userid?(
@@ -100,6 +102,7 @@ class Chat extends React.Component{
                     
                     
                 })}
+                </QueueAnim>
                 {/* {this.props.chat.chatmsg.map(v=>{
                     return <p key={v._id}>{v.content}</p>
                 })} */}
