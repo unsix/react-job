@@ -1,6 +1,6 @@
 import React from "react"
 import Logo from '../../component/logo/logo'
-import { List,Button, InputItem, Radio, WhiteSpace } from 'antd-mobile';
+import { List,Button, InputItem, Radio, WhiteSpace } from 'antd-mobile'
 import {connect} from 'react-redux'
 import {regisger} from '../../redux/user_redux'
 import {Redirect} from 'react-router-dom'
@@ -12,16 +12,20 @@ import imoocForm from '../../component/imooc-form/imooc-form'
 )
 @imoocForm
 class Register extends React.Component {
-  constructor(props){
-    super(props)
-    this.handleRegister = this.handleRegister.bind(this)
-  }
+  // constructor(props){
+  //   super(props)
+  //   this.handleRegister = this.handleRegister.bind(this)
+  // }
 	componentDidMount(){
 	this.props.handleChange('type','genius')
 }
-  handleRegister(){
+  handleRegister=()=>{
     this.props.regisger(this.props.state)
 
+  }
+  login =()=>{
+    // console.log(this.props)
+    this.props.history.push('./login')
   }
   render(){
     const RadioItem = Radio.RadioItem
@@ -60,6 +64,8 @@ class Register extends React.Component {
         </RadioItem>
         <WhiteSpace />
         <Button type='primary' onClick={this.handleRegister}>注册 </Button>
+        <WhiteSpace />
+        <Button onClick={this.login} type="primary">登录</Button>
         </List>
       </div>
     )

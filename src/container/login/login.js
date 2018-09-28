@@ -14,7 +14,7 @@ import imoocFrom from '../../component/imooc-form/imooc-form.js'
 @imoocFrom
 class Login extends React.Component {
   register =()=>{
-    console.log(this.props)
+    // console.log(this.props)
     this.props.history.push('./register')
   }
   handleLogin =()=>{
@@ -25,7 +25,7 @@ class Login extends React.Component {
       <div>
       	{this.props.redirectTo&&this.props.redirectTo!='/login'? <Redirect to={this.props.redirectTo} />:null}
         <Logo></Logo>
-        <h2>我是登录页</h2>
+        {/* <h2>我是登录页</h2> */}
         <WingBlank>
           <List>
           	{this.props.msg?<p className ="err-msg">{this.props.msg}</p>:null}

@@ -43,17 +43,30 @@ function msgRecv(msg,userid){
 function msgRead({from,userid,num}){
 	return {type: MSG_READ, payload:{from,userid,num}}
 }
+//async+await配合使用，await必须在asyc内部 
 export function readMsg(from){
-    return (dispatch,getState)=>{
-        axios.post('/user/readmsg',{from})
-            .then(res=>{
-                const userid = getState().user._id
+    return async (dispatch,getState)=>{
+        const res = await axios.post('/user/readmsg',{from}) //同步形式
+        const userid = getState().user._id
                 if (res.status==200 && res.data.code==0){
                     dispatch(msgRead({userid,from,num:res.data.num}))
                 }
-            })
+            // .then(res=>{
+                
+            // })
     }
 }
+// export function readMsg(from){
+//     return (dispatch,getState)=>{
+//         axios.post('/user/readmsg',{from})
+//             .then(res=>{
+//                 const userid = getState().user._id
+//                 if (res.status==200 && res.data.code==0){
+//                     dispatch(msgRead({userid,from,num:res.data.num}))
+//                 }
+//             })
+//     }
+// }
 export function recvMsg(){
     return (dispatch,getState)=>{
        socket.on('recvmsg',function(data){
