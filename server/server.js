@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 const model = require('./model')
 const Chat = model.getModel('chat')
 
+const path = require('path')
 const app = express()
 
 // work with express
@@ -41,7 +42,19 @@ io.on('connection',function(socket){
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use('/user',userRouter)
-
+//1.购买域名
+//2.dns解析到你服务器到Ip
+//3.按照nginx
+//4.使用pm2管理node进程
+app.use(function(req,res,next){
+	if(req.url.startsWith('/user/')||req.url.startsWith('/static/')){
+		return next()
+	}
+	console.log('path resolve',path.resolve('build/index.html'))
+	return res.sendFile(path.resolve('build/index.html'))
+})
+//拦截路由转发
+app.use('/',express.static(path.resolve('build')))
 
 server.listen(9093,function(){
   console.log("start at port 9093")
