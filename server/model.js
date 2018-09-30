@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 //链接
 const DB_URL = 'mongodb://localhost:27017/react-job'
-mongoose.connect(DB_URL)
+mongoose.connect(DB_URL,{ useNewUrlParser: true })
 
 
 const models = {
