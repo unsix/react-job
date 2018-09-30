@@ -10,11 +10,18 @@ const Chat = model.getModel('chat')
 const path = require('path')
 const app = express()
 
-// import React from 'react'
-// function App(){
-// 	return <h2>server render</h2>
-// }
-// console.log(App())
+import React from 'react'
+import {renderToString,renderToStaticMackup} from 'react-dom/server'
+// React组件=>div
+function App(){
+	return (
+		<div>
+			<p>1</p>
+			<p>2</p>
+		</div>
+	)
+}
+console.log(renderToString(<App></App>))
 // work with express
 const server = require('http').Server(app)
 
@@ -44,7 +51,12 @@ app.use(function(req,res,next){
 	if(req.url.startsWith('/user/')||req.url.startsWith('/static/')){
 		return next()
 	}
-	console.log('path resolve',path.resolve('build/index.html'))
+
+	//服务端渲染App
+	// const htmlRes = renderToString(<App></App>)
+	// res.send(htmlRes)
+
+	// console.log('path resolve',path.resolve('build/index.html'))
 	return res.sendFile(path.resolve('build/index.html'))
 })
 //拦截路由转发
