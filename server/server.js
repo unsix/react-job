@@ -11,6 +11,10 @@ const path = require('path')
 const app = express()
 
 import React from 'react'
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import { Provider } from 'react-redux'
+import { StaticRouter } from 'react-router-dom'
 import {renderToString,renderToStaticMackup} from 'react-dom/server'
 // React组件=>div
 function App(){
