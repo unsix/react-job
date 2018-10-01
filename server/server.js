@@ -9,6 +9,10 @@ const Chat = model.getModel('chat')
 
 const path = require('path')
 const app = express()
+import assethook from 'asset-require-hook'
+assethook({
+	extensions:['png']
+})
 import csshook from 'css-modules-require-hook/preset'
 import React from 'react'
 import { createStore, applyMiddleware, compose } from 'redux'
@@ -18,6 +22,8 @@ import { StaticRouter } from 'react-router-dom'
 import App from '../src/App'
 import reducers from '../src/reducers'
 import {renderToString,renderToStaticMackup} from 'react-dom/server'
+import staticPath from '../build/asset-manifest.json'
+// console.log(staticPath)
 // React组件=>div
 // function App(){
 // 	return (
@@ -27,7 +33,7 @@ import {renderToString,renderToStaticMackup} from 'react-dom/server'
 // 		</div>
 // 	)
 // }
-console.log(renderToString(<App></App>))
+// console.log(renderToString(<App></App>))
 // work with express
 const server = require('http').Server(app)
 
@@ -75,11 +81,31 @@ app.use(function(req,res,next){
 		)
 	)
 	//服务端渲染App
-	// const htmlRes = renderToString(<App></App>)
-	// res.send(htmlRes)
-
+	// const htmlRes = (<App></App>)
+	const pageHtml = `
+	<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<meta name="theme-color" content="#000000">
+			<link rel="manifest" href="/manifest.json">
+			<link rel="shortcut icon" href="/favicon.ico">
+			<link rel="stylesheet" href="/${staticPath['main.css']}"
+			<title>React App</title>
+		</head>
+		<body>
+			<noscript>
+			You need to enable JavaScript to run this app.
+			</noscript>
+			<div id="root">${markup}</div>
+			<script src="/${staticPath['main.js']}"></script>
+			<script type="text/javascript" src="/static/js/bundle.js"></script>
+		</body>
+	</html>
+	`
+	res.send(pageHtml)
 	// console.log('path resolve',path.resolve('build/index.html'))
-	return res.sendFile(path.resolve('build/index.html'))
+	// return res.sendFile(path.resolve('build/index.html'))
 })
 //拦截路由转发
 app.use('/',express.static(path.resolve('build')))
