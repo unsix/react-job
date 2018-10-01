@@ -9,22 +9,24 @@ const Chat = model.getModel('chat')
 
 const path = require('path')
 const app = express()
-
+import csshook from 'css-modules-require-hook/preset'
 import React from 'react'
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { StaticRouter } from 'react-router-dom'
+import App from '../src/App'
+import reducers from '../src/reducers'
 import {renderToString,renderToStaticMackup} from 'react-dom/server'
 // React组件=>div
-function App(){
-	return (
-		<div>
-			<p>1</p>
-			<p>2</p>
-		</div>
-	)
-}
+// function App(){
+// 	return (
+// 		<div>
+// 			<p>1</p>
+// 			<p>2</p>
+// 		</div>
+// 	)
+// }
 console.log(renderToString(<App></App>))
 // work with express
 const server = require('http').Server(app)
@@ -56,6 +58,22 @@ app.use(function(req,res,next){
 		return next()
 	}
 
+	const store = createStore(reducers, compose(
+		applyMiddleware(thunk),
+	))
+	let context ={}
+	const markup = renderToString(
+		(
+			<Provider store={store}>
+				<StaticRouter
+					location={req.url}
+					context={context}      //react有跳转 会提示我们有跳转
+				>
+					<App></App>
+				</StaticRouter>
+			</Provider>	
+		)
+	)
 	//服务端渲染App
 	// const htmlRes = renderToString(<App></App>)
 	// res.send(htmlRes)
