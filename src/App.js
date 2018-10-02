@@ -7,10 +7,23 @@ import GeniusInfo from './container/geniusinfo/geniusinfo'
 import AuthRoute from './component/authroute/authroute'
 import DashBoard from './component/dashboard/dashboard'
 import Chat from './component/chat/chat'
-
+import './index.css'
 class App extends Component {
+  constructor(props){
+    super(props)
+    this.state={
+      hasError:false
+    }
+  }
+  componentDidCatch(err,info){
+    console.log(err,info)
+    this.setState({
+      hasError:true
+    })
+  }
   render() {
-    return (
+    return this.state.hasError?
+    <img className="logo-error" src={require('./error.jpg')} alt=""></img>:(
       <div>
         <AuthRoute></AuthRoute>
         <Switch>
