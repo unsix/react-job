@@ -17,7 +17,7 @@ class Login extends React.Component {
     // console.log(this.props)
     this.props.history.push('./register')
   }
-  handleLogin =()=>{
+  handleLogin=()=>{
     this.props.login(this.props.state)
   }
   render(){
@@ -40,6 +40,7 @@ class Login extends React.Component {
           </List>
           <WhiteSpace />
           <Button onClick={this.handleLogin} type="primary">登录</Button>
+          {/* <Button onClick={()=>this.handleLogin()} type="primary">登录</Button> */}
           <WhiteSpace />
           <Button onClick={this.register} type="primary">注册</Button>
         </WingBlank>
