@@ -17,7 +17,7 @@
             <p>{{item.contract_name}}</p>
             <p v-if="item.type == '1'">乙方姓名：{{item.worker_name}}</p>
             <p v-if="item.type == '2'">甲方公司：{{item.company_name}}</p>
-            <p v-if="item.type == 2"><span  v-if="!item.signatory_b">未签字</span><span  v-if="item.is_sign == '1'">已生效</span></p>
+            <p v-if="item.type == 2"><span  v-if="item.status == -1">失效，甲方评审未通过</span><span  v-if="item.status == 2">已签字，等待甲方评审</span></p>
           </div>
           <div class="btn" v-show="item.type==1">
             <div style="height: 20px">

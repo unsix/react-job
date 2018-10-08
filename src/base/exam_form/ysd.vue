@@ -1,10 +1,10 @@
 <template>
   <div class="form" name="验收单">
     <div class="top">
-      <el-button size="small" type="primary" plain @click="return_">返回列表</el-button>
-      <p class="title">验收单</p>
-      <a v-if="form_Lista.approval_id && down_show" style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
-    </div>
+    <el-button size="small" type="primary" plain @click="return_">返回列表</el-button>
+    <p class="title">验收单</p>
+    <a v-if="form_Lista.approval_id && down_show" style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
+  </div>
     <iframe id="mom" class="win" ref="indx" width="100%" style="height: 600px" scrolling="yes" height="100%" :src="linked" seamless frameborder="0"></iframe>
     <div class="menu" v-show="handle_show">
       <el-button type="primary" plain @click="handle">处理</el-button>

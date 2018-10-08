@@ -217,7 +217,11 @@
               val=Math.floor(tato * 100) / 100
             }
             this.bxd_ruleForm.money =val
-            this.bxd_ruleForm.big_money = this.dx(val)+'整'
+            if(val.toString().split(".")[1].length>1){
+              this.bxd_ruleForm.big_money = this.dx(val)
+            }else{
+              this.bxd_ruleForm.big_money = this.dx(val)+'整'
+            }
           },
           dx:function (n) {
             var unit = "京亿万仟佰拾兆万仟佰拾亿仟佰拾万仟佰拾元角分",
@@ -480,10 +484,10 @@
                     var current = this
                     var judge = res.data.code
                     this.$testLogin(judge,current)
-                    this.loading_show = false
+                    this.loadingShow = false
                     if (res.data.code ===0){
                       this.add_ok()
-                      this.loading_show = false
+                      this.loadingShow = false
                       this.$router.push({
                         path: '/work/exam'
                       })
@@ -678,7 +682,7 @@
                   this.loadingShow = false
                   if(res.data.code === 0) {
                     this.add_ok()
-                    this.loading_show = false
+                    this.loadingShow = false
                     this.$router.push({
                       path: '/work/exam'
                     })
@@ -716,7 +720,7 @@
                   this.loadingShow = false
                   if(res.data.code === 0) {
                     this.add_ok()
-                    this.loading_show = false
+                    this.loadingShow = false
                     this.$router.push({
                       path: '/work/exam'
                     })

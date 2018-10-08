@@ -60,6 +60,11 @@
         <div>
           <h2>设置审批权限</h2>
           <i class="el-icon-close" @click="close_as"></i>
+          <div>
+            <p style="padding-bottom: 5px">审批人类型</p>
+            <el-radio v-model="radio" label="1">审批人</el-radio>
+            <el-radio v-model="radio" label="2">合同发送人</el-radio>
+          </div>
           <div class="mand">
             <p style="padding-bottom:5px">必填字段</p>
             <el-tag style="margin-left: 5px;margin-top: 5px" :key="item.id" v-for="item in form_fill.required" closable :disable-transitions="false" @close="mandClose(item)">{{item.name}}</el-tag>
@@ -167,7 +172,8 @@
         sequence_id:'',
         add_show:false,
         auto_fill:[],
-        requ:true
+        requ:true,
+        radio:'1'
 			}
 		},
 		props: {
@@ -215,6 +221,7 @@
 				param.append("company_id", this.nowCompanyId);
 				param.append("type", this.formType);
 				param.append("sequence", JSON.stringify(this.arr));
+				param.append('person_type',this.radio)
         let str = this.$test("/index.php/Mobile/approval/set_sequence")
 				this.$http.post(str, param)
 					.then((res) => {
@@ -303,6 +310,9 @@
               let obj = res.data.data
               if(obj.enclosure_describe){
                 this.describe = obj.enclosure_describe
+              }
+              if(obj.person_type){
+                this.radio = obj.person_type
               }
               if(obj.form_content){
                 if(obj.form_content.required.length > 0){

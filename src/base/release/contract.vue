@@ -4,13 +4,18 @@
       <div class="tabs">
         <el-tabs v-model="activeCard" @tab-click="handle">
           <el-tab-pane label="合同模板" name="1"></el-tab-pane>
-          <el-tab-pane label="拟呈批合同" name="2"></el-tab-pane>
+          <el-tab-pane label="合同草稿" name="2"></el-tab-pane>
         </el-tabs>
       </div>
       <div class="lists">
         <ul>
           <li v-for="(item,index) in contract_list" @click="look_contract(item.contract_type_id,item.contract_name,item.type)">
             <p>{{item.contract_name}}</p>
+            <div class="bun" v-show="activeCard == 2">
+              <span @click.stop="edit(item)">编辑</span>
+              <span @click.stop="share()">复制</span>
+              <span @click.stop="send(item)">发起合同评审</span>
+            </div>
           </li>
         </ul>
         <div class="pages" v-show="pageShow">
@@ -25,8 +30,8 @@
       <div class="top">
         <el-button type="primary" size="small" @click="_return">返回</el-button>
         <p>{{con_title}}</p>
-        <b @click="write_contract()"><i class="el-icon-edit"></i></b>
-        <a style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
+        <b @click="write_contract()" v-show="activeCard == 1"><i class="el-icon-edit"></i></b>
+        <a style="color: black" :href="downUrl" target="_blank" download="" mce_href='#' v-show="activeCard == 1"><i class="el-icon-download"></i></a>
       </div>
       <iframe :src="core" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
     </div>
@@ -103,17 +108,33 @@
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST',
       }),
+      edit(item){
+        this.contr_show = false
+        this.con_title = item.contract_name
+        this.details_show = true
+        let httpUrl = this.$test('/index.php/Mobile/skey/look_draft?id')
+        this.cores = `${httpUrl}=${item.contract_record_id}&operation=3&view=3`
+      },
+      share(){
+
+      },
+      send(res){
+        this.todo = res
+        this.psb_show = true
+        this.contr_show = false
+      },
       handle(tab){
         let index = JSON.parse(tab.index)
         this.activeCard = (index+1).toString()
         this._get_Data()
       },
+
       _get_Data(){
         this.contract_list = []
         if(this.activeCard == '1'){
           this.pageShow = false
           let param = new URLSearchParams()
-          param.append('type',1)
+          param.append('type',3)
           param.append('each',10)
           let httpUrl = this.$test('/index.php/Mobile/find/select_contract_companty_types')
           this.$http.post(httpUrl,param)
@@ -126,7 +147,7 @@
           let param = new URLSearchParams()
           param.append('p',this.pageIndex)
           param.append('each',10)
-          let httpUrl = this.$test('/index.php/Mobile/find/draft_list')
+          let httpUrl = this.$test('/index.php/Mobile/find/pre_contract_list')
           this.$http.post(httpUrl,param)
             .then((res)=>{
               if(res.data.code == 0){
@@ -140,7 +161,6 @@
             })
         }
       },
-
       first_page() {
         this.pageIndex = 1
       },
@@ -163,8 +183,9 @@
           }
         })
         key = key.substring(key.lastIndexOf('=')+1, key.length)
+        //拿到cookie
         let httpUrls = this.$test('/index.php/Mobile/Find/show_form?info=null&type_id')
-        this.core = `${httpUrls}=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null&skey=${key}&skey_uid=${this.user.uid}`
+        this.core = `${httpUrls}=${pr}&contract_name=null&is_tax=2&subtotal=null&develop_start_time=null&develop_end_time=null&information_address=null`
         this.contr_show = false
         this.detail_show = true
         this.con_title = re
@@ -182,8 +203,14 @@
         this.cores = `${httpUrl}=${this.type_id}&operation=1&view=2`
       },
       _returned(){
-        this.detail_show = true
-        this.details_show = false
+        if(this.activeCard == 2){
+          this.details_show = false
+          this.contr_show = true
+          this.con_title = ''
+        }else{
+          this.detail_show = true
+          this.details_show = false
+        }
       },
       submit(){
         var obj = this.$refs.win.contentWindow
@@ -218,10 +245,16 @@
         }
       },
       _returns(){
-        this.details_show = true
-        this.psb_show = false
-        this.user_info = []
-        this.approval_id1 = ''
+        if(this.activeCard == 2){
+          this.contr_show = true
+          this.psb_show = false
+          this.todo = {}
+        }else{
+          this.details_show = true
+          this.psb_show = false
+          this.user_info = []
+          this.approval_id1 = ''
+        }
       },
       show_sea(){
         this.psb_show = false
@@ -625,6 +658,15 @@
         }
         p{
           cursor: pointer;
+          float: left;
+        }
+        .bun{
+          float: right;
+          span{
+            color: #878d99;
+            margin: 0 10px;
+            cursor: pointer;
+          }
         }
       }
       .pages {

@@ -243,7 +243,11 @@
           if(this.tode.contract_temp_id){
             this.psb_ruleForm.contract_name_new = this.tode.contract_name
             this.psb_ruleForm.contract_id = this.tode.contract_temp_id
+          }else{
+            this.psb_ruleForm.contract_name_new = this.tode.contract_name
+            this.psb_ruleForm.contract_id = this.tode.contract_record_id
           }
+
         }
       },
 			handleRemove(file, fileList) {
@@ -378,8 +382,10 @@
 						this.psb_ruleForm.pay_method = this.form_Lista.pay_method
 						this.psb_ruleForm.executor = this.form_Lista.executor
             this.psb_ruleForm.contract_name_new = this.form_Lista.contract_name_new
-						if(!this.tode.contract_temp_id){
-              this.psb_ruleForm.contract_id = this.form_Lista.contract_id
+            if(this.tode){
+              if(!this.tode.contract_temp_id){
+                this.psb_ruleForm.contract_id = this.form_Lista.contract_id
+              }
             }
 						this.psb_ruleForm.remarks = this.form_Lista.remarks
 						this.psb_ruleForm.project_manager_name = this.form_Lista.project_manager_name

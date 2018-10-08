@@ -14,6 +14,7 @@
           <li @click="choose_receipt"><span>表单回执</span></li>
           <li @click="choose_approval"><span>表单审批</span></li>
           <li @click="choose_info"><span>设置信息共享</span></li>
+          <li @click="choose_shenpi"><span>设置合同审批权限</span></li>
         </ul>
       </div>
     </div>
@@ -179,7 +180,7 @@
 export default {
   data(){
     return{
-      asType:['合同评审','请款单','请购单','申请公章','呈批件','报销单','个人请款单'],
+      asType:['合同评审','请款单','请购单','申请公章','呈批件','报销单','个人请款单','结算单'],
       as_what_show:false,
       manage_show:true,
       jurisdictionItemShow:false,
@@ -222,6 +223,11 @@ export default {
           name:'个人请款单',
           type:13,
           groups:[]
+        },
+        jiesuan:{
+          name:'结算单',
+          type:14,
+          groups:[]
         }
       },
       showMe:false,
@@ -262,6 +268,9 @@ export default {
       this.manage_show = false
       this.enjoy_if = true
     },
+    choose_shenpi(){
+
+    },
     return_manage(){
       this.enjoy_if = false
       this.manage_show = true
@@ -299,6 +308,9 @@ export default {
           break;
         case '个人请款单':
           this.formType = 13
+          break;
+        case '结算单':
+          this.formType = 14
           break;
       }
       this._getApproval()
@@ -454,6 +466,11 @@ export default {
                 arr.push(createJurisdictionList(list))
               })
               this.$set(this.setFormRe.gongzi,'groups',arr)
+            }else if(item.type === 14){
+              let arr = []
+              item.list.forEach((list)=>{
+                arr.push(createJurisdictionList(list))
+              })
             }
           })
         })
@@ -484,6 +501,8 @@ export default {
         zz = 12
       } else if(this.formRePersonIndex == 'gongzi'){
         zz = 13
+      } else if(this.formRePersonIndex == 'jiesuan'){
+        zz = 14
       }
       let narr = []
       this.setFormRe[this.formRePersonIndex].groups.forEach((item) => {

@@ -241,7 +241,11 @@
 						this.sqgz_ruleForm.department_id = this.form_Lista.department_id
 						this.sqgz_ruleForm.add = this.form_Lista.info
 						this.sqgz_ruleForm.project_manager_name = this.form_Lista.project_manager_name
-            this.sqgz_ruleForm.project_manager = this.form_Lista.project_manager
+            if(!this.form_Lista.project_manager){
+              this.sqgz_ruleForm.project_manager = {}
+            }else{
+              this.form_Lista.project_manager = this.form_Lista.project_manager
+            }
 						this.sqgz_ruleForm.add.forEach((item, index) => {
 							if(item.seal_type === '公章') {
 								this.sqgz_ruleForm.add[index].seal_type = '1'

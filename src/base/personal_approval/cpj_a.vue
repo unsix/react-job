@@ -809,7 +809,6 @@
             return
           }
         }
-        console.log(this.pic_times)
         if(this.pic_times != 0 || this.file_times != 0){
           let param = new URLSearchParams()
           param.append('uid',this.user.uid)
