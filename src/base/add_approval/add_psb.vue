@@ -243,7 +243,11 @@
           if(this.tode.contract_temp_id){
             this.psb_ruleForm.contract_name_new = this.tode.contract_name
             this.psb_ruleForm.contract_id = this.tode.contract_temp_id
+          }else{
+            this.psb_ruleForm.contract_name_new = this.tode.contract_name
+            this.psb_ruleForm.contract_id = this.tode.contract_record_id
           }
+
         }
       },
 			handleRemove(file, fileList) {

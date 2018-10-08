@@ -48,7 +48,6 @@
 						<div class="edit">
 							<el-button type="primary" round @click="listCli(item,item.approval_state)">查看</el-button>
 							<el-button type="danger" round v-show="item.approval_state_num === '3'" @click="deleteForm(item)">删除</el-button>
-
 							<div class="process" v-if="approval_process">
 								<span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
 							</div>
@@ -580,13 +579,13 @@
 				<div class="menu" v-show="handle_show">
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-if="menuShow">
-            <div class="box" v-if="recent.content_json">
-              <p><span>合同</span><a v-if="form_Listb.is_final == 1" target="_blank" :href="insdent">{{recent.contract_name}}</a><b style="cursor: pointer" @click="look_html" v-if="form_Listb.is_final == 0">{{recent.contract_name}}</b></p>
-              <div class="toped" v-if="form_Listb.is_final == 0">
+            <div class="box" v-if="recent.contract_temp_id">
+              <p><span>合同</span><a v-if="form_Listb.is_before_send == 0" target="_blank" :href="insdent">{{recent.contract_name}}</a><b style="cursor: pointer" @click="look_html" v-if="form_Listb.is_before_send == 1">{{recent.contract_name}}</b></p>
+              <div class="toped" v-if="form_Listb.is_before_send == 1">
                 <el-button type="info" size="small" @click="return_status" v-if="statused != '暂未修改合同'">还原</el-button>
-                <b v-if="form_Listb.is_final == 0">{{statused}}</b>
+                <b v-if="form_Listb.is_before_send == 1">{{statused}}</b>
               </div>
-              <div class="choose" v-if="form_Listb.is_final == 1">
+              <div class="choose" v-if="form_Listb.person_type == 2">
                 <p>选择合同乙方</p>
                 <p @click="show_name" class="rese"><img :src="other.avatar" alt=""><span>{{other_people}}</span></p>
               </div>
@@ -963,6 +962,113 @@
           </div>
         </div>
       </div>
+      <!--结算单展示-->
+      <div class="form" name="结算单" v-if="jiesuandan_show">
+        <div class="top">
+          <span class="title">结算单</span>
+        </div>
+        <div>
+          <span>工程项目名称：</span><span>{{form_Lista.project_name}}</span>
+        </div>
+        <div>
+          <span>施工队名称：</span><span>{{form_Lista.construction_name}}</span>
+        </div>
+        <div>
+          <span>合同名称：</span><span>{{form_Lista.contract_name}}</span>
+        </div>
+        <div>
+          <span>合同金额：</span><span>{{form_Lista.contract_price}}</span>
+        </div>
+        <div>
+          <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
+        </div>
+        <div>
+          <span style="color: red;"><span>总额：</span>{{form_Lista.total_price}}</span><span style="display: block">{{form_Lista.big_money}}</span>
+        </div>
+        <div v-for="item in form_Lista.list_json" class="qingdan">
+          <h4>结算条目</h4>
+          <p>单位:<span>{{item.unit}}</span></p>
+          <p>施工内容:<span>{{item.content}}</span></p>
+          <p>数量:<span>{{item.amount}}</span></p>
+          <p>单价:<span>{{item.unit_price}}</span></p>
+          <p>合计:<span>{{item.sum_price}}</span></p>
+          <p>备注:<span>{{item.remarks}}</span></p>
+        </div>
+        <div>
+          <span>附件列表：</span>
+          <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+        </div>
+        <div>
+          <span>图片附件：</span>
+          <a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+            <img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
+          </a>
+        </div>
+        <div>
+          <span>发起人：</span><span>{{form_Listb.found_name}}</span>
+        </div>
+        <div>
+          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
+						</span>
+        </div>
+        <div>
+          <span>审批：</span>
+          <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
+            <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span><i v-show="status == 2" style="float: right;margin-right: 50px" class="iconfont icon-xiaoxi" @click="reply_other(item.uid,item.participation_id,item.name)"></i></b>
+            <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+            <p>意见:<span>{{item.opinion}}</span></p>
+            <p v-show="item.many_enclosure" class="enclosure">
+              <span style="display: block">附件列表</span>
+              <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+              <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+              <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+            </p>
+            <div style="width: 530px;margin-left: 50px;background: #e3e4e9;">
+              <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+                <div class="avatar">
+                  <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+                </div>
+                <div class="tel">
+                  <span>{{res.add_time}}</span>
+                </div>
+                <div class="operation">
+                  <span>{{res.reply_content}}</span>
+                </div>
+                <div class="img">
+                  <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+                </div>
+                <div>
+                  <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+                </div>
+              </div>
+            </div>
+            <p>审批时间:{{item.add_time}}</p>
+          </div>
+        </div>
+        <div class="menu" v-show="handle_show">
+          <el-button type="primary" plain @click="handle">处理</el-button>
+          <div class="button" v-if="menuShow">
+            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
+            <label>
+              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+            </label>
+            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+              <i class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            </el-upload>
+            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+              <el-button size="small" type="info" plain>上传文件</el-button>
+              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+            </el-upload>
+            <el-button type="primary" round @click="agree">同意</el-button>
+            <el-button type="danger" round @click="refuse">拒绝</el-button>
+          </div>
+        </div>
+      </div>
 		</div>
 		<browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
 		<loading v-show="loading_show"></loading>
@@ -1144,7 +1250,8 @@
         other:{},
         name_show:false,
         statused:'暂未修改合同',
-        modify:{}
+        modify:{},
+        jiesuandan_show:false,
 			}
 		},
 		computed: {
@@ -1889,7 +1996,7 @@
 			agree(){
         //se 可选
         //de 必选
-        if(this.form_Listb.is_final == '1' && this.recent.content_json){
+        if(this.form_Listb.is_final == '1' && this.recent.contract_temp_id){
           if(this.other_people == '选择合同乙方'){
             this.$message.error('请选择合同乙方')
             return false
@@ -1967,7 +2074,7 @@
         })
         this.file_times = 0
         this.pic_times = 0
-        if(this.form_Listb.is_final == 1 && this.recent.content_json){
+        if(this.form_Listb.is_final == 1 && this.recent.contract_temp_id){
           this.agreed()
         }else{
           this.add_agree()
@@ -1980,7 +2087,7 @@
           type: 'warning'
         }).then(() => {
           this.loading_show = true
-          if(this.form_Listb.is_final == 1 && this.recent.content_json){
+          if(this.form_Listb.is_final == 1 && this.recent.contract_temp_id){
             this.add_others()
           }
           setTimeout(()=>{
@@ -1993,7 +2100,7 @@
               param.append('opinion',this.handle_txt)
               param.append('form_result',this.pity)
               param.append('auto_fill_fields',this.form_fill)
-              if(this.list.type == '合同评审表' && this.recent.content_json){
+              if(this.list.type == '合同评审表' && this.recent.contract_temp_id){
                 if(this.statused == '暂未修改合同'){
                   param.append('contract_temp_id',this.recent.contract_temp_id)
                 }else{
@@ -2552,6 +2659,13 @@
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
               this.gongzidan_show = true
+            } else if(item.type == '结算单'){
+              this.form_Lista = res.data.data
+              this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+              console.log(this.form_Lista)
+              this.jiesuandan_show = true
             }
             this.reply = res.data.data.approval_id
             this.newCompany = res.data.data.company_id
@@ -2649,6 +2763,7 @@
                 })
             }
             this.form_Listb = create_approval_list(res.data.data)
+            console.log(this.form_Listb)
           })
 
         let mparam = new URLSearchParams()

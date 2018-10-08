@@ -13,6 +13,7 @@
           <el-tab-pane label="报销单"></el-tab-pane>
           <el-tab-pane label="验收单"></el-tab-pane>
           <el-tab-pane label="个人请款单"></el-tab-pane>
+          <el-tab-pane label="结算单"></el-tab-pane>
 				</el-tabs>
 			</div>
 			<div class="from_template" v-show="formShow">
@@ -27,6 +28,7 @@
         <addBxd v-if="bxd_show" :userList="user_info" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
         <addYsd v-if="ysd_show" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
         <addGzd v-if="gzd_show" :userList="user_info" :approval_id="approval_id8" @return_exam="return_Add"></addGzd>
+        <addJsd v-if="jsd_show" :userList="user_info" :approval_id="approval_id9" @return_exam="return_Add"></addJsd>
 			</div>
 		</div>
 		<div class="as_what" v-show="as_what_show">
@@ -77,6 +79,7 @@
     <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
 	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
     <gzd v-if="gzd_if" :form_Lista="form_Lista" ref="gzds" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></gzd>
+    <jsd v-if="jsd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></jsd>
     <div class="sendsd" v-show="sendShow">
       <div>
         <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
@@ -105,6 +108,7 @@
   import addBxd from '@/base/add_approval/add_bxd'
   import addYsd from '@/base/add_approval/add_ysd'
   import addGzd from '@/base/add_approval/add_gzd'
+  import addJsd from '@/base/add_approval/add_jsd'
 	import psb from '@/base/exam_form/psb'
 	import qgd from '@/base/exam_form/qgd'
 	import cpj from '@/base/exam_form/cpj'
@@ -113,6 +117,7 @@
   import bxd from '@/base/exam_form/bxd'
   import ysd from '@/base/exam_form/ysd'
   import gzd from '@/base/exam_form/gzd'
+  import jsd from '@/base/exam_form/jsd'
 	import chooseTemplate from '@/base/add_approval/choose_template'
 	import loading from '@/base/loading/loading'
 	import {getPic} from '@/common/js/pic.js'
@@ -147,6 +152,7 @@
         bxd_if: false,
         ysd_if:false,
         gzd_if:false,
+        jsd_if:false,
 				formShow: true,
 				chooseTemShow: false,
 				as_what_show: false,
@@ -158,6 +164,7 @@
 				psb_show: true,
 				sqgz_show: false,
         gzd_show:false,
+        jsd_show:false,
 				loading_show: false,
 				at_qingkuanShow:false,
         inspection_type_id:'',
@@ -174,6 +181,7 @@
         approval_id6:'',
         approval_id7:'',
         approval_id8:'',
+        approval_id9:'',
 				form_approval_id:'',
 				qk_return:false,
 				nextPageShow: true,
@@ -693,7 +701,6 @@
 
       //使用
 			qkUser(item,index){
-
           this.request_money_basis_type = item.type;
           this.form_approval_id = ''
           this.at_qingkuanShow = false
@@ -718,7 +725,6 @@
         let str = this.$test("/index.php/Mobile/user/companies_list")
 				this.$http.post(str, param)
 					.then((res) => {
-
             var current = this
             var judge = res.data.code
             this.$testLogin(judge,current)
@@ -736,7 +742,6 @@
 				setUserState: 'SET_USERSTATE',
 				setCompanyList: 'SET_COMPANYLIST'
 			}),
-
 			useInfo(item) {
 				this.approval_id1 = ''
 				this.approval_id2 = ''
@@ -780,6 +785,9 @@
         } else if(item.type === '个人请款单'){
           this.approval_id8 = item.approval_id
           this.gzd_show = true
+        } else if(item.type === '结算单'){
+          this.approval_id9 = item.approval_id
+          this.jsd_show = true
         }
 			},
 			viewInfo(item) {
@@ -790,6 +798,7 @@
 				this.sqgz_show = false
         this.bxd_show = false
         this.ysd_show = false
+        this.jsd_show =false
         this.gzd_show = false
 				this.chooseTemShow = false
 				let param = new URLSearchParams();
@@ -839,6 +848,12 @@
               this.form_Lista = create_yanshoudan_list(res.data.data)
             } else if (item.type == '个人请款单'){
 						  this.gzd_if = true
+              this.form_Lista = res.data.data
+              this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
+              this.get_img(this.form_Lista.many_enclosure)
+              this.get_file(this.form_Lista.many_enclosure)
+            }else if(item.type == '结算单'){
+              this.jsd_if = true
               this.form_Lista = res.data.data
               this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
               this.get_img(this.form_Lista.many_enclosure)
@@ -1004,6 +1019,7 @@
         this.bxd_if = false
         this.ysd_if = false
         this.gzd_if = false
+        this.jsd_if =false
 				this.chooseTemShow = true
 			},
 			returnForm() {
@@ -1022,6 +1038,7 @@
         this.bxd_show = false
         this.ysd_show = false
         this.gzd_show = false
+        this.jsd_show = false
 			},
       //tab 切換
 			handleClick(tab) {
@@ -1045,6 +1062,7 @@
         this.bxd_show = false
         this.ysd_show = false
         this.gzd_show = false
+        this.jsd_show = false
         this.psb_if = false
         this.qgd_if= false
         this.cpj_if= false
@@ -1085,6 +1103,9 @@
         }else if(this.navIndex === 7){
 				  this.gzd_show = true
           this.approval_type = 13
+        }else if(this.navIndex == 8){
+				  this.jsd_show = true
+          this.approval_type = 14
         }
         this.get_approval_user_info()
 			},
@@ -1115,6 +1136,9 @@
             break;
           case 13:
             str = 13
+            break;
+          case 14:
+            str = 14
             break;
         }
         let param = new URLSearchParams()
@@ -1341,6 +1365,7 @@
 			psb,
 			qgd,
 			cpj,
+      jsd,
 			qkd,
 			sqgz,
       bxd,
@@ -1353,7 +1378,8 @@
 			addQkd,
       addBxd,
       addYsd,
-      addGzd
+      addGzd,
+      addJsd
 		}
 	}
 </script>
@@ -1591,13 +1617,12 @@
 		.add_approval {
 			padding: 0px 10px;
 			>.nav {
-				.el-tabs__nav {
-					width: 100%;
-				}
+				/*.el-tabs__nav {*/
+					/*width: 100%;*/
+				/*}*/
 				.el-tabs__item {
 					font-size: 12px;
 					font-weight: 700;
-					width: 71px;
 					text-align: center;
 				}
 			}

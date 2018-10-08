@@ -1,6 +1,6 @@
 
 export default class approval_list {
-  constructor({found_name, is_ok,list,content,participation_id,is_final,finance,supply}) {
+  constructor({found_name, is_ok,list,content,participation_id,is_final,person_type,is_before_send,finance,supply}) {
     this.found_name = found_name
     this.is_ok = is_ok
     this.list = list
@@ -9,6 +9,8 @@ export default class approval_list {
     this.finance = finance
     this.supply = supply
     this.is_final = is_final
+    this.is_before_send = is_before_send
+    this.person_type = person_type
   }
 }
 function is_ok(item){
@@ -44,7 +46,9 @@ export function create_approval_list(item) {
     participation_id:item.participation_id,
     finance:get_finance(item),
     supply:item.supply,
-    is_final:item.is_final
+    is_final:item.is_final,
+    person_type:item.person_type,
+    is_before_send:item.is_before_send
   })
 }
 
