@@ -565,7 +565,7 @@
 						param.append("end_time", this.psb_ruleForm.end_time);
 						param.append("executor", this.psb_ruleForm.executor);
 						param.append("remarks", this.psb_ruleForm.remarks);
-						param.append("contract_temp_id", this.psb_ruleForm.contract_id);
+						if(this.psb_ruleForm.contract_id){if(this.psb_ruleForm.contract_id){param.append("contract_temp_id", this.psb_ruleForm.contract_id)}}
 						param.append("contract_num", this.psb_ruleForm.contract_num);
 						param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
             let str = this.$test("/index.php/Mobile/approval/add_approval_conyract_company_new")
@@ -752,7 +752,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_temp_id", this.psb_ruleForm.contract_id);
+					if(this.psb_ruleForm.contract_id){param.append("contract_temp_id", this.psb_ruleForm.contract_id)};
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
@@ -798,7 +798,7 @@
 					param.append("end_time", this.psb_ruleForm.end_time);
 					param.append("executor", this.psb_ruleForm.executor);
 					param.append("remarks", this.psb_ruleForm.remarks);
-					param.append("contract_temp_id", this.psb_ruleForm.contract_id);
+					if(this.psb_ruleForm.contract_id){param.append("contract_temp_id", this.psb_ruleForm.contract_id)};
 					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
 					param.append("contract_num", this.psb_ruleForm.contract_num);
 					param.append("contract_name_new", this.psb_ruleForm.contract_name_new);
