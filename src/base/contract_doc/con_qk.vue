@@ -1,34 +1,35 @@
 <template>
-  <div>
-    <div v-if="wrapper">
-      <div class="forms" v-if="form_show">
-        <div class="top">
-          <el-button type="primary" size="small" @click="_return">返回</el-button>
-          <p>{{qkd_status}}</p>
-          <b @click="show_sign">去复制</b>
-        </div>
-        <addQkd v-if="qkd_show" :userList="user_info" :approval_id="approval_id" :btn_show="false" :contract_name="contract_name" :contract="inset" ref="scse"  @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
-        <qkds class="qkd_s" :contract_name="contract_name" :contract="inset" :approval_id="approval_id" :btn_show="false" :request_money_basis_type="request_money_basis_type" ref="qkd" v-if="qkd_if"></qkds>
+  <div v-if="wrapper">
+    <div class="forms" v-if="form_show">
+      <div class="top" v-show="sign">
+        <el-button type="primary" size="small" @click="_return">返回</el-button>
+        <p>{{qkd_status}}</p>
+        <b @click="show_sign" v-show="qkd_status!='工作联系单'">去复制</b>
       </div>
-      <choose v-if="chooseShow" :link="true"  ref="choosetem" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></choose>
-      <chooseTemplate v-if="chooseTemShow" :link="true" style="background: #FFF"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
-
-      <qkd v-if="if_qkd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
-      <comQkd :change_type="change_type" v-if="qkd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" :pset="false" @return_psb="returnList" :file_arr="file_arr"></comQkd>
+      <addQkd v-if="qkd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :link="true" :btn_show="false" :contract_name="contract_name" :contract="inset.contract_temp_id" ref="scse"  @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
+      <addJsd v-if="jsd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :btnShow="true" @return_exam="return_Add" :contract_name="contract_name" :contract="inset.contract_temp_id"></addJsd>
+      <addYsd v-if="ysd_show" class="qingkuan" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id" @return_exam="return_Add"></addYsd>
+      <addLxd v-if="lxd_show" class="qingkuan" :approval_id="inset.contract_temp_id" @return_exam="return_Add"></addLxd>
     </div>
-    <cho v-else :title="tips"></cho>
+    <chooseTemplate v-if="chooseTemShow" :link="true" style="background: #FFF"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
+    <comJsd  v-if="jsd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" :pset="false" @return_psb="returnList" :file_arr="file_arr"></comJsd>
+    <comQkd :change_type="change_type" v-if="qkd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" :pset="false" @return_psb="returnList" :file_arr="file_arr"></comQkd>
+    <comYsd v-if="ysd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></comYsd>
   </div>
+  <cho v-else :title="tips"></cho>
 </template>
 
 <script>
   import cho from '@/base/add_approval/cho'
   import { mapGetters, mapMutations } from 'vuex'
-  import qkd from '@/base/personal_approval/qkd_b'
+  import comJsd from '@/base/exam_form/jsd'
   import comQkd from '@/base/exam_form/qkd'
-  import qkds from '@/base/personal_approval/qkd_a'
+  import comYsd from '@/base/exam_form/ysd'
   import {getPic} from '@/common/js/pic.js'
   import addQkd from '@/base/add_approval/add_qkd'
-  import choose from '@/base/personal_approval/inital'
+  import addJsd from '@/base/add_approval/add_jsd'
+  import addYsd from '@/base/add_approval/add_ysd'
+  import addLxd from '@/base/add_approval/add_lxd'
   import chooseTemplate from '@/base/add_approval/choose_template'
   import { create_qingkuandan_list } from '@/common/js/approval/qingkuandan'
   import { create_approval_list } from '@/common/js/approval/approval_list'
@@ -36,6 +37,7 @@
   export default {
     data(){
       return{
+        sign:true,
         wrapper:true,
         ys_list:[],
         js_list:[],
@@ -55,18 +57,13 @@
         form_Listb:{},
         file_arr:[],
         qkd_show_if:false,
-        change_type:''
-      }
-    },
-    props:{
-      inset:{
-
-      },
-      qkd_status:{
-
-      },
-      contract_name:{
-
+        change_type:'',
+        jsd_show:false,
+        jsd_show_if:false,
+        inspection_type_id:'',
+        ysd_show:false,
+        ysd_show_if:false,
+        lxd_show:false,
       }
     },
     methods:{
@@ -85,17 +82,25 @@
         switch (this.qkd_status) {
           case '请款单':
             this.qkd_show = true
-            this.get_user()
+            this.get_user(8)
             break;
-          case '个人请款单':
-            this.qkd_if = true
+          case '结算单':
+            this.jsd_show = true
+            this.get_user(14)
+            break;
+          case '验收单':
+            this.ysd_show = true
+            this.get_user(12)
+            break;
+          case '工作联系单':
+            this.lxd_show = true
             break;
         }
       },
-      get_user(){
+      get_user(pr){
         let param = new URLSearchParams()
         param.append('company_id',this.nowCompanyId)
-        param.append('type',8)
+        param.append('type',pr)
         let src = this.$test('/index.php/Mobile/user/get_approval_user_info')
         this.$http.post(src,param)
           .then((res)=>{
@@ -130,9 +135,8 @@
       },
       return_Add(){
         this.form_show = false
-        this.$parent.store = true
         this.approval_id = ''
-        this.$parent.add_qkd_show_cr = false
+        this.$parent.returnList()
       },
       _reInfo(){
         this.form_show = false
@@ -149,8 +153,11 @@
           case '请款单':
             this.qkd_show = true
             break;
-          case '个人请款单':
-            this.qkd_if = true
+          case '结算单':
+            this.jsd_show = true
+            break;
+          case '验收单':
+            this.ysd_show = true
             break;
         }
       },
@@ -229,13 +236,13 @@
             }
             this.form_Listb = create_approval_list(res.data.data)
           })
-        switch (this.qkd_status) {
-          case '请款单':
-            let nparam = new URLSearchParams();
-            nparam.append("approval_id", item.approval_id);
-            let src = this.$test("/index.php/Mobile/approval/approval_process_show")
-            this.$http.post(src, nparam)
-              .then((res)=>{
+        let nparam = new URLSearchParams();
+        nparam.append("approval_id", item.approval_id);
+        let src = this.$test("/index.php/Mobile/approval/approval_process_show")
+        this.$http.post(src, nparam)
+          .then((res)=>{
+            switch (this.qkd_status) {
+              case '请款单':
                 if(res.data.data.change_type){
                   this.change_type = res.data.data.change_type
                 }
@@ -243,21 +250,23 @@
                 this.form_Lista = create_qingkuandan_list(res.data.data)
                 this.get_img(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
-              })
-            break;
-          case '个人请款单':
-            let param = new URLSearchParams()
-            param.append('approval_personal_id',item.approval_personal_id)
-            let str = this.$test('/index.php/Mobile/Personal/approval_personal_process_show')
-            this.$http.post(str,param)
-              .then((res)=>{
-                this.if_qkd = true
-                this.form_Lista = create_qingkuandan_list(res.data.data)
+                break;
+              case '结算单':
+                this.jsd_show_if = true
+                this.form_Lista = res.data.data
+                this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
                 this.get_img(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
-              })
-            break;
-        }
+                break;
+              case '验收单':
+                this.ysd_show_if = true
+                this.form_Lista = res.data.data
+                this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
+                this.get_img(this.form_Lista.many_enclosure)
+                this.get_file(this.form_Lista.many_enclosure)
+                break;
+            }
+          })
       },
       useInfo(item){
         this.approval_id = ''
@@ -271,9 +280,13 @@
             this.qkd_show = true
             this.approval_id = item.approval_id
             break;
-          case '个人请款单':
-            this.qkd_if = true
-            this.approval_id = item.approval_personal_id
+          case '结算单':
+            this.jsd_show = true
+            this.approval_id = item.approval_id
+            break;
+          case '验收单':
+            this.ysd_show = true
+            this.approval_id = item.approval_id
             break;
         }
       },
@@ -282,9 +295,10 @@
         this.js_list = []
         this.gz_list = []
         this.user_info = []
-        this.form_show = false
+        this.$parent.qk_note = true
         this.$parent.store = true
-        this.$parent.add_qkd_show_cr = false
+        this.$parent.qkd_show = false
+        this.$parent.jsd_show = false
       },
       show_sign(){
         this.qkd_show = false
@@ -295,23 +309,21 @@
             this.chooseTemShow = true
             this.approval_type = 8
             break;
-          case '个人请款单':
-            this.chooseShow = true
-            this.approval_type = 2
+          case '结算单':
+            this.chooseTemShow = true
+            this.approval_type =14
+            break;
+          case '验收单':
+            this.chooseTemShow = true
+            this.approval_type =12
             break;
         }
       },
       returnList(){
-        switch (this.qkd_status) {
-          case '请款单':
-            this.chooseTemShow = true
-            this.qkd_show_if = false
-            break;
-          case '个人请款单':
-            this.chooseShow = true
-            this.if_qkd = false
-            break;
-        }
+        this.chooseTemShow = true
+        this.qkd_show_if = false
+        this.jsd_show_if = false
+        this.ysd_show_if = false
       },
       get_img(many_enclosure) {
         if(!many_enclosure) {
@@ -467,8 +479,31 @@
         })
       },
     },
+    props:{
+      inset:{
+
+      },
+      qkd_status:{
+
+      },
+      contract_name:{
+
+      }
+    },
     created(){
       this.change_types()
+      console.log(this.inset)
+    },
+    components:{
+      cho,
+      comQkd,
+      addQkd,
+      chooseTemplate,
+      addJsd,
+      comJsd,
+      comYsd,
+      addYsd,
+      addLxd
     },
     computed: {
       ...mapGetters([
@@ -481,15 +516,6 @@
         'companyList'
       ])
     },
-    components:{
-      qkds,
-      qkd,
-      addQkd,
-      choose,
-      comQkd,
-      chooseTemplate,
-      cho
-    }
   }
 </script>
 
@@ -523,7 +549,7 @@
     }
     .qingkuan{
       width: 96%;
-      margin:  0 auto;
+      margin: 10px auto 0;
       #picc{
         ul{
           li{
@@ -546,11 +572,6 @@
       }
       .upload-demo_a{
         margin-top: 20px;
-      }
-    }
-    .qkd_s{
-      .as{
-        margin-top: 0px!important;
       }
     }
   }

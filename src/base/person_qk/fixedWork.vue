@@ -335,12 +335,15 @@
       submit(){
         if(!this.todo.name){
           this.$message.info('名字不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.bank_name){
           this.$message.info('开户行不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.bank_account){
           this.$message.info('开户账号不可为空')
+          this.$parent.loadingShow = false
           return false
         }else{
           this.submit_fix()

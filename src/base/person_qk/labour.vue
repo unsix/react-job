@@ -209,33 +209,43 @@
       submit(){
         if(!this.todo.name){
           this.$message.info('名字不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.bank_name){
           this.$message.info('开户行不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.bank_account){
           this.$message.info('开户账号不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.id_card){
           this.$message.info('身份证号不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.work_type){
           this.$message.info('工种不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.once_month){
           this.$message.info('本次请款月份不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.amount){
           this.$message.info('本次完成面积不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.should_pay_price){
           this.$message.info('应付金额不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.thr_true_people){
           this.$message.info('确认人不可为空')
+          this.$parent.loadingShow = false
           return false
         }else if(!this.todo.unit){
           this.$message.info('承包单价不可为空')
+          this.$parent.loadingShow = false
           return false
         }else{
           this.submit_lab()

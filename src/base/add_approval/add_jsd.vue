@@ -9,8 +9,7 @@
         </el-form-item>
         <el-form-item label="合同名称" prop="contract_name">
           <el-input v-model="jsd_ruleForm.contract_name" style="width:195px;"></el-input>
-          <el-button type="info" plain @click="chooseHetong" style="float: right;" v-show="jsd_ruleForm.contract_id == ''">选择合同</el-button>
-          <el-button type="info" plain @click="viewHt" style="float: right;margin-right: 5px;" v-show="jsd_ruleForm.contract_id != '' ">查看合同</el-button>
+          <el-button type="info" plain @click="viewHt" style="float: right;margin-right: 5px;" v-show="btnShow">查看合同</el-button>
         </el-form-item>
         <el-form-item label="合同金额" prop="contract_price">
           <el-input v-model="jsd_ruleForm.contract_price"></el-input>
@@ -63,6 +62,7 @@
           <el-button size="small" type="info" plain>上传文件</el-button>
           <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
         </el-upload>
+        <more ref="more"></more>
         <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
           <p>审批流程</p>
           <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -82,6 +82,7 @@
   import { mapGetters, mapMutations } from 'vuex'
   import loading from '@/base/loading/loading'
   import * as math from 'mathjs'
+  import more from '@/base/add_approval/more'
   export default {
     data(){
       return{
@@ -126,7 +127,7 @@
           project_manager:{},
           project_manager_name:'',
           many_enclosure:[],
-          contract_request_id:'190'
+          contract_request_id:''
         },
         fileList:[],
         fileList_a:[],
@@ -168,9 +169,8 @@
           })
       },
       viewHt(){
-        return false
         let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
-        window.open( str+this.jsd_ruleForm.contract_id+'&operation=2&view=3')
+        window.open( str+this.jsd_ruleForm.contract_request_id+'&operation=2&view=4')
       },
       add_jsd(){
         let obj = {
@@ -187,15 +187,20 @@
         this.jsd_ruleForm.add.splice(index,1)
       },
       submitForm_jsd(formName){
-        this.$refs[formName].validate((valid) => {
-          if(valid) {
-            this.jsd_submit()
-            this.loading_show = true
-          } else {
-            this.$message.error('请将表单填写完整');
-            return false;
-          }
-        });
+        this.loadingShow = true
+        this.$refs.more.submit()
+        setTimeout(()=>{
+          this.$refs[formName].validate((valid) => {
+            if(valid) {
+              this.jsd_submit()
+              this.loading_show = true
+            } else {
+              this.$message.error('请将表单填写完整');
+              this.$refs.more.file = []
+              return false;
+            }
+          });
+        },500)
       },
       handlePreview(file, fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
@@ -320,6 +325,7 @@
         this.file_time = 0
         this.pic_time = 0
         this.loadingShow = true
+        var more = this.$refs.more
         setTimeout(()=>{
           if(this.picArr.length === 0 && this.fileArr.length === 0){
             let param = new URLSearchParams()
@@ -339,6 +345,9 @@
             if(todo != 'null'){
               param.append("project_manager", todo);
             }
+            if(more.file.length > 0){
+              param.append("many_enclosure", JSON.stringify([...more.file]));
+            }
             let str = this.$test("/index.php/Mobile/approval/add_settlement")
             this.$http.post(str, param)
               .then((res)=>{
@@ -349,9 +358,7 @@
                 if(res.data.code === 0) {
                   this.add_ok()
                   this.loading_show = false
-                  this.$router.push({
-                    path: '/work/exam'
-                  })
+                  this.$emit('return_exam')
                 } else {
                   this.add_fail()
                 }
@@ -512,6 +519,10 @@
         });
       },
       initial_data(){
+        if(this.contract_name){
+          this.jsd_ruleForm.contract_request_id = this.contract
+          this.jsd_ruleForm.contract_name = this.contract_name
+        }
         if(!this.approval_id || this.approval_id === '') {
           return
         }
@@ -588,6 +599,64 @@
                     obj.hash = file_data.attachments
                     this.fileList_a.push(obj)
                   })
+              }else if(item.type === 5){
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        switch (item.type) {
+                          case '12':
+                            item.type ='验收单'
+                            break;
+                          case '14':
+                            item.type ='结算单'
+                            break;
+                        }
+                        item.approval_state = get_state(item.approval_state)
+                        this.$refs.more.ys_list.push(item)
+                      })
+                    }
+                  })
+                function get_state(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '3'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }else if(item.type === 6){
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        item.pryroll_status = get_states(item.pryroll_status)
+                        this.$refs.more.gz_list.push(item)
+                      })
+                    }
+                  })
+                function get_states(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '-1'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }else if(state === '99'){
+                    return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }
+                }
               }
             })
           })
@@ -618,7 +687,8 @@
           if(todo != 'null'){
             param.append("project_manager", todo);
           }
-          param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+          param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
           let str = this.$test("/index.php/Mobile/approval/add_settlement")
           this.$http.post(str, param)
             .then((res)=>{
@@ -629,9 +699,7 @@
               if(res.data.code === 0) {
                 this.add_ok()
                 this.loading_show = false
-                this.$router.push({
-                  path: '/work/exam'
-                })
+                this.$emit('return_exam')
               } else {
                 this.add_fail()
               }
@@ -663,7 +731,8 @@
             param.append("project_manager", todo);
           }
           let str = this.$test("/index.php/Mobile/approval/add_settlement")
-          param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+          param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
           this.$http.post(str, param)
             .then((res)=>{
               var current = this
@@ -673,9 +742,7 @@
               if(res.data.code === 0) {
                 this.add_ok()
                 this.loading_show = false
-                this.$router.push({
-                  path: '/work/exam'
-                })
+                this.$emit('return_exam')
               } else {
                 this.add_fail()
               }
@@ -692,6 +759,15 @@
       },
       userList:{
 
+      },
+      contract_name:{
+
+      },
+      contract:{
+
+      },
+      btnShow:{
+        default:false
       }
     },
     computed: {
@@ -704,7 +780,8 @@
       ])
     },
     components:{
-      loading
+      loading,
+      more
     }
   }
 </script>

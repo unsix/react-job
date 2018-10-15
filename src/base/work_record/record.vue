@@ -99,14 +99,13 @@
           </div>
         </div>
         <div v-show="star.form_type == 1">
-
           <div class="bottom">
             <div class="time">
               <span>{{star.start_time}} {{log_form}} 由 {{star.reviewer_name}}点评</span>
             </div>
             <ul>
               <li v-for="ti in star.custom_form_elements">
-                <!--<p>{{ti.title}}</p>-->
+                <p>{{ti.title}}</p>
                 <span style="margin-left: 20px;display: block" v-html="ti.result" ></span>
               </li>
             </ul>
@@ -548,7 +547,7 @@
         param.append("uid",this.user.uid)
         param.append("company_id",this.nowCompanyId)
         param.append('p',this.pageIndex)
-        param.append('each',10)
+        param.append('each',20)
         param.append('type',this.activeCard)
         let httpUrl = this.$test('/index.php/Mobile/company/publish_look_two')
         this.$http.post(httpUrl,param)
@@ -608,8 +607,17 @@
               d = d < 10 ? ('0' + d) : d;
               if(item.log_type == '1'){
                 item.log_form = '日志'
-                var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
-                item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+                var show_day = ''
+                switch (date.getDay()) {
+                  case 0:show_day="星期六";break
+                  case 1:show_day="星期天";break
+                  case 2:show_day="星期一";break
+                  case 3:show_day="星期二";break
+                  case 4:show_day="星期三";break
+                  case 5:show_day="星期四";break
+                  case 6:show_day="星期五";break
+                }
+                item.start_time = y+'年'+m +'月'+d+'日'+' '+show_day
               }
               if(item.log_type == '2'){
                 item.log_form = '周志'
@@ -827,8 +835,17 @@
             var day=date.getDay();
             d = d < 10 ? ('0' + d) : d;
             if(type == '1'){
-              var show_day=new Array('星期一','星期二','星期三','星期四','星期五','星期六','星期日');
-              this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day[day-1]
+              var show_day = ''
+              switch (date.getDay()) {
+                case 0:show_day="星期六";break
+                case 1:show_day="星期天";break
+                case 2:show_day="星期一";break
+                case 3:show_day="星期二";break
+                case 4:show_day="星期三";break
+                case 5:show_day="星期四";break
+                case 6:show_day="星期五";break
+              }
+              this.star.start_time = y+'年'+m +'月'+d+'日'+' '+show_day
             }
             if(type == '2'){
               tithis.star.start_timeme = y+'年'+m+'月'+d+'日'

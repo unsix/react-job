@@ -1,64 +1,68 @@
 <template>
   <div>
-    <div class="contract_list" v-show="contr_show">
-      <div class="tabs">
-        <el-tabs v-model="activeCard" @tab-click="handle">
-          <el-tab-pane label="合同模板" name="1"></el-tab-pane>
-          <el-tab-pane label="合同草稿" name="2"></el-tab-pane>
-        </el-tabs>
-      </div>
-      <div class="lists">
-        <ul>
-          <li v-for="(item,index) in contract_list" @click="look_contract(item.contract_type_id,item.contract_name,item.type)">
-            <p>{{item.contract_name}}</p>
-            <div class="bun" v-show="activeCard == 2">
-              <span @click.stop="edit(item)">编辑</span>
-              <span @click.stop="share()">复制</span>
-              <span @click.stop="send(item)">发起合同评审</span>
-            </div>
-          </li>
-        </ul>
-        <div class="pages" v-show="pageShow">
-          <span @click="first_page">首页</span>
-          <span @click="last_page" v-show="pageIndex > 1">上一页</span>
-          <span @click="next_page" v-show="nextPageShow">下一页</span>
+    <div v-if="wrapper">
+      <div class="contract_list" v-show="contr_show">
+        <div class="tabs">
+          <el-tabs v-model="activeCard" @tab-click="handle">
+            <el-tab-pane label="合同模板" name="1"></el-tab-pane>
+            <el-tab-pane label="合同草稿" name="2"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="lists">
+          <ul>
+            <li v-for="(item,index) in contract_list" @click="look_contract(item.contract_type_id,item.contract_name,item.type)">
+              <p>{{item.contract_name}}</p>
+              <div class="bun" v-show="activeCard == 2">
+                <span @click.stop="edit(item)">编辑</span>
+                <span @click.stop="share()">复制</span>
+                <span @click.stop="send(item)">发起合同评审</span>
+              </div>
+            </li>
+          </ul>
+          <div class="pages" v-show="pageShow">
+            <span @click="first_page">首页</span>
+            <span @click="last_page" v-show="pageIndex > 1">上一页</span>
+            <span @click="next_page" v-show="nextPageShow">下一页</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="detail" v-show="detail_show">
-      <div class="top">
-        <el-button type="primary" size="small" @click="_return">返回</el-button>
-        <p>{{con_title}}</p>
-        <b @click="write_contract()" v-show="activeCard == 1"><i class="el-icon-edit"></i></b>
-        <a style="color: black" :href="downUrl" target="_blank" download="" mce_href='#' v-show="activeCard == 1"><i class="el-icon-download"></i></a>
+      <div class="detail" v-show="detail_show">
+        <div class="top">
+          <el-button type="primary" size="small" @click="_return">返回</el-button>
+          <p>{{con_title}}</p>
+          <b @click="write_contract()" v-show="activeCard == 1"><i class="el-icon-edit"></i></b>
+          <a style="color: black" :href="downUrl" target="_blank" download="" mce_href='#' v-show="activeCard == 1"><i class="el-icon-download"></i></a>
+        </div>
+        <iframe :src="core" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
       </div>
-      <iframe :src="core" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
-    </div>
 
-    <div class="detail" v-if="details_show">
-      <div class="top">
-        <el-button type="primary" size="small" @click="_returned">返回</el-button>
-        <p>编写-{{con_title}}</p>
-        <b @click="submit()">提交</b>
+      <div class="detail" v-if="details_show">
+        <div class="top">
+          <el-button type="primary" size="small" @click="_returned">返回</el-button>
+          <p>编写-{{con_title}}</p>
+          <b @click="submit()">提交</b>
+        </div>
+        <iframe ref="win" :src="cores" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
       </div>
-      <iframe ref="win" :src="cores" class="win" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
-    </div>
 
-    <div class="box" v-if="psb_show">
-      <div class="top">
-        <el-button type="primary" size="small" @click="_returns">返回</el-button>
-        <p>{{contr_name}}</p>
-        <b @click="show_sea">去复制</b>
+      <div class="box" v-if="psb_show">
+        <div class="top">
+          <el-button type="primary" size="small" @click="_returns">返回</el-button>
+          <p>{{contr_name}}</p>
+          <b @click="show_sea">去复制</b>
+        </div>
+        <addPsb :userList="user_info" :approval_id="approval_id1" :tode="todo" @return_exam="return_Add"></addPsb>
       </div>
-      <addPsb :userList="user_info" :approval_id="approval_id1" :tode="todo" @return_exam="return_Add"></addPsb>
+      <chooseTemplate v-if="chooseTemShow"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
+      <psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="false" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
     </div>
-    <chooseTemplate v-if="chooseTemShow"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
-    <psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="false" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
+    <cho  v-else  :title="tips"></cho>
   </div>
 </template>
 
 <script>
+  import cho from '@/base/add_approval/cho'
   import { mapGetters, mapMutations } from 'vuex'
   import psb from '@/base/exam_form/psb'
   import addPsb from '@/base/add_approval/add_psb'
@@ -70,6 +74,11 @@
   export default {
     data(){
       return{
+        ys_list:[],
+        js_list:[],
+        gz_list:[],
+        tips:'',
+        wrapper:true,
         activeCard:'1',
         contract_list:[],
         pageIndex:1,
@@ -245,6 +254,9 @@
         }
       },
       _returns(){
+        this.ys_list = []
+        this.js_list = []
+        this.gz_list = []
         if(this.activeCard == 2){
           this.contr_show = true
           this.psb_show = false
@@ -580,7 +592,8 @@
     components:{
       addPsb,
       psb,
-      chooseTemplate
+      chooseTemplate,
+      cho
     }
   }
 </script>

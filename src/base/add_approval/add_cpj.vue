@@ -34,6 +34,7 @@
         <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
+      <more ref="more"></more>
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -58,6 +59,7 @@
   import { getAvatar } from '@/common/js/avatar.js'
 	import { create_cengpijian_list } from '@/common/js/approval/cengpijian'
 	import { mapGetters, mapMutations } from 'vuex'
+  import more from '@/base/add_approval/more'
 	export default {
 		data() {
 			return {
@@ -139,81 +141,10 @@
       chose,
       fuchose,
       sec,
-      datas
+      datas,
+      more
 		},
 		methods: {
-      msms:function () {
-        console.log(this.todo)
-        let str = eval(this.todo)
-        str.forEach((item)=>{
-          item.meta_data = JSON.parse(item.meta_data)
-          if(item.type == "input_text"){
-            this.conpents.push({
-              component:sec,
-              tit: item.title,
-              form_element_id: item.form_element_id,
-              version:item.version,
-              place:item.meta_data.hint,
-              input_type:item.meta_data.input_type,
-              cc: 'ceshi'
-            })
-          }
-          if(item.type == "single_choice"){
-            this.conpents.push({
-              component:chose,
-              form_element_id: item.form_element_id,
-              version:item.version,
-              tit: item.title,
-              meta_data:item.meta_data.options,
-              default_select:item.meta_data.default_select,
-              cc: 'ceshi'
-            })
-            //四个组件的ref名字改一下
-          }
-          if(item.type == "multi_choice"){
-            this.conpents.push({
-              component:fuchose,
-              form_element_id: item.form_element_id,
-              version:item.version,
-              tit: item.title,
-              meta_data:item.meta_data.options,
-              default_select:item.meta_data.default_select,
-              cc: 'ceshi'
-            })
-          }
-          if(item.type == "date_select"){
-            this.conpents.push({
-              component:datas,
-              form_element_id: item.form_element_id,
-              version:item.version,
-              tit: item.title,
-              fill:item.meta_data.is_fill_local_time,
-              cc: 'ceshi'
-            })
-          }
-        })
-      },
-      wode:function () {
-        var geo = this.$refs.ceshi
-        geo.forEach((item)=>{
-          this.shuju.push({
-            result:item.result,
-            form_element_id:item.form_element_id
-          })
-        })
-        console.log(this.shuju)
-        this.shuju = JSON.stringify(this.shuju)
-      },
-      mtmt:function () {
-        var geo = this.$refs.ceshi
-        console.log(geo)
-        let sr = eval(this.ts)
-        for(var i=0;i<sr.length;i++){
-          if(sr[i].form_element_id == geo[i].form_element_id){
-            geo[i].result = sr[i].result
-          }
-        }
-      },
 			handleRemove(file, fileList) {
 				this.fileList = fileList
 			},
@@ -277,7 +208,7 @@
 						this.form_Lista = create_cengpijian_list(res.data.data)
 						this.cpj_ruleForm.department_id = this.form_Lista.department_id
 						this.cpj_ruleForm.department_name = this.form_Lista.department_name
-            this.cpj_ruleForm.project_manager = this.form_Lista.project_manager
+            this.cpj_ruleForm.project_manager = JSON.parse(this.form_Lista.project_manager)
 						this.cpj_ruleForm.content = this.form_Lista.content
 						this.cpj_ruleForm.chengpi_num = this.form_Lista.chengpi_num
 						this.cpj_ruleForm.title = this.form_Lista.title
@@ -301,7 +232,6 @@
                       var picLeader = ''
                       str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
                       let img_add = picLeader +item
-                      console.log(img_add)
                       obj.hash = item
                       obj.name = img_name
                       obj.url = img_add
@@ -328,6 +258,64 @@
                     obj.hash = file_data.attachments
                     this.fileList_a.push(obj)
                   })
+              }else if(item.type === 5){
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        switch (item.type) {
+                          case '12':
+                            item.type ='验收单'
+                            break;
+                          case '14':
+                            item.type ='结算单'
+                            break;
+                        }
+                        item.approval_state = get_state(item.approval_state)
+                        this.$refs.more.ys_list.push(item)
+                      })
+                    }
+                  })
+                function get_state(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '3'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }else if(item.type === 6){
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        item.pryroll_status = get_states(item.pryroll_status)
+                        this.$refs.more.gz_list.push(item)
+                      })
+                    }
+                  })
+                function get_states(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '-1'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }else if(state === '99'){
+                    return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }
+                }
               }
             })
 					})
@@ -398,20 +386,24 @@
 			},
       //判断文件内容
 			submitForm_cpj(formName) {
-				this.comDepartList.forEach((item) => {
-					if(item.department_name === this.cpj_ruleForm.department_name) {
-						this.cpj_ruleForm.department_id = item.department_id
-					}
-				})
-				this.$refs[formName].validate((valid) => {
-					if(valid) {
-            this.cpj_submit()
-						this.loading_show = true
-					} else {
-						this.$message.error('请将表单填写完整');
-						return false;
-					}
-				});
+        this.loading_show = true
+        this.$refs.more.submit()
+        setTimeout(()=>{
+          this.comDepartList.forEach((item) => {
+            if(item.department_name === this.cpj_ruleForm.department_name) {
+              this.cpj_ruleForm.department_id = item.department_id
+            }
+          })
+          this.$refs[formName].validate((valid) => {
+            if(valid) {
+              this.cpj_submit()
+            } else {
+              this.$message.error('请将表单填写完整');
+              this.$refs.more.file = []
+              return false;
+            }
+          });
+        },500)
 			},
       //提交
 			cpj_submit() {
@@ -431,8 +423,9 @@
 				this.file_time = 0
 				this.pic_time = 0
 				this.loadingShow = true
+        var more = this.$refs.more
 				setTimeout(() => {
-          if(this.picArr.length === 0 && this.fileArr.length === 0) {
+          if(this.picArr.length === 0 && this.fileArr.length === 0 ) {
 						let param = new URLSearchParams();
 						let todo = JSON.stringify(this.cpj_ruleForm.project_manager)
             if(todo != 'null'){
@@ -444,6 +437,9 @@
 						param.append("content", this.cpj_ruleForm.content);
 						param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 						param.append("title", this.cpj_ruleForm.title);
+						if(more.file.length > 0){
+              param.append("many_enclosure", JSON.stringify([...more.file]));
+            }
             let str = this.$test("/index.php/Mobile/approval/add_chengpi")
 						this.$http.post(str, param)
 							.then((res) => {
@@ -454,9 +450,7 @@
 								if(res.data.code === 0) {
 									this.add_ok()
 									this.loading_show = false
-									this.$router.push({
-										path: '/work/exam'
-									})
+                  this.$emit('return_exam')
 								} else {
 									this.add_fail()
 								}
@@ -656,7 +650,8 @@
 					param.append("content", this.cpj_ruleForm.content);
 					param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 					param.append("title", this.cpj_ruleForm.title);
-					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
           let str = this.$test("/index.php/Mobile/approval/add_chengpi")
 					this.$http.post(str, param)
 						.then((res) => {
@@ -667,9 +662,7 @@
 							if(res.data.code === 0) {
 								this.add_ok()
                 this.loading_show = false
-                this.$router.push({
-                  path: '/work/exam'
-                })
+                this.$emit('return_exam')
 							} else {
 								this.add_fail()
 							}
@@ -693,7 +686,8 @@
 					param.append("content", this.cpj_ruleForm.content);
 					param.append("chengpi_num", this.cpj_ruleForm.chengpi_num);
 					param.append("title", this.cpj_ruleForm.title);
-					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
           let str = this.$test("/index.php/Mobile/approval/add_chengpi")
 					this.$http.post(str, param)
 						.then((res) => {
@@ -703,9 +697,7 @@
 							if(res.data.code === 0) {
 								this.add_ok()
                 this.loading_show = false
-                this.$router.push({
-                  path: '/work/exam'
-                })
+                this.$emit('return_exam')
 							} else {
 								this.add_fail()
 							}

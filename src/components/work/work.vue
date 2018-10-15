@@ -63,19 +63,20 @@
                 <el-menu-item index="4-4" v-show="setting_show" :route="{ path: '/work/jurisdictionManage' }">设置</el-menu-item>
                 <el-menu-item index="4-5" :route="{ path: '/work/addressBook' }">通讯录</el-menu-item>
                 <el-menu-item index="4-6" :route="{path:'/work/contr_list'}">公司合同</el-menu-item>
-                <el-submenu index="4-7">
+                <el-menu-item index="4-7" :route="{path:'/work/contes'}">公司合同归档</el-menu-item>
+                <el-submenu index="4-8">
                   <template slot="title">公司审批</template>
-                  <el-menu-item index="4-7-1" :route="{path:'/work/exam'}">处理审批</el-menu-item>
-                  <el-menu-item index="4-7-2" :route="{ path: '/work/formReceipt' }">审批回执</el-menu-item>
-                  <el-menu-item index="4-7-3" :route="{ path: '/work/addApproval' }">发起审批</el-menu-item>
+                  <el-menu-item index="4-8-1" :route="{path:'/work/exam'}">处理审批</el-menu-item>
+                  <el-menu-item index="4-8-2" :route="{ path: '/work/formReceipt' }">审批回执</el-menu-item>
+                  <el-menu-item index="4-8-3" :route="{ path: '/work/addApproval' }">发起审批</el-menu-item>
                 </el-submenu>
-                <el-menu-item index="4-8" :route="{path:'/work/person_qk'}">制作个人工资请款单</el-menu-item>
-                <el-submenu index="4-9">
+                <el-menu-item index="4-9" :route="{path:'/work/person_qk'}">制作个人工资请款单</el-menu-item>
+                <el-submenu index="4-10">
                   <template slot="title">工作记录</template>
-                  <el-menu-item index="4-9-1" :route="{ path: '/work/record' }">工作日志</el-menu-item>
-                  <el-menu-item index="4-9-2" :route="{ path: '/work/log' }">发布日志</el-menu-item>
+                  <el-menu-item index="4-10-1" :route="{ path: '/work/record' }">工作日志</el-menu-item>
+                  <el-menu-item index="4-10-2" :route="{ path: '/work/log' }">发布日志</el-menu-item>
                 </el-submenu>
-                <el-menu-item index="4-10" :route="{ path: '/work/workMind' }">消息提醒</el-menu-item>
+                <el-menu-item index="4-11" :route="{ path: '/work/workMind' }">消息提醒</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
             <el-submenu index="5">
@@ -759,7 +760,7 @@
                       })
                     }
                   })
-              },2000)
+              },500)
             })
         })
       },

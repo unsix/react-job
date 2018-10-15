@@ -11,7 +11,7 @@
       </div>
       <div v-if="form_Lista.contract_name_new">
         <span>合同名称：</span><span>{{form_Lista.contract_name_new}}</span>
-        <b v-if="form_Lista.contract_request_id" style="font-size: 14px;margin-left: 330px;line-height: 23px;cursor: pointer" @click="show_html">查看附件</b>
+        <b v-if="form_Lista.contract_request_id" style="font-size: 14px;margin-left: 230px;line-height: 23px;cursor: pointer" @click="show_html">查看附件</b>
       </div>
       <div v-if="form_Lista.worker_type">
         <span>工种：</span><span>{{form_Lista.worker_type}}</span>

@@ -115,6 +115,7 @@
 				<el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
+      <more ref="more"></more>
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -132,6 +133,7 @@
 <script>
 
 	import loading from '@/base/loading/loading'
+  import more from '@/base/add_approval/more'
 	import { create_qinggoudan_list } from '@/common/js/approval/qinggoudan'
 	import { mapGetters, mapMutations } from 'vuex'
 	export default {
@@ -291,7 +293,8 @@
 			]),
 		},
 		components: {
-			loading
+			loading,
+      more
 		},
 		methods: {
       resetForm(){
@@ -423,7 +426,7 @@
 								}
 							})
               this.qgd_ruleForm.consignee_uid = this.form_Lista.consignee_uid
-              this.qgd_ruleForm.project_manager =this.form_Lista.project_manager
+              this.qgd_ruleForm.project_manager =JSON.parse(this.form_Lista.project_manager)
               this.qgd_ruleForm.buy_person_uid = this.form_Lista.buy_person_uid
 							this.qgd_ruleForm.request_buy_department = department_name
 							this.qgd_ruleForm.contract_name_new = this.form_Lista.contract_name_new
@@ -493,6 +496,64 @@
                       obj.hash = file_data.attachments
                       this.fileList_a.push(obj)
                     })
+                }else if(item.type === 5){
+                  let param = new URLSearchParams();
+                  param.append("id", item.contract_id);
+                  let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                  this.$http.post(str,param)
+                    .then((res)=>{
+                      if(res.data.code == 0){
+                        res.data.data.forEach((item)=>{
+                          switch (item.type) {
+                            case '12':
+                              item.type ='验收单'
+                              break;
+                            case '14':
+                              item.type ='结算单'
+                              break;
+                          }
+                          item.approval_state = get_state(item.approval_state)
+                          this.$refs.more.ys_list.push(item)
+                        })
+                      }
+                    })
+                  function get_state(state){
+                    if(state === '0'){
+                      return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                    }else if(state === '1'){
+                      return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                    }else if(state === '2'){
+                      return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                    }else if(state === '3'){
+                      return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                    }
+                  }
+                }else if(item.type === 6){
+                  let param = new URLSearchParams();
+                  param.append("id", item.contract_id);
+                  let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                  this.$http.post(str,param)
+                    .then((res)=>{
+                      if(res.data.code == 0){
+                        res.data.data.forEach((item)=>{
+                          item.pryroll_status = get_states(item.pryroll_status)
+                          this.$refs.more.gz_list.push(item)
+                        })
+                      }
+                    })
+                  function get_states(state){
+                    if(state === '0'){
+                      return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                    }else if(state === '1'){
+                      return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                    }else if(state === '2'){
+                      return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                    }else if(state === '-1'){
+                      return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                    }else if(state === '99'){
+                      return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                    }
+                  }
                 }
               })
 						}, 100)
@@ -728,6 +789,7 @@
 				this.file_time = 0
 				this.pic_time = 0
 				this.loadingShow = true
+        var more = this.$refs.more
 				this.qgd_ruleForm.arrival_time = JSON.stringify(this.qgd_ruleForm.arrival_time).slice(1, 11)
 				setTimeout(() => {
 					if(this.picArr.length === 0 && this.fileArr.length === 0) {
@@ -758,6 +820,9 @@
 						param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
 						param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
             param.append("many_enclosure", this.qgd_ruleForm.many_enclosure);
+            if(more.file.length > 0){
+              param.append("many_enclosure", JSON.stringify([...more.file]));
+            }
             let str = this.$test("/index.php/Mobile/approval/add_request_buy")
 						this.$http.post(str, param)
 							.then((res) => {
@@ -948,7 +1013,8 @@
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
 					param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
 					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
-					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
 					param.append("type", 2);
           let str = this.$test("/index.php/Mobile/approval/add_request_buy")
 					this.$http.post(str, param)
@@ -1014,7 +1080,8 @@
 					param.append("buy_person_phone", this.qgd_ruleForm.buy_person_phone);
 					param.append("consignee_uid", this.qgd_ruleForm.consignee_uid);
 					param.append("buy_person_uid", this.qgd_ruleForm.buy_person_uid);
-					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
 					param.append("type", 2);
           let str = this.$test("/index.php/Mobile/approval/add_request_buy")
 					this.$http.post(str, param)

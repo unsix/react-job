@@ -52,6 +52,7 @@
         <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
+      <more ref="more"></more>
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -71,6 +72,7 @@
   import { getPic } from '@/common/js/pic.js'
   import { getAvatar } from '@/common/js/avatar.js'
   import { create_baoxiaodan_list } from '@/common/js/approval/baoxiaodan'
+  import more from '@/base/add_approval/more'
   import { mapGetters, mapMutations } from 'vuex'
       export default {
         data(){
@@ -137,7 +139,8 @@
           ])
         },
         components:{
-          loading
+          loading,
+          more
         },
         methods:{
           handleRemove(file,fileList){
@@ -274,7 +277,7 @@
                 this.bxd_ruleForm.title = this.form_Lista.title
                 this.bxd_ruleForm.project_manager_name = this.form_Lista.project_manager_name
                 this.bxd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
-                this.bxd_ruleForm.project_manager = this.form_Lista.project_manager
+                this.bxd_ruleForm.project_manager = JSON.parse(this.form_Lista.project_manager)
                 this.form_Lista.many_enclosure.forEach((item)=>{
                   let img_name = item.name
                   if (item.type === 3){
@@ -319,6 +322,64 @@
                         obj.hash = file_data.attachments
                         this.fileList_a.push(obj)
                       })
+                  }else if(item.type === 5){
+                    let param = new URLSearchParams();
+                    param.append("id", item.contract_id);
+                    let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                    this.$http.post(str,param)
+                      .then((res)=>{
+                        if(res.data.code == 0){
+                          res.data.data.forEach((item)=>{
+                            switch (item.type) {
+                              case '12':
+                                item.type ='验收单'
+                                break;
+                              case '14':
+                                item.type ='结算单'
+                                break;
+                            }
+                            item.approval_state = get_state(item.approval_state)
+                            this.$refs.more.ys_list.push(item)
+                          })
+                        }
+                      })
+                    function get_state(state){
+                      if(state === '0'){
+                        return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                      }else if(state === '1'){
+                        return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                      }else if(state === '2'){
+                        return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                      }else if(state === '3'){
+                        return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                      }
+                    }
+                  }else if(item.type === 6){
+                    let param = new URLSearchParams();
+                    param.append("id", item.contract_id);
+                    let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                    this.$http.post(str,param)
+                      .then((res)=>{
+                        if(res.data.code == 0){
+                          res.data.data.forEach((item)=>{
+                            item.pryroll_status = get_states(item.pryroll_status)
+                            this.$refs.more.gz_list.push(item)
+                          })
+                        }
+                      })
+                    function get_states(state){
+                      if(state === '0'){
+                        return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                      }else if(state === '1'){
+                        return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                      }else if(state === '2'){
+                        return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                      }else if(state === '-1'){
+                        return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                      }else if(state === '99'){
+                        return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                      }
+                    }
                   }
                 })
               })
@@ -402,40 +463,47 @@
             this.bxd_ruleForm.add.push(obj)
           },
           submitForm_bxd(formName){
-            this.returnOk = false
-            this.bxd_ruleForm.add.forEach((item)=>{
-             if(item.month_day===''||item.content===''||item.price===''||item.amount===''){
-               this.$message.error('请将清单条目填写完整');
-               this.returnOk = true
-             }
-            })
-            if(!this.bxd_ruleForm.project_manager){
-              this.$message.error('请选择项目经理')
-              return false
-            }
-            if(this.returnOk === true) {
-              return
-            }
-            this.$refs[formName].validate((valid) => {
-              if(valid) {
-                this.$confirm('确定总额为' + this.bxd_ruleForm.money + '吗', '提示', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type:'warning'
-                }).then(()=>{
-                  this.bxd_submit()
-                  this.loadingShow = true
-                }).catch(()=>{
-                  this.$message({
-                    type: 'info',
-                    message: '已取消操作'
-                  });
-                })
-              } else {
-                this.$message.error('请将表单填写完整');
-                return false;
+            this.$refs.more.submit()
+            setTimeout(()=>{
+              this.returnOk = false
+              this.bxd_ruleForm.add.forEach((item)=>{
+                if(item.month_day===''||item.content===''||item.price===''||item.amount===''){
+                  this.$message.error('请将清单条目填写完整');
+                  this.returnOk = true
+                }
+              })
+              if(!this.bxd_ruleForm.project_manager){
+                this.$message.error('请选择项目经理')
+                this.$refs.more.file = []
+                return false
               }
-            });
+              if(this.returnOk === true) {
+                return
+                this.$refs.more.file = []
+              }
+              this.$refs[formName].validate((valid) => {
+                if(valid) {
+                  this.$confirm('确定总额为' + this.bxd_ruleForm.money + '吗', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type:'warning'
+                  }).then(()=>{
+                    this.bxd_submit()
+                    this.loadingShow = true
+                  }).catch(()=>{
+                    this.$message({
+                      type: 'info',
+                      message: '已取消操作'
+                    });
+                    this.$refs.more.file = []
+                  })
+                } else {
+                  this.$message.error('请将表单填写完整');
+                  this.$refs.more.file = []
+                  return false;
+                }
+              });
+            },500)
           },
           bxd_submit(){
             this.picArr =[]
@@ -466,6 +534,7 @@
             this.file_time = 0
             this.pic_time = 0
             this.loadingShow = true
+            var more = this.$refs.more
             setTimeout(()=>{
               if(this.picArr.length === 0 && this.fileArr.length === 0){
                 let param = new URLSearchParams();
@@ -478,6 +547,9 @@
                 param.append("money",this.bxd_ruleForm.money)
                 param.append("big_money",this.bxd_ruleForm.big_money)
                 param.append("content", JSON.stringify(this.bxd_ruleForm.add));
+                if(more.file.length > 0){
+                  param.append("many_enclosure", JSON.stringify([...more.file]));
+                }
                 let str = this.$test("/index.php/Mobile/approval/add_baoxiao")
                 this.$http.post(str,param)
                   .then((res)=>{
@@ -672,7 +744,8 @@
               param.append("big_money",this.bxd_ruleForm.big_money)
               param.append("content", JSON.stringify(this.bxd_ruleForm.add));
               param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
-              param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+              var more = this.$refs.more
+              param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
               let str = this.$test("/index.php/Mobile/approval/add_baoxiao")
               this.$http.post(str,param)
                 .then((res)=>{
@@ -710,7 +783,8 @@
               param.append("big_money",this.bxd_ruleForm.big_money)
               param.append("content", JSON.stringify(this.bxd_ruleForm.add));
               param.append("project_manager_name",this.bxd_ruleForm.project_manager_name)
-              param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+              var more = this.$refs.more
+              param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
               let str = this.$test("/index.php/Mobile/approval/add_baoxiao")
               this.$http.post(str,param)
                 .then((res)=>{

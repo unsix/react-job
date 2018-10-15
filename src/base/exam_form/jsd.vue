@@ -12,6 +12,7 @@
       </div>
       <div>
         <span>合同名称：</span><span>{{form_Lista.contract_name}}</span>
+        <a style="font-size: 14px;margin-left: 330px;line-height: 23px;cursor: pointer" :href="insdent" target="_blank" v-if="form_Lista.contract_request_id">查看附件</a>
       </div>
       <div>
         <span>合同金额：</span><span>{{form_Lista.contract_price}}</span>
@@ -135,10 +136,30 @@
         pic_time:0,
         enclosure_id:'',
         finance_state:'',
-        status:'1'
+        status:'1',
+        insdent:''
       }
     },
     methods:{
+      add_html(){
+        setTimeout(()=>{
+          let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
+          this.insdent =str + this.form_Lista.contract_request_id+'&operation=2&view=4'
+          let param = new URLSearchParams
+          param.append('uid',this.user.uid)
+          param.append('company_id',this.form_Lista.company_id)
+          param.append('approval_id',this.form_Lista.approval_id)
+          let src = this.$test('/index.php/Mobile/find/get_download_token')
+          this.$http.post(src,param)
+            .then((res)=>{
+              var cur = this
+              var jud = res.data.code
+              this.$testLogin(jud,cur)
+              let str = this.$test('/index.php/Mobile/skey/aaampd_picture?token=')
+              this.downUrl = str + res.data.data
+            })
+        },500)
+      },
       return_(){
         this.$emit('return_psb')
       },
@@ -349,7 +370,7 @@
       },
     },
     created(){
-
+      this.add_html()
     },
     props:{
       form_Lista: {
