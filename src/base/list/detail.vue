@@ -448,9 +448,7 @@
       this.$refs.sign.contentWindow.remote()
     },
     _submit(){
-      this.$refs.indx.contentWindow.getCustomFormResult()
-      let tips = this.$refs.indx.contentWindow.tips
-      let result = this.$refs.indx.contentWindow.result
+      let result = this.$refs.indx.contentWindow.getCustomFormResult()
       if(this.signImg == ''){
         this.$message.error('请签字')
         return false
