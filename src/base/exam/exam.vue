@@ -632,8 +632,8 @@
 					<el-button type="primary" plain @click="handle">处理</el-button>
 					<div class="button" v-if="menuShow">
             <div class="box" v-if="recent.contract_temp_id">
-              <p><span>合同</span><a v-if="form_Listb.is_before_send == 0" target="_blank" :href="insdent">{{recent.contract_name}}</a><b style="cursor: pointer" @click="look_html" v-if="form_Listb.is_before_send == 1">{{recent.contract_name}}</b></p>
-              <div class="toped" v-if="form_Listb.is_before_send == 1">
+              <p><span>合同</span><a v-if="form_Listb.is_before_send == 0 || form_Listb.person_type == 2" target="_blank" :href="insdent">{{recent.contract_name}}</a><b style="cursor: pointer" @click="look_html" v-if="form_Listb.is_before_send == 1 &&  form_Listb.person_type == 1">{{recent.contract_name}}</b></p>
+              <div class="toped" v-if="form_Listb.is_before_send == 1 &&  form_Listb.person_type == 1">
                 <el-button type="info" size="small" @click="return_status" v-if="statused != '暂未修改合同'">还原</el-button>
                 <b v-if="form_Listb.is_before_send == 1">{{statused}}</b>
               </div>
@@ -642,22 +642,24 @@
                 <p @click="show_name" class="rese"><img :src="other.avatar" alt=""><span>{{other_people}}</span></p>
               </div>
             </div>
-            <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
-            <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
-            <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
-            <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
-            <label>
-              <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
-            </label>
-            <p class="miao" v-show="describe">附件描述:{{describe}}</p>
-            <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
-              <i class="el-icon-plus"></i>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
-            </el-upload>
-            <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
-              <el-button size="small" type="info" plain>上传文件</el-button>
-              <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
-            </el-upload>
+            <div v-show="form_Listb.person_type == 1">
+              <simpleText v-show="true" v-for="(item ,index) in mands" :key="index" :title="item" ref="re"></simpleText>
+              <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
+              <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
+              <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
+              <label>
+                <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
+              </label>
+              <p class="miao" v-show="describe">附件描述:{{describe}}</p>
+              <el-upload class="upload-demo" id="picc" v-model="many_enclosure"  multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+                <i class="el-icon-plus"></i>
+                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+              </el-upload>
+              <el-upload class="upload-demo_a" v-model="many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+                <el-button size="small" type="info" plain>上传文件</el-button>
+                <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
+              </el-upload>
+            </div>
             <el-button type="primary" round @click="agree">同意</el-button>
             <el-button type="danger" round @click="refuse">拒绝</el-button>
 					</div>
@@ -1548,7 +1550,7 @@
 		},
 		mounted() {
 			if(this.$route.path === '/work/exam') {
-				this.$emit('changeWorkIndex', '4-7-1')
+				this.$emit('changeWorkIndex', '4-8-1')
 			}
       let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
       this.$refs.wide.style.height = h + 'px'
@@ -2269,7 +2271,7 @@
         })
         this.file_times = 0
         this.pic_times = 0
-        if(this.form_Listb.is_final == 1 && this.recent.contract_temp_id){
+        if(this.form_Listb.person_type == 2){
           this.agreed()
         }else{
           this.add_agree()
@@ -2764,6 +2766,7 @@
         this.form_fill.optional = []
         this.form_fill.required = []
         this.untreateds = []
+        this._getExamList()
 			},
 			listCli(item,sta) {
         this.recent = {}
@@ -3577,8 +3580,6 @@
 				param.append("type", this.nowType);
 				param.append("each", '10');
 				param.append("p", this.pageIndex);
-				// param.append("company_id", this.nowCompanyId);
-        //让初始页的companyId为当前公司id 去掉变为全部
         let str = this.$test("/index.php/Mobile/approval/see_approval_list")
 				this.$http.post(str, param)
 					.then((res) => {

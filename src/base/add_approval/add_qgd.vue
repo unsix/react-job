@@ -417,7 +417,6 @@
             var judge = res.data.code
             this.$testLogin(judge,current)
 						this.form_Lista = create_qinggoudan_list(res.data.data)
-            console.log(this.form_Lista)
 						let department_name
 						setTimeout(() => {
 							this.comDepartList.forEach((item) => {
@@ -440,7 +439,7 @@
 							this.qgd_ruleForm.receive_address = this.form_Lista.receive_address
 							this.qgd_ruleForm.request_contract_address = this.form_Lista.request_contract_address
               this.form_Lista.content.forEach((item)=>{
-                if(item.subtotal.indexOf('元') != '-1'){
+                if(item.subtotal.toString().indexOf('元') != '-1'){
                   item.subtotal = item.subtotal.substr(0,item.subtotal.length-1)
                 }
               })

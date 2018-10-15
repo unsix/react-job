@@ -6,7 +6,7 @@
         <p>{{moreInfo.name}}</p>
         <b><i class="iconfont icon-xiazai19" style="color: #62A4D7;cursor: pointer" @click="showMap"></i></b>
       </div>
-      <div class="main" v-show="moreInfo.accept_show_mode == 1">
+      <div class="main" v-show="moreInfo.accept_show_mode == 2">
         <div class="portfolio" v-show="pictures.length > 1">
           <p>PERSONAL PORTFOLIO</p>
           <ul>
@@ -33,7 +33,7 @@
         </div>
         <div class="detas">
           <p style="font-size: 20px !important;">您名字</p>
-          <p>{{moreInfo.name}}/{{moreInfo.phone}}</p>
+          <p @click="look_phone">{{moreInfo.name}}/{{moreInfo.phone}}</p>
           <div class="table">
             <ul style="margin-left: 130px">
               <li><span>工种:</span><b>{{moreInfo.type}}</b></li>
@@ -55,13 +55,13 @@
           </div>
         </div>
       </div>
-      <div class="mains" v-show="moreInfo.accept_show_mode==2">
+      <div class="mains" v-show="moreInfo.accept_show_mode ==1">
         <div class="assect">
           <img :src="moreInfo.avatar" alt="" @click="picShow(moreInfo.avatar)">
           <ul>
             <li>姓名：{{moreInfo.name}}</li>
             <li>职业：{{moreInfo.type}}</li>
-            <li><i class="iconfont icon-weibiaoti-" style="color: #7CC7FF"></i>{{moreInfo.phone}}</li>
+            <li @click="look_phone"><i class="iconfont icon-weibiaoti-" style="color: #7CC7FF"></i>{{moreInfo.phone}}</li>
             <li><i class="iconfont icon-xiaoxi" style="color: #50BCBC;"></i>找他聊聊</li>
           </ul>
         </div>
@@ -960,6 +960,52 @@
         this.approval_id = item.approval_personal_id
         this.bxd_if = true
       }
+    },
+    look_phone(){
+      let nparam = new URLSearchParams()
+      nparam.append('target_uid',this.u_id)
+      let httpUrl = this.$test('/index.php/Mobile/alisun/view_power')
+      this.$http.post(httpUrl,nparam)
+        .then((res)=>{
+          var current = this
+          var judge = res.data.code
+          this.$testLogin(judge,current)
+          if(res.data.data.status == 1){
+
+          }else{
+            this.$confirm('是否从余额付费一元查看用户详情','提示',{
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(()=>{
+              let param = new URLSearchParams()
+              param.append('target_uid',this.u_id)
+              let httpUrl = this.$test('/index.php/Mobile/alisun/view_payment')
+              this.$http.post(httpUrl,param)
+                .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  if(res.data.code == 0){
+                    if(res.data.data.status == 1){
+                      this._getInfo(this.u_id,this.user.uid)
+                      if(this.u_id == this.user.uid){
+                        this.star = false
+                      }else{
+                        this.star = true
+                      }
+                    }else{
+                      this.$message.warning(res.data.message)
+                    }
+                  }else{
+                    this.$message.warning(res.data.message)
+                  }
+                })
+            }).catch(()=>{
+              this.$message.warning('已取消支付')
+            })
+          }
+        })
     }
   },
   mounted(){

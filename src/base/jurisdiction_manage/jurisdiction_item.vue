@@ -445,7 +445,6 @@
         this.choice_Value = '';
       },
       show_choice(){
-        console.log(this.auto_fill)
         this.form_fill.optional = []
         this.auto_fills.optionals = []
         this.add_show = true

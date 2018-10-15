@@ -14,7 +14,7 @@
           <li @click="choose_receipt"><span>表单回执</span></li>
           <li @click="choose_approval"><span>表单审批</span></li>
           <li @click="choose_info"><span>设置信息共享</span></li>
-          <li @click="choose_shenpi"><span>设置合同审批权限</span></li>
+          <li @click="choose_shenpi"><span>设置合同查看权限</span></li>
         </ul>
       </div>
     </div>
@@ -167,6 +167,43 @@
     </div>
     <jurisdictionItem class="other_item" :fuJias="fuJia" v-show="jurisdictionItemShow" @_return="_return" :formType="formType" @reload="reload" :submitAddPersonShow="submitAddPersonShow" :jurisdictionFormList="jurisdictionFormList"></jurisdictionItem>
     <enjoy v-if="enjoy_if" @return_manage="return_manage"></enjoy>
+    <div class="look_power" v-show="look_power_show">
+      <div class="top">
+        <el-button type="info" size="small" @click="_return">返回</el-button>
+        <p>合同查看权限</p>
+      </div>
+      <div style="height: 50px;overflow: hidden">
+        <div class="addPerson">
+          <el-button type="primary" round style="margin-right: 10px;"  @click="save">保存修改</el-button>
+        </div>
+      </div>
+      <div class="chooseApprovalPerson">
+        <el-collapse v-model="data_power">
+          <el-collapse-item title="人员列表" name="1">
+            <div class="info" v-for="(item,index) in comPersonList" @click="choose_power(item,index)">
+              <div class="avatar">
+                <img :src="item.avatar" alt="" />
+              </div>
+              <div class="content">
+                <span class="name">{{item.department_name}}</span>
+                <span class="name">{{item.name}}</span>
+              </div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+      <div class="jurisdictionFormList">
+        <ul>
+          <li v-for="(item,index) in powerList" :key="item.name">
+            <div class="info">
+              <img :src="item.avatar" alt="" />
+              <span>{{item.name}}</span>
+              <i class="delete el-icon-error" @click="deletePower(item,index)"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -219,9 +256,9 @@ export default {
           type:11,
           groups:[]
         },
-        gongzi:{
-          name:'个人请款单',
-          type:13,
+        yanshou:{
+          name:'验收单',
+          type:12,
           groups:[]
         },
         jiesuan:{
@@ -235,6 +272,7 @@ export default {
       activeNames: ['0'],
       activeName1: ['1'],
       activeName2: '1',
+      data_power:[],
       redactState: false,
       formRePersonIndex: '',
       fuJia:[],
@@ -250,6 +288,8 @@ export default {
       addProjectShow:false,
       project:false,
       newProjectName: '',
+      look_power_show:false,
+      powerList:[]
     }
   },
   methods:{
@@ -264,12 +304,69 @@ export default {
       setUserState: 'SET_USERSTATE',
       setCompanyList: 'SET_COMPANYLIST'
     }),
+    deletePower(){
+      this.powerList.splice(index, 1)
+    },
+    choose_power(item){
+      for(let i = 0; i < this.powerList.length; i++) {
+        if(item.name === this.powerList[i].name) {
+          this.$message.error(item.name + '已经在列表中！');
+          return
+        }
+      }
+      this.powerList.push(item)
+
+    },
+    save(){
+      this.$confirm('确认保存对合同的修改么?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        let arr = []
+        this.powerList.forEach((item)=>{
+          arr.push(item.uid)
+        })
+        let param = new URLSearchParams()
+        param.append('company_id',this.nowCompanyId)
+        param.append('uids',JSON.stringify(arr))
+        let str = this.$test('/index.php/Mobile/contract/set_power_for_contract')
+        this.$http.post(str,param)
+          .then((res)=>{
+            if(res.data.code == 0){
+              this.$message.success('添加成功')
+              this._return()
+            }else{
+              this.$message.error(res.data.message)
+            }
+          })
+      }).catch(()=>{
+        this.$message.info('已取消操作')
+      })
+    },
     choose_info(){
       this.manage_show = false
       this.enjoy_if = true
     },
     choose_shenpi(){
-
+      this.manage_show = false
+      this.look_power_show = true
+      this.get_power()
+    },
+    get_power(){
+      this.powerList = []
+      let param = new URLSearchParams()
+      param.append('company_id',this.nowCompanyId)
+      let str = this.$test('/index.php/Mobile/contract/find_power_for_contract_list')
+      this.$http.post(str,param)
+        .then((res)=>{
+          if(res.data.code == 0){
+            res.data.data.forEach((item)=>{
+              item.avatar = getAvatar(item.avatar)
+              this.powerList.push(item)
+            })
+          }
+        })
     },
     return_manage(){
       this.enjoy_if = false
@@ -399,6 +496,7 @@ export default {
     _return(){
       this.jurisdictionItemShow = false
       this.manage_show = true
+      this.look_power_show = false
     },
     _returns(){
       this.addComProject = false
@@ -417,7 +515,6 @@ export default {
           var judge = res.data.code
           this.$testLogin(judge,current)
           res.data.data.forEach((item) => {
-            console.log(item)
             if(item.type === 1) {
               let arr = []
               item.list.forEach((list) => {
@@ -460,17 +557,12 @@ export default {
                 arr.push(createJurisdictionList(list))
               })
               this.$set(this.setFormRe.yanshou, 'groups', arr)
-            }else if(item.type === 13){
-              let arr = []
-              item.list.forEach((list)=>{
-                arr.push(createJurisdictionList(list))
-              })
-              this.$set(this.setFormRe.gongzi,'groups',arr)
             }else if(item.type === 14){
               let arr = []
               item.list.forEach((list)=>{
                 arr.push(createJurisdictionList(list))
               })
+              this.$set(this.setFormRe.jiesuan,'groups',arr)
             }
           })
         })
@@ -499,8 +591,6 @@ export default {
         zz = 11
       } else if(this.formRePersonIndex == 'yanshou'){
         zz = 12
-      } else if(this.formRePersonIndex == 'gongzi'){
-        zz = 13
       } else if(this.formRePersonIndex == 'jiesuan'){
         zz = 14
       }
@@ -1422,6 +1512,158 @@ export default {
         button {
           margin-left: 40px;
           margin-top: 20px;
+        }
+      }
+    }
+  }
+  .look_power{
+    width: 100%;
+    background: #FFF;
+    position: relative;
+    .top {
+      position: relative;
+      border-bottom: 1px solid #e3e4e9;
+      background: #fff;
+      .el-button {
+        position: absolute;
+        top: 8px;
+        left: 5px;
+        margin: 0 !important;
+      }
+      p {
+        width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: bolder;
+        padding: 15px 0;
+      }
+      b {
+        position: absolute;
+        top: 13px;
+        right: 13px;
+        cursor: pointer;
+      }
+    }
+    .addPerson {
+      display: block;
+      float: right;
+      padding: 10px 15px;
+    }
+    .submitAddPerson {
+      position: absolute;
+      top: 360px;
+      right: 10px;
+      display: inline-block;
+      float: right;
+    }
+    .jurisdictionFormList {
+      margin-top: 10px;
+      width: 300px;
+      min-height: 600px;
+      ul {
+        li {
+          .group {
+            display: block;
+            height: 20px;
+            color: #FFFFFF;
+            background: #878D99;
+            line-height: 20px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            text-indent: 10px;
+          }
+          .info {
+            display: block;
+            height: 30px;
+            font-size: 0;
+            cursor: default;
+            position: relative;
+            border-bottom: 1px solid #5A5E66;
+            img {
+              display: inline-block;
+              width: 26px;
+              height: 26px;
+              -webkit-border-radius: 50%;
+              -moz-border-radius: 50%;
+              border-radius: 50%;
+              vertical-align: top;
+              margin-top: 2px;
+              margin-left: 4px;
+            }
+            span {
+              font-size: 14px;
+              line-height: 30px;
+              margin-left: 10px;
+            }
+            .up {
+              line-height: 30px;
+              font-size: 14px;
+              float: right;
+              position: absolute;
+              right: 45px;
+              cursor: pointer;
+              display: inline-block;
+            }
+            .down {
+              display: inline-block;
+              line-height: 30px;
+              font-size: 14px;
+              float: right;
+              position: absolute;
+              right: 80px;
+              cursor: pointer;
+            }
+            .delete {
+              line-height: 30px;
+              font-size: 14px;
+              float: right;
+              margin-right: 10px;
+              color: #878D99;
+              &:hover {
+                color: #FA5555;
+              }
+            }
+            .setting{
+              line-height: 30px;
+              font-size: 14px;
+              float: right;
+              margin-right: 95px;
+              color: #878D99;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+    .chooseApprovalPerson {
+      position: absolute;
+      right: 10px;
+      top: 120px;
+      width: 200px;
+      height: 300px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      .info {
+        cursor: default;
+        font-size: 0;
+        margin-bottom: 4px;
+        >.avatar {
+          vertical-align: top;
+          display: inline-block;
+          img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+          }
+        }
+        >.content {
+          display: inline-block;
+          margin-left: 10px;
+          >span {
+            display: block;
+            font-size: 12px;
+          }
         }
       }
     }

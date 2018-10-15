@@ -235,6 +235,7 @@
 			this._getToken()
 			this.initial_data()
       this.check_title()
+      this.get_data()
 		},
 		components: {
 			loading,
@@ -794,6 +795,41 @@
 				}, 500)
 
 			},
+      get_data(){
+		    if(!this.tode.contract_record_id){
+		      return
+        }else{
+		      let param = new URLSearchParams()
+          param.append('contract_record_id',this.tode.contract_record_id)
+          let str = this.$test('/index.php/Mobile/find/get_contract_public_info')
+          this.$http.post(str,param)
+            .then((res)=>{
+              if(res.data.code == 0){
+                let obj = res.data.data
+                this.psb_ruleForm.contract_name = obj.project_name
+                this.psb_ruleForm.contract_num = obj.contract_num
+                this.psb_ruleForm.a_name = obj.party_a_term
+                this.psb_ruleForm.b_name = obj.party_b_term
+                this.psb_ruleForm.executor = obj.party_a
+                this.psb_ruleForm.pay_method = obj.pay_way
+                this.psb_ruleForm.arrive_time = obj.start_work_time
+                this.psb_ruleForm.end_time = obj.end_work_time
+                this.psb_ruleForm.prive = obj.contract_unit_price
+                this.psb_ruleForm.total_prive = obj.contract_record_id
+                if(this.psb_ruleForm.arrive_time){
+                  let strDate = this.psb_ruleForm.arrive_time
+                  var time = new Date(strDate)
+                  this.psb_ruleForm.arrive_time = time
+                }
+                if(this.psb_ruleForm.end_time){
+                  let strDate = this.psb_ruleForm.end_time
+                  var time1 = new Date(strDate)
+                  this.psb_ruleForm.end_time = time1
+                }
+              }
+            })
+        }
+      }
 		},
 		watch: {
 			file_time() {

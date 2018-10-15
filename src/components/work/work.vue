@@ -63,7 +63,7 @@
                 <el-menu-item index="4-4" v-show="setting_show" :route="{ path: '/work/jurisdictionManage' }">设置</el-menu-item>
                 <el-menu-item index="4-5" :route="{ path: '/work/addressBook' }">通讯录</el-menu-item>
                 <el-menu-item index="4-6" :route="{path:'/work/contr_list'}">公司合同</el-menu-item>
-                <el-menu-item index="4-7" :route="{path:'/work/contes'}">公司合同归档</el-menu-item>
+                <el-menu-item index="4-7" v-show="contract_show" :route="{path:'/work/contes'}">公司合同归档</el-menu-item>
                 <el-submenu index="4-8">
                   <template slot="title">公司审批</template>
                   <el-menu-item index="4-8-1" :route="{path:'/work/exam'}">处理审批</el-menu-item>
@@ -320,7 +320,8 @@
         pic_hash:'',
         loadingShow:false,
         asd_hash:'',
-        setting_show:true
+        setting_show:true,
+        contract_show:true
         // default_open:['1'],
         // default_open:[]
       }
@@ -372,6 +373,12 @@
 				if(m === 1) {
           this.setting_show = true
 				}
+				let p= this.userState.power
+        if(p == 1){
+          this.contract_show = true
+        }else{
+          this.contract_show = false
+        }
 			},
  			changeWorkIndex(num){
 				this.workIndex = num
@@ -492,6 +499,7 @@
 						this.setUserState({
 							'manage': parseInt(res.data.data.is_manage),
 							'finance': parseInt(res.data.data.is_finance),
+              'power':parseInt(res.data.data.power_to_contract)
 						})
 						this.judgeState()
 					})
