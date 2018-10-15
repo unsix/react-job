@@ -223,9 +223,7 @@
       },
       submit(){
         var obj = this.$refs.win.contentWindow
-        obj.getCustomFormResult()
-        let tips = obj.tips
-        let result = obj.result
+        let result = obj.getCustomFormResult()
         if(result){
           this.$confirm('确认发起评审么','提示',{
             confirmButtonText:'确认',
