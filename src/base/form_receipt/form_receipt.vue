@@ -126,6 +126,7 @@
 			this._getUserCompanyList()
 
 		},
+
 		methods: {
 			handleClick(tab) {
 				this.psb_if = false
@@ -144,16 +145,16 @@
 				}
 
 			},
-			first_page() {
-				this.pageIndex = 1
-			},
-			last_page() {
-				this.nextPageShow = true
-					--this.pageIndex
-			},
-			next_page() {
-				++this.pageIndex
-			},
+      first_page() {
+        this.pageIndex = 1
+      },
+      last_page() {
+        this.nextPageShow = true
+        --this.pageIndex
+      },
+      next_page() {
+        ++this.pageIndex
+      },
 			_getUserCompanyList() {
 				let param = new URLSearchParams();
 				param.append("uid", this.user.uid);

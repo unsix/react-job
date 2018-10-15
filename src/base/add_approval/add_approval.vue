@@ -1,90 +1,89 @@
 <template>
   <!--添加请求-->
-	<div class="add_approval_wrapper">
-		<div class="add_approval">
-			<div class="nav">
-        <!--导航-->
-				<el-tabs v-model="activeName" @tab-click="handleClick">
-					<el-tab-pane label="合同评审表"></el-tab-pane>
-					<el-tab-pane label="请购单"></el-tab-pane>
-					<el-tab-pane label="请款单"></el-tab-pane>
-					<el-tab-pane label="申请公章"></el-tab-pane>
-					<el-tab-pane label="呈批件"></el-tab-pane>
-          <el-tab-pane label="报销单"></el-tab-pane>
-          <el-tab-pane label="验收单"></el-tab-pane>
-          <el-tab-pane label="个人请款单"></el-tab-pane>
-          <el-tab-pane label="结算单"></el-tab-pane>
-				</el-tabs>
-			</div>
-			<div class="from_template" v-show="formShow">
-				<el-button type="primary" plain @click="chooseTem" v-show="forms">从模板选择</el-button>
-			</div>
-			<div class="form" v-show="formShow">
-				<addQkd v-if="qkd_show" :userList="user_info" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
-				<addCpj v-if="cpj_show" :userList="user_info" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
-				<addPsb v-if="psb_show" :userList="user_info" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
-				<addQgd v-if="qgd_show" :userList="user_info" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
-				<addSqgz v-if="sqgz_show" :userList="user_info" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
-        <addBxd v-if="bxd_show" :userList="user_info" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
-        <addYsd v-if="ysd_show" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
-        <addGzd v-if="gzd_show" :userList="user_info" :approval_id="approval_id8" @return_exam="return_Add"></addGzd>
-        <addJsd v-if="jsd_show" :userList="user_info" :approval_id="approval_id9" @return_exam="return_Add"></addJsd>
-			</div>
-		</div>
-		<div class="as_what" v-show="as_what_show">
-			<ul>
-				<h2 v-show="ysdType.length == 0">选择请款依据</h2>
-        <h2 v-show="ysdType.length > 0">选择验收单类型</h2>
-				<i class="el-icon-close" @click="close_as"></i>
-				<li v-show="ysdType.length == 0" v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
-        <li v-show="ysdType.length > 0" v-for="(item,index) in ysdType" @click="ysd_click(item.inspection_type_id)" >{{item.inspection_name}}</li>
-			</ul>
-		</div>
-		<div class="as_qingkuan" v-if="at_qingkuanShow">
-			<ul>
-				<li v-for="(item,index) in untreated" :key="item.approval_id" ref="list">
-					<div class="edit">
-						<el-button type="primary" round @click="qkView(item,index)">查看</el-button>
-						<el-button type="success" round @click="qkUser(item,index)">使用</el-button>
-						<div class="process">
-							<span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
-						</div>
-					</div>
-					<div class="content">
-						<div class="title">
-							<span>{{item.add_time}}</span>
-						</div>
-						<div class="type">
-							<span>标题：{{item.title}}</span>
-						</div>
-						<div class="type">
-							<span>类型：{{item.type}}</span>
-						</div>
-					</div>
-				</li>
-				<div class="page">
-					<span @click="first_page">首页</span>
-					<span @click="last_page" v-show="pageIndex > 1">上一页</span>
-					<span @click="next_page" v-show="nextPageShow">下一页</span>
-				</div>
-			</ul>
-		</div>
-		<loading v-show="loading_show"></loading>
-		<chooseTemplate v-if="chooseTemShow" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
-		<psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
-		<qgd :qk_return="qk_return" @return_qk="return_qk" v-if="qgd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
-		<cpj v-if="cpj_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
-		<sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
-		<qkd :form_approval_id="form_approval_id" :change_type="change_type" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
-    <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
-	  <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
-    <gzd v-if="gzd_if" :form_Lista="form_Lista" ref="gzds" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></gzd>
-    <jsd v-if="jsd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></jsd>
-    <div class="sendsd" v-show="sendShow">
-      <div>
-        <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
-        <el-input type="textarea" v-model="content"></el-input>
-        <span class="sr">
+	<div>
+    <div class="add_approval_wrapper" v-if="wrapper">
+      <div class="add_approval">
+        <div class="nav">
+          <!--导航-->
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="合同评审表"></el-tab-pane>
+            <el-tab-pane label="请购单"></el-tab-pane>
+            <el-tab-pane label="请款单"></el-tab-pane>
+            <el-tab-pane label="申请公章"></el-tab-pane>
+            <el-tab-pane label="呈批件"></el-tab-pane>
+            <el-tab-pane label="报销单"></el-tab-pane>
+            <el-tab-pane label="验收单"></el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="from_template" v-show="formShow">
+          <el-button type="primary" plain @click="chooseTem" v-show="forms">从模板选择</el-button>
+        </div>
+        <div class="form" v-show="formShow">
+          <addQkd v-if="qkd_show" :userList="user_info" :approval_id="approval_id5" ref="scse" :main_show="main_show" @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
+          <addCpj v-if="cpj_show" :userList="user_info" :approval_id="approval_id3" @return_exam="return_Add"></addCpj>
+          <addPsb v-if="psb_show" :userList="user_info" :approval_id="approval_id1" @return_exam="return_Add"></addPsb>
+          <addQgd v-if="qgd_show" :userList="user_info" :approval_id="approval_id2" @return_exam="return_Add"></addQgd>
+          <addSqgz v-if="sqgz_show" :userList="user_info" :approval_id="approval_id4" @return_exam="return_Add"></addSqgz>
+          <addBxd v-if="bxd_show" :userList="user_info" :approval_id="approval_id6" @return_exam="return_Add"></addBxd>
+          <addYsd v-if="ysd_show" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id7" @return_exam="return_Add"></addYsd>
+          <addGzd v-if="gzd_show" :userList="user_info" :approval_id="approval_id8" @return_exam="return_Add"></addGzd>
+          <addJsd v-if="jsd_show" :userList="user_info" :approval_id="approval_id9" @return_exam="return_Add"></addJsd>
+        </div>
+      </div>
+      <div class="as_what" v-show="as_what_show">
+        <ul>
+          <h2 v-show="ysdType.length == 0">选择请款依据</h2>
+          <h2 v-show="ysdType.length > 0">选择验收单类型</h2>
+          <i class="el-icon-close" @click="close_as"></i>
+          <li v-show="ysdType.length == 0" v-for="(item,index) in asType" @click="as_click(index)">{{item}}</li>
+          <li v-show="ysdType.length > 0" v-for="(item,index) in ysdType" @click="ysd_click(item.inspection_type_id)" >{{item.inspection_name}}</li>
+        </ul>
+      </div>
+      <div class="as_qingkuan" v-if="at_qingkuanShow">
+        <ul>
+          <li v-for="(item,index) in untreated" :key="item.approval_id" ref="list">
+            <div class="edit">
+              <el-button type="primary" round @click="qkView(item,index)">查看</el-button>
+              <el-button type="success" round @click="qkUser(item,index)">使用</el-button>
+              <div class="process">
+                <span v-html="item.approval_state" style="font-weight: 700; font-size: 14px;"></span>
+              </div>
+            </div>
+            <div class="content">
+              <div class="title">
+                <span>{{item.add_time}}</span>
+              </div>
+              <div class="type">
+                <span>标题：{{item.title}}</span>
+              </div>
+              <div class="type">
+                <span>类型：{{item.type}}</span>
+              </div>
+            </div>
+          </li>
+          <div class="page">
+            <span @click="first_page">首页</span>
+            <span @click="last_page" v-show="pageIndex > 1">上一页</span>
+            <span @click="next_page" v-show="nextPageShow">下一页</span>
+          </div>
+        </ul>
+      </div>
+      <loading v-show="loading_show"></loading>
+      <chooseTemplate v-if="chooseTemShow" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
+      <psb v-if="psb_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></psb>
+      <qgd :qk_return="qk_return" @return_qk="return_qk" v-if="qgd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qgd>
+      <cpj v-if="cpj_if" :form_Lista="form_Lista" :qk_return="qk_return" @return_qk="return_qk" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"> </cpj>
+      <sqgz v-if="sqgz_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></sqgz>
+      <qkd :form_approval_id="form_approval_id" :change_type="change_type" v-if="qkd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
+      <bxd v-if="bxd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></bxd>
+      <ysd v-if="ysd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></ysd>
+      <gzd v-if="gzd_if" :form_Lista="form_Lista" ref="gzds" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></gzd>
+      <jsd v-if="jsd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></jsd>
+      <div class="sendsd" v-show="sendShow">
+        <div>
+          <span class="close"><span class="huifu">呈批件补充协议</span><i class="el-icon-close" @click="closeSend"></i></span>
+          <el-input type="textarea" v-model="content"></el-input>
+          <span class="sr">
           <el-button type="primary" round @click="submitCom">确定</el-button>
           <el-upload class="upload-demo" id="picc" multiple accept="image/jpeg,image/png" action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
             <i class="iconfont icon-zhaopian"></i>
@@ -93,13 +92,16 @@
             <i class="iconfont icon-fujian"></i>
           </el-upload>
         </span>
+        </div>
       </div>
-    </div>
 
+    </div>
+    <cho v-else :title="tips"></cho>
   </div>
 </template>
 
 <script>
+  import cho from '@/base/add_approval/cho'
 	import addQgd from '@/base/add_approval/add_qgd'
 	import addCpj from '@/base/add_approval/add_cpj'
 	import addPsb from '@/base/add_approval/add_psb'
@@ -136,6 +138,10 @@
 	export default {
 		data() {
 			return {
+			  tips:'',
+        ys_list:[],
+        js_list:[],
+        gz_list:[],
         forms:true,
 				navIndex: 0,
 				asType: ['请购单', '合同评审表', '呈批件'],
@@ -203,6 +209,7 @@
         change_type:'',
         user_info:[],
         prc_index:'',
+        wrapper:true
 			}
 		},
 		computed: {
@@ -932,7 +939,6 @@
 						this.form_Listb = create_approval_list(res.data.data)
 					})
 			},
-      //get_img方法
       get_img(many_enclosure) {
         if(!many_enclosure) {
           return
@@ -1042,6 +1048,9 @@
 			},
       //tab 切換
 			handleClick(tab) {
+        this.gz_list = []
+        this.js_list = []
+        this.ys_list = []
         this.user_info = []
 				this.approval_id1 = ''
 				this.approval_id2 = ''
@@ -1095,10 +1104,7 @@
 				  this.bxd_show = true
           this.approval_type = 11
         } else if(this.navIndex === 6){
-          this.ysd_show = true
           this.get_ysd_type()
-          this.as_what_show = true
-          this.formShow = false
           this.approval_type = 12
         }else if(this.navIndex === 7){
 				  this.gzd_show = true
@@ -1184,6 +1190,9 @@
             var judge = res.data.code
             this.$testLogin(judge,current)
             this.ysdType = res.data.data
+            this.ysd_show = true
+            this.as_what_show = true
+            this.formShow = false
           })
       },
 			close_sqgz(item, index) {
@@ -1379,7 +1388,8 @@
       addBxd,
       addYsd,
       addGzd,
-      addJsd
+      addJsd,
+      cho
 		}
 	}
 </script>

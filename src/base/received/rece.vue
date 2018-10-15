@@ -33,9 +33,12 @@
             <div style="height: 20px">
               <p @click.stop="look_company_contract(item.contract_temp_id,'验收')" style="cursor: pointer;float:right;text-align: right">验收记录</p>
               <p @click.stop="look_company_contract(item.contract_temp_id,'请款')" style="cursor: pointer;float:right;margin-right:20px;text-align: right">请款记录</p>
+              <p @click.stop="look_company_contract(item.contract_temp_id,'结算')" style="cursor: pointer;float:right;margin-right:20px;text-align: right">结算记录</p>
             </div>
             <span @click.stop="add_ysd(item.contract_temp_id)">申请验收</span>
             <span @click.stop="add_com_qkd(item)">去请款</span>
+            <span @click.stop="add_com_lxd(item)">工作联系单</span>
+            <span @click.stop="add_com_jsd(item)">结算单</span>
           </div>
         </li>
       </ul>
@@ -179,12 +182,16 @@
     <cpjs class="cpj_s" ref="cpj" v-if="cpj_if" :approval_id="approval_id"></cpjs>
     <bxds class="bxd_s" ref="bxd" v-if="bxd_if" :approval_id="approval_id"></bxds>
   </div>
-  <qkd v-if="if_qkd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></qkd>
+  <qkd v-if="if_qkd" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnListed" :file_arr="file_arr"></qkd>
   <companyQkd :form_approval_id="form_approval_id" :down_show="down_show" :change_type="change_type" v-if="qkd_com_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList_com" :file_arr="file_arr"></companyQkd>
   <ysd v-if="ysd_if" :down_show="down_show" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList_com"></ysd>
+  <jsd v-if="jsd_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList_com" :file_arr="file_arr"></jsd>
+  <lxd v-if="lxd_show" @return_list="_return_main" :approval_id="contract_ids"></lxd>
   <chooseTemplate v-if="chooseTemShow" ref="choosetem" @returnForm="returnForm" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
 
   <add_ysd v-if="add_ysd_show_cr" :inset='inset' :sec_title="con_title" :linked="linked"></add_ysd>
+
+  <addJsd v-if="jsd_show" :qkd_status="title" :contract_name="jsd_data.contract_name" :inset="jsd_data"></addJsd>
 
   <comYsd v-if="add_qkd_show_cr" :inset='inset' :qkd_status="qkd_son" :contract_name="contract_name"></comYsd>
 </div>
@@ -192,6 +199,7 @@
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import addJsd from '@/base/contract_doc/con_qk'
   import qkd from '@/base/personal_approval/qkd_b'
   import loading from '@/base/loading/loading'
   import qgds from '@/base/personal_approval/qgd_a'
@@ -199,9 +207,11 @@
   import cpjs from '@/base/personal_approval/cpj_a'
   import bxds from '@/base/personal_approval/bxd_a'
   import ysd from '@/base/exam_form/ysd'
+  import jsd from '@/base/exam_form/jsd'
   import add_ysd from '@/base/received/add_ysd'
   import comYsd from '@/base/received/add_com_qkd'
   import companyQkd from '@/base/exam_form/qkd'
+  import lxd from '@/base/work_record/look_lxd'
   import {getPic} from '@/common/js/pic.js'
   import {getAvatar} from '@/common/js/avatar.js'
   import chooseTemplate from '@/base/personal_approval/inital'
@@ -237,7 +247,7 @@ export default {
       chooseTemShow:false,
       if_qkd:false,
       approval_type:'',
-      activeName:'1',
+      activeName:'2',
       file_arr:[],
       pageIndex:'1',
       form_Lista:{},
@@ -273,6 +283,11 @@ export default {
       white:'',
       change_type:'',
       down_show:false,
+      jsd_if:false,
+      lxd_show:false,
+      jsd_show:false,
+      jsd_data:{},
+      title:''
     }
   },
   methods:{
@@ -290,7 +305,6 @@ export default {
     add_com_qkd(pr){
       this.inset = pr.contract_temp_id
       this.contract_name = pr.contract_name
-      console.log(this.contract_name)
       this.addShow = true
       this.wideShow = true
       this.sec_title = '选择请款单类型'
@@ -323,6 +337,7 @@ export default {
       this.qkd_com_if =false
       this.checked = true
       this.ysd_if =false
+      this.jsd_if = false
     },
     look_evad(pr){
       this.inset = pr
@@ -458,7 +473,7 @@ export default {
       this.contract_ids = ''
       this.approval_id = ''
     },
-    returnList(){
+    returnListed(){
       this.if_cpj = false
       this.if_qgd = false
       this.if_bxd = false
@@ -469,6 +484,10 @@ export default {
       }else{
         this.chooseTemShow = true
       }
+    },
+    returnList(){
+      this.jsd_show = false
+      this.store = true
     },
     handClick(tab){
       let index = parseInt(tab.index)
@@ -1252,17 +1271,25 @@ export default {
       this.vlurt = []
       this.white = res
       let param = new URLSearchParams()
-      param.append('contract_request_id',pr)
       param.append('each',20)
       param.append('p',this.pageIndex)
       if(res == '请款'){
         param.append('type',4)
         this.data_qkd = '请款记录'
-      }else{
+      }else if(res == '验收'){
         param.append('type',3)
         this.data_qkd = '验收记录'
+      }else if(res == '结算'){
+        this.data_qkd = '结算记录'
       }
-      let httpUrl = this.$test('/index.php/mobile/find/get_approval_id_from_contract')
+      let httpUrl = ''
+      if(res == '结算'){
+        param.append('contract_id',pr)
+        httpUrl = this.$test('/index.php/Mobile/find/find_settle_list')
+      }else{
+        param.append('contract_request_id',pr)
+        httpUrl = this.$test('/index.php/mobile/find/get_approval_id_from_contract')
+      }
       this.$http.post(httpUrl,param)
         .then((res)=>{
           if(res.data.code == 0){
@@ -1304,7 +1331,14 @@ export default {
             this.get_file(this.form_Lista.many_enclosure)
           }else if(item.type == '验收单'){
             this.ysd_if = true
-            this.form_Lista = create_yanshoudan_list(res.data.data)
+            this.form_Lista = res.data.data
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
+          }else if(item.type == '结算单'){
+            this.jsd_if = true
+            this.form_Lista = res.data.data
+            this.get_img(this.form_Lista.many_enclosure)
+            this.get_file(this.form_Lista.many_enclosure)
           }
         })
       let nparam = new URLSearchParams();
@@ -1378,6 +1412,22 @@ export default {
           }
           this.form_Listb = create_approval_list(res.data.data)
         })
+    },
+    add_com_lxd(item){
+      this.store = false
+      this.lxd_show = true
+      this.contract_ids = item.contract_temp_id
+    },
+    add_com_jsd(item){
+      this.store = false
+      this.jsd_show = true
+      this.jsd_data = item
+      this.title= '结算单'
+    },
+    _return_main(){
+      this.lxd_show = false
+      this.store = true
+      this.contract_ids = ''
     }
   },
   created(){
@@ -1409,7 +1459,10 @@ export default {
     chooseTemplate,
     companyQkd,
     add_ysd,
-    comYsd
+    comYsd,
+    jsd,
+    lxd,
+    addJsd
   },
   computed: {
     ...mapGetters([

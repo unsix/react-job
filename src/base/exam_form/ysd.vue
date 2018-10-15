@@ -6,6 +6,48 @@
     <a v-if="form_Lista.approval_id && down_show" style="color: black" :href="downUrl" target="_blank" download="" mce_href='#'><i class="el-icon-download"></i></a>
   </div>
     <iframe id="mom" class="win" ref="indx" width="100%" style="height: 600px" scrolling="yes" height="100%" :src="linked" seamless frameborder="0"></iframe>
+    <div>
+      <span>审批：</span>
+      <div v-for="item in form_Listb.content" class="exam_info">
+        <b><span>{{item.department_name}}</span><span>{{item.name}}</span><span>{{item.is_agree}}</span></b>
+        <p v-for="(val, key, index) in item.form_result">{{key}}:{{val}}</p>
+        <p>意见:<span>{{item.opinion}}</span></p>
+        <p v-show="item.many_enclosure" class="enclosure">
+          <span style="display: block">附件列表</span>
+          <a v-for="link in item.files" :href="link.address">{{link.name}}</a>
+          <img :src="res" v-for="(res,index) in item.imgs" @click="cl_pic(item.imgs,index)">
+          <img :src="list" v-for="(list,index) in item.picture" @click="cl_pic(item.picture,index)" />
+        </p>
+        <div style="width: 530px;margin-left: 50px;background: #e3e4e9;" v-show="item.replys">
+          <div class="reply" v-for="res in item.replys" style="margin: 10px 20px;line-height: 22px">
+            <div class="avatar">
+              <span>{{res.name}}</span><span v-show="res.name != res.return_person_name">回复{{res.return_person_name}}</span><i v-show="status == 2" @click="reply_other(res.uid,item.participation_id,res.name)" style="float: right" class="iconfont icon-xiaoxi"></i>
+            </div>
+            <div class="tel">
+              <span>{{res.add_time}}</span>
+            </div>
+            <div class="operation">
+              <span>{{res.reply_content}}</span>
+            </div>
+            <div class="img">
+              <img style="width: 50px" :src="es" alt="" v-for="(es,index) in res.imgs" @click="cl_pic(res.imgs,index)">
+            </div>
+            <div>
+              <a class="file" :href="es.address" v-for="(es,index) in res.files">{{es.name}}</a>
+            </div>
+          </div>
+        </div>
+        <p>审批时间:{{item.add_time}}</p>
+      </div>
+    </div>
+    <div v-if="form_Listb.finance">
+      <span>表单回执：</span>
+      <br />
+      <span style="color: #444444;">
+						<span v-html="form_Listb.finance.finance_state"></span> {{form_Listb.finance.name}} {{form_Listb.finance.receipt_content}} {{form_Listb.finance.save_time}}
+			<div><img style="width: 50px;height: 50px;border: 1px solid #e3e4e9;" :src="list" alt="" v-for="(list,index) in form_Listb.re_pic" @click="rec_pic(form_Listb.re_pic,index)" /></div>
+			</span>
+    </div>
     <div class="menu" v-show="handle_show">
       <el-button type="primary" plain @click="handle">处理</el-button>
       <div class="button" v-show="menuShow">
@@ -17,11 +59,13 @@
       </div>
     </div>
     <loading v-show="loading_show"></loading>
+    <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
   </div>
 </template>
 
 <script>
   import loading from '@/base/loading/loading'
+  import browsePic from '@/base/browse_pic/browse_pic'
   import { mapGetters } from 'vuex'
   export default {
     data(){
@@ -70,6 +114,14 @@
       ])
     },
     methods:{
+      cl_pic(item,index){
+        item.forEach((res)=>{
+          let current = res.indexOf('?')
+          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+        })
+        this.pic_index = index
+        this.pic_show = true
+      },
       add_html(){
         let param = new URLSearchParams
         param.append('uid',this.user.uid)
@@ -298,7 +350,8 @@
       }
     },
     components: {
-      loading
+      loading,
+      browsePic
     },
     created(){
       this.initial_data()
@@ -342,44 +395,44 @@
       border-bottom: 1px solid #DDDDDD;
       font-size: 14px;
       transition: .3s;
-      margin-bottom: 0px;
-      >.lzz {
-        font-weight: 700;
-        font-size: 15px;
-        text-indent: 2px;
-      }
-      &:first-child {
-        border-bottom: 1px solid transparent;
-        &:hover {
-          background: none;
+      margin-bottom: 4px;
+      b{
+        margin-left: 20px;
+        margin-bottom:5px;
+        display: block;
+        span{
+          margin-right: 15px;
+          &:last-child{
+            color: red;
+          }
         }
       }
-      &:nth-child(even) {
-        background: rgb(245, 247, 250);
+      p{
+        margin-left: 30px;
+        margin-bottom: 10px;
       }
-      &:hover {
-        background: #EEEEEE;
-      }
-      >div {
-        height: 40px;
-        line-height: 40px;
-        display: inline-block;
-      }
-      .avatar {
-        vertical-align: top;
-        width: 70px;
-      }
-      .name {
-        width: 80px;
-      }
-      .tel {
-        width: 150px;
-      }
-      .operation {
-        width: 240px;
-        button {
+      .enclosure{
+        a{
+          font-size: 14px;
+          margin: 4px auto;
           display: block;
+          height: 24px;
+          width: 80%;
+          line-height: 24px;
+          color: #5A5E66;
+          border: 1px solid #F9F9F9;
+          border-radius: 4px;
+          background: #DDDDDD;
+          text-align: center;
         }
+        img{
+          width: 50px;
+          height: 50px;
+          margin: 5px;
+        }
+      }
+      &:last-child{
+        border-bottom: none;
       }
     }
     >div {

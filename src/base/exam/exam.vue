@@ -130,6 +130,19 @@
 				<div>
 					<span>附件列表：</span>
 					<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>类型：{{item.type}}</p>
+            <p>标题：{{item.title}}</p>
+            <p>审批进程：<span v-html="item.approval_state"></span></p>
+          </div>
+          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>{{item.name}}{{item.phone}}</p>
+            <p>请款月份：{{item.month}}</p>
+            <p>应付金额:{{item.pay_amount}}元</p>
+            <p><span v-html="item.pryroll_status"></span></p>
+          </div>
 				</div>
 				<div>
 					<span>图片附件：</span>
@@ -272,6 +285,19 @@
 				<div>
 					<span>附件列表：</span>
 					<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>类型：{{item.type}}</p>
+            <p>标题：{{item.title}}</p>
+            <p>审批进程：<span v-html="item.approval_state"></span></p>
+          </div>
+          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>{{item.name}}{{item.phone}}</p>
+            <p>请款月份：{{item.month}}</p>
+            <p>应付金额:{{item.pay_amount}}元</p>
+            <p><span v-html="item.pryroll_status"></span></p>
+          </div>
 				</div>
 				<div>
 					<span>图片附件：</span>
@@ -398,6 +424,19 @@
 				<div>
 					<span>附件列表：</span>
 					<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>类型：{{item.type}}</p>
+            <p>标题：{{item.title}}</p>
+            <p>审批进程：<span v-html="item.approval_state"></span></p>
+          </div>
+          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>{{item.name}}{{item.phone}}</p>
+            <p>请款月份：{{item.month}}</p>
+            <p>应付金额:{{item.pay_amount}}元</p>
+            <p><span v-html="item.pryroll_status"></span></p>
+          </div>
 				</div>
 				<div>
 					<span>图片附件：</span>
@@ -527,6 +566,19 @@
 				<div>
 					<span>附件列表：</span>
 					<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>类型：{{item.type}}</p>
+            <p>标题：{{item.title}}</p>
+            <p>审批进程：<span v-html="item.approval_state"></span></p>
+          </div>
+          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>{{item.name}}{{item.phone}}</p>
+            <p>请款月份：{{item.month}}</p>
+            <p>应付金额:{{item.pay_amount}}元</p>
+            <p><span v-html="item.pryroll_status"></span></p>
+          </div>
 				</div>
 				<div>
 					<span>图片附件：</span>
@@ -634,6 +686,19 @@
         <div>
           <span>附件列表：</span>
           <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>类型：{{item.type}}</p>
+            <p>标题：{{item.title}}</p>
+            <p>审批进程：<span v-html="item.approval_state"></span></p>
+          </div>
+          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>{{item.name}}{{item.phone}}</p>
+            <p>请款月份：{{item.month}}</p>
+            <p>应付金额:{{item.pay_amount}}元</p>
+            <p><span v-html="item.pryroll_status"></span></p>
+          </div>
         </div>
         <div>
           <span>图片附件：</span>
@@ -729,6 +794,19 @@
         <div>
           <span>附件列表：</span>
           <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
+          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>类型：{{item.type}}</p>
+            <p>标题：{{item.title}}</p>
+            <p>审批进程：<span v-html="item.approval_state"></span></p>
+          </div>
+          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+            <p>{{item.add_time}}</p>
+            <p>{{item.name}}{{item.phone}}</p>
+            <p>请款月份：{{item.month}}</p>
+            <p>应付金额:{{item.pay_amount}}元</p>
+            <p><span v-html="item.pryroll_status"></span></p>
+          </div>
         </div>
         <div>
           <span>图片附件：</span>
@@ -1120,6 +1198,9 @@
     <detail_fix style="background: #FFF" v-if="detail_fix_show" :content="detail_data" :btnShow="btnShow" @return_per="return_per"></detail_fix>
 
     <name v-if="name_show"  @transet="transet"></name>
+
+    <ysd v-if="ysd_if" :form_Lista="form_Elsea" :form_Listb="form_Elseb" :handle_show="false" @return_psb="returnList"></ysd>
+    <jsd v-if="jsd_if" :form_Lista="form_Elsea" :form_Listb="form_Elseb" :handle_show="false" @return_psb="returnList" :file_arr="file_arrs"></jsd>
 	</div>
 </template>
 
@@ -1140,12 +1221,22 @@
   import { create_baoxiaodan_list } from "@/common/js/approval/baoxiaodan";
   import { create_exam_list } from '@/common/js/approval/exam'
 	import { create_approval_list } from '@/common/js/approval/approval_list'
+  import jsd from '@/base/exam_form/jsd'
+  import ysd from '@/base/exam_form/ysd'
+  import gzd from '@/base/exam_form/gzd'
+  import { create_yanshoudan_list } from "@/common/js/approval/yanshoudan";
 	import { mapGetters, mapMutations } from 'vuex'
   import moment from 'moment'
   import simpleText from '@/base/unit/input'
 	export default {
 		data() {
 			return {
+        form_Elsea:{},
+        file_arrs:[],
+        form_Elseb:{},
+        ysd_if:false,
+        jsd_if:false,
+        gzd_if:false,
         fra_show:false,
         detail_data:{},
         btnShow:false,
@@ -1481,7 +1572,10 @@
       moment,
       detail_fix,
       detail_ele,
-      name
+      name,
+      ysd,
+      jsd,
+      gzd
 		},
 		methods: {
       ...mapMutations({
@@ -1495,6 +1589,107 @@
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST'
       }),
+      look(item){
+        this.formShow = false
+        if(item.type == '验收单' || item.type == '结算单'){
+          let param = new URLSearchParams();
+          param.append("uid", this.user.uid);
+          param.append("approval_id", item.approval_id);
+          let str = this.$test("/index.php/Mobile/approval/approval_process_show")
+          this.$http.post(str, param)
+            .then((res)=>{
+              if(item.type == '验收单'){
+                this.ysd_if = true
+                this.form_Elsea = create_yanshoudan_list(res.data.data)
+              }else if(item.type == '结算单'){
+                this.jsd_if = true
+                this.form_Elsea = res.data.data
+                this.form_Elsea.project_manager_name = this.form_Elsea.project_manager_name.name
+                this.get_img(this.form_Elsea.many_enclosure)
+                this.get_filed(this.form_Elsea.many_enclosure)
+              }
+            })
+          let nparam = new URLSearchParams();
+          nparam.append("uid", this.user.uid);
+          nparam.append("approval_id", item.approval_id);
+          nparam.append("company_id", item.company_id);
+          let httpUrl = this.$test("/index.php/Mobile/approval/approval_process_personnel")
+          this.$http.post(httpUrl, nparam)
+            .then((res) => {
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
+              res.data.data.content.forEach((item, index) => {
+                if(item.picture) {
+                  let arr = []
+                  let zparam = new URLSearchParams();
+                  zparam.append("enclosure_id", item.picture);
+                  let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+                  this.$http.post(str, zparam)
+                    .then((res) => {
+                      var current = this
+                      var judge = res.data.code
+                      this.$testLogin(judge,current)
+                      res.data.data.picture.forEach((item) => {
+                        if(item != '') {
+                          arr.push(getPic(item))
+                        }
+                      })
+                    })
+                  res.data.data.content[index].picture = arr
+                }
+                if(item.many_enclosure){
+                  this.get_imgs(item.many_enclosure,item)
+                  this.get_files(item.many_enclosure,item)
+                }
+                if(item.replys){
+                  item.replys.forEach((pic)=>{
+                    this.get_imgs(pic.many_enclosure,pic)
+                    this.get_files(pic.many_enclosure,pic)
+                  })
+                }
+              })
+              if(res.data.data.supply){
+                res.data.data.supply.forEach((item,index)=>{
+                  this.get_imgs(item.many_enclosure,item)
+                  this.get_files(item.many_enclosure,item)
+                })
+              }
+              if(res.data.data.finance) {
+                if(res.data.data.finance.finance_state === '1') {
+                  res.data.data.finance.finance_state = '<span style="color:#67C23A">通过</span>'
+                } else {
+                  res.data.data.finance.finance_state = '<span style="color:#EB9E05" >未通过</span>'
+                }
+                let zparam = new URLSearchParams();
+                zparam.append("enclosure_id", res.data.data.finance.receipt_pic);
+                let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+                this.$http.post(str, zparam)
+                  .then((res) => {
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
+                    let arr = []
+                    res.data.data.picture.forEach((item) => {
+                      if(item != '') {
+                        arr.push(getPic(item))
+                      }
+                    })
+                    this.$set(this.form_Elseb, 're_pic', arr)
+                  })
+              }
+              this.form_Elseb = create_approval_list(res.data.data)
+            })
+        }else {
+          this.get_detail(item)
+        }
+      },
+      returnList(){
+        this.formShow = true
+        this.gzd_if = false
+        this.jsd_if = false
+        this.ysd_if = false
+      },
       return_status(){
         let str = this.$test('/index.php/Mobile/skey/look_draft?id=')
         this.linked = str + this.recent.contract_temp_id+'&operation=3&view=4'
@@ -2617,6 +2812,7 @@
               this.form_Lista = create_cengpijian_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.cengpijian_show = true
             } else if(item.type === '合同评审表') {
               this.form_Lista = create_hetongpingshen_list(res.data.data)
@@ -2627,29 +2823,35 @@
                 this.get_img(this.form_Lista.enclosure_id)
                 this.get_file(this.form_Lista.enclosure_id)
               }
+              this.get_repal(this.form_Lista.many_enclosure)
               this.pingshenbiao_show = true
             } else if(item.type === '请款单') {
               this.form_Lista = create_qingkuandan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.qingkuandan_show = true
             } else if(item.type === '申请公章') {
               this.form_Lista = create_gongzhang_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.gongzhang_show = true
             } else if(item.type === '请购单') {
               this.form_Lista = create_qinggoudan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.qinggoudan_show = true
             } else if(item.type === '报销单'){
               this.form_Lista = create_baoxiaodan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.baoxiaodan_show = true
             } else if(item.type == '验收单'){
               let str = this.$test('/index.php/Mobile/skey/look_inspection_company?approval_id=')
+              this.get_repal(this.form_Lista.many_enclosure)
               this.core = str+res.data.data.approval_id
               this.yanshou_show = true
             } else if(item.type == '个人请款单'){
@@ -2658,13 +2860,13 @@
               this.get_item_data()
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.gongzidan_show = true
             } else if(item.type == '结算单'){
               this.form_Lista = res.data.data
               this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
-              console.log(this.form_Lista)
               this.jiesuandan_show = true
             }
             this.reply = res.data.data.approval_id
@@ -2763,7 +2965,6 @@
                 })
             }
             this.form_Listb = create_approval_list(res.data.data)
-            console.log(this.form_Listb)
           })
 
         let mparam = new URLSearchParams()
@@ -2794,6 +2995,73 @@
             }
           })
 			},
+      get_repal(many_enclosure){
+        many_enclosure.forEach((item)=>{
+          if(item.type == '5'){
+            let arr = []
+            let param = new URLSearchParams();
+            param.append("id", item.contract_id);
+            let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+            this.$http.post(str,param)
+              .then((res)=>{
+                if(res.data.code == 0){
+                  res.data.data.forEach((item)=>{
+                    switch (item.type) {
+                      case '12':
+                        item.type ='验收单'
+                        break;
+                      case '14':
+                        item.type ='结算单'
+                        break;
+                    }
+                    item.approval_state = get_state(item.approval_state)
+                    arr.push(item)
+                    this.$set(this.form_Lista, 'app_list', arr)
+                  })
+                }
+              })
+            function get_state(state){
+              if(state === '0'){
+                return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+              }else if(state === '1'){
+                return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+              }else if(state === '2'){
+                return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+              }else if(state === '3'){
+                return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+              }
+            }
+          }else if(item.type == '6'){
+            let arr = []
+            let param = new URLSearchParams();
+            param.append("id", item.contract_id);
+            let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+            this.$http.post(str,param)
+              .then((res)=>{
+                if(res.data.code == 0){
+                  res.data.data.forEach((item)=>{
+                    item.pryroll_status = get_states(item.pryroll_status)
+                    arr.push(item)
+                  })
+                  this.$set(this.form_Lista, 'apple_list', arr)
+                }
+              })
+            function get_states(state){
+              if(state === '0'){
+                return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+              }else if(state === '1'){
+                return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+              }else if(state === '2'){
+                return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+              }else if(state === '-1'){
+                return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+              }else if(state === '99'){
+                return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+              }
+            }
+          }
+        })
+      },
       rec_pic(item, index) {
         item.forEach((res)=>{
           let current = res.indexOf('?')
@@ -3209,6 +3477,37 @@
 					}
 				})
 			},
+      get_filed(many_enclosure) {
+        this.file_arrs = []
+        if(!many_enclosure) {
+          return
+        }
+        if(typeof many_enclosure == 'string'){
+          return
+        }
+        many_enclosure.forEach((item) => {
+          if(item.type === 4) {
+            let param = new URLSearchParams();
+            param.append("attachments_id", item.contract_id);
+            let str = this.$test("/index.php/Mobile/approval/look_attachments")
+            this.$http.post(str, param)
+              .then((res) => {
+                var current = this
+                var judge = res.data.code
+                this.$testLogin(judge,current)
+                let obj = {}
+                var str = process.env.NODE_ENV
+                var picLeader = ''
+                str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                let file_data = res.data.data
+                let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                obj.name = file_data.file_name+'.'+file_data.attribute
+                obj.address = file_add
+                this.file_arr.push(obj)
+              })
+          }
+        })
+      },
       get_files(many_enclosure,info){
         if(!many_enclosure){
           return

@@ -47,6 +47,13 @@
           工资请款确认单
           <span v-show="qkd">{{obj6.description}}</span>
         </li>
+        <li @click="show_lxd">
+          <el-badge :value="obj7.unread_num" class="item">
+            <span><i class="el-icon-bell"></i></span>
+          </el-badge>
+          @我的工作联系单
+          <span v-show="lxd">{{obj7.description}}</span>
+        </li>
       </ul>
     </div>
 
@@ -61,6 +68,8 @@
     <per v-if="per_show"></per>
 
     <list ref="list" v-if="list_show_once"></list>
+
+    <lxd v-if="lxd_show" @return_list="_return"></lxd>
   </div>
 </template>
 
@@ -74,6 +83,7 @@
   import like from '@/base/work_record/liked'
   import per from '@/base/work_record/person_qkd'
   import list from '@/base/work_record/replyList'
+  import lxd from '@/base/work_record/look_lxd'
   export default {
     data(){
       return{
@@ -114,13 +124,20 @@
           unread_num:'',
           description:''
         },
+        obj7:{
+          name:'',
+          unread_num:'',
+          description:''
+        },
         rec:true,
         sce:true,
         scd:true,
         scf:true,
         approval:true,
         qkd:true,
-        list_show_once:false
+        lxd:true,
+        list_show_once:false,
+        lxd_show:false
       }
     },
     methods:{
@@ -170,6 +187,10 @@
       show_qkd(){
         this.mainShow = false
         this.per_show = true
+      },
+      show_lxd(){
+        this.mainShow = false
+        this.lxd_show = true
       },
       _get_notification_list(){
         let param = new URLSearchParams()
@@ -237,8 +258,22 @@
               this.obj6.unread_num = this.list.salary_remind.unread_num
               this.obj6.description = this.list.salary_remind.description
             }
+            if(this.list.work_contact_message == null){
+              this.lxd = false
+              this.list.salary_remind = this.obj6
+              this.obj7.unread_num = '0'
+            }else{
+              this.obj7.name = this.list.work_contact_message.name
+              this.obj7.unread_num = this.list.work_contact_message.unread_num
+              this.obj7.description = this.list.work_contact_message.description
+            }
           })
       },
+      _return(){
+        this.mainShow = true
+        this.lxd_show = false
+        this._get_notification_list()
+      }
 
     },
     computed:{
@@ -266,7 +301,8 @@
       remy,
       like,
       per,
-      list
+      list,
+      lxd
     },
     watch:{
 

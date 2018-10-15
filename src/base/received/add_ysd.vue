@@ -1,19 +1,23 @@
 <template>
   <div>
-    <div class="mained" v-show="mian_show">
-      <div class="top">
-        <el-button type="primary" size="small" @click="_return">返回</el-button>
-        <p>{{sec_title}}</p>
-        <b @click="show_sign">去复制</b>
+    <div v-if="wrapper">
+      <div class="mained" v-show="mian_show">
+        <div class="top">
+          <el-button type="primary" size="small" @click="_return">返回</el-button>
+          <p>{{sec_title}}</p>
+          <b @click="show_sign">去复制</b>
+        </div>
+        <addYsd :inspection_type_id="linked" v-if="ysd_if" :insdent="inset" :approval_id="approval_id7"></addYsd>
       </div>
-      <addYsd :inspection_type_id="linked" v-if="ysd_if" :insdent="inset" :approval_id="approval_id7"></addYsd>
+      <ysd v-if="ysd_show" :form_Lista="form_Lista"  :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
+      <chooseTemplate style="background: #FFF" v-if="chooseTemShow"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
     </div>
-    <ysd v-if="ysd_show" :form_Lista="form_Lista"  :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList"></ysd>
-    <chooseTemplate style="background: #FFF" v-if="chooseTemShow"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
+    <cho  v-else :title="tips"></cho>
   </div>
 </template>
 
 <script>
+  import cho from '@/base/add_approval/cho'
   import { mapGetters, mapMutations } from 'vuex'
   import addYsd from '@/base/add_approval/add_ysd'
   import ysd from '@/base/exam_form/ysd'
@@ -23,6 +27,11 @@
   export default {
     data(){
       return{
+        ys_list:[],
+        js_list:[],
+        gz_list:[],
+        tips:'',
+        wrapper:true,
         mian_show:true,
         approval_type:'12',
         chooseTemShow:false,
@@ -46,6 +55,9 @@
         setCompanyList: 'SET_COMPANYLIST'
       }),
       _return(){
+        this.ys_list = []
+        this.js_list = []
+        this.gz_list = []
         this.$parent.store = true
         this.$parent.add_ysd_show_cr = false
       },
@@ -338,7 +350,8 @@
     components:{
       addYsd,
       chooseTemplate,
-      ysd
+      ysd,
+      cho
     }
   }
 </script>

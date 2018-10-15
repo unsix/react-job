@@ -60,6 +60,7 @@
         <el-button size="small" type="info" plain>上传文件</el-button>
         <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
       </el-upload>
+      <more ref="more"></more>
       <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
         <p>审批流程</p>
         <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -79,6 +80,7 @@
 	import loading from '@/base/loading/loading'
 	import { mapGetters, mapMutations } from 'vuex'
 	import { create_gongzhang_list } from '@/common/js/approval/gongzhang.js'
+  import more from '@/base/add_approval/more'
 	export default {
 		data() {
 			return {
@@ -164,7 +166,8 @@
 			])
 		},
 		components: {
-			loading
+			loading,
+      more
 		},
 		methods: {
 			handleRemove(file, fileList) {
@@ -244,7 +247,7 @@
             if(!this.form_Lista.project_manager){
               this.sqgz_ruleForm.project_manager = {}
             }else{
-              this.form_Lista.project_manager = this.form_Lista.project_manager
+              this.form_Lista.project_manager = JSON.parse(this.form_Lista.project_manager)
             }
 						this.sqgz_ruleForm.add.forEach((item, index) => {
 							if(item.seal_type === '公章') {
@@ -306,6 +309,64 @@
                     obj.hash = file_data.attachments
                     this.fileList_a.push(obj)
                   })
+              }else if(item.type === 5){
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        switch (item.type) {
+                          case '12':
+                            item.type ='验收单'
+                            break;
+                          case '14':
+                            item.type ='结算单'
+                            break;
+                        }
+                        item.approval_state = get_state(item.approval_state)
+                        this.$refs.more.ys_list.push(item)
+                      })
+                    }
+                  })
+                function get_state(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '3'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }else if(item.type === 6){
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        item.pryroll_status = get_states(item.pryroll_status)
+                        this.$refs.more.gz_list.push(item)
+                      })
+                    }
+                  })
+                function get_states(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '-1'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }else if(state === '99'){
+                    return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }
+                }
               }
             })
 					})
@@ -406,13 +467,17 @@
 						this.sqgz_ruleForm.department_id = item.department_id
 					}
 				})
-				this.$refs[formName].validate((valid) => {
-					if(valid) {
-						this.sqgz_submit()
-					} else {
-						return false;
-					}
-				});
+        this.$refs.more.submit()
+				setTimeout(()=>{
+          this.$refs[formName].validate((valid) => {
+            if(valid) {
+              this.sqgz_submit()
+            } else {
+              this.$refs.more.file = []
+              return false;
+            }
+          });
+        })
 			},
 			sqgz_submit() {
 				this.picArr = []
@@ -434,6 +499,7 @@
 				this.file_time = 0
 				this.pic_time = 0
 				this.loadingShow = true
+        var more = this.$refs.more
 				setTimeout(() => {
 					if(this.picArr.length === 0 && this.fileArr.length === 0) {
 						let param = new URLSearchParams();
@@ -445,6 +511,9 @@
 						param.append("departmental", this.sqgz_ruleForm.department_id);
 						param.append("user_name", this.sqgz_ruleForm.user_name);
 						param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
+            if(more.file.length > 0){
+              param.append("many_enclosure", JSON.stringify([...more.file]));
+            }
             let str = this.$test("/index.php/Mobile/approval/add_request_seal")
 						this.$http.post(str, param)
 							.then((res) => {
@@ -613,7 +682,8 @@
 					param.append("departmental", this.sqgz_ruleForm.department_id);
 					param.append("user_name", this.sqgz_ruleForm.user_name);
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
-					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
           let str = this.$test("/index.php/Mobile/approval/add_request_seal")
 					this.$http.post(str, param)
 						.then((res) => {
@@ -647,7 +717,8 @@
 					param.append("departmental", this.sqgz_ruleForm.department_id);
 					param.append("user_name", this.sqgz_ruleForm.user_name);
 					param.append("info", JSON.stringify(this.sqgz_ruleForm.add));
-					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr]));
+          var more = this.$refs.more
+					param.append("many_enclosure", JSON.stringify([...this.file_hash_arr, ...this.afile_hash_arr,...more.file]));
           let str = this.$test("/index.php/Mobile/approval/add_request_seal")
 					this.$http.post(str, param)
 						.then((res) => {
