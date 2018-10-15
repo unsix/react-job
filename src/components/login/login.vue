@@ -486,9 +486,11 @@
 			    .then((res)=>{
 			    	let is_manage = parseInt(res.data.data.is_manage)
 			    	let is_finance = parseInt(res.data.data.is_finance)
+            let power = parseInt(res.data.data.power_to_contract)
 			    	this.setUserState({
 						'manage':is_manage,
 						'finance':is_finance,
+            'power':power
 					})
         })
 			},

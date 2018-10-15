@@ -675,6 +675,11 @@
         'token'
       ])
     },
+    mounted(){
+      if(this.$route.path === '/work/exam') {
+        this.$emit('changeWorkIndex', '4-7')
+      }
+    },
     watch:{
       pageIndex(){
         if(this.notes){

@@ -286,52 +286,14 @@
           this.$refs.detail._getInfo(pr,this.user.uid)
           this.$refs.detail.star = false
         }else{
-          this.$refs.detail.star = true
-          let nparam = new URLSearchParams()
-          nparam.append('target_uid',pr)
-          let httpUrl = this.$test('/index.php/Mobile/alisun/view_power')
-          this.$http.post(httpUrl,nparam)
-            .then((res)=>{
-              var current = this
-              var judge = res.data.code
-              this.$testLogin(judge,current)
-              if(res.data.data.status == 1){
-                this.mains = false
-                this.detail_show = true
-                this.$refs.detail._getInfo(pr,this.user.uid)
-              }else{
-                this.$confirm('是否从余额付费一元查看用户详情','提示',{
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning'
-                }).then(()=>{
-                  let param = new URLSearchParams()
-                  param.append('target_uid',pr)
-                  let httpUrl = this.$test('/index.php/Mobile/alisun/view_payment')
-                  this.$http.post(httpUrl,param)
-                    .then((res)=>{
-                      var current = this
-                      var judge = res.data.code
-                      this.$testLogin(judge,current)
-                      if(res.data.code == 0){
-                        this.mains = false
-                        this.detail_show = true
-                        this.$refs.detail._getInfo(pr,this.user.uid)
-                        if(pr == this.user.uid){
-                          this.$refs.detail.star = false
-                        }else{
-                          this.$refs.detail.star = true
-                        }
-                      }else{
-                        this.$message.warning(res.data.message)
-                        this.$refs.detail._return()
-                      }
-                    })
-                }).catch(()=>{
-                  this.$message.warning('已取消支付')
-                })
-              }
-            })
+          this.mains = false
+          this.detail_show = true
+          this.$refs.detail._getInfo(pr,this.user.uid)
+          if(pr == this.user.uid){
+            this.$refs.detail.star = false
+          }else{
+            this.$refs.detail.star = true
+          }
         }
       },
       search(pr){

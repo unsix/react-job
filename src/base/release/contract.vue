@@ -131,6 +131,7 @@
         this.todo = res
         this.psb_show = true
         this.contr_show = false
+        this.getlist()
       },
       handle(tab){
         let index = JSON.parse(tab.index)
@@ -559,7 +560,7 @@
         })
       },
       return_Add(){
-        this.detail_show = true
+        this.contr_show = true
         this.psb_show = false
         this.user_info = []
         this.approval_id1 = ''

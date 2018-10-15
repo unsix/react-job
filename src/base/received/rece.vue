@@ -5,8 +5,8 @@
       <el-button v-show="inserted == 6" type="primary" size="small" @click="_returnsd">返回</el-button>
       <p>我的合同</p>
       <el-tabs v-model="activeName" @tab-click="handClick">
-        <el-tab-pane label="进行中" name="1"></el-tab-pane>
-        <el-tab-pane label="已结束" name="2"></el-tab-pane>
+        <el-tab-pane label="未开始" name="1"></el-tab-pane>
+        <el-tab-pane label="已开始" name="2"></el-tab-pane>
       </el-tabs>
     </div>
     <div class="list">
@@ -17,7 +17,7 @@
             <p>{{item.contract_name}}</p>
             <p v-if="item.type == '1'">乙方姓名：{{item.worker_name}}</p>
             <p v-if="item.type == '2'">甲方公司：{{item.company_name}}</p>
-            <p v-if="item.type == 2"><span  v-if="item.status == -1">失效，甲方评审未通过</span><span  v-if="item.status == 2">已签字，等待甲方评审</span></p>
+            <p v-if="item.type == 2"><span  v-if="item.status == -1">失效，甲方评审未通过</span><span  v-if="item.status == 1">未签字</span><span  v-if="item.status == 2">已签字，等待甲方评审</span></p>
           </div>
           <div class="btn" v-show="item.type==1">
             <div style="height: 20px">
@@ -54,7 +54,7 @@
     <div class="top">
       <el-button type="primary" size="small" @click="_return">返回</el-button>
       <p>{{con_title}}</p>
-      <b v-show="!sign_type.signatory_b" @click="show_sign">签字确认</b>
+      <b v-show="sign_show" @click="show_sign">签字确认</b>
     </div>
     <iframe id="mom" class="win" ref="indx" :src="linked" scrolling="yes" height="100%" seamless frameborder="0"></iframe>
   </div>
@@ -247,7 +247,7 @@ export default {
       chooseTemShow:false,
       if_qkd:false,
       approval_type:'',
-      activeName:'2',
+      activeName:'1',
       file_arr:[],
       pageIndex:'1',
       form_Lista:{},
@@ -287,7 +287,8 @@ export default {
       lxd_show:false,
       jsd_show:false,
       jsd_data:{},
-      title:''
+      title:'',
+      sign_show:true
     }
   },
   methods:{
@@ -593,6 +594,9 @@ export default {
       ++this.pageIndex
     },
     getMoreInfo(pr){
+      if(pr.status != '1'){
+        this.sign_show = false
+      }
       this.sign_type = pr
       this.store = false
       let httpUrl = this.$test('/index.php/Mobel/skey/look_draft?id=')

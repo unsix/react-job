@@ -293,7 +293,7 @@
 		},
 		mounted(){
 			if(this.$route.path === '/work/addApproval') {
-				this.$emit('changeWorkIndex','4-7-3')
+				this.$emit('changeWorkIndex','4-8-3')
 			}
 		},
 		created(){
