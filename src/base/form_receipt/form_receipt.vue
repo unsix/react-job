@@ -226,12 +226,14 @@
               this.form_Lista = create_cengpijian_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
             } else if(item.type === '合同评审表') {
               this.psb_if = true
               this.form_Lista = create_hetongpingshen_list(res.data.data)
               if(this.form_Lista.many_enclosure){
                 this.get_img(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
+                this.get_repal(this.form_Lista.many_enclosure)
               }else{
                 this.get_img(this.form_Lista.enclosure_id)
                 this.get_file(this.form_Lista.enclosure_id)
@@ -241,27 +243,32 @@
               this.form_Lista = create_qingkuandan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
             } else if(item.type === '申请公章') {
               this.gz_if = true
               this.form_Lista = create_gongzhang_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
             } else if(item.type === '请购单') {
               this.qgd_if = true
               this.form_Lista = create_qinggoudan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
             } else if(item.type === '报销单'){
               this.bxd_if = true
               this.form_Lista = create_baoxiaodan_list(res.data.data)
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
             } else if(item.type === '个人请款单'){
               this.gzd_if = true
               this.form_Lista = res.data.data
               this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
             }
 					})
 				let nparam = new URLSearchParams();
@@ -391,7 +398,79 @@
 					})
 
 			},
-
+      get_repal(many_enclosure){
+        if(!many_enclosure){
+          return
+        }else{
+          if(many_enclosure.length > 0){
+            many_enclosure.forEach((item)=>{
+              if(item.type == '5'){
+                let arr = []
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        switch (item.type) {
+                          case '12':
+                            item.type ='验收单'
+                            break;
+                          case '14':
+                            item.type ='结算单'
+                            break;
+                        }
+                        item.approval_state = get_state(item.approval_state)
+                        arr.push(item)
+                        this.$set(this.form_Lista, 'app_list', arr)
+                      })
+                    }
+                  })
+                function get_state(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '3'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }else if(item.type == '6'){
+                let arr = []
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        item.pryroll_status = get_states(item.pryroll_status)
+                        arr.push(item)
+                      })
+                      this.$set(this.form_Lista, 'apple_list', arr)
+                    }
+                  })
+                function get_states(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '-1'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }else if(state === '99'){
+                    return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }
+            })
+          }
+        }
+      },
 			...mapMutations({
 				setUser: 'SET_USER',
 				setNowCompanyId: 'SET_NOWCOMPANY_ID',
