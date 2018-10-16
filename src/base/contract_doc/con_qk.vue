@@ -249,6 +249,7 @@
                 this.qkd_show_if = true
                 this.form_Lista = create_qingkuandan_list(res.data.data)
                 this.get_img(this.form_Lista.many_enclosure)
+                this.get_repal(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
                 break;
               case '结算单':
@@ -257,6 +258,7 @@
                 this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
                 this.get_img(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
+                this.get_repal(this.form_Lista.many_enclosure)
                 break;
               case '验收单':
                 this.ysd_show_if = true
@@ -264,9 +266,83 @@
                 this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
                 this.get_img(this.form_Lista.many_enclosure)
                 this.get_file(this.form_Lista.many_enclosure)
+                this.get_repal(this.form_Lista.many_enclosure)
                 break;
             }
           })
+      },
+      get_repal(many_enclosure){
+        if(!many_enclosure){
+          return
+        }else{
+          if(many_enclosure.length > 0){
+            many_enclosure.forEach((item)=>{
+              if(item.type == '5'){
+                let arr = []
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        switch (item.type) {
+                          case '12':
+                            item.type ='验收单'
+                            break;
+                          case '14':
+                            item.type ='结算单'
+                            break;
+                        }
+                        item.approval_state = get_state(item.approval_state)
+                        arr.push(item)
+                        this.$set(this.form_Lista, 'app_list', arr)
+                      })
+                    }
+                  })
+                function get_state(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '3'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }else if(item.type == '6'){
+                let arr = []
+                let param = new URLSearchParams();
+                param.append("id", item.contract_id);
+                let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+                this.$http.post(str,param)
+                  .then((res)=>{
+                    if(res.data.code == 0){
+                      res.data.data.forEach((item)=>{
+                        item.pryroll_status = get_states(item.pryroll_status)
+                        arr.push(item)
+                      })
+                      this.$set(this.form_Lista, 'apple_list', arr)
+                    }
+                  })
+                function get_states(state){
+                  if(state === '0'){
+                    return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                  }else if(state === '1'){
+                    return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }else if(state === '2'){
+                    return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                  }else if(state === '-1'){
+                    return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                  }else if(state === '99'){
+                    return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                  }
+                }
+              }
+            })
+          }
+        }
       },
       useInfo(item){
         this.approval_id = ''

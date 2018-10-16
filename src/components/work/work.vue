@@ -681,7 +681,6 @@
           }
           this.$http.post('https://up.qbox.me/', formData, config).then((res) => {
             this.pic_hash.push(res.data.hash)
-            console.log(JSON.stringify(this.pic_hash))
             let param = new URLSearchParams()
             param.append('uid',this.user.uid)
             param.append('picture',JSON.stringify(this.pic_hash))
