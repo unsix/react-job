@@ -103,7 +103,7 @@ app.use(function(req,res,next){
 		</body>
 	</html>
 	`
-	res.send(pageHtml)
+	// res.send(pageHtml)
 	// console.log('path resolve',path.resolve('build/index.html'))
 	// return res.sendFile(path.resolve('build/index.html'))
 })
