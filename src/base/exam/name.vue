@@ -68,6 +68,9 @@
           let str = this.$test('index.php/Mobile/payroll/get_recent_contact_list')
           this.$http.post(str,param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               if(res.data.code ==0){
                 res.data.data.forEach((item)=>{
                   item.avatar = getAvatar(item.avatar)
@@ -88,6 +91,9 @@
             let str = this.$test('index.php/Mobile/worker/get_worker_info')
             this.$http.post(str,param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                this.$testLogin(judge,current)
                 if(res.data.code == 0){
                   res.data.data.forEach((item)=>{
                     item.avatar = getAvatar(item.avatar)
@@ -112,6 +118,9 @@
         let str = this.$test('/index.php/Mobile/Find/nearby_worker_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.listed = res.data.data.nworker
               this.listed.forEach((item)=>{

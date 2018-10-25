@@ -212,6 +212,9 @@
             let str = this.$test("/index.php/Mobile/User/return_company_new")
             this.$http.post(str,nparam)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                this.$testLogin(judge,current)
                 if(res.data.code == 0){
                   this.personnel_id = res.data.data.personnel_id
                 }
@@ -251,6 +254,9 @@
                 let str = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
                 this.$http.post(str,nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     this.enclosure_id = res.data.data.enclosure_id
                     this.pic_time = Date.parse(new Date())
                   })

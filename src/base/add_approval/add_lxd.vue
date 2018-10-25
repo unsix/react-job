@@ -161,6 +161,9 @@
         let str = this.$test('/index.php/Mobile/Find/nearby_worker_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.nworker.forEach((item)=>{
                 item.avatar = getAvatar(item.avatar)
@@ -233,6 +236,9 @@
         let str = this.$test('/index.php/Mobile/contract/add_work_connection')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             this.loadingShow = false
             if(res.data.code == 0){
               this.add_ok()

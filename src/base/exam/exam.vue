@@ -647,7 +647,7 @@
               <simpleText v-show="true" v-for="(item ,index) in choices" :key="index" :title="item" ref="te"></simpleText>
               <simpleText v-show="true" v-for="(item ,index) in option" :key="index" :ids="item.id" :title="item.name" ref="se"></simpleText>
               <simpleText v-show="true" v-for="(item ,index) in requir" :key="index" :ids="item.id" :title="item.name" ref="de"></simpleText>
-              <label>
+              <label style="overflow: hidden;display: flex;justify-content: center;margin-top: 10px">
                 <el-input style="width: 435px" type="textarea" :rows="2" placeholder="请输入回复内容" v-model="handle_txt"></el-input>
               </label>
               <p class="miao" v-show="describe">附件描述:{{describe}}</p>
@@ -2763,6 +2763,9 @@
         this.choices = []
         this.option = []
         this.require = []
+        if(typeof this.form_fill != 'object'){
+          this.form_fill = JSON.parse(this.form_fill)
+        }
         this.form_fill.optional = []
         this.form_fill.required = []
         this.untreateds = []
