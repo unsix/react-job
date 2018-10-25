@@ -443,6 +443,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         switch (item.type) {
@@ -475,6 +478,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         item.pryroll_status = get_states(item.pryroll_status)
@@ -805,6 +811,9 @@
             let str = this.$test('/index.php/Mobile/find/get_contract_public_info')
             this.$http.post(str,param)
               .then((res)=>{
+                var current = this
+                var judge = res.data.code
+                this.$testLogin(judge,current)
                 if(res.data.code == 0){
                   let obj = res.data.data
                   this.psb_ruleForm.contract_name = obj.project_name

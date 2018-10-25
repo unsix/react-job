@@ -264,6 +264,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         switch (item.type) {
@@ -296,6 +299,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         item.pryroll_status = get_states(item.pryroll_status)

@@ -129,6 +129,9 @@
           let str = this.$test('/index.php/Mobile/approval/add_enclosure_approval')
           this.$http.post(str,param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 this.ys_id.contract_id = res.data.data.id
                 this.ys_id.name = `共${arr.length}个审批`
@@ -147,6 +150,9 @@
           let rsc = this.$test('/index.php/Mobile/approval/add_enclosure_payroll')
           this.$http.post(rsc,param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 this.gz_id.contract_id = res.data.data.id
                 this.gz_id.name = `共${arr.length}个工资条`

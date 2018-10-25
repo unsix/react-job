@@ -189,6 +189,9 @@
           let str = this.$test('/index.php/Mobile/payroll/confirm_payroll')
           this.$http.post(str,param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               this.loadingShow = false
               if(res.data.code == 0){
                 this.$message.success('处理成功')
@@ -217,6 +220,9 @@
           let str = this.$test('/index.php/Mobile/payroll/confirm_payroll')
           this.$http.post(str,param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               this.loadingShow = false
               if(res.data.code == 0){
                 this.$message.success('处理成功')
@@ -238,15 +244,9 @@
       this.change_data()
     },
     props:{
-      content:{
-
-      },
-      handle:{
-
-      },
-      btnShow:{
-
-      }
+      content:{},
+      handle:{},
+      btnShow:{}
     },
     components:{
       browsePic,

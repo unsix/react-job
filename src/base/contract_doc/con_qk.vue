@@ -104,6 +104,9 @@
         let src = this.$test('/index.php/Mobile/user/get_approval_user_info')
         this.$http.post(src,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 this.$set(item,'require',Array)
@@ -241,6 +244,9 @@
         let src = this.$test("/index.php/Mobile/approval/approval_process_show")
         this.$http.post(src, nparam)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             switch (this.qkd_status) {
               case '请款单':
                 if(res.data.data.change_type){
@@ -284,6 +290,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         switch (item.type) {
@@ -318,6 +327,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         item.pryroll_status = get_states(item.pryroll_status)

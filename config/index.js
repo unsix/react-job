@@ -33,7 +33,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/index.php': {
-        target: 'http://192.168.1.250:80/fw/index.php',
+        target: 'http://192.168.1.251:80/fw/index.php',
         changeOrigin: true,
         pathRewrite: {
           '^/index.php': ''

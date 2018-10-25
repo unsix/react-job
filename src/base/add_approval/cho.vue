@@ -136,6 +136,9 @@
         let str = this.$test("/index.php/Mobile/approval/select_approval")
         this.$http.post(str, param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 item.approval_state = get_state(item.approval_state)
@@ -165,6 +168,9 @@
         let str = this.$test("/index.php/Mobile/payroll/get_payroll_choice_list")
         this.$http.post(str, param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 item.pryroll_status = get_state(item.pryroll_status)
@@ -223,6 +229,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         switch (item.type) {
@@ -257,6 +266,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         item.pryroll_status = get_states(item.pryroll_status)
@@ -293,6 +305,9 @@
           let str = this.$test("/index.php/Mobile/approval/approval_process_show")
           this.$http.post(str, param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               if(this.title == '验收'){
                 this.ysd_if = true
                 this.form_Lista = create_yanshoudan_list(res.data.data)
@@ -554,6 +569,9 @@
           let str = this.$test("/index.php/Mobile/approval/select_approval")
           this.$http.post(str, param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               if(res.data.code == 0){
                 res.data.data.forEach((item)=>{
                   item.approval_state = get_state(item.approval_state)

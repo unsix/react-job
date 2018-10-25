@@ -133,6 +133,9 @@
         let str = this.$test('/index.php/Mobile/find/find_contract_company_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             res.data.data.forEach((item)=>{
               item.avatar = getAvatar(item.avatar)
               let str = `/index.php/Mobile/skey/look_draft?id=${item.contract_temp_id}&operation=2&view=4`
@@ -193,6 +196,9 @@
         let str = this.$test('/index.php/Mobile/find/contract_request_money_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 if(item.type == 8){
@@ -228,6 +234,9 @@
         let str = this.$test('/index.php/Mobile/find/find_settle_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 if(item.type == 14){
@@ -263,6 +272,9 @@
         let str = this.$test('/index.php/Mobile/find/find_inspection_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               res.data.data.forEach((item)=>{
                 if(item.type == 12){
@@ -298,6 +310,9 @@
         let str = this.$test('/index.php/Mobile/find/find_work_connect_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             this.qk_list = res.data.data
             if(res.data.data.length < 10 ){
               this.nextPageShow = false
@@ -349,6 +364,9 @@
           let str = this.$test('/index.php/Mobile/contract/look_work_connection')
           this.$http.post(str,param)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               this.form_Lista = res.data.data
               if(this.form_Lista.main_send_info){
                 this.form_Lista.main_send_info.forEach((item)=>{
@@ -438,6 +456,9 @@
           let src = this.$test("/index.php/Mobile/approval/approval_process_show")
           this.$http.post(src, nparam)
             .then((res)=>{
+              var current = this
+              var judge = res.data.code
+              this.$testLogin(judge,current)
               switch (this.record) {
                 case '请款记录':
                   if(res.data.data.change_type){
@@ -482,6 +503,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         switch (item.type) {
@@ -516,6 +540,9 @@
                 let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
                 this.$http.post(str,param)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         item.pryroll_status = get_states(item.pryroll_status)
@@ -774,9 +801,6 @@
           }
         }
       }
-    },
-    mounted(){
-
     },
     created(){
       this.getdate()

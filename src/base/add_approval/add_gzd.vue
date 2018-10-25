@@ -383,6 +383,9 @@
                 let str = this.$test('/index.php/Mobile/approval/upload_enclosure_new')
                 this.$http.post(str,nparam)
                   .then((res)=>{
+                    var current = this
+                    var judge = res.data.code
+                    this.$testLogin(judge,current)
                     this.afile_hash_arr.push({
                       "type": 3,
                       "contract_id": res.data.data.enclosure_id,
@@ -504,6 +507,9 @@
         let str = this.$test('/index.php/Mobile/payroll/get_payroll_choice_list')
         this.$http.post(str,param)
           .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
             if(res.data.code == 0){
               this.untreated = res.data.data
               this.untreated.forEach((item)=>{
@@ -719,6 +725,9 @@
                   let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
                   this.$http.post(str,param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      this.$testLogin(judge,current)
                       if(res.data.code == 0){
                         res.data.data.forEach((item)=>{
                           switch (item.type) {
@@ -751,6 +760,9 @@
                   let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
                   this.$http.post(str,param)
                     .then((res)=>{
+                      var current = this
+                      var judge = res.data.code
+                      this.$testLogin(judge,current)
                       if(res.data.code == 0){
                         res.data.data.forEach((item)=>{
                           item.pryroll_status = get_states(item.pryroll_status)

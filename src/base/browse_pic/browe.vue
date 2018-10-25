@@ -41,7 +41,7 @@
       img_arr(){
         this.img_arr.forEach((res)=>{
           let current = res.indexOf('?')
-          this.imgArr.push(res.slice(0,current) + '?imageslim' )
+          this.imgArr.push(res.slice(0,current) + '?imageslim')
         })
       }
     },

@@ -345,6 +345,118 @@
           this.form_Lista = create_yanshoudan_list(res.data.data)
           let str = this.$test('/index.php/Mobile/skey/look_inspection_company?type_id')
           this.linked = `${str}=${this.form_Lista.type_id}&form_id=${this.form_Lista.form_id}`
+          this.ysd_ruleForm.many_enclosure = this.form_Lista.many_enclosure
+          this.form_Lista.many_enclosure.forEach((item)=>{
+            if (item.type === 3) {
+              let img_name = item.name
+              let param = new URLSearchParams();
+              param.append("enclosure_id", item.contract_id);
+              let str = this.$test("/index.php/Mobile/approval/look_enclosure")
+              this.$http.post(str, param)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  res.data.data.picture.forEach((item) => {
+                    //item 就是hash
+                    let obj = {}
+                    var str = process.env.NODE_ENV
+                    var picLeader = ''
+                    str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                    let img_add = picLeader + item
+                    console.log(img_add)
+                    obj.hash = item
+                    obj.name = img_name
+                    obj.url = img_add
+                    this.fileList.push(obj)
+                  })
+                })
+            }else if(item.type === 4){
+              let param = new URLSearchParams();
+              param.append("attachments_id", item.contract_id);
+              let str = this.$test("/index.php/Mobile/approval/look_attachments")
+              this.$http.post(str, param)
+                .then((res) => {
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  let obj = {}
+                  let file_data = res.data.data
+                  var str = process.env.NODE_ENV
+                  var picLeader = ''
+                  str !== 'production' ? picLeader = 'http://bbsf-test-file.hzxb.net/' : picLeader = 'http://bbsf-file.hzxb.net/'
+                  let file_add = picLeader + file_data.attachments + '?attname=' + file_data.file_name +'.'+file_data.attribute
+                  obj.name = file_data.file_name+'.'+file_data.attribute
+                  obj.address = file_add
+                  obj.hash = file_data.attachments
+                  this.fileList_a.push(obj)
+                })
+            }else if(item.type === 5){
+              let param = new URLSearchParams();
+              param.append("id", item.contract_id);
+              let str = this.$test('/index.php/Mobile/approval/look_enclosure_approval')
+              this.$http.post(str,param)
+                .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  if(res.data.code == 0){
+                    res.data.data.forEach((item)=>{
+                      switch (item.type) {
+                        case '12':
+                          item.type ='验收单'
+                          break;
+                        case '14':
+                          item.type ='结算单'
+                          break;
+                      }
+                      item.approval_state = get_state(item.approval_state)
+                      this.$refs.more.ys_list.push(item)
+                    })
+                  }
+                })
+              function get_state(state){
+                if(state === '0'){
+                  return '<span style="color:#409EFF">审批中<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                }else if(state === '1'){
+                  return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                }else if(state === '2'){
+                  return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                }else if(state === '3'){
+                  return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                }
+              }
+            }else if(item.type === 6){
+              let param = new URLSearchParams();
+              param.append("id", item.contract_id);
+              let str = this.$test('/index.php/Mobile/approval/look_enclosure_payroll')
+              this.$http.post(str,param)
+                .then((res)=>{
+                  var current = this
+                  var judge = res.data.code
+                  this.$testLogin(judge,current)
+                  if(res.data.code == 0){
+                    res.data.data.forEach((item)=>{
+                      item.pryroll_status = get_states(item.pryroll_status)
+                      this.$refs.more.gz_list.push(item)
+                    })
+                  }
+                })
+              function get_states(state){
+                if(state === '0'){
+                  return '<span style="color:#409EFF">待处理<i class="el-icon-loading" style="margin-left:4px"></i></span>'
+                }else if(state === '1'){
+                  return '<span style="color:#67C23A">已通过<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                }else if(state === '2'){
+                  return '<span style="color:#EB9E05">未通过<i class="el-icon-warning" style="margin-left:4px"></i></span>'
+                }else if(state === '-1'){
+                  return '<span style="color:#FA5555">已撤销<i class="el-icon-error" style="margin-left:4px"></i></span>'
+                }else if(state === '99'){
+                  return '<span style="color:#67C23A">已确认<i class="el-icon-success" style="margin-left:4px"></i></span>'
+                }
+              }
+            }
+          })
         })
     },
     add_html(){
