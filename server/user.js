@@ -5,12 +5,30 @@ const Router = express.Router()
 const model = require('./model')
 const User = model.getModel('user')
 const Chat = model.getModel('chat')
+const path = require('path')
+const fs = require('fs')
+const multiparty = require('multiparty');  //解析器
 Chat.remove({},function(e,d){
 
 })
 
 const _filter = {'pwd':0,'__v':0}
 
+Router.post('/uploadimg',function(req,res){
+  // User.remove({},function(e,d){})
+  console.log("进入readImage");
+ 
+  // 解析一个文件上传
+  var form = new multiparty.Form();
+
+  form.parse(req, function (err, fields, files) {
+      //同步重命名文件名
+      // fs.rename(files.file[0].path, path.resolve('写入图片的路径'+'图片或文件的名字，可以在files中取出来'))
+      fs.rename(files.file[0].path, path.resolve('../uploadimg',`${files.file[0].originalFilename}`))
+      res.write('received upload:\n\n')
+      res.end()
+})
+})
 Router.get('/list',function(req,res){
   // User.remove({},function(e,d){})
   const {type} = req.query
