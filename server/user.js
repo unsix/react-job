@@ -16,7 +16,7 @@ const _filter = {'pwd':0,'__v':0}
 
 Router.post('/uploadimg',function(req,res){
   // User.remove({},function(e,d){})
-  console.log("进入readImage");
+  console.log("进入uploadimg");
  
   // 解析一个文件上传
   var form = new multiparty.Form();
