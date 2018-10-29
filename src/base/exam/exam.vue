@@ -2143,41 +2143,6 @@
       },
 			handle(){
         this.menuShow = !this.menuShow
-        if(this.menuShow){
-          let param = new URLSearchParams()
-          param.append('approval_id',this.reply)
-          let str = this.$test('/index.php/Mobile/approval/find_sequence_attachment_new')
-          this.$http.post(str,param)
-            .then((res)=>{
-              if(res.data.code == 0){
-                var form = res.data.data
-                if(form.auto_fill_fields){
-                  if(form.auto_fill_fields.optional){
-                    if(this.$refs.se){
-                      form.auto_fill_fields.optional.forEach((item)=>{
-                        this.$refs.se.forEach((pr)=>{
-                          if(item.id == pr.ids){
-                            pr.result = item.value
-                          }
-                        })
-                      })
-                    }
-                  }
-                  if(form.auto_fill_fields.required){
-                    if(this.$refs.de){
-                      form.auto_fill_fields.required.forEach((item)=>{
-                        this.$refs.de.forEach((pr)=>{
-                          if(item.id == pr.ids){
-                            pr.result = item.value
-                          }
-                        })
-                      })
-                    }
-                  }
-                }
-              }
-            })
-        }
         let param = new URLSearchParams();
 				param.append("uid", this.user.uid);
         let str = this.$test("/index.php/Mobile/path/get_token")

@@ -254,12 +254,12 @@
       },
 			//			选择合同评审表人员
 			chooseContractApprovalPerson(item) {
-				for(let i = 0; i < this.jurisdictionFormList.length; i++) {
-					if(item.name === this.jurisdictionFormList[i].name) {
-						this.$message.error(item.name + '已经在列表中！');
-						return
-					}
-				}
+				// for(let i = 0; i < this.jurisdictionFormList.length; i++) {
+				// 	if(item.name === this.jurisdictionFormList[i].name) {
+				// 		this.$message.error(item.name + '已经在列表中！');
+				// 		return
+				// 	}
+				// }
         this.activeNames = ['1']
 				this.jurisdictionFormList.push(item)
 			},
@@ -350,12 +350,8 @@
         let obj = {}
         obj.required = []
         obj.optional = []
-        this.form_fill.required.forEach((item)=>{
-          obj.required.push(item.id)
-        })
-        this.form_fill.optional.forEach((item)=>{
-          obj.optional.push(item.id)
-        })
+        this.form_fill.required.forEach((item)=>{obj.required.push(item.id)})
+        this.form_fill.optional.forEach((item)=>{obj.optional.push(item.id)})
         let param = new URLSearchParams()
         param.append('company_id',this.nowCompanyId)
         param.append('type',this.formType)

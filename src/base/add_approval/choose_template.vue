@@ -178,10 +178,15 @@
 						}
 					}
 					.content {
+            width: 82%;
 						cursor: default;
 						padding: 12px 10px;
 						display: inline-block;
 						>div {
+              width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
 							height: 25px;
 							line-height: 25px;
 						}
