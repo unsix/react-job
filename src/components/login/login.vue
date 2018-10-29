@@ -379,7 +379,6 @@
           let param = new URLSearchParams()
           param.append('type',this.ster_ruleForm.type)
           param.append('phone',this.ster_ruleForm.phone)
-          console.log(this.ster_ruleForm.phone)
           param.append('password',password)
           param.append('check_password',check)
           let httpUrl = this.$test('/index.php/Mobile/skey/register')
@@ -466,8 +465,8 @@
 						this._getUserCompanyList(res.data.data.uid)
 						this._getComDepart()
 						this.loadingShow=true
+            this.$router.push('/work');
 						setTimeout(()=>{
-							this.$router.push('/work');
 							this.loadingShow=false
 							this.account_num = ''
 				 			this.password_num = ''
