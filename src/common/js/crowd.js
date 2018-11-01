@@ -6,7 +6,7 @@ export default function getCro(jud,cur) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     cur.$router.push({ path: '/login' });
-    cur.$message.error('您的帐号在别处登录，请等3分钟后重新登陆');
+    cur.$message.error('您的账户在另一设备登录, 您被挤下线');
   } else if(jud == 252){
     localStorage.removeItem('nowCompanyId');
     localStorage.removeItem('nowCompanyName');
