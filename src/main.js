@@ -17,6 +17,8 @@ import 'vue-croppa/dist/vue-croppa.css'
 import croppa from 'vue-croppa'
 import getPost from '@/common/js/http'
 import getCro from '@/common/js/crowd'
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 Vue.prototype.$test = getPost
 Vue.prototype.$testLogin = getCro
 Vue.use(croppa)
@@ -27,6 +29,11 @@ Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(Calendar)
+Vue.use(Viewer,{
+  defaultOptions: {
+    zIndex:9999
+  }
+})
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 /* eslint-disable no-new */
 

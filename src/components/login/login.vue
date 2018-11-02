@@ -429,8 +429,11 @@
               this.ster_ruleForm.password = ''
               this.ster_ruleForm.check_password = ''
               this.ster_ruleForm.sender = ''
-              this.isC = false
-              this.isA = true
+              localStorage.user = JSON.stringify(this.user);
+              this._getUserCompanyList(res.data.data.uid)
+              this._getComDepart()
+              this.loadingShow=true
+              this.$router.push('/work');
             })
         }else{
           this.$message({
