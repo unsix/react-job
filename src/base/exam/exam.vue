@@ -150,11 +150,12 @@
 						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
           <viewer :images="form_Lista.img_list" >
-            <img v-for="src in form_Lista.img_list" @click="ctrl_pic_show(form_Lista.img_list,index)"   :src="src" :key="src"   >
+            <img v-for="src in form_Lista.img_list"   :src="src" :key="src"   >
           </viewer>
           <!-- <div v-viewer="option" >
-            <template v-for="{source,thumbnail} in form_Lista.img_list">
-                <img  :data-source="source" :src="thumbnail" :key="thumbnail" >
+            <template v-for="{src,source} in form_Lista"> -->
+            <!-- <template v-for="src in form_Lista.img_list"> -->
+                <!-- <img :src="src" :data-source="source"   :key="src" >
             </template>
           </div> -->
 				</div>
@@ -1245,6 +1246,9 @@
 	export default {
 		data() {
 			return {
+        option:{
+          url:'data-source'
+        },
         form_Elsea:{},
         file_arrs:[],
         form_Elseb:{},
@@ -2149,15 +2153,16 @@
         item.forEach((res)=>{
           let current = res.indexOf('?')
           this.arr_list.push({
-            src:res.slice(0,current) + '?imageslim'} )
+            source:res.slice(0,current) + '?imageslim'} )
            console.log(this.form_Lista.img_list,'form_Lista.img_list')
            console.log(this.arr_list,'222')
           //  var source = this.arr_list.push(res.slice(0,current) + '?imageslim' )
           // this.form_Lista.img_list.push()
+          
         })
-        // this.pic_index = index
-        // this.pic_show = true
+        return this.option.url = this.arr_list.source
       },
+      
 			handle(){
         this.menuShow = !this.menuShow
         let param = new URLSearchParams();

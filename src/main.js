@@ -31,9 +31,12 @@ Vue.use(ElementUI)
 Vue.use(Calendar)
 Vue.use(Viewer,{
   defaultOptions: {
-    zIndex:9999
+    zIndex:9999,
   }
 })
+Viewer.setDefaults({
+  Options: { "inline": false, "button": false, "navbar": false, "title": false, "toolbar": false, "tooltip": false, "movable": false, "zoomable": false, "rotatable": true, "scalable": false, "transition": false, "fullscreen": false, "keyboard": false, "url": "data-source" }
+});
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 /* eslint-disable no-new */
 
