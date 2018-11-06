@@ -1,5 +1,5 @@
-<template>
-  <div class="input_type" :id="form_element_id" :version="str" >
+<template  >
+  <div class="input_type"  :id="form_element_id" :version="str" >
     <label>
       <p>{{tit}}</p>
       <input  :type="stype"
@@ -16,7 +16,10 @@
                 v-model="result"
                 :placeholder="hint"
                 :maxlength="length"
-                ></textarea>
+                v-on:input="autoTextAreaHeight"
+                >
+      </textarea>
+      <!-- <textarea   cols="40" rows="1" style="height:25px;" id="text"></textarea>   -->
     </label>
   </div>
 </template>
@@ -59,6 +62,11 @@
       look:function () {
 
       },
+      autoTextAreaHeight:function(e){
+            let o = e.target;
+            o.style.height = 'auto'
+            o.style.height = o.scrollTop + o.scrollHeight + "px";
+        }
     },
     created(){
       if(this.line == undefined || this.line > 2){

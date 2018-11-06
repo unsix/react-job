@@ -1,11 +1,11 @@
 <template>
-	<div class="pic">
+	<div class="pic" >
 		<div>
-			<div>
+			<div >
 				<i class="el-icon-arrow-left" @click="left"></i>
-			</div>
-				<li v-for="(item,index) in img_arr" v-show="index == pic_index">
-          <img :src="item"  alt="" />
+			</div >
+				<li v-for="(item,index) in img_arr" v-show="index == pic_index"  >
+          <img :src="item"  alt=""  ref="img"/>
         </li>
 			<div>
 				<i class="el-icon-arrow-right" @click="right"></i>
@@ -14,6 +14,10 @@
 		<div class="close">
 			<i class="el-icon-close" @click="close"></i>
 		</div>
+		<div class="refresh">
+			<i class="el-icon-findwork-Right-rotate"  @click="refresh(count++)"></i>
+		</div>
+		<div></div>
 	</div>
 </template>
 
@@ -21,7 +25,8 @@
 export default {
 	data(){
 		return{
-			imgArr:[]
+			imgArr:[],
+			count : 1
 		}
 	},
 	props: {
@@ -36,8 +41,14 @@ export default {
 	methods: {
 		close(){
 			this.$parent.pic_show = false
-      document.body.style.overflow = 'visible'
-      this.img_arr.splice(0,this.img_arr.length)
+			document.body.style.overflow = 'visible'
+			this.img_arr.splice(0,this.img_arr.length)
+		},
+		refresh(count){
+			var current = 0
+			current = (count*90)%360;
+			this.$refs.img[this.pic_index].style.transform = 'rotate('+current+'deg)';
+			console.log(this.$refs.img)
 		},
 		left() {
       if(this.pic_index === 0) {
@@ -53,7 +64,6 @@ export default {
 		},
 	}
 }</script>
-
 <style lang="scss" scoped>
   *{
     list-style: none;
@@ -104,6 +114,20 @@ export default {
 		display: block;
 		top: 100px;
 		right:100px;
+		i{
+			font-size: 50px;
+			color: #FFFFFF;
+			cursor: pointer;
+			&:hover{
+				color: #FA5555;
+			}
+		}
+	}
+	.refresh{
+		position: fixed;
+		display: block;
+		top:84%;
+		right:45%;
 		i{
 			font-size: 50px;
 			color: #FFFFFF;

@@ -337,7 +337,8 @@
         setToken: 'SET_TOKEN',
         setUserState: 'SET_USERSTATE',
         setCompanyList: 'SET_COMPANYLIST'
-      }),
+			}),
+			
 			logOut(){
 				this.workIndex = '1'
 				this.userOperationShow = false
@@ -706,7 +707,8 @@
             return false;
           }
         })
-      },
+			},
+			
       submit(){
         this.cros.generateBlob((blob)=>{
           let formData = new FormData();

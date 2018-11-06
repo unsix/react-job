@@ -1,6 +1,5 @@
 <template>
   <div class="log" ref="logs">
-
     <div v-show="logShow">
       <div class="tab">
         <el-tabs v-model="activeNames" @tab-click="handClick">
@@ -24,7 +23,7 @@
         </div>
         <span v-show="dates" class="zz">补发</span>
       </div>
-      <div class="shu">
+      <div class="shu"   >
         <components :is="item.component"
                     :tit="item.tit"
                     :key="idx"

@@ -138,7 +138,7 @@
           </div>
           <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
             <p>{{item.add_time}}</p>
-            <p>{{item.name}}{{item.phone}}</p>
+            <p>{{item.name}}{{item.phone}}</p>s
             <p>请款月份：{{item.month}}</p>
             <p>应付金额:{{item.pay_amount}}元</p>
             <p><span v-html="item.pryroll_status"></span></p>
@@ -146,7 +146,7 @@
 				</div>
 				<div>
 					<span>图片附件：</span>
-					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
+					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list" >
 						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
 				</div>
@@ -1088,8 +1088,7 @@
           <span>发起人：</span><span>{{form_Listb.found_name}}</span>
         </div>
         <div>
-          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
-						</span>
+          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
         </div>
         <div>
           <span>审批：</span>
@@ -1164,7 +1163,6 @@
 				</div>
 			</div>
 		</div>
-
     <div class="send" v-show="sendShow">
       <span class="close"><span class="huifu">回复{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
       <el-input type="textarea" v-model="content"></el-input>
@@ -1230,9 +1228,16 @@
 	import { mapGetters, mapMutations } from 'vuex'
   import moment from 'moment'
   import simpleText from '@/base/unit/input'
+
+  //  console.log(this.form_Lista.img_list,"11111")
+  // const imglist = []
+  // const base = 
 	export default {
 		data() {
 			return {
+        option:{
+          url:'data-source'
+        },
         form_Elsea:{},
         file_arrs:[],
         form_Elseb:{},
@@ -2136,11 +2141,17 @@
       ctrl_pic_show(item, index) {
         item.forEach((res)=>{
           let current = res.indexOf('?')
-          this.arr_list.push(res.slice(0,current) + '?imageslim' )
+           this.arr_list.push(res.slice(0,current) + '?imageslim' )
+           console.log(this.form_Lista.img_list,'form_Lista.img_list')
+           console.log(this.arr_list,'222')
+          //  var source = this.arr_list.push(res.slice(0,current) + '?imageslim' )
+          // this.form_Lista.img_list.push()
+          
         })
         this.pic_index = index
         this.pic_show = true
       },
+      
 			handle(){
         this.menuShow = !this.menuShow
         let param = new URLSearchParams();

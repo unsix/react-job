@@ -9,7 +9,7 @@
 				</div>
 				<div class="signIn">
 					<div class="username">
-						<input type="text" name="phone" placeholder="请输入账号"  v-model.trim="account_num"/>
+						<input type="text" name="sender" placeholder="请输入账号"  v-model.trim="account_num"/>
 					</div>
 					<div class="password">
 						<input type="password" placeholder="请输入密码" v-model.trim="password_num"  @keyup.enter="login"/>
@@ -31,8 +31,8 @@
           <el-button @click="_return" type="success">返回</el-button>
         </div>
         <div class="keyboard">
-          <div class="phone">
-            <input type="tel" @change="checkTel(sender)" v-model="sender" name="phone" placeholder="请输入账号" />
+          <div class="sender">
+            <input type="tel" @change="checkTel(sender)" v-model="sender" name="sender" placeholder="请输入账号" />
           </div>
           <div class="pass">
             <input type="text" placeholder="请输入验证码" v-model="code" @keyup.enter="resetCode"/>
@@ -50,8 +50,8 @@
           <el-button @click="_return" type="success">返回</el-button>
         </div>
         <el-form :rules="sterRule" ref="ster_ruleForm" :model="ster_ruleForm">
-          <el-form-item prop="phone">
-            <el-input placeholder="请输入手机号" type="tel" v-model="ster_ruleForm.phone"></el-input>
+          <el-form-item prop="sender">
+            <el-input placeholder="请输入手机号" type="tel" v-model="ster_ruleForm.sender"></el-input>
           </el-form-item>
           <el-form-item class="pass">
             <input type="text" class="el-input__inner node" placeholder="请输入验证码" v-model="ster_ruleForm.code_a"/>
@@ -171,13 +171,13 @@
         },
         ster_ruleForm:{
 				  type:'1',
-				  phone:'',
+				  sender:'',
           password: '',
           check_password: '',
           code_a:''
         },
         sterRule:{
-				  phone:[
+				  sender:[
             { pattern:/^[1][3,4,5,7,8][0-9]{9}$/,message:'手机号码格式不正确',trigger: 'blur'}
           ],
           password: [
@@ -188,6 +188,7 @@
             { validator: validatePass4, trigger: 'blur' }
           ]
         },
+        phone_type:'web'
 			}
 		},
 		computed:{
@@ -195,7 +196,7 @@
 				'nowCompanyId',
 				'user'
 			]),
-			phone_num(){
+			sender_num(){
 				if(this.account_num.length !== 11){
 					return true
 				}else{
@@ -243,7 +244,7 @@
         let password = md5(this.res_ruleForm.password)
         let check = md5(this.res_ruleForm.check_password)
         let nparam = new URLSearchParams()
-        nparam.append('phone',this.sender)
+        nparam.append('sender',this.sender)
         nparam.append('password',password)
         nparam.append('check_password',check)
         let httpUrl = this.$test("/index.php/Mobile/skey/setPassword")
@@ -314,7 +315,7 @@
         }
       },
       getCodeSter(){
-        if(this.ster_ruleForm.phone === ''){
+        if(this.ster_ruleForm.sender === ''){
           this.$message.error('请输入账号');
           return
         }
@@ -333,7 +334,7 @@
           },1000)
         }
         let mparam = new URLSearchParams()
-        mparam.append('sender',this.ster_ruleForm.phone)
+        mparam.append('sender',this.ster_ruleForm.sender)
         let httpUrl = this.$test('/index.php/Mobile/skey/send_validate_code')
         this.$http.post(httpUrl,mparam)
           .then((res)=>{
@@ -354,7 +355,7 @@
           })
       },
       _ster(){
-        if(this.ster_ruleForm.phone === ''||this.ster_ruleForm.password === ''||this.ster_ruleForm.check_password === ''){
+        if(this.ster_ruleForm.sender === ''||this.ster_ruleForm.password === ''||this.ster_ruleForm.check_password === ''){
           this.$message.error('请将表单填写完整');
           return
         }
@@ -378,9 +379,10 @@
           let check = md5(this.ster_ruleForm.check_password)
           let param = new URLSearchParams()
           param.append('type',this.ster_ruleForm.type)
-          param.append('phone',this.ster_ruleForm.phone)
+          param.append('sender',this.ster_ruleForm.sender)
           param.append('password',password)
           param.append('check_password',check)
+          param.append("phone_type",'web');
           let httpUrl = this.$test('/index.php/Mobile/skey/register')
           this.$http.post(httpUrl,param)
             .then((res)=>{
@@ -389,8 +391,34 @@
                 this.$message({
                   showClose: true,
                   message: '恭喜你 注册成功',
-                  type: 'success'
+                  type: 'success',
                 })
+                // this.$router.push('/work');
+                // window.location.hash = "#/work"
+                // console.log('window.location.hash = "#/work')
+                //  let httpUrl = this.$test("/index.php/Mobile/skey/login")
+                //   this.$http.post(httpUrl,param)
+                //   .then((res)=>{
+                //   if(res.data.code === 0){
+                //     let avatar = getAvatar(res.data.data.avatar)
+                //     this.setUser({
+                //       'uid':res.data.data.uid,
+                //       'name':res.data.data.name,
+                //       'avatar':avatar,
+                //       'sender':this.account_num
+                //     })
+                //     localStorage.user = JSON.stringify(this.user);
+                //     this._getUserCompanyList(res.data.data.uid)
+                //     this._getComDepart()
+                //     this.loadingShow=true
+                //     this.$router.push('/work');
+                //     setTimeout(()=>{
+                //       this.loadingShow=false
+                //       this.account_num = ''
+                //       this.password_num = ''
+                //     },1000)
+					      //   }
+			          // })
               }else if(res.data.code == 1){
                 this.$message({
                   showClose: true,
@@ -401,9 +429,12 @@
               this.ster_ruleForm.code_a = ''
               this.ster_ruleForm.password = ''
               this.ster_ruleForm.check_password = ''
-              this.ster_ruleForm.phone = ''
-              this.isC = false
-              this.isA = true
+              this.ster_ruleForm.sender = ''
+              localStorage.user = JSON.stringify(this.user);
+              this._getUserCompanyList(res.data.data.uid)
+              this._getComDepart()
+              this.loadingShow=true
+              this.$router.push('/work');
             })
         }else{
           this.$message({
@@ -698,7 +729,7 @@ $color3:#409EFF;
           line-height: 9.5px;
         }
       }
-      .phone {
+      .sender {
         width: 70%;
         margin: 0px auto;
         input {
