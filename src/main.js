@@ -29,14 +29,13 @@ Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(Calendar)
-Vue.use(Viewer,{
-  defaultOptions: {
-    zIndex:9999,
-  }
-})
+Vue.use(Viewer)
 Viewer.setDefaults({
-  Options: { "inline": false, "button": false, "navbar": false, "title": false, "toolbar": false, "tooltip": false, "movable": false, "zoomable": false, "rotatable": true, "scalable": false, "transition": false, "fullscreen": false, "keyboard": false, "url": "data-source" }
+  Options: { "inline": true, "button": false, "navbar": false, "title": false, "toolbar": false, "tooltip": false, "movable": false, "zoomable": false, "rotatable": false, "scalable": true, "transition": true, "fullscreen": true, "keyboard": true, "url": "data-source" }
 });
+// Viewer.setDefaults({
+//   zIndexInline: 2017
+// })
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 /* eslint-disable no-new */
 

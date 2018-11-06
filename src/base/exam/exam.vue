@@ -149,15 +149,6 @@
 					<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list" >
 						<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
 					</a>
-          <viewer :images="form_Lista.img_list" >
-            <img v-for="src in form_Lista.img_list"   :src="src" :key="src"   >
-          </viewer>
-          <!-- <div v-viewer="option" >
-            <template v-for="{src,source} in form_Lista"> -->
-            <!-- <template v-for="src in form_Lista.img_list"> -->
-                <!-- <img :src="src" :data-source="source"   :key="src" >
-            </template>
-          </div> -->
 				</div>
 				<div>
 					<span>发起人：</span><span>{{form_Listb.found_name}}</span>
@@ -1097,8 +1088,7 @@
           <span>发起人：</span><span>{{form_Listb.found_name}}</span>
         </div>
         <div>
-          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}
-						</span>
+          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
         </div>
         <div>
           <span>审批：</span>
@@ -1173,7 +1163,6 @@
 				</div>
 			</div>
 		</div>
-
     <div class="send" v-show="sendShow">
       <span class="close"><span class="huifu">回复{{sendName}}</span><i class="el-icon-close" @click="closeSend"></i></span>
       <el-input type="textarea" v-model="content"></el-input>
@@ -2152,15 +2141,15 @@
       ctrl_pic_show(item, index) {
         item.forEach((res)=>{
           let current = res.indexOf('?')
-          this.arr_list.push({
-            source:res.slice(0,current) + '?imageslim'} )
+           this.arr_list.push(res.slice(0,current) + '?imageslim' )
            console.log(this.form_Lista.img_list,'form_Lista.img_list')
            console.log(this.arr_list,'222')
           //  var source = this.arr_list.push(res.slice(0,current) + '?imageslim' )
           // this.form_Lista.img_list.push()
           
         })
-        return this.option.url = this.arr_list.source
+        this.pic_index = index
+        this.pic_show = true
       },
       
 			handle(){
