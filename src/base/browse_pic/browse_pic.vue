@@ -15,22 +15,13 @@
 			<i class="el-icon-close" @click="close"></i>
 		</div>
 		<div class="refresh">
-			<i class="el-icon-refresh"  @click="refresh(count++)"></i>
+			<i class="el-icon-findwork-Right-rotate"  @click="refresh(count++)"></i>
 		</div>
 		<div></div>
 	</div>
 </template>
 
 <script>
-	// window.onload = function(){
-	// 						var current = 0;				
-	// 						document.getElementsByTagName('img').onclick = function(){
-							
-	// 								current = (current+90)%360;
-							
-	// 								this.style.transform = 'rotate('+current+'deg)';
-	// 						}
-	// 				};
 export default {
 	data(){
 		return{
@@ -47,14 +38,11 @@ export default {
 			default: 0
 		}
 	},
-	// mounted(){
-  //           let img=this.$refs.img;
-  //       },
 	methods: {
 		close(){
 			this.$parent.pic_show = false
-      document.body.style.overflow = 'visible'
-      this.img_arr.splice(0,this.img_arr.length)
+			document.body.style.overflow = 'visible'
+			this.img_arr.splice(0,this.img_arr.length)
 		},
 		refresh(count){
 			var current = 0
@@ -76,7 +64,6 @@ export default {
 		},
 	}
 }</script>
-
 <style lang="scss" scoped>
   *{
     list-style: none;
@@ -139,8 +126,8 @@ export default {
 	.refresh{
 		position: fixed;
 		display: block;
-		top:90%;
-		right:48%;
+		top:84%;
+		right:45%;
 		i{
 			font-size: 50px;
 			color: #FFFFFF;

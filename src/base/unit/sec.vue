@@ -64,6 +64,7 @@
       },
       autoTextAreaHeight:function(e){
             let o = e.target;
+            o.style.height = 'auto'
             o.style.height = o.scrollTop + o.scrollHeight + "px";
         }
     },

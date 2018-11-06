@@ -55,7 +55,7 @@
           </el-form-item>
           <el-form-item class="pass">
             <input type="text" class="el-input__inner node" placeholder="请输入验证码" v-model="ster_ruleForm.code_a"/>
-            <el-button type="primary" @click="getCodeSter" v-show="codeShow">22获取验证码</el-button>
+            <el-button type="primary" @click="getCodeSter" v-show="codeShow">获取验证码</el-button>
             <el-button type="info" v-show="!codeShow">{{sec}}s</el-button>
           </el-form-item>
           <el-form-item prop="password">
@@ -382,6 +382,7 @@
           param.append('sender',this.ster_ruleForm.sender)
           param.append('password',password)
           param.append('check_password',check)
+          param.append("phone_type",'web');
           let httpUrl = this.$test('/index.php/Mobile/skey/register')
           this.$http.post(httpUrl,param)
             .then((res)=>{

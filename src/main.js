@@ -29,10 +29,10 @@ Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(Calendar)
-Vue.use(Viewer)
-Viewer.setDefaults({
-  Options: { "inline": true, "button": false, "navbar": false, "title": false, "toolbar": false, "tooltip": false, "movable": false, "zoomable": false, "rotatable": false, "scalable": true, "transition": true, "fullscreen": true, "keyboard": true, "url": "data-source" }
-});
+// Vue.use(Viewer)
+// Viewer.setDefaults({
+//   Options: { "inline": true, "button": false, "navbar": false, "title": false, "toolbar": false, "tooltip": false, "movable": false, "zoomable": false, "rotatable": false, "scalable": true, "transition": true, "fullscreen": true, "keyboard": true, "url": "data-source" }
+// });
 // Viewer.setDefaults({
 //   zIndexInline: 2017
 // })
