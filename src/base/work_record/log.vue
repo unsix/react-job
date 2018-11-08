@@ -136,8 +136,8 @@
         peShow:false,
         checked:false,
         company:'',
-        ccCom:[],
-        ccPer:[],
+        ccCom:[null],
+        ccPer:[null],
         ccCompany:'',
         ccPerson:'',
         allPan:'',
@@ -154,8 +154,15 @@
         addShow:false,
         tode:[],
         custom_form_type:'',
-        log_type:''
+        log_type:'',
       }
+    },
+    beforeMount(){
+        var inData = JSON.parse(localStorage.getItem("inData"))
+        this.ccCom = inData.ccCom
+        this.copyRange = inData.copyRange
+        this.comPer = inData.comPer
+        this.comPerson = inData.comPerson
     },
     methods:{
       msms() {
@@ -496,6 +503,8 @@
         }
       },
       log_submit(){
+        let  data = this._data
+        localStorage.setItem("inData",JSON.stringify(data));
         if(this.copyRange == '抄送范围'){
           this.$message({
             message: '请选择抄送人',
