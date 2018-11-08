@@ -158,11 +158,15 @@
       }
     },
     beforeMount(){
-        var inData = JSON.parse(localStorage.getItem("inData"))
+        var id = this.nowCompanyId
+        var inData = JSON.parse(localStorage.getItem("inData"+`${id}`))
+        if(inData){
+        this.allPan = inData.allPan
         this.ccCom = inData.ccCom
         this.copyRange = inData.copyRange
         this.comPer = inData.comPer
         this.comPerson = inData.comPerson
+        }
     },
     methods:{
       msms() {
@@ -503,8 +507,9 @@
         }
       },
       log_submit(){
-        let  data = this._data
-        localStorage.setItem("inData",JSON.stringify(data));
+        var data = this._data
+        var nowCompanyId_data = this.nowCompanyId
+        localStorage.setItem("inData"+`${nowCompanyId_data}`,JSON.stringify(data));
         if(this.copyRange == '抄送范围'){
           this.$message({
             message: '请选择抄送人',
