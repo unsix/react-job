@@ -136,8 +136,8 @@
         peShow:false,
         checked:false,
         company:'',
-        ccCom:[null],
-        ccPer:[null],
+        ccCom:[],
+        ccPer:[],
         ccCompany:'',
         ccPerson:'',
         allPan:'',
@@ -508,6 +508,13 @@
       },
       log_submit(){
         var data = this._data
+        data = {
+          ccCom:this._data.ccCom,
+          allPan:this._data.allPan,
+          copyRange:this._data.copyRange,
+          comPer:this._data.comPer,
+          comPerson:this._data.comPerson
+        } 
         var nowCompanyId_data = this.nowCompanyId
         localStorage.setItem("inData"+`${nowCompanyId_data}`,JSON.stringify(data));
         if(this.copyRange == '抄送范围'){
