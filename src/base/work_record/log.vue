@@ -161,23 +161,41 @@
         var id = this.nowCompanyId
         var inData = JSON.parse(localStorage.getItem("inData"+`${id}`))
         if(inData){
-        this.allPan = inData.allPan
-        this.ccCom = inData.ccCom
-        this.copyRange = inData.copyRange
-        this.comPer = inData.comPer
-        this.comPerson = inData.comPerson
-        this.checked = inData.checked
-        // this.activeNames = inData.activeNames
-        this.ccPer = inData.ccPer
-        this.ccCompany = inData.ccCompany
-        this.ccPerson = inData.ccPerson
+            this.allPan = inData.work_log_person.datatype_log.allPan
+            this.ccCom = inData.work_log_person.datatype_log.ccCom
+            this.copyRange = inData.work_log_person.datatype_log.copyRange
+            this.comPer = inData.work_log_person.datatype_log.comPer
+            this.comPerson = inData.work_log_person.datatype_log.comPerson
+            this.checked = inData.work_log_person.datatype_log.checked
+            this.ccPer = inData.work_log_person.datatype_log.ccPer
+            this.ccCompany = inData.work_log_person.datatype_log.ccCompany
+            this.ccPerson = inData.work_log_person.datatype_log.ccPerson
+          // this.activeNames = inData.work_log_person.activeNames
+          // console.log(this.activeNames)
+          // if(inData.work_log_person.activeNames){
+          //   this.allPan = inData.work_log_person.datatype_log.allPan
+          //   this.ccCom = inData.work_log_person.datatype_log.ccCom
+          //   this.copyRange = inData.work_log_person.datatype_log.copyRange
+          //   this.comPer = inData.work_log_person.datatype_log.comPer
+          //   this.comPerson = inData.work_log_person.datatype_log.comPerson
+          //   this.checked = inData.work_log_person.datatype_log.checked
+          //   this.ccPer = inData.work_log_person.datatype_log.ccPer
+          //   this.ccCompany = inData.work_log_person.datatype_log.ccCompany
+          //   this.ccPerson = inData.work_log_person.datatype_log.ccPerson
+          // }
         }
     },
     methods:{
       msms() {
         this.conpents.splice(0,this.conpents.length)
         this.tode.forEach((item)=>{
-          item.meta_data = JSON.parse(item.meta_data)
+          // if (typeof item.meta_data === 'string') {
+          //    item.meta_data = JSON.parse(item.meta_data)
+          // }
+          if(typeof item.meta_data == 'string'){
+            item.meta_data = JSON.parse(item.meta_data)
+          }
+          //  item.meta_data = JSON.parse(item.meta_data)
           if(item.type == "input_text"){
             this.conpents.push({
               component:sec,
@@ -385,6 +403,9 @@
           message: '添加成功',
           type: 'success'
         });
+        // if (typeof airport === 'string') {
+        //     airport = JSON.parse(airport)
+        //   }
         let arr = JSON.parse(this.logs.custom_form_result)
         let jso = JSON.parse(this.logs.json)
         arr = []
@@ -513,18 +534,33 @@
       },
       log_submit(){
         var data = this._data
-        data = {
-          ccCompany:this._data.ccCompany,
-          activeNames:this._data.activeNames,
-          ccCom:this._data.ccCom,
-          allPan:this._data.allPan,
-          copyRange:this._data.copyRange,
-          comPer:this._data.comPer,
-          comPerson:this._data.comPerson,
-          checked:this._data.checked,
-          ccPer:this._data.ccPer,
-          ccPerson:this._data.ccPerson
-        } 
+        // data = {
+        //   ccCompany:this._data.ccCompany,
+        //   ccCom:this._data.ccCom,
+        //   allPan:this._data.allPan,
+        //   copyRange:this._data.copyRange,
+        //   comPer:this._data.comPer,
+        //   comPerson:this._data.comPerson,
+        //   checked:this._data.checked,
+        //   ccPer:this._data.ccPer,
+        //   ccPerson:this._data.ccPerson
+        // }
+         data = {
+           work_log_person:{
+              activeNames:this._data.activeNames,
+              datatype_log:{
+              ccCompany:this._data.ccCompany,
+              ccCom:this._data.ccCom,
+              allPan:this._data.allPan,
+              copyRange:this._data.copyRange,
+              comPer:this._data.comPer,
+              comPerson:this._data.comPerson,
+              checked:this._data.checked,
+              ccPer:this._data.ccPer,
+              ccPerson:this._data.ccPerson
+            }
+           }
+        }  
         var nowCompanyId_data = this.nowCompanyId
         localStorage.setItem("inData"+`${nowCompanyId_data}`,JSON.stringify(data));
         if(this.copyRange == '抄送范围'){

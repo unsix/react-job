@@ -351,6 +351,7 @@
 				if(localStorage.length>0){
 					for(var i = 0; i < localStorage.length; i++)
 						{	
+						// console.log(localStorage.key(i))
 						console.log(localStorage.key(i).match('inData'))
 						if(localStorage.key(i).match('inData')){
 							localStorage.removeItem(localStorage.key(i).match('inData').input)
