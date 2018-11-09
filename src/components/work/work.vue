@@ -347,9 +347,6 @@
 				localStorage.removeItem('personnelId');
 				localStorage.removeItem('token');
 				localStorage.removeItem('user');
-				const  aLength = localStorage.length;
-				console.log(aLength)
-				console.log(localStorage.key)
 				if(localStorage.length>0){
 					for(var i = 0; i < localStorage.length; i++)
 						{	
@@ -360,7 +357,6 @@
 						}
 					}
 				}
-				localStorage.removeItem('inData')
 				this.$router.push({ path: '/login' })
 				this.setUser('')
 				this.setNowCompanyId('')

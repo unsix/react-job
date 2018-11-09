@@ -166,6 +166,11 @@
         this.copyRange = inData.copyRange
         this.comPer = inData.comPer
         this.comPerson = inData.comPerson
+        this.checked = inData.checked
+        // this.activeNames = inData.activeNames
+        this.ccPer = inData.ccPer
+        this.ccCompany = inData.ccCompany
+        this.ccPerson = inData.ccPerson
         }
     },
     methods:{
@@ -509,11 +514,16 @@
       log_submit(){
         var data = this._data
         data = {
+          ccCompany:this._data.ccCompany,
+          activeNames:this._data.activeNames,
           ccCom:this._data.ccCom,
           allPan:this._data.allPan,
           copyRange:this._data.copyRange,
           comPer:this._data.comPer,
-          comPerson:this._data.comPerson
+          comPerson:this._data.comPerson,
+          checked:this._data.checked,
+          ccPer:this._data.ccPer,
+          ccPerson:this._data.ccPerson
         } 
         var nowCompanyId_data = this.nowCompanyId
         localStorage.setItem("inData"+`${nowCompanyId_data}`,JSON.stringify(data));
