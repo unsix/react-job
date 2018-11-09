@@ -347,6 +347,7 @@
 				localStorage.removeItem('personnelId');
 				localStorage.removeItem('token');
 				localStorage.removeItem('user');
+				this.$router.push({ path: '/login' })
 				if(localStorage.length>0){
 					for(var i = 0; i < localStorage.length; i++)
 						{	
@@ -357,7 +358,6 @@
 						}
 					}
 				}
-				this.$router.push({ path: '/login' })
 				this.setUser('')
 				this.setNowCompanyId('')
 				this.setComPersonList('')
