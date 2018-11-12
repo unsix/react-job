@@ -10,4 +10,5 @@ const state = {
   token:''
 }
 
-export default state
+let state1 = state;
+export default state1

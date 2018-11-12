@@ -170,19 +170,6 @@
             this.ccPer = inData.work_log_person.datatype_log.ccPer
             this.ccCompany = inData.work_log_person.datatype_log.ccCompany
             this.ccPerson = inData.work_log_person.datatype_log.ccPerson
-          // this.activeNames = inData.work_log_person.activeNames
-          // console.log(this.activeNames)
-          // if(inData.work_log_person.activeNames){
-          //   this.allPan = inData.work_log_person.datatype_log.allPan
-          //   this.ccCom = inData.work_log_person.datatype_log.ccCom
-          //   this.copyRange = inData.work_log_person.datatype_log.copyRange
-          //   this.comPer = inData.work_log_person.datatype_log.comPer
-          //   this.comPerson = inData.work_log_person.datatype_log.comPerson
-          //   this.checked = inData.work_log_person.datatype_log.checked
-          //   this.ccPer = inData.work_log_person.datatype_log.ccPer
-          //   this.ccCompany = inData.work_log_person.datatype_log.ccCompany
-          //   this.ccPerson = inData.work_log_person.datatype_log.ccPerson
-          // }
         }
     },
     methods:{
@@ -547,7 +534,7 @@
         // }
          data = {
            work_log_person:{
-              activeNames:this._data.activeNames,
+              // activeNames:this._data.activeNames,
               datatype_log:{
               ccCompany:this._data.ccCompany,
               ccCom:this._data.ccCom,
