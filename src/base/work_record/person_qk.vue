@@ -134,19 +134,7 @@
               this._return()
             }
           })
-        function change_Data(pr,that) {
-          switch (pr) {
-            case '1':
-              that.detail_fix_show = true
-              break;
-            case '2':
-              that.detail_ele_show = true
-              break;
-            case '3':
-              that.detail_ele_show = true
-              break;
-          }
-        }
+
       }
     },
     created(){

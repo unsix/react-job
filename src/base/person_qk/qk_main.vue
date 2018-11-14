@@ -68,7 +68,7 @@
       return{
         title:'个人请款单',
         list_show:true,
-        list_type:['点工月工资请款单','个人劳务承包请款单','固定职工月工资请款单'],
+        list_type:['点工月工资请款单'],
         ele_show:false,
         lab_show:false,
         fix_show:false,
@@ -183,14 +183,14 @@
             this.ele_show = true
             this.types = 'ele'
             break;
-          case '个人劳务承包请款单':
-            this.lab_show = true
-            this.types = 'lab'
-            break;
-          case '固定职工月工资请款单':
-            this.fix_show = true
-            this.types = 'fix'
-            break;
+          // case '个人劳务承包请款单':
+          //   this.lab_show = true
+          //   this.types = 'lab'
+          //   break;
+          // case '固定职工月工资请款单':
+          //   this.fix_show = true
+          //   this.types = 'fix'
+          //   break;
         }
       },
       show_his(){
@@ -374,14 +374,14 @@
                 this.ele_show = true
                 this.title = '点工月工资请款单'
                 break;
-              case 'lab':
-                this.lab_show = true
-                this.title = '个人劳务承包请款单'
-                break;
-              case 'fix':
-                this.fix_show = true
-                this.title = '固定职工月工资请款单'
-                break;
+              // case 'lab':
+              //   this.lab_show = true
+              //   this.title = '个人劳务承包请款单'
+              //   break;
+              // case 'fix':
+              //   this.fix_show = true
+              //   this.title = '固定职工月工资请款单'
+              //   break;
             }
           }else if(this.types && this.title != '历史记录'){
             this.list_show = true

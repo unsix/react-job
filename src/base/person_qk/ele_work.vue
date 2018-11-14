@@ -3,13 +3,22 @@
     <div v-show="mainShow" >
       <div class="font_form">
         <el-form label-width="100px" ref="ele_rules" :rules="ele_rules">
-          <el-form-item label="姓名" prop="name">
+          <el-form-item label="工程项目名称" placeholder="例：茶山保利东岸花园项目1-2楼" prop="work_type">
+            <el-input v-model="todo.engineering"></el-input>
+          </el-form-item>
+          <el-form-item label="施工位置" placeholder="例：1号楼" prop="work_type">
+            <el-input v-model="todo.place"></el-input>
+          </el-form-item>
+          <el-form-item label="施工班组" placeholder="例：张三 泥水" prop="work_type">
+            <el-input v-model="todo.place"></el-input>
+          </el-form-item>
+          <el-form-item label="施工人员"  prop="name" >
             <el-input v-model="todo.name"  @click.native="getNmae('姓名')"></el-input>
           </el-form-item>
           <el-form-item label="联系方式" prop="phone">
-            <el-input v-model="todo.phone" :disabled="true"></el-input>
+            <el-input v-model="todo.phone"></el-input>
           </el-form-item>
-          <el-form-item label="开户行" class="mar" prop="bank_name">
+          <el-form-item label="开户行"  prop="bank_name">
             <el-input v-model="todo.bank_name"></el-input>
           </el-form-item>
           <el-form-item label="开户账号" prop="bank_account">
@@ -18,35 +27,53 @@
           <el-form-item label="身份证号" prop="id_card">
             <el-input v-model="todo.id_card"></el-input>
           </el-form-item>
-          <el-form-item label="工种" prop="work_type">
-            <el-input v-model="todo.work_type"></el-input>
+          <!--<el-form-item label="工种" prop="work_type">-->
+            <!--<el-input v-model="todo.work_type"></el-input>-->
+          <el-form-item label="施工进场时间" prop="once_month">
+            <el-date-picker v-model="todo.start_month" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
           </el-form-item>
-          <el-form-item label="本次请款月份" prop="once_month">
-            <el-date-picker v-model="todo.once_month" type="month" placeholder="选择日期" :clearable="false"></el-date-picker>
+          <!--</el-form-item>-->
+
+          <el-form-item label="截止时间" prop="once_month">
+            <el-date-picker v-model="todo.end_month" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
           </el-form-item>
-          <el-form-item label="日工资￥" prop="unit">
-            <el-input v-model="todo.unit" placeholder="0" @change="check_Day(todo)"></el-input>
+          <el-button class="addconstrution" type="primary"  size="small" @click="addConstruction_list" >添加施工内容</el-button>
+          <!--<el-button class="addconstrution" type="danger"  size="small" @click="construction_list.splice(index,1)" >删除施工内容</el-button>-->
+          <el-button class="addconstrution" type="danger"  size="small" @click="deleteConstruction_list(index)" >删除施工内容</el-button>
+          <li v-for='(item,index) in construction_list' >
+            <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
+            <el-form-item label="施工内容" prop="unit" class="mar">
+              <el-input v-model="item.todo_content" placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" ></el-input>
+            </el-form-item>
+            <el-form-item label="单位" prop="amount">
+              <el-input v-model="item.todo_unit"  placeholder="m2" ></el-input>
+            </el-form-item>
+            <el-form-item label="数量" prop="sanction_price">
+              <el-input v-model="item.todo_number"  placeholder="0"></el-input>
+            </el-form-item>
+            <el-form-item label="单价" prop="price">
+              <el-input v-model="item.todo_unit_price" placeholder="0" ></el-input>
+            </el-form-item>
+            <el-form-item label="金额" prop="received_price"  @change="check_pay(todo)">
+              <!--<el-input v-model="" value="0" ></el-input>-->
+              {{item.todo_unit_price&&item.todo_number!=''?item.todo_unit_price*item.todo_number:'自动计算'}}
+            </el-form-item>
+            <el-form-item label="备注" prop="price" class="mar">
+              <el-input  placeholder="" ></el-input>
+            </el-form-item>
+          </li>
+          <el-form-item label="累计已领金额" prop="should_pay_price" >
+            <el-input v-model="todo.lead_price" placeholder="" ></el-input>
           </el-form-item>
-          <el-form-item label="工作天数" prop="amount">
-            <el-input v-model="todo.amount" placeholder="0" @change="check_work(todo)"></el-input>
+          <el-form-item label="工人剩余工资" prop="should_pay_price" >
+            <!--<el-input v-model="todo.surplus_price" placeholder="" ></el-input>-->
+            {{sum-todo.lead_price}}
           </el-form-item>
-          <el-form-item label="奖罚￥" prop="sanction_price">
-            <el-input v-model="todo.sanction_price" placeholder="0" @change="check_san(todo)"></el-input>
-          </el-form-item>
-          <el-form-item label="金额￥" prop="price">
-            <el-input v-model="todo.price" placeholder="0" :disabled="true"></el-input>
-          </el-form-item>
-          <el-form-item label="已领金额￥" prop="received_price">
-            <el-input v-model="todo.received_price" placeholder="0" @change="check_pay(todo)"></el-input>
-          </el-form-item>
-          <el-form-item label="应付金额￥" prop="should_pay_price">
-            <el-input v-model="todo.should_pay_price" placeholder="0"  :disabled="true"></el-input>
-          </el-form-item>
-          <el-form-item label="第三方确认人" prop="thr_true_people">
+          <el-form-item label="班组确认人" prop="thr_true_people">
             <el-input v-model="todo.thr_true_people" @click.native="getNmae('确认人')"></el-input>
           </el-form-item>
-          <el-form-item label="确认人" prop="true_people">
-            <el-input v-model="todo.true_people" :disabled="true"></el-input>
+          <el-form-item label="项目负责人" prop="true_people">
+            <el-input v-model="todo.true_people" @click.native="getNmae('负责人')" ></el-input>
           </el-form-item>
           <el-upload style="margin-left: 10px" class="upload-demo"  ref="res" id="picc" v-model="todo.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="todo.fileList" :auto-upload="false">
             <i class="el-icon-plus" ></i>
@@ -75,6 +102,14 @@
         mainShow:true,
         nameshow:false,
         choice:"",
+        list: [{ company: "", number: "", price: "" }],
+        construction_list:[{
+          todo_cotent:'',
+          todo_unit:'',
+          todo_number:'',
+          todo_unit_price:'',
+          todo_remark:''
+        }],
         ele_rules:{
           name:[{
             message: '请填写标题',
@@ -96,6 +131,18 @@
         setToken: 'SET_TOKEN',
         setComPersonList: 'SET_COM_PERSON_LIST',
       }),
+      addConstruction_list(){
+        this.construction_list.push({
+          todo_cotent:'',
+          todo_unit:'',
+          todo_number:'',
+          todo_unit_price:'',
+          todo_remark:''
+        });
+      },
+        deleteConstruction_list(index){
+         this.construction_list.splice(index,1)
+        },
       handlePreview(file,fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
@@ -147,11 +194,18 @@
             this.todo.name = res.name
             this.todo.phone = res.phone
             this.todo.uid = res.uid
+            this.todo.bank_name = res.bank_name
+            this.todo.bank_account = res.bank_account
+            this.todo.id_card = res.id_card
             this.todo.confirm_uid = res.uid
             this.todo.true_people = res.name
             break;
           case '确认人':
             this.todo.thr_true_people = res.name
+            this.todo.third_uid = res.uid
+            break;
+          case '负责人':
+            this.todo.true_people = res.name
             this.todo.third_uid = res.uid
             break;
         }
@@ -161,18 +215,18 @@
         this.nameshow = true
         this.choice = res
       },
-      check_Day(data){
-        var numReg =  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
-        if(!numReg.test(data.unit)){
-          this.$message({
-            showClose: true,
-            message: '格式错误',
-            type: 'error'
-          })
-          data.unit = "0";
-        }
-        this.get_result(data)
-      },
+      // check_Day(data){
+      //   var numReg =  /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+      //   if(!numReg.test(data.unit)){
+      //     this.$message({
+      //       showClose: true,
+      //       message: '格式错误',
+      //       type: 'error'
+      //     })
+      //     data.unit = "0";
+      //   }
+      //   this.get_result(data)
+      // },
       check_work(data){
         var numReg =  /^[1-9]\d*$/
         if(!numReg.test(data.amount)){
@@ -185,18 +239,18 @@
         }
         this.get_result(data)
       },
-      check_san(data){
-        var numReg = /^([+-]?)\d*\.?\d+$/
-        if(!numReg.test(data.sanction_price)){
-          this.$message({
-            showClose: true,
-            message: '格式错误',
-            type: 'error'
-          })
-          data.sanction_price = "0";
-        }
-        this.get_result(data)
-      },
+      // check_san(data){
+      //   var numReg = /^([+-]?)\d*\.?\d+$/
+      //   if(!numReg.test(data.sanction_price)){
+      //     this.$message({
+      //       showClose: true,
+      //       message: '格式错误',
+      //       type: 'error'
+      //     })
+      //     data.sanction_price = "0";
+      //   }
+      //   this.get_result(data)
+      // },
       check_pay(data){
         var numReg =  /^[1-9]\d*$/
         if(!numReg.test(data.received_price)){
@@ -232,15 +286,18 @@
           this.$message.info('身份证号不可为空')
           this.$parent.loadingShow = false
           return false
-        }else if(!this.todo.work_type){
-          this.$message.info('工种不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.once_month){
+        }
+        else if(!this.todo.start_month){
           this.$message.info('本次请款月份不可为空')
           this.$parent.loadingShow = false
           return false
-        }else if(!this.todo.amount){
+        }
+        else if(!this.todo.end_month){
+          this.$message.info('本次请款月份不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.amount){
           this.$message.info('工作天数不可为空')
           this.$parent.loadingShow = false
           return false
@@ -264,8 +321,8 @@
         this.pic_hash_arr = []
         this.afile_hash_arr = []
         this.file_hash_arr = []
-        if(this.todo.once_month){
-          this.todo.month = moment(this.todo.once_month).format('YYYY-MM')
+        if(this.todo.start_month){
+          this.todo.month = moment(this.todo.start_month).format('YYYY-MM-dd')
         }
         if(this.todo.fileList_a.length ==0 && this.todo.fileList.length == 0){
           this.todo.many_enclosure = []
@@ -438,6 +495,15 @@
         'comDepartList',
         'token'
       ]),
+      sum() {
+        let _list = this.construction_list;
+        let sum = 0;
+        _list.forEach(i => {
+          let s = i.todo_number * i.todo_unit_price;
+          sum += s;
+        });
+        return sum;
+      }
     },
   }
 </script>
@@ -501,4 +567,13 @@
   .upload-demo_a{
     margin-top: 20px;
   }
+  li{
+    list-style: none;
+  }
+  .addconstrution{
+    clear: both;
+    margin-left: 26px;
+    margin-top: 10px;
+  }
+
 </style>
