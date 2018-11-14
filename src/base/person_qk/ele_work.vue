@@ -141,7 +141,9 @@
         });
       },
         deleteConstruction_list(index){
-         this.construction_list.splice(index,1)
+          if(this.construction_list.length>1){
+            this.construction_list.splice(index,1)
+          }
         },
       handlePreview(file,fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
