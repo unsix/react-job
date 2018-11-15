@@ -1,64 +1,5 @@
 <template>
     <div >
-      <!--<div class="font_form">-->
-        <!--<el-form label-width="100px" :model="jsd_ruleForm" :rules="jsd_rules" ref="jsd_ruleForm">-->
-          <!--<el-form-item label="工程项目名称" placeholder="例：茶山保利东岸花园项目1-2楼" prop="work_type">-->
-            <!--<el-input v-model="jsd_ruleForm.project_name" ></el-input>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="施工位置" prop="project_adress" class="mar">-->
-            <!--<el-input v-model="jsd_ruleForm.project_adress"></el-input>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="请款施工班组" prop="construction_name" >-->
-            <!--<el-input v-model="jsd_ruleForm.construction_name"></el-input>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="截止日期" prop="closing_data" >-->
-            <!--<el-date-picker v-model="jsd_ruleForm.closing_data" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="合同名称" prop="contract_name" >-->
-          <!--<el-input v-model="jsd_ruleForm.contract_name" style="width:195px;"></el-input>-->
-          <!--<el-button type="info" plain @click="viewHt" style="float: right;margin-right: 5px;" v-show="btnShow">查看合同</el-button>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="合同金额" prop="contract_price" class="mar">-->
-            <!--<el-input v-model="jsd_ruleForm.contract_price"></el-input>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="项目负责人" class="mar">-->
-            <!--<el-select v-model="jsd_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">-->
-              <!--<el-option v-for="item in comPersonList"-->
-                         <!--:key="item.personnel_id"  :label="item.name" :value="item.uid">-->
-                <!--<img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />-->
-                <!--<span style="float: left;margin-left: 20px;">{{ item.name }}</span>-->
-                <!--<span style="float: right; color: #8492a6; font-size: 13px">{{ item.department_name }}</span>-->
-              <!--</el-option>-->
-            <!--</el-select>-->
-          <!--</el-form-item>-->
-          <!--&lt;!&ndash;<el-button class="addconstrution" type="primary"  size="small"  >添加施工内容</el-button>&ndash;&gt;-->
-          <!--&lt;!&ndash;&lt;!&ndash;<el-button class="addconstrution" type="danger"  size="small" @click="construction_list.splice(index,1)" >删除施工内容</el-button>&ndash;&gt;&ndash;&gt;-->
-          <!--&lt;!&ndash;<el-button class="addconstrution"  type="danger"  size="small"  >删除施工内容</el-button>&ndash;&gt;-->
-          <!--&lt;!&ndash;<li v-for='(item,index) in jsd_ruleForm.add' >&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-form-item label="施工内容" prop="unit" class="mar">&ndash;&gt;-->
-              <!--&lt;!&ndash;<el-input  placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" ></el-input>&ndash;&gt;-->
-            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-form-item label="单位" prop="amount">&ndash;&gt;-->
-              <!--&lt;!&ndash;<el-input  placeholder="m2" ></el-input>&ndash;&gt;-->
-            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-form-item label="数量" prop="sanction_price">&ndash;&gt;-->
-              <!--&lt;!&ndash;<el-input   placeholder="0"></el-input>&ndash;&gt;-->
-            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-form-item label="单价" prop="price">&ndash;&gt;-->
-              <!--&lt;!&ndash;<el-input  placeholder="0" ></el-input>&ndash;&gt;-->
-            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-form-item label="金额" prop="received_price"  @change="check_pay(todo)">&ndash;&gt;-->
-            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-form-item label="备注" prop="price" class="mar">&ndash;&gt;-->
-              <!--&lt;!&ndash;<el-input  placeholder="" ></el-input>&ndash;&gt;-->
-            <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
-          <!--&lt;!&ndash;</li>&ndash;&gt;-->
-        <!--</el-form>-->
-      <!--</div>-->
-
-
-
       <el-form :model="jsd_ruleForm" :rules="jsd_rules" ref="jsd_ruleForm" label-width="150px" class="new_bxd demo-jsd_ruleForm">
         <el-form-item label="工程项目名称" prop="project_name" class="mar">
           <el-input v-model="jsd_ruleForm.project_name"></el-input>
@@ -173,40 +114,6 @@
           <!--{{ sum_Team-sum_Pay-sum_Cut!=0?sum_Team-sum_Pay-sum_Cut:'自动计算'}}-->
           {{sum_Surplus!=0?sum_Surplus:'自动计算'}}
         </el-form-item>
-        <!--<div class="add_bxd">添加结算条目-->
-          <!--<i class="el-icon-circle-plus" @click="add_jsd">-->
-          <!--</i><span style="color: red;display: inline-block" v-model="jsd_ruleForm.money">总额:{{jsd_ruleForm.money}}</span>-->
-          <!--<span style="color: red;display: block;margin-left: 135px" v-model="jsd_ruleForm.big_money">{{jsd_ruleForm.big_money}}</span></div>-->
-        <!--<div v-for="(item,index) in jsd_ruleForm.add" class="new_bxd">-->
-          <!--<div class="close"><i class="fa fa-close" v-show="jsd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>-->
-          <!--<el-form :inline="true" class="demo-form-inline zp mar">-->
-            <!--<el-form-item label="施工内容" >-->
-              <!--<el-input-->
-                <!--type="textarea"-->
-                <!--autosize-->
-                <!--v-model="item.content"></el-input>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="单位">-->
-              <!--<el-input v-model="item.unit"></el-input>-->
-            <!--</el-form-item>-->
-          <!--</el-form>-->
-          <!--<el-form :inline="true" class="demo-form-inline zp">-->
-            <!--<el-form-item label="数量">-->
-              <!--<el-input v-model="item.amount" @change="checkAmount(item)"></el-input>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="单价">-->
-              <!--<el-input v-model="item.unit_price" @change="checkUnit(item)"></el-input>-->
-            <!--</el-form-item>-->
-          <!--</el-form>-->
-          <!--<el-form :inline="true" class="demo-form-inline zp">-->
-            <!--<el-form-item label="合计">-->
-              <!--<input type="tel" class="el-input__inner" :readonly="true" v-model="item.sum_price">-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="备注" >-->
-              <!--<el-input v-model="item.remarks" ></el-input>-->
-            <!--</el-form-item>-->
-          <!--</el-form>-->
-        <!--</div>-->
         <el-upload class="upload-demo" id="picc" v-model="jsd_ruleForm.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
           <i class="el-icon-plus"></i>
           <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
@@ -431,21 +338,6 @@
           })
           data.amount="";
         }
-        // else{
-        //   data.sum_price = math.eval(Number(data.amount) * Number(data.unit_price))
-        //   if(this.jsd_ruleForm.add.length == 1){
-        //     this.jsd_ruleForm.money = data.sum_price
-        //     this.jsd_ruleForm.big_money = this.dx(data.sum_price)
-        //   }else{
-        //     let sub = this.jsd_ruleForm.add
-        //     let val = 0
-        //     for (var i = 0;i<sub.length;i++){
-        //       val += parseFloat(sub[i].sum_price)
-        //     }
-        //     this.jsd_ruleForm.money = val
-        //     this.jsd_ruleForm.big_money = this.dx(val)
-        //   }
-        // }
       },
       checkUnit:function (data) {
         var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -457,21 +349,6 @@
           })
           data.unit_price="";
         }
-        // else{
-        //   data.sum_price = math.eval(Number(data.amount) * Number(data.unit_price))
-        //   if(this.jsd_ruleForm.add.length == 1){
-        //     this.jsd_ruleForm.money = data.sum_price
-        //     this.jsd_ruleForm.big_money = this.dx(data.sum_price)
-        //   }else{
-        //     let sub = this.jsd_ruleForm.add
-        //     let val = 0
-        //     for (var i = 0;i<sub.length;i++){
-        //       val += parseFloat(sub[i].sum_price)
-        //     }
-        //     this.jsd_ruleForm.money = val
-        //     this.jsd_ruleForm.big_money = this.dx(val)
-        //   }
-        // }
       },
       dx:function (n) {
         var unit = "京亿万仟佰拾兆万仟佰拾亿仟佰拾万仟佰拾元角分",
