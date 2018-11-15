@@ -54,7 +54,7 @@
           </el-form-item>
           <el-form-item label="合计" class="automatic">
             <!--<input type="tel" class="el-input__inner" :readonly="true" v-model="item.sum_price">-->
-            {{item.amount&&item.unit_price!=''?item.amount*item.unit_price:'自动计算'}}
+            {{item.amount&&item.unit_price!=''?Math.round(parseFloat(item.amount*item.unit_price)*100)/100:'自动计算'}}
           </el-form-item>
           <el-form-item label="备注" >
             <el-input v-model="item.remarks" ></el-input>
@@ -338,21 +338,6 @@
           })
           data.amount="";
         }
-        // else{
-        //   data.sum_price = math.eval(Number(data.amount) * Number(data.unit_price))
-        //   if(this.jsd_ruleForm.add.length == 1){
-        //     this.jsd_ruleForm.money = data.sum_price
-        //     this.jsd_ruleForm.big_money = this.dx(data.sum_price)
-        //   }else{
-        //     let sub = this.jsd_ruleForm.add
-        //     let val = 0
-        //     for (var i = 0;i<sub.length;i++){
-        //       val += parseFloat(sub[i].sum_price)
-        //     }
-        //     this.jsd_ruleForm.money = val
-        //     this.jsd_ruleForm.big_money = this.dx(val)
-        //   }
-        // }
       },
       checkUnit:function (data) {
         var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -364,21 +349,6 @@
           })
           data.unit_price="";
         }
-        // else{
-        //   data.sum_price = math.eval(Number(data.amount) * Number(data.unit_price))
-        //   if(this.jsd_ruleForm.add.length == 1){
-        //     this.jsd_ruleForm.money = data.sum_price
-        //     this.jsd_ruleForm.big_money = this.dx(data.sum_price)
-        //   }else{
-        //     let sub = this.jsd_ruleForm.add
-        //     let val = 0
-        //     for (var i = 0;i<sub.length;i++){
-        //       val += parseFloat(sub[i].sum_price)
-        //     }
-        //     this.jsd_ruleForm.money = val
-        //     this.jsd_ruleForm.big_money = this.dx(val)
-        //   }
-        // }
       },
       dx:function (n) {
         var unit = "京亿万仟佰拾兆万仟佰拾亿仟佰拾万仟佰拾元角分",
@@ -874,7 +844,7 @@
         _list.forEach(i => {
           let s = i.amount * i.unit_price;
           if (s) {
-            sum += s;
+            sum += Math.round(parseFloat(s)*100)/100;
           }
         });
         return sum;
@@ -885,7 +855,7 @@
         _list.forEach(i => {
           let s = i.sum_price;
           if (s) {
-            sum += parseInt(s);
+            sum += Math.round(parseFloat(s)*100)/100;
           }
         });
         return sum;
@@ -896,7 +866,8 @@
         _list.forEach(i => {
           let s = i.sum_price;
           if (s) {
-            sum += parseInt(s);
+            // sum += parseFloat(s);
+            sum += Math.round(parseFloat(s)*100)/100;
           }
         });
         return sum;
@@ -907,16 +878,17 @@
         let pay = this.sum_Pay;
         let cut = this.sum_Cut;
         if(pay&&cut!=null){
-          sum = team-pay-cut
+          sum = sum += Math.round(parseFloat(team-pay-cut)*100)/100;
         }
         else if(pay!=null&&cut==null){
-          sum = team-pay
+          sum = Math.round(parseFloat(team-pay)*100)/100;
         }
         else if(pay==null&&cut!=null){
-          sum = team-cut
+          sum = Math.round(parseFloat(team-cut)*100)/100;
         }
         else {
-          sum = team
+          // sum = team
+          sum = Math.round(parseFloat(team)*100)/100;
         }
         return sum
       }

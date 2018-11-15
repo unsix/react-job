@@ -56,7 +56,7 @@
             </el-form-item>
             <el-form-item label="金额" prop="received_price"  @change="check_pay(todo)">
               <!--<el-input v-model="" value="0" ></el-input>-->
-              {{item.todo_unit_price&&item.todo_number!=''?item.todo_unit_price*item.todo_number:'自动计算'}}
+              {{item.todo_unit_price&&item.todo_number!=''?Math.round(parseFloat(item.todo_unit_price*item.todo_number)*100)/100:'自动计算'}}
             </el-form-item>
             <el-form-item label="备注" prop="price" class="mar">
               <el-input  placeholder="" ></el-input>
@@ -504,7 +504,7 @@
         let sums = 0;
         _list.forEach(i => {
           let s = i.todo_number * i.todo_unit_price;
-          sums += s;
+          sums += Math.round(parseFloat(s)*100)/100;
         });
         return sums;
       }
