@@ -582,7 +582,7 @@
         }
       },
       submit_ele(){
-        this.loadingShow = true
+        this.loadingShow = false
         this.$refs.ele.forEach((item)=>{
           item.submit()
         })

@@ -2,15 +2,15 @@
   <div>
     <div v-show="mainShow" >
       <div class="font_form">
-        <el-form label-width="100px" ref="ele_rules" :rules="ele_rules">
+        <el-form label-width="100px" ref="ele_rules" :model="construction_list"  :rules="ele_rules">
           <el-form-item label="工程项目名称" placeholder="例：茶山保利东岸花园项目1-2楼" prop="work_type">
-            <el-input v-model="todo.engineering"></el-input>
+            <el-input v-model="todo.project_name"></el-input>
           </el-form-item>
           <el-form-item label="施工位置" placeholder="例：1号楼" prop="work_type">
-            <el-input v-model="todo.place"></el-input>
+            <el-input v-model="todo.project_adress"></el-input>
           </el-form-item>
           <el-form-item label="施工班组" placeholder="例：张三 泥水" prop="work_type">
-            <el-input v-model="todo.places"></el-input>
+            <el-input v-model="todo.project_construction_name"></el-input>
           </el-form-item>
           <el-form-item label="施工人员"  prop="name" >
             <el-input v-model="todo.name"  @click.native="getNmae('姓名')"></el-input>
@@ -30,28 +30,28 @@
           <!--<el-form-item label="工种" prop="work_type">-->
             <!--<el-input v-model="todo.work_type"></el-input>-->
           <el-form-item label="施工进场时间" prop="once_month">
-            <el-date-picker v-model="todo.start_month" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
+            <el-date-picker v-model="todo.project_start_time" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
           </el-form-item>
           <!--</el-form-item>-->
 
           <el-form-item label="截止时间" prop="once_month">
-            <el-date-picker v-model="todo.end_month" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
+            <el-date-picker v-model="todo.project_end_time" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
           </el-form-item>
           <el-button class="addconstrution" type="primary"  size="small" @click="addConstruction_list" >添加施工内容</el-button>
           <!--<el-button class="addconstrution" type="danger"  size="small" @click="construction_list.splice(index,1)" >删除施工内容</el-button>-->
           <el-button class="addconstrution" v-show="this.construction_list.length>1" type="danger"  size="small" @click="deleteConstruction_list(index)" >删除施工内容</el-button>
           <li v-for='(item,index) in construction_list' >
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
-            <el-form-item label="施工内容" prop="unit" class="mar">
+            <el-form-item label="施工内容" prop="todo_content" class="mar">
               <el-input v-model="item.todo_content" placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" ></el-input>
             </el-form-item>
-            <el-form-item label="单位" prop="amount">
+            <el-form-item label="单位" prop="todo_unit">
               <el-input v-model="item.todo_unit"  placeholder="m2" ></el-input>
             </el-form-item>
-            <el-form-item label="数量" prop="sanction_price">
+            <el-form-item label="数量" prop="todo_number">
               <el-input v-model="item.todo_number"  placeholder="0"></el-input>
             </el-form-item>
-            <el-form-item label="单价" prop="price">
+            <el-form-item label="单价" prop="todo_unit_price">
               <el-input v-model="item.todo_unit_price" placeholder="0" ></el-input>
             </el-form-item>
             <el-form-item label="金额" prop="received_price"  @change="check_pay(todo)" class="automatic">
@@ -110,14 +110,22 @@
           todo_remark:''
         }],
         ele_rules:{
-          name:[{
-            message: '请填写标题',
-            trigger: 'change'
+          todo_content:[{
+            message: '请填写施工内容',
+            trigger: 'blur'
           }],
-          phone:[{
-            message: '请填写标题',
-            trigger: 'change'
-          }]
+          todo_unit:[{
+            message: '请填写单位',
+            trigger: 'blur'
+          }],
+          todo_number:[{
+            message: '请填写数量',
+            trigger: 'blur'
+          }],
+          todo_unit_price:[{
+            message: '请填写单价',
+            trigger: 'blur'
+          }],
         },
         pic_hash_arr:[],
         afile_hash_arr:[],
@@ -280,51 +288,86 @@
         pr.should_pay_price = once_res
       },
       submit(){
-        if(!this.todo.engineering){
-            this.$message.info('名字不可为空')
+        if(!this.todo.project_name){
+            this.$message.info('工程名称不可为空')
             this.$parent.loadingShow = false
             return false
         }
-        // else if(!this.todo.bank_name){
-        //   this.$message.info('开户行不可为空')
-        //   this.$parent.loadingShow = false
-        //   return false
-        // }else if(!this.todo.bank_account){
-        //   this.$message.info('开户账号不可为空')
-        //   this.$parent.loadingShow = false
-        //   return false
-        // }else if(!this.todo.id_card){
-        //   this.$message.info('身份证号不可为空')
+        if(!this.todo.project_adress){
+          this.$message.info('施工位置不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        if(!this.todo.project_construction_name){
+          this.$message.info('施工班组不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        if(!this.todo.name){
+          this.$message.info('施工人员不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.bank_name){
+          this.$message.info('开户行不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.bank_account){
+          this.$message.info('开户账号不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.id_card){
+          this.$message.info('身份证号不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.project_start_time){
+          this.$message.info('施工进场时间不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.project_end_time){
+          this.$message.info('截止时间不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        // else if(!this.item.todo_content){
+        //   this.$message.info('施工内容不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else if(!this.todo.start_month){
-        //   this.$message.info('本次请款月份不可为空')
+        // else if(!this.item.todo_unit){
+        //   this.$message.info('单位不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else if(!this.todo.end_month){
-        //   this.$message.info('本次请款月份不可为空')
+        // else if(!this.item.todo_number){
+        //   this.$message.info('数量不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else if(!this.todo.amount){
-        //   this.$message.info('工作天数不可为空')
-        //   this.$parent.loadingShow = false
-        //   return false
-        // }else if(!this.todo.should_pay_price){
-        //   this.$message.info('应付金额不可为空')
-        //   this.$parent.loadingShow = false
-        //   return false
-        // }else if(!this.todo.thr_true_people){
-        //   this.$message.info('确认人不可为空')
-        //   this.$parent.loadingShow = false
-        //   return false
-        // }else if(!this.todo.unit){
-        //   this.$message.info('日工资不可为空')
+        // else if(!this.item.todo_unit_price){
+        //   this.$message.info('单价不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
+        else if(!this.todo.lead_price){
+          this.$message.info('累计已领不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.thr_true_people){
+          this.$message.info('确认人不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
+        else if(!this.todo.true_people){
+          this.$message.info('项目负责人不可为空')
+          this.$parent.loadingShow = false
+          return false
+        }
         else{
           this.submit_ele()
         }
