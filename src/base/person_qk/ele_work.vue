@@ -39,7 +39,7 @@
           </el-form-item>
           <el-button class="addconstrution" type="primary"  size="small" @click="addConstruction_list" >添加施工内容</el-button>
           <!--<el-button class="addconstrution" type="danger"  size="small" @click="construction_list.splice(index,1)" >删除施工内容</el-button>-->
-          <el-button class="addconstrution" type="danger"  size="small" @click="deleteConstruction_list(index)" >删除施工内容</el-button>
+          <el-button class="addconstrution" v-show="this.construction_list.length>1" type="danger"  size="small" @click="deleteConstruction_list(construction_list)" >删除施工内容</el-button>
           <li v-for='(item,index) in construction_list' >
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
             <el-form-item label="施工内容" prop="unit" class="mar">
@@ -67,7 +67,7 @@
           </el-form-item>
           <el-form-item label="工人剩余工资" prop="should_pay_price" >
             <!--<el-input v-model="todo.surplus_price" placeholder="" ></el-input>-->
-            {{sum-todo.lead_price}}
+            {{ sum-todo.lead_price>=0||sum-todo.lead_price<0?sum-todo.lead_price:'自动计算'}}
           </el-form-item>
           <el-form-item label="班组确认人" prop="thr_true_people">
             <el-input v-model="todo.thr_true_people" @click.native="getNmae('确认人')"></el-input>
@@ -90,7 +90,6 @@
     <name v-if="nameshow" @transet="transet" ></name>
   </div>
 </template>
-
 <script>
   import name from '@/base/person_qk/Named'
   import moment from 'moment'
@@ -140,10 +139,12 @@
           todo_remark:''
         });
       },
-        deleteConstruction_list(index){
-          if(this.construction_list.length>1){
-            this.construction_list.splice(index,1)
-          }
+        deleteConstruction_list(item){
+          item.forEach(i=>{
+            if(this.construction_list.length>1){
+              this.construction_list.splice(i,1)
+            }
+          })
         },
       handlePreview(file,fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
@@ -272,52 +273,53 @@
         pr.should_pay_price = once_res
       },
       submit(){
-        if(!this.todo.name){
-          this.$message.info('名字不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.bank_name){
-          this.$message.info('开户行不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.bank_account){
-          this.$message.info('开户账号不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.id_card){
-          this.$message.info('身份证号不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }
-        else if(!this.todo.start_month){
-          this.$message.info('本次请款月份不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }
-        else if(!this.todo.end_month){
-          this.$message.info('本次请款月份不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }
-        else if(!this.todo.amount){
-          this.$message.info('工作天数不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.should_pay_price){
-          this.$message.info('应付金额不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.thr_true_people){
-          this.$message.info('确认人不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else if(!this.todo.unit){
-          this.$message.info('日工资不可为空')
-          this.$parent.loadingShow = false
-          return false
-        }else{
+        // if(!this.todo.name){
+        //     this.$message.info('名字不可为空')
+        //     this.$parent.loadingShow = false
+        //     return false
+        // }else if(!this.todo.bank_name){
+        //   this.$message.info('开户行不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }else if(!this.todo.bank_account){
+        //   this.$message.info('开户账号不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }else if(!this.todo.id_card){
+        //   this.$message.info('身份证号不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }
+        // else if(!this.todo.start_month){
+        //   this.$message.info('本次请款月份不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }
+        // else if(!this.todo.end_month){
+        //   this.$message.info('本次请款月份不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }
+        // else if(!this.todo.amount){
+        //   this.$message.info('工作天数不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }else if(!this.todo.should_pay_price){
+        //   this.$message.info('应付金额不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }else if(!this.todo.thr_true_people){
+        //   this.$message.info('确认人不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }else if(!this.todo.unit){
+        //   this.$message.info('日工资不可为空')
+        //   this.$parent.loadingShow = false
+        //   return false
+        // }
+        // else{
           this.submit_ele()
-        }
+        // }
       },
       submit_ele(){
         this.pic_hash_arr = []
@@ -499,12 +501,12 @@
       ]),
       sum() {
         let _list = this.construction_list;
-        let sum = 0;
+        let sums = 0;
         _list.forEach(i => {
           let s = i.todo_number * i.todo_unit_price;
-          sum += s;
+          sums += s;
         });
-        return sum;
+        return sums;
       }
     },
   }
