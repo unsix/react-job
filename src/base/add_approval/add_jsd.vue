@@ -137,7 +137,6 @@
       <loading v-show="loadingShow"></loading>
     </div>
 </template>
-
 <script>
   import { mapGetters, mapMutations } from 'vuex'
   import loading from '@/base/loading/loading'
@@ -152,11 +151,26 @@
             message: '请填写工程项目名称',
             trigger: 'change'
           }],
-          construction_name: [{
+          project_adress: [{
             required: true,
-            message: '请填写施工队名称',
+            message: '请填写施工位置名称',
             trigger: 'blur'
           }],
+          construction_name: [{
+            required: true,
+            message: '请填写请款施工班组名称',
+            trigger: 'blur'
+          }],
+          closing_data: [{
+            required: true,
+            message: '请选择截止日期',
+            trigger: 'blur'
+          }],
+          // project_adress: [{
+          //   required: true,
+          //   message: '请填写施工位置名称',
+          //   trigger: 'blur'
+          // }],
           contract_name: [{
             required: true,
             message: '请填写合同名称',
@@ -279,6 +293,7 @@
             } else {
               this.$message.error('请将表单填写完整');
               this.$refs.more.file = []
+              this.loadingShow = false
               return false;
             }
           });
@@ -877,18 +892,20 @@
         let team = this.sum_Team;
         let pay = this.sum_Pay;
         let cut = this.sum_Cut;
-        if(pay&&cut!=null){
-          sum = sum += Math.round(parseFloat(team-pay-cut)*100)/100;
-        }
-        else if(pay!=null&&cut==null){
-          sum = Math.round(parseFloat(team-pay)*100)/100;
-        }
-        else if(pay==null&&cut!=null){
-          sum = Math.round(parseFloat(team-cut)*100)/100;
-        }
-        else {
-          // sum = team
-          sum = Math.round(parseFloat(team)*100)/100;
+        if(team){
+          if(pay&&cut!=null){
+            sum = Math.round(parseFloat(team-pay-cut)*100)/100;
+          }
+          else if(pay!=null&&cut==null){
+            sum = Math.round(parseFloat(team-pay)*100)/100;
+          }
+          else if(pay==null&&cut!=null){
+            sum = Math.round(parseFloat(team-cut)*100)/100;
+          }
+          else {
+            // sum = team
+            sum = Math.round(parseFloat(team)*100)/100;
+          }
         }
         return sum
       }

@@ -10,7 +10,7 @@
             <el-input v-model="todo.place"></el-input>
           </el-form-item>
           <el-form-item label="施工班组" placeholder="例：张三 泥水" prop="work_type">
-            <el-input v-model="todo.place"></el-input>
+            <el-input v-model="todo.places"></el-input>
           </el-form-item>
           <el-form-item label="施工人员"  prop="name" >
             <el-input v-model="todo.name"  @click.native="getNmae('姓名')"></el-input>
@@ -39,7 +39,7 @@
           </el-form-item>
           <el-button class="addconstrution" type="primary"  size="small" @click="addConstruction_list" >添加施工内容</el-button>
           <!--<el-button class="addconstrution" type="danger"  size="small" @click="construction_list.splice(index,1)" >删除施工内容</el-button>-->
-          <el-button class="addconstrution" v-show="this.construction_list.length>1" type="danger"  size="small" @click="deleteConstruction_list(construction_list)" >删除施工内容</el-button>
+          <el-button class="addconstrution" v-show="this.construction_list.length>1" type="danger"  size="small" @click="deleteConstruction_list(index)" >删除施工内容</el-button>
           <li v-for='(item,index) in construction_list' >
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
             <el-form-item label="施工内容" prop="unit" class="mar">
@@ -54,7 +54,7 @@
             <el-form-item label="单价" prop="price">
               <el-input v-model="item.todo_unit_price" placeholder="0" ></el-input>
             </el-form-item>
-            <el-form-item label="金额" prop="received_price"  @change="check_pay(todo)">
+            <el-form-item label="金额" prop="received_price"  @change="check_pay(todo)" class="automatic">
               <!--<el-input v-model="" value="0" ></el-input>-->
               {{item.todo_unit_price&&item.todo_number!=''?Math.round(parseFloat(item.todo_unit_price*item.todo_number)*100)/100:'自动计算'}}
             </el-form-item>
@@ -65,7 +65,7 @@
           <el-form-item label="累计已领金额" prop="should_pay_price" >
             <el-input v-model="todo.lead_price" placeholder="" ></el-input>
           </el-form-item>
-          <el-form-item label="工人剩余工资" prop="should_pay_price" >
+          <el-form-item label="工人剩余工资" prop="should_pay_price" class="automatic" >
             <!--<el-input v-model="todo.surplus_price" placeholder="" ></el-input>-->
             {{ sum-todo.lead_price>=0||sum-todo.lead_price<0?sum-todo.lead_price:'自动计算'}}
           </el-form-item>
@@ -139,13 +139,20 @@
           todo_remark:''
         });
       },
-        deleteConstruction_list(item){
-          item.forEach(i=>{
-            if(this.construction_list.length>1){
-              this.construction_list.splice(i,1)
-            }
-          })
-        },
+        // deleteConstruction_list(item){
+        //   item.forEach(i=>{
+        //     if(this.construction_list.length>1){
+        //       item.splice(i,1)
+        //       console.log()
+        //     }
+        //   })
+        // },
+      deleteConstruction_list(index){
+          if(this.construction_list.length>1){
+            this.construction_list.splice(index,1)
+          }
+
+      },
       handlePreview(file,fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
           this.$message.error('上传文件格式错误')
@@ -273,11 +280,12 @@
         pr.should_pay_price = once_res
       },
       submit(){
-        // if(!this.todo.name){
-        //     this.$message.info('名字不可为空')
-        //     this.$parent.loadingShow = false
-        //     return false
-        // }else if(!this.todo.bank_name){
+        if(!this.todo.engineering){
+            this.$message.info('名字不可为空')
+            this.$parent.loadingShow = false
+            return false
+        }
+        // else if(!this.todo.bank_name){
         //   this.$message.info('开户行不可为空')
         //   this.$parent.loadingShow = false
         //   return false
@@ -317,9 +325,9 @@
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else{
+        else{
           this.submit_ele()
-        // }
+        }
       },
       submit_ele(){
         this.pic_hash_arr = []
@@ -579,5 +587,7 @@
     margin-left: 26px;
     margin-top: 10px;
   }
-
+  .automatic{
+    color: #409EFF;
+  }
 </style>
