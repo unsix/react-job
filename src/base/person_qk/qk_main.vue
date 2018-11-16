@@ -187,7 +187,7 @@
         this.list_show = false
         this.buttonShow = true
         switch (pr) {
-          case '点工月工资请款单':
+          case '班组工人工资进度请款单':
             this.ele_show = true
             this.types = 'ele'
             break;
@@ -380,7 +380,7 @@
             switch (this.types) {
               case 'ele':
                 this.ele_show = true
-                this.title = '班组工人进度请款单'
+                this.title = '班组工人工资进度请款单'
                 break;
               // case 'lab':
               //   this.lab_show = true
@@ -654,6 +654,7 @@
               this._return()
             }
           })
+        //对应type 数字有效查看
           function change_Data(pr,that) {
             switch (pr) {
               case '1':
@@ -663,6 +664,8 @@
                 that.detail_ele_show = true
                 break;
               case '3':
+                that.detail_ele_show = true
+              case '4':
                 that.detail_ele_show = true
                 break;
             }
