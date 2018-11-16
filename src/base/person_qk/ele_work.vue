@@ -64,15 +64,16 @@
           </li>
           <el-form-item label="工人产值合计" class="automatic mar" >
             {{sum_total!=''&&sum_total!=0?sum_total:''}}
+            <!--{{sum_total}}-->
           </el-form-item>
           <el-button class="addconstrution mar" type="info"  size="small" >累计已领金额</el-button>
           <el-form-item label="累计已领金额" prop="should_pay_price"  >
-            <el-input v-model="todo.lead_price" placeholder="" ></el-input>
+            <el-input v-model="todo.payroll_receive_total_price" placeholder="" ></el-input>
           </el-form-item>
           <el-form-item label="工人剩余工资" prop="should_pay_price" class="automatic" >
             <!--<el-input v-model="todo.surplus_price" placeholder="" ></el-input>-->
-            <!--{{ sum_total-todo.lead_price>=0||sum_total-todo.lead_price<0?sum_total-todo.lead_price:'自动计算'}}-->
-            {{sum_rest}}
+            <!--{{ sum_total-todo.payroll_receive_total_price>=0||sum_total-todo.payroll_receive_total_price<0?sum_total-todo.payroll_receive_total_price:'自动计算'}}-->
+            {{sum_rest>=0||sum_rest<0?sum_rest:'自动计算'}}
           </el-form-item>
           <el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>
           <el-form-item label="班组确认人" prop="thr_true_people">
@@ -142,12 +143,12 @@
       addpayroll_list_json(){
         if(this.todo.payroll_list_json){
           this.todo.payroll_list_json.push({
-            content:this.content,
-            unit:this.unit,
-            amount:this.amount,
-            unit_price:this.unit_price,
-            sum_price:this.sum_price,
-            remark:this.remark
+            content:'',
+            unit:'',
+            amount:'',
+            unit_price:'',
+            sum_price:'',
+            remark:''
           });
         }
       },
@@ -358,7 +359,7 @@
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        else if(!this.todo.lead_price){
+        else if(!this.todo.payroll_receive_total_price){
           this.$message.info('累计已领不可为空')
           this.$parent.loadingShow = false
           return false
@@ -555,25 +556,29 @@
         'comDepartList',
         'token'
       ]),
+      // Math.round(parseFloat(item.unit_price*item.amount)
       sum_total() {
-        if(this.todo.payroll_list_json){
+        // if(this.todo.payroll_list_json){
           let _list = this.todo.payroll_list_json;
-          let sum = '';
+          let sum = 0;
           _list.forEach(i => {
             let s = i.amount * i.unit_price;
-            sum += Math.round(parseFloat(s)*100)/100;
+            if(s){
+              // sum += Math.round(parseFloat(s)*100)/100;
+              sum += Math.round(parseFloat(s)*100)/100;
+            }
           });
           return sum;
-        }
+        // }
       },
 
       sum_rest() {
         if(this.todo.payroll_list_json){
-          let sum = '';
+          let sum = 0;
           let total = this.sum_total;
-          let  s = this.todo.lead_price;
-          sum = Math.round(parseFloat(total -s)*100)/100;
-          return sum;
+          let  s = this.todo.payroll_receive_total_price;
+          sum = Math.round(parseFloat(total-s)*100)/100;
+          return sum
         }
       },
     },

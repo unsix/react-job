@@ -68,7 +68,7 @@
       return{
         title:'个人请款单',
         list_show:true,
-        list_type:['点工月工资请款单'],
+        list_type:['班组工人工资进度请款单'],
         ele_show:false,
         lab_show:false,
         fix_show:false,
@@ -380,7 +380,7 @@
             switch (this.types) {
               case 'ele':
                 this.ele_show = true
-                this.title = '点工月工资请款单'
+                this.title = '班组工人进度请款单'
                 break;
               // case 'lab':
               //   this.lab_show = true

@@ -855,7 +855,7 @@
       ]),
       sum_Team() {
         let _list = this.jsd_ruleForm.add;
-        let sum = '';
+        let sum = 0;
         _list.forEach(i => {
           let s = i.amount * i.unit_price;
           if (s) {
@@ -866,7 +866,7 @@
       },
       sum_Pay(){
         let _list = this.jsd_ruleForm.adds;
-        let sum = '';
+        let sum = 0;
         _list.forEach(i => {
           let s = i.sum_price;
           if (s) {
@@ -877,7 +877,7 @@
       },
       sum_Cut(){
         let _list = this.jsd_ruleForm.addss;
-        let sum = '';
+        let sum = 0;
         _list.forEach(i => {
           let s = i.sum_price;
           if (s) {
@@ -888,7 +888,7 @@
         return sum;
       },
       sum_Surplus(){
-        let sum = '';
+        let sum = 0;
         let team = this.sum_Team;
         let pay = this.sum_Pay;
         let cut = this.sum_Cut;
