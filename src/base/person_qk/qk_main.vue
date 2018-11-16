@@ -14,11 +14,11 @@
     </div>
     <div class="listMain">
       <ele v-if="ele_show" v-for="(item,idx) in add_ele" :todo="item" :key="idx" ref="ele" @submit_ele_son="submit_ele_son" :current="idx" :pages="add_ele.length"></ele>
-      <lab v-if="lab_show" v-for="(item,idx) in add_lab" :todo="item" :key="idx" ref="lab" @submit_ele_son="submit_lab_son" :current="idx" :pages="add_lab.length"></lab>
-      <fix v-if="fix_show" v-for="(item,idx) in add_fix" :todo="item" :key="idx" ref="fix" @submit_ele_son="submit_fix_son" :current="idx" :pages="add_fix.length"></fix>
+      <!--<lab v-if="lab_show" v-for="(item,idx) in add_lab" :todo="item" :key="idx" ref="lab" @submit_ele_son="submit_lab_son" :current="idx" :pages="add_lab.length"></lab>-->
+      <!--<fix v-if="fix_show" v-for="(item,idx) in add_fix" :todo="item" :key="idx" ref="fix" @submit_ele_son="submit_fix_son" :current="idx" :pages="add_fix.length"></fix>-->
     </div>
     <div class="buttons" v-show="buttonShow">
-      <el-button type="primary" size="small" @click="add_from">添加</el-button>
+      <!--<el-button type="primary" size="small" @click="add_from">添加</el-button>-->
       <el-button type="warning" size="small" @click="submit">发送</el-button>
     </div>
     <div class="listss" v-show="listShow">
@@ -73,6 +73,14 @@
         lab_show:false,
         fix_show:false,
         add_ele:[{
+          payroll_list_json:[{
+            content:'',
+            unit:'',
+            amount:'',
+            unit_price:'',
+            sum_price:'',
+            remarks:''
+          }],
           uid:'',
           name:'',
           phone:'',
@@ -95,64 +103,64 @@
           third_uid:'',
           once_month:''
         }],
-        add_lab:[{
-          uid:'',
-          name:'',
-          phone:'',
-          bank_name:'',
-          bank_account:'',
-          id_card:'',
-          work_type:'',
-          month:'',
-          unit:'',
-          amount:'',
-          price:'',
-          sanction_price:'',
-          received_price:'',
-          should_pay_price:'',
-          thr_true_people:'',
-          many_enclosure:[],
-          fileList:[],
-          fileList_a:[],
-          confirm_uid:'',
-          third_uid:'',
-          once_month:''
-        }],
-        add_fix:[{
-          name:'',
-          phone:'',
-          bank_name:'',
-          bank_account:'',
-          once_month:'',
-          all_day_price:'',
-          phone_subsidy:'',
-          house_subsidy	:'',
-          base_life_pay:'',
-          educate_pay:'',
-          work_age_pay:'',
-          profession_pay:'',
-          environment_price:'',
-          easy:'',
-          overtime_pay:'',
-          merit_ration:'',
-          merit_pay:'',
-          subsidy:'',
-          total:'',
-          social_security:'',
-          personal_tax:'',
-          absent_cost:'',
-          house_cost:'',
-          hydropower_cost:'',
-          performance_deduction:'',
-          performance_cost:'',
-          cut_money:'',
-          sum:'',
-          month:'',
-          many_enclosure:[],
-          fileList:[],
-          fileList_a:[],
-          uid:''
-        }],
+        // add_lab:[{
+        //   uid:'',
+        //   name:'',
+        //   phone:'',
+        //   bank_name:'',
+        //   bank_account:'',
+        //   id_card:'',
+        //   work_type:'',
+        //   month:'',
+        //   unit:'',
+        //   amount:'',
+        //   price:'',
+        //   sanction_price:'',
+        //   received_price:'',
+        //   should_pay_price:'',
+        //   thr_true_people:'',
+        //   many_enclosure:[],
+        //   fileList:[],
+        //   fileList_a:[],
+        //   confirm_uid:'',
+        //   third_uid:'',
+        //   once_month:''
+        // }],
+        // add_fix:[{
+        //   name:'',
+        //   phone:'',
+        //   bank_name:'',
+        //   bank_account:'',
+        //   once_month:'',
+        //   all_day_price:'',
+        //   phone_subsidy:'',
+        //   house_subsidy	:'',
+        //   base_life_pay:'',
+        //   educate_pay:'',
+        //   work_age_pay:'',
+        //   profession_pay:'',
+        //   environment_price:'',
+        //   easy:'',
+        //   overtime_pay:'',
+        //   merit_ration:'',
+        //   merit_pay:'',
+        //   subsidy:'',
+        //   total:'',
+        //   social_security:'',
+        //   personal_tax:'',
+        //   absent_cost:'',
+        //   house_cost:'',
+        //   hydropower_cost:'',
+        //   performance_deduction:'',
+        //   performance_cost:'',
+        //   cut_money:'',
+        //   sum:'',
+        //   month:'',
+        //   many_enclosure:[],
+        //   fileList:[],
+        //   fileList_a:[],
+        //   uid:''
+        // }],
         types:'',
         buttonShow:false,
         loadingShow:false,
@@ -392,6 +400,17 @@
             this.buttonShow = false
             this.listShow = false
             this.add_ele = [{
+              // payroll_list_json:[{
+              //   content:'',
+              //   unit:'',
+              //   amount:'',
+              //   unit_price:'',
+              //   sum_price:'',
+              //   remark:''
+              // }],
+              payroll_list_json:[{
+
+              }],
               name:'',
               phone:'',
               bank_name:'',
@@ -414,64 +433,64 @@
               confirm_uid:'',
               third_uid:''
             }]
-            this.add_lab = [{
-              name:'',
-              phone:'',
-              bank_name:'',
-              bank_account:'',
-              id_card:'',
-              work_type:'',
-              once_month:'',
-              amount:'',
-              unit:'',
-              price:'',
-              sanction_price:'',
-              received_price:'',
-              should_pay_price:'',
-              thr_true_people:'',
-              true_people:'',
-              many_enclosure:[],
-              fileList:[],
-              fileList_a:[],
-              uid:'',
-              confirm_uid:'',
-              third_uid:''
-            }]
-            this.add_fix = [{
-              name:'',
-              phone:'',
-              bank_name:'',
-              bank_account:'',
-              once_month:'',
-              all_day_price:'',
-              phone_subsidy:'',
-              house_subsidy	:'',
-              base_life_pay:'',
-              educate_pay:'',
-              work_age_pay:'',
-              profession_pay:'',
-              environment_price:'',
-              easy:'',
-              overtime_pay:'',
-              merit_ration:'',
-              merit_pay:'',
-              subsidy:'',
-              total:'',
-              social_security:'',
-              personal_tax:'',
-              absent_cost:'',
-              house_cost:'',
-              hydropower_cost:'',
-              performance_deduction:'',
-              performance_cost:'',
-              cut_money:'',
-              sum:'',
-              month:'',
-              many_enclosure:[],
-              fileList:[],
-              fileList_a:[],
-              uid:''
-            }]
+            // this.add_lab = [{
+            //   name:'',
+            //   phone:'',
+            //   bank_name:'',
+            //   bank_account:'',
+            //   id_card:'',
+            //   work_type:'',
+            //   once_month:'',
+            //   amount:'',
+            //   unit:'',
+            //   price:'',
+            //   sanction_price:'',
+            //   received_price:'',
+            //   should_pay_price:'',
+            //   thr_true_people:'',
+            //   true_people:'',
+            //   many_enclosure:[],
+            //   fileList:[],
+            //   fileList_a:[],
+            //   uid:'',
+            //   confirm_uid:'',
+            //   third_uid:''
+            // }]
+            // this.add_fix = [{
+            //   name:'',
+            //   phone:'',
+            //   bank_name:'',
+            //   bank_account:'',
+            //   once_month:'',
+            //   all_day_price:'',
+            //   phone_subsidy:'',
+            //   house_subsidy	:'',
+            //   base_life_pay:'',
+            //   educate_pay:'',
+            //   work_age_pay:'',
+            //   profession_pay:'',
+            //   environment_price:'',
+            //   easy:'',
+            //   overtime_pay:'',
+            //   merit_ration:'',
+            //   merit_pay:'',
+            //   subsidy:'',
+            //   total:'',
+            //   social_security:'',
+            //   personal_tax:'',
+            //   absent_cost:'',
+            //   house_cost:'',
+            //   hydropower_cost:'',
+            //   performance_deduction:'',
+            //   performance_cost:'',
+            //   cut_money:'',
+            //   sum:'',
+            //   month:'',
+            //   many_enclosure:[],
+            //   fileList:[],
+            //   fileList_a:[],
+            //   uid:''
+            // }]
             this.types = ''
             this.ele_items = []
           }else{
@@ -676,7 +695,8 @@
           if(newVal.length == this.add_ele.length){
             let param = new URLSearchParams()
             param.append('items',JSON.stringify(newVal))
-            param.append('type',2)
+            // parm.append('payroll_list_json',this.constructor_list)
+            param.append('type',4)
             let str = this.$test('/index.php/Mobile/payroll/add_payroll')
             this.$http.post(str,param)
               .then((res)=>{

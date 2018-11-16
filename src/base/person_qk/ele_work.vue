@@ -2,7 +2,7 @@
   <div>
     <div v-show="mainShow" >
       <div class="font_form">
-        <el-form label-width="100px" ref="ele_rules" :model="construction_list"  :rules="ele_rules">
+        <el-form label-width="100px" ref="ele_rules" >
           <el-form-item label="工程项目名称" placeholder="例：茶山保利东岸花园项目1-2楼" prop="work_type">
             <el-input v-model="todo.project_name"></el-input>
           </el-form-item>
@@ -37,29 +37,29 @@
           <el-form-item label="截止时间" prop="once_month">
             <el-date-picker v-model="todo.project_end_time" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
           </el-form-item>
-          <el-button class="addconstrution" type="primary"  size="small" @click="addConstruction_list" >添加施工内容</el-button>
-          <!--<el-button class="addconstrution" type="danger"  size="small" @click="construction_list.splice(index,1)" >删除施工内容</el-button>-->
-          <el-button class="addconstrution" v-show="this.construction_list.length>1" type="danger"  size="small" @click="deleteConstruction_list(index)" >删除施工内容</el-button>
-          <li v-for='(item,index) in construction_list' >
+          <el-button class="addconstrution" type="primary"  size="small" @click="addpayroll_list_json" >添加施工内容</el-button>
+          <!--<el-button class="addconstrution" type="danger"  size="small" @click="payroll_list_json.splice(index,1)" >删除施工内容</el-button>-->
+          <el-button class="addconstrution"  type="danger"  size="small" @click="deletepayroll_list_json(index)" >删除施工内容</el-button>
+          <li v-for='(item,index) in todo.payroll_list_json' >
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
-            <el-form-item label="施工内容" prop="todo_content" class="mar">
-              <el-input v-model="item.todo_content" placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" ></el-input>
+            <el-form-item label="施工内容" prop="content" class="mar">
+              <el-input v-model="item.content" placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" ></el-input>
             </el-form-item>
-            <el-form-item label="单位" prop="todo_unit">
-              <el-input v-model="item.todo_unit"  placeholder="m2" ></el-input>
+            <el-form-item label="单位" prop="unit">
+              <el-input v-model="item.unit"  placeholder="m2" ></el-input>
             </el-form-item>
-            <el-form-item label="数量" prop="todo_number">
-              <el-input v-model="item.todo_number"  placeholder="0"></el-input>
+            <el-form-item label="数量" prop="amount">
+              <el-input v-model="item.amount"  placeholder="0"></el-input>
             </el-form-item>
-            <el-form-item label="单价" prop="todo_unit_price">
-              <el-input v-model="item.todo_unit_price" placeholder="0" ></el-input>
+            <el-form-item label="单价" prop="unit_price">
+              <el-input v-model="item.unit_price" placeholder="0" ></el-input>
             </el-form-item>
             <el-form-item label="金额" prop="received_price"  @change="check_pay(todo)" class="automatic">
               <!--<el-input v-model="" value="0" ></el-input>-->
-              {{item.todo_unit_price&&item.todo_number!=''?Math.round(parseFloat(item.todo_unit_price*item.todo_number)*100)/100:'自动计算'}}
+              {{item.unit_price&&item.amount!=''?Math.round(parseFloat(item.unit_price*item.amount)*100)/100:'自动计算'}}
             </el-form-item>
-            <el-form-item label="备注" prop="price" class="mar">
-              <el-input  placeholder="" ></el-input>
+            <el-form-item label="备注" prop="remarks" class="mar">
+              <el-input v-model="item.remarks"  placeholder="" ></el-input>
             </el-form-item>
           </li>
           <el-form-item label="累计已领金额" prop="should_pay_price" >
@@ -101,28 +101,23 @@
         mainShow:true,
         nameshow:false,
         choice:"",
-        list: [{ company: "", number: "", price: "" }],
-        construction_list:[{
-          todo_cotent:'',
-          todo_unit:'',
-          todo_number:'',
-          todo_unit_price:'',
-          todo_remark:''
-        }],
+        // payroll_list_json:[{
+        //
+        // }],
         ele_rules:{
-          todo_content:[{
+          content:[{
             message: '请填写施工内容',
             trigger: 'blur'
           }],
-          todo_unit:[{
+          unit:[{
             message: '请填写单位',
             trigger: 'blur'
           }],
-          todo_number:[{
+          amount:[{
             message: '请填写数量',
             trigger: 'blur'
           }],
-          todo_unit_price:[{
+          unit_price:[{
             message: '请填写单价',
             trigger: 'blur'
           }],
@@ -138,28 +133,32 @@
         setToken: 'SET_TOKEN',
         setComPersonList: 'SET_COM_PERSON_LIST',
       }),
-      addConstruction_list(){
-        this.construction_list.push({
-          todo_cotent:'',
-          todo_unit:'',
-          todo_number:'',
-          todo_unit_price:'',
-          todo_remark:''
-        });
+      addpayroll_list_json(){
+        if(this.todo.payroll_list_json){
+          this.todo.payroll_list_json.push({
+            content:this.content,
+            unit:this.unit,
+            amount:this.amount,
+            unit_price:this.unit_price,
+            sum_price:this.sum_price,
+            remark:this.remark
+          });
+        }
       },
-        // deleteConstruction_list(item){
+        // deletepayroll_list_json(item){
         //   item.forEach(i=>{
-        //     if(this.construction_list.length>1){
+        //     if(this.payroll_list_json.length>1){
         //       item.splice(i,1)
         //       console.log()
         //     }
         //   })
         // },
-      deleteConstruction_list(index){
-          if(this.construction_list.length>1){
-            this.construction_list.splice(index,1)
+      deletepayroll_list_json(index){
+        if(this.todo.payroll_list_json){
+          if(this.todo.payroll_list_json.length>1){
+            this.todo.payroll_list_json.splice(index,1)
           }
-
+        }
       },
       handlePreview(file,fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
@@ -333,22 +332,22 @@
           this.$parent.loadingShow = false
           return false
         }
-        // else if(!this.item.todo_content){
+        // else if(!this.item.todo.content){
         //   this.$message.info('施工内容不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else if(!this.item.todo_unit){
+        // else if(!this.item.unit){
         //   this.$message.info('单位不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else if(!this.item.todo_number){
+        // else if(!this.item.amount){
         //   this.$message.info('数量不可为空')
         //   this.$parent.loadingShow = false
         //   return false
         // }
-        // else if(!this.item.todo_unit_price){
+        // else if(!this.item.unit_price){
         //   this.$message.info('单价不可为空')
         //   this.$parent.loadingShow = false
         //   return false
@@ -530,7 +529,7 @@
     },
     props:{
       todo:{
-
+        payroll_list_json:[{}]
       },
       current:{
 
@@ -551,13 +550,15 @@
         'token'
       ]),
       sum() {
-        let _list = this.construction_list;
-        let sums = 0;
-        _list.forEach(i => {
-          let s = i.todo_number * i.todo_unit_price;
-          sums += Math.round(parseFloat(s)*100)/100;
-        });
-        return sums;
+        if(this.todo.payroll_list_json){
+          let _list = this.todo.payroll_list_json;
+          let sums = 0;
+          _list.forEach(i => {
+            let s = i.amount * i.unit_price;
+            sums += Math.round(parseFloat(s)*100)/100;
+          });
+          return sums;
+        }
       }
     },
   }
