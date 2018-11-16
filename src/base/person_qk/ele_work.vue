@@ -62,13 +62,19 @@
               <el-input v-model="item.remarks"  placeholder="" ></el-input>
             </el-form-item>
           </li>
-          <el-form-item label="累计已领金额" prop="should_pay_price" >
+          <el-form-item label="工人产值合计" class="automatic mar" >
+            {{sum_total!=''&&sum_total!=0?sum_total:''}}
+          </el-form-item>
+          <el-button class="addconstrution mar" type="info"  size="small" >累计已领金额</el-button>
+          <el-form-item label="累计已领金额" prop="should_pay_price"  >
             <el-input v-model="todo.lead_price" placeholder="" ></el-input>
           </el-form-item>
           <el-form-item label="工人剩余工资" prop="should_pay_price" class="automatic" >
             <!--<el-input v-model="todo.surplus_price" placeholder="" ></el-input>-->
-            {{ sum-todo.lead_price>=0||sum-todo.lead_price<0?sum-todo.lead_price:'自动计算'}}
+            <!--{{ sum_total-todo.lead_price>=0||sum_total-todo.lead_price<0?sum_total-todo.lead_price:'自动计算'}}-->
+            {{sum_rest}}
           </el-form-item>
+          <el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>
           <el-form-item label="班组确认人" prop="thr_true_people">
             <el-input v-model="todo.thr_true_people" @click.native="getNmae('确认人')"></el-input>
           </el-form-item>
@@ -219,7 +225,7 @@
             break;
           case '确认人':
             this.todo.thr_true_people = res.name
-            this.todo.third_uid = res.uid
+            this.todo.team_uid = res.uid
             break;
           case '负责人':
             this.todo.true_people = res.name
@@ -549,17 +555,27 @@
         'comDepartList',
         'token'
       ]),
-      sum() {
+      sum_total() {
         if(this.todo.payroll_list_json){
           let _list = this.todo.payroll_list_json;
-          let sums = 0;
+          let sum = '';
           _list.forEach(i => {
             let s = i.amount * i.unit_price;
-            sums += Math.round(parseFloat(s)*100)/100;
+            sum += Math.round(parseFloat(s)*100)/100;
           });
-          return sums;
+          return sum;
         }
-      }
+      },
+
+      sum_rest() {
+        if(this.todo.payroll_list_json){
+          let sum = '';
+          let total = this.sum_total;
+          let  s = this.todo.lead_price;
+          sum = Math.round(parseFloat(total -s)*100)/100;
+          return sum;
+        }
+      },
     },
   }
 </script>
@@ -628,8 +644,7 @@
   }
   .addconstrution{
     clear: both;
-    margin-left: 26px;
-    margin-top: 10px;
+    margin: 10px 0 7px 8px;
   }
   .automatic{
     color: #409EFF;
