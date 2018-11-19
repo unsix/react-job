@@ -64,7 +64,7 @@
           </li>
           <el-form-item label="工人产值合计" class="automatic mar" >
             {{sum_total!=''&&sum_total!=0?sum_total:''}}
-            <!--{{sum_total}}-->
+            <!--<el-input v-model="todo.total_price"  placeholder="" ></el-input>-->
           </el-form-item>
           <el-button class="addconstrution mar" type="info"  size="small" >累计已领金额</el-button>
           <el-form-item label="累计已领金额" prop="should_pay_price"  >
@@ -189,6 +189,8 @@
       handleRemove_a(file, fileList_a) {
         this.todo.fileList_a = fileList_a
       },
+
+
       handlePreview_a(file, fileList_a){
         let index = file.name.lastIndexOf('.')
         let attribute = file.name.slice(index)
@@ -379,11 +381,14 @@
         }
       },
       submit_ele(){
-        this.pic_hash_arr = []
-        this.afile_hash_arr = []
-        this.file_hash_arr = []
-        if(this.todo.start_month){
-          this.todo.month = moment(this.todo.start_month).format('YYYY-MM-dd')
+        this.pic_hash_arr = [];
+        this.afile_hash_arr = [];
+        this.file_hash_arr = [];
+        if(this.todo.project_start_time){
+          this.todo.project_start_time = moment(this.todo.project_start_time).format('YYYY-MM-DD')
+        }
+        if(this.todo.project_end_time){
+          this.todo.project_end_time = moment(this.todo.project_start_time).format('YYYY-MM-DD')
         }
         if(this.todo.fileList_a.length ==0 && this.todo.fileList.length == 0){
           this.todo.many_enclosure = []
@@ -528,7 +533,7 @@
           }
         },
         deep:true
-      }
+      },
     },
     components:{
       name,
@@ -558,30 +563,53 @@
       ]),
       // Math.round(parseFloat(item.unit_price*item.amount)
       sum_total() {
-        // if(this.todo.payroll_list_json){
+        if(this.todo.payroll_list_json){
           let _list = this.todo.payroll_list_json;
           let sum = 0;
           _list.forEach(i => {
-            let s = i.amount * i.unit_price;
+             i.sum_price = i.amount * i.unit_price;
+             let s = i.sum_price
+            // sum_price = _list.sum_price
+            i.sum_price = i.amount * i.unit_price;
             if(s){
               // sum += Math.round(parseFloat(s)*100)/100;
               sum += Math.round(parseFloat(s)*100)/100;
             }
+            this.todo.total_price = sum
           });
-          return sum;
-        // }
+          return this.todo.total_price
+        }
       },
 
       sum_rest() {
-        if(this.todo.payroll_list_json){
           let sum = 0;
           let total = this.sum_total;
           let  s = this.todo.payroll_receive_total_price;
           sum = Math.round(parseFloat(total-s)*100)/100;
-          return sum
-        }
+          this.todo.rest_payroll_price = sum;
+          return this.todo.rest_payroll_price;
       },
-    },
+      // now:{
+      //   get(){
+      //     let sum_total = this.sum_total;
+      //     // let sum_rest  = this.sum_rest;
+      //     this.todo.total_price =  sum_total;
+      //     // this.todo.payroll_receive_total_price = sum_rest
+      //     // this.todo.rest_payroll_price = sum_rest;
+      //     // sums = {
+      //     //   sum_price
+      //     // }
+      //
+      //     return this.todo.total_price
+      //   }
+      }
+    // },
+    // mounted () {
+    //   // for(let i = 0 ;i<3;i++){
+    //     console.log(this.now)  // 当false关闭缓存的时候，每次访问now是都是最新的的。 而为true的时候，则需要依赖的属性改变了才会更新时间；
+    //   //
+    //   this.now()
+    // }
   }
 </script>
 
