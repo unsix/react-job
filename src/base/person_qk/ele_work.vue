@@ -70,6 +70,9 @@
           <el-form-item label="累计已领金额" prop="should_pay_price"  >
             <el-input v-model="todo.payroll_receive_total_price" placeholder="" ></el-input>
           </el-form-item>
+          <el-form-item label="累计已领内容" prop="should_pay_price"  >
+            <el-input v-model="todo.price_describe" placeholder="" ></el-input>
+          </el-form-item>
           <el-form-item label="工人剩余工资" prop="should_pay_price" class="automatic" >
             <!--<el-input v-model="todo.surplus_price" placeholder="" ></el-input>-->
             <!--{{ sum_total-todo.payroll_receive_total_price>=0||sum_total-todo.payroll_receive_total_price<0?sum_total-todo.payroll_receive_total_price:'自动计算'}}-->
@@ -148,7 +151,7 @@
             amount:'',
             unit_price:'',
             sum_price:'',
-            remark:''
+            remarks:''
           });
         }
       },
@@ -224,15 +227,17 @@
             this.todo.bank_account = res.bank_account
             this.todo.id_card = res.id_card
             this.todo.confirm_uid = res.uid
-            this.todo.true_people = res.name
+            // this.todo.true_people = res.name
+
             break;
           case '确认人':
-            this.todo.thr_true_people = res.name
-            this.todo.team_uid = res.uid
+            this.todo.thr_true_people = res.name;
+            this.todo.team_uid = res.uid;
             break;
           case '负责人':
+            // this.todo.thid = res.name;
             this.todo.true_people = res.name
-            this.todo.third_uid = res.uid
+            this.todo.third_uid = res.uid;
             break;
         }
       },

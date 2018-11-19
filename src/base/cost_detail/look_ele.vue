@@ -9,22 +9,35 @@
         <p>发起人：{{content.initiator_name}}</p>
       </div>
       <div class="main">
-        <p>姓名:<span>{{detail.name}}</span></p>
+        <p>工程项目名称:<span>{{detail.project_name}}</span></p>
+        <p>施工位置:<span>{{detail.project_adress}}</span></p>
+        <p>施工班组:<span>{{detail.project_construction_name}}</span></p>
+        <p>确认人:<span>{{detail.confirm_name}}</span></p>
         <p>联系方式:<span>{{detail.phone}}</span></p>
         <p>开户行:<span>{{detail.bank_name}}</span></p>
         <p>开户账号:<span>{{detail.bank_account}}</span></p>
         <p>身份证号:<span>{{detail.id_card}}</span></p>
-        <p>工种:<span>{{detail.work_type}}</span></p>
-        <p>本次请款月份:<span>{{detail.month}}</span></p>
-        <p v-if="content.type == '3'">承包单价（元/平方）:<span>{{detail.contract_unit_price}}</span></p>
-        <p v-if="content.type == '3'">本次完成面积（平方）:<span>{{detail.complete_area}}</span></p>
-        <p v-if="content.type == '2'">日工资￥：<span>{{detail.daily_wages}}</span></p>
-        <p v-if="content.type == '2'">工作天数：<span>{{detail.working_days}}</span></p>
-        <p>金额￥:<span>{{detail.price}}</span></p>
-        <p>奖罚￥:<span>{{detail.sanction_price}}</span></p>
-        <p>已领金额￥:<span>{{detail.received_price}}</span></p>
-        <p>应付金额:<span>{{detail.should_pay_price}}</span></p>
-        <p>确认人:<span>{{detail.confirm_name}}</span></p>
+        <p>施工进场时间:<span>{{detail.project_start_time}}</span></p>
+        <p>截止时间:<span>{{detail.project_end_time}}</span></p>
+        <!--<p v-if="content.type == '3'">承包单价（元/平方）:<span>{{detail.contract_unit_price}}</span></p>-->
+        <!--<p v-if="content.type == '3'">本次完成面积（平方）:<span>{{detail.complete_area}}</span></p>-->
+        <!--<p v-if="content.type == '2'">日工资￥：<span>{{detail.daily_wages}}</span></p>-->
+        <!--<p v-if="content.type == '2'">工作天数：<span>{{detail.working_days}}</span></p>-->
+        <!--<p>金额￥:<span>{{detail.price}}</span></p>-->
+        <!--<p>奖罚￥:<span>{{detail.sanction_price}}</span></p>-->
+        <!--<p>已领金额￥:<span>{{detail.received_price}}</span></p>-->
+        <!--<p>应付金额:<span>{{detail.should_pay_price}}</span></p>-->
+        <li v-for = '(item,index) in detail.payroll_list_json'>
+          <p>施工内容:<span>{{item.content}}</span></p>
+          <p>单位:<span>{{item.unit}}</span></p>
+          <p>数量:<span>{{item.amount}}</span></p>
+          <p>单价:<span>{{item.unit_price}}</span></p>
+          <p>合计金额:<span>{{item.sum_price}}</span></p>
+          <p>备注:<span>{{item.remarks}}</span></p>
+        </li>
+        <p>工人产值工资合计:<span>{{detail.total_price}}</span></p>
+        <p>累计收到工资合计:<span>{{detail.payroll_receive_total_price}}</span></p>
+        <p>班组确认人:<span>{{detail.team_name}}</span></p>
         <p>第三方确认人:<span>{{detail.third_name}}</span></p>
       </div>
       <div class="enclosure">
