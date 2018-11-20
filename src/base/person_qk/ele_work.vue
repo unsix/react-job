@@ -59,7 +59,7 @@
               <el-input v-model="item.amount"  placeholder="0" @change="checkAmount(item)"></el-input>
             </el-form-item>
             <el-form-item label="单价" prop="unit_price">
-              <el-input v-model="item.unit_price" placeholder="0" ></el-input>
+              <el-input v-model="item.unit_price" placeholder="0" @change="checkUnit_price(item)"></el-input>
             </el-form-item>
             <el-form-item label="金额" prop="received_price"   class="automatic">
               <!--<el-input v-model="" value="0" ></el-input>-->
@@ -186,6 +186,17 @@
             type: 'error'
           })
           item.amount="";
+        }
+      },
+      checkUnit_price(item){
+        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+        if(!priceReg.test(item.unit_price)){
+          this.$message({
+            showClose: true,
+            message: '格式错误请输入数字',
+            type: 'error'
+          })
+          item.unit_price="";
         }
       },
       checkPay_r(item){
@@ -587,13 +598,13 @@
     },
     props:{
       todo:{
-        payroll_list_json:[{
-          content:'',
-          unit:'',
-          amount:'',
-          unit_price:'',
-          remarks:'',
-        }]
+        // payroll_list_json:[{
+        //   content:'',
+        //   unit:'',
+        //   amount:'',
+        //   unit_price:'',
+        //   remarks:'',
+        // }]
       },
       current:{
 

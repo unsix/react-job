@@ -33,9 +33,9 @@
 
         <el-button class="addconstrution" type="primary"  size="small" @click="add_jsd" >添加施工内容</el-button>
         <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
-        <li v-for="(item,index) in jsd_ruleForm.add">
+        <li v-for="(item,index) in jsd_ruleForm.list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
-          <div class="close"><i class="fa fa-close" v-show="jsd_ruleForm.add.length > 1" @click="closeQd_add(index)"></i></div>
+          <div class="close"><i class="fa fa-close" v-show="jsd_ruleForm.list_json.length > 1" @click="closeQd_add(index)"></i></div>
           <el-form-item label="施工内容" prop="unit" class="mar">
             <el-input type="textarea"
                       autosize
@@ -68,7 +68,7 @@
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsds" >添加支付工程款</el-button>
         <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
-        <li v-for="(item,index) in jsd_ruleForm.adds">
+        <li v-for="(item,index) in jsd_ruleForm.pay_list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close"  @click="closeQd_adds(index)"></i></div>
           <el-form-item label="内容" prop="unit" class="mar">
@@ -90,7 +90,7 @@
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsdss" >添加扣款项</el-button>
         <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
-        <li v-for="(item,index) in jsd_ruleForm.addss">
+        <li v-for="(item,index) in jsd_ruleForm.chargebacks_list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close"  @click="closeQd_addss(index)"></i></div>
           <el-form-item label="内容" prop="unit" class="mar">
@@ -139,6 +139,7 @@
 </template>
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import moment from 'moment'
   import loading from '@/base/loading/loading'
   import * as math from 'mathjs'
   import more from '@/base/add_approval/more'
@@ -186,12 +187,13 @@
           project_name:'',
           construction_name:'',
           contract_name:'',
+          contract_request_id:'',
           contract_price:'',
-          money:'',
-          big_money:'',
-          adds:[],
-          addss:[],
-          add:[{
+          project_adress:'',
+          closing_data:'',
+          pay_list_json:[],
+          chargebacks_list_json:[],
+          list_json:[{
             content:'',
             unit:'',
             amount:'',
@@ -199,11 +201,17 @@
             sum_price:'',
             remarks:''
           }],
-          contract_id:'',
+          total_price:'',
+          company_id:'',
           project_manager:{},
-          project_manager_name:'',
-          many_enclosure:[],
-          contract_request_id:''
+          many_encolsure:[{
+            type:'',
+            constract_id:'',
+            name:''
+          }],
+          pay_total_price:'',
+          chargebacks_price:'',
+          project_manager_name:''
         },
         fileList:[],
         fileList_a:[],
@@ -257,30 +265,30 @@
           sum_price:'',
           remarks:''
         }
-        this.jsd_ruleForm.add.push(obj)
+        this.jsd_ruleForm.list_json.push(obj)
       },
       closeQd_add(index){
-        this.jsd_ruleForm.add.splice(index,1)
+        this.jsd_ruleForm.list_json.splice(index,1)
       },
       add_jsds(){
         let obj = {
           content_build:'',
           sum_price_build:''
         }
-        this.jsd_ruleForm.adds.push(obj)
+        this.jsd_ruleForm.pay_list_json.push(obj)
       },
       closeQd_adds(index){
-        this.jsd_ruleForm.adds.splice(index,1)
+        this.jsd_ruleForm.pay_list_json.splice(index,1)
       },
       add_jsdss(){
         let obj = {
           content:'',
           sum_price:''
         }
-        this.jsd_ruleForm.addss.push(obj)
+        this.jsd_ruleForm.chargebacks_list_json.push(obj)
       },
       closeQd_addss(index){
-        this.jsd_ruleForm.addss.splice(index,1)
+        this.jsd_ruleForm.chargebacks_list_json.splice(index,1)
       },
       submitForm_jsd(formName){
         this.loadingShow = true
@@ -380,6 +388,9 @@
       jsd_submit(){
         this.picArr = []
         this.fileArr = []
+        if(this.jsd_ruleForm.closing_data){
+          this.jsd_ruleForm.closing_data = moment(this.jsd_ruleForm.closing_data).format('YYYY-MM-DD')
+        }
         this.fileList.forEach((item) => {
           if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
             this.picArr.push(item)
@@ -398,18 +409,26 @@
         setTimeout(()=>{
           if(this.picArr.length === 0 && this.fileArr.length === 0){
             let param = new URLSearchParams()
+            param.append('project_name',this.jsd_ruleForm.project_name)
+            param.append('construction_name',this.jsd_ruleForm.construction_name)
+            param.append('contract_name',this.jsd_ruleForm.contract_name)
             if(this.jsd_ruleForm.contract_id){
               param.append('approval_contract_id',this.jsd_ruleForm.contract_id)
             }else{
               param.append('contract_request_id',this.jsd_ruleForm.contract_request_id)
             }
-            param.append('project_name',this.jsd_ruleForm.project_name)
-            param.append('construction_name',this.jsd_ruleForm.construction_name)
-            param.append('contract_name',this.jsd_ruleForm.contract_name)
             param.append('contract_price',this.jsd_ruleForm.contract_price)
-            param.append('list_json',JSON.stringify(this.jsd_ruleForm.add))
-            param.append('total_price',this.jsd_ruleForm.money)
+            param.append('project_adress',this.jsd_ruleForm.project_adress)
+            param.append('closing_data',this.jsd_ruleForm.closing_data)
+            param.append('list_json',JSON.stringify(this.jsd_ruleForm.list_json))
+            param.append('pay_list_json',JSON.stringify(this.jsd_ruleForm.pay_list_json))
+            param.append('chargebacks_list_json',JSON.stringify(this.jsd_ruleForm.chargebacks_list_json))
+            param.append('total_price',this.jsd_ruleForm.total_price)
             param.append('company_id',this.nowCompanyId)
+            param.append('project_manager',this.jsd_ruleForm.project_manager)
+            param.append('many_enclosure',this.jsd_ruleForm.many_enclosure)
+            param.append('pay_total_price',this.jsd_ruleForm.pay_total_price)
+            param.append('chargebacks_price',this.jsd_ruleForm.chargebacks_price)
             let todo = JSON.stringify(this.jsd_ruleForm.project_manager)
             if(todo != 'null'){
               param.append("project_manager", todo);
@@ -854,29 +873,32 @@
         'token'
       ]),
       sum_Team() {
-        let _list = this.jsd_ruleForm.add;
+        let _list = this.jsd_ruleForm.list_json;
         let sum = 0;
         _list.forEach(i => {
           let s = i.amount * i.unit_price;
+          i.sum_price = i.amount * i.unit_price
           if (s) {
             sum += Math.round(parseFloat(s)*100)/100;
           }
+          this.jsd_ruleForm.total_price =  sum
         });
         return sum;
       },
       sum_Pay(){
-        let _list = this.jsd_ruleForm.adds;
+        let _list = this.jsd_ruleForm.pay_list_json;
         let sum = 0;
         _list.forEach(i => {
           let s = i.sum_price;
           if (s) {
             sum += Math.round(parseFloat(s)*100)/100;
           }
+          this.jsd_ruleForm.pay_total_price = sum
         });
         return sum;
       },
       sum_Cut(){
-        let _list = this.jsd_ruleForm.addss;
+        let _list = this.jsd_ruleForm.chargebacks_list_json;
         let sum = 0;
         _list.forEach(i => {
           let s = i.sum_price;
@@ -906,13 +928,15 @@
             // sum = team
             sum = Math.round(parseFloat(team)*100)/100;
           }
+          this.jsd_ruleForm.chargebacks_price = sum
         }
         return sum
       }
     },
     components:{
       loading,
-      more
+      more,
+      moment
     },
   }
 </script>
