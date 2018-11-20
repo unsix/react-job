@@ -44,7 +44,7 @@
             </el-input>
           </el-form-item>
           <el-form-item  label="单位">
-            <el-input v-model="item.unit"></el-input>
+            <el-input v-model="item.unit" placeholder="m2" ></el-input>
           </el-form-item>
           <el-form-item label="数量">
             <el-input v-model="item.amount" @change="checkAmount(item)"></el-input>
@@ -112,7 +112,7 @@
         </div>
         <el-form-item label="剩余工程款"  class="automatic">
           <!--{{ sum_Team-sum_Pay-sum_Cut!=0?sum_Team-sum_Pay-sum_Cut:'自动计算'}}-->
-          {{sum_Surplus!=null?sum_Surplus:'自动计算'}}
+          {{sum_Surplus!=''?sum_Surplus:'自动计算'}}
         </el-form-item>
         <el-upload class="upload-demo" id="picc" v-model="jsd_ruleForm.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
           <i class="el-icon-plus"></i>
@@ -204,12 +204,12 @@
           total_price:'',
           company_id:'',
           project_manager:{},
-          many_encolsure:[{
+          many_enclosure:[{
             type:'',
             constract_id:'',
             name:''
           }],
-          pay_total_price:'',
+          pay_total_price:0,
           chargebacks_price:'',
           project_manager_name:''
         },
@@ -272,8 +272,8 @@
       },
       add_jsds(){
         let obj = {
-          content_build:'',
-          sum_price_build:''
+          content:'',
+          sum_price:''
         }
         this.jsd_ruleForm.pay_list_json.push(obj)
       },
@@ -425,8 +425,8 @@
             param.append('chargebacks_list_json',JSON.stringify(this.jsd_ruleForm.chargebacks_list_json))
             param.append('total_price',this.jsd_ruleForm.total_price)
             param.append('company_id',this.nowCompanyId)
-            param.append('project_manager',this.jsd_ruleForm.project_manager)
-            param.append('many_enclosure',this.jsd_ruleForm.many_enclosure)
+            // param.append('project_manager',this.jsd_ruleForm.project_manager)
+            // param.append('many_enclosure',this.jsd_ruleForm.many_enclosure)
             param.append('pay_total_price',this.jsd_ruleForm.pay_total_price)
             param.append('chargebacks_price',this.jsd_ruleForm.chargebacks_price)
             let todo = JSON.stringify(this.jsd_ruleForm.project_manager)
