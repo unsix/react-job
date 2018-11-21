@@ -14,10 +14,10 @@
             <el-input v-model="todo.project_construction_name"></el-input>
           </el-form-item>
           <el-form-item label="施工人员"  prop="name" class="cl" >
-            <el-input v-model="todo.name"  @click.native="getNmae('姓名')"></el-input>
+            <el-input v-model="todo.name"  @change.native="getNmae('姓名')" :editable="false" :clearable="false"></el-input>
           </el-form-item>
           <el-form-item label="联系方式" prop="phone">
-            <el-input v-model="todo.phone" @click.native="getNmae('姓名')"></el-input>
+            <el-input v-model="todo.phone" @change.native="getNmae('姓名')" :editable="false" :clearable="false"></el-input>
           </el-form-item>
           <el-form-item label="开户行"  prop="bank_name">
             <el-input v-model="todo.bank_name"></el-input>
@@ -105,6 +105,7 @@
             <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
           </el-upload>
           <span class="page_number" v-show="pages >1">{{current+1}}/{{pages}}</span>
+          <p class="page_number page_number_p">* 承诺(前端仅展示不提交,后端自行生成: 本人{{this.todo.name}}为{{this.todo.project_construction_name}}雇佣工人，在此承诺情况属实，核准无误，由此所引起的一切经济纠纷及法律责任由本人承担，与贵司无关。)</p>
         </el-form>
       </div>
     </div>
@@ -445,7 +446,7 @@
           this.todo.project_start_time = moment(this.todo.project_start_time).format('YYYY-MM-DD')
         }
         if(this.todo.project_end_time){
-          this.todo.project_end_time = moment(this.todo.project_start_time).format('YYYY-MM-DD')
+          this.todo.project_end_time = moment(this.todo.project_end_time).format('YYYY-MM-DD')
         }
         if(this.todo.fileList_a.length ==0 && this.todo.fileList.length == 0){
           this.todo.many_enclosure = []
@@ -711,6 +712,11 @@
     float: right;
     margin-bottom: 10px;
     color: #5a5e66;
+  }
+  .page_number_p{
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.3;
   }
   .el-upload--picture-card{
     width: 85px;

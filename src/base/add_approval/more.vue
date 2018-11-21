@@ -47,7 +47,7 @@
         ys_id:{},
         js_id:{},
         gz_id:{},
-        file:[]
+        file:[],
       }
     },
     methods:{
@@ -165,7 +165,10 @@
     },
     created(){
       this.showlist()
-    }
+    },
+    props: {
+
+    },
   }
 </script>
 

@@ -1,6 +1,7 @@
 <template>
     <div >
-      <el-form :model="jsd_ruleForm" :rules="jsd_rules" ref="jsd_ruleForm" label-width="150px" class="new_bxd demo-jsd_ruleForm">
+      <el-form :model="jsd_ruleForm" :rules="jsd_rules"  ref="jsd_ruleForm" label-width="150px" class="new_bxd demo-jsd_ruleForm">
+        <el-button class="addconstrution mar" type="info"  size="small" >基本信息</el-button>
         <el-form-item label="工程项目名称" prop="project_name" class="mar">
           <el-input v-model="jsd_ruleForm.project_name"></el-input>
         </el-form-item>
@@ -11,16 +12,16 @@
           <el-input v-model="jsd_ruleForm.construction_name"></el-input>
         </el-form-item>
         <el-form-item label="截止日期" prop="closing_data" class="mar">
-          <el-date-picker v-model="jsd_ruleForm.closing_data" type="date" placeholder="选择日期" :clearable="false"></el-date-picker>
+          <el-date-picker v-model="jsd_ruleForm.closing_data" type="date" placeholder="选择日期" :editable="false" :clearable="false"></el-date-picker>
         </el-form-item>
         <el-form-item label="合同名称" prop="contract_name" >
           <el-input v-model="jsd_ruleForm.contract_name" style="width:195px;"></el-input>
           <el-button type="info" plain @click="viewHt" style="float: right;margin-right: 5px;" v-show="btnShow">查看合同</el-button>
         </el-form-item>
         <el-form-item label="合同金额" prop="contract_price" class="mar">
-          <el-input v-model="jsd_ruleForm.contract_price"></el-input>
+          <el-input v-model="jsd_ruleForm.contract_price" @change="checkContract_price(jsd_ruleForm)"></el-input>
         </el-form-item>
-        <el-form-item label="项目负责人" class="mar">
+        <el-form-item label="项目负责人" class="mar" prop="project_manager_name">
           <el-select v-model="jsd_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
             <el-option v-for="item in comPersonList"
                        :key="item.personnel_id"  :label="item.name" :value="item.uid">
@@ -30,33 +31,64 @@
             </el-option>
           </el-select>
         </el-form-item>
-
-        <el-button class="addconstrution" type="primary"  size="small" @click="add_jsd" >添加施工内容</el-button>
+        <el-button class="addconstrution mar" type="info"  size="small" >产值</el-button>
+        <el-button class="addconstrution el-ml" type="primary"  size="small" @click="add_jsd" >添加施工内容</el-button>
         <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
-        <li v-for="(item,index) in jsd_ruleForm.list_json">
+        <li v-for="(item,index) in jsd_ruleForm.list_json" >
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close" v-show="jsd_ruleForm.list_json.length > 1" @click="closeQd_add(index)"></i></div>
-          <el-form-item label="施工内容" prop="unit" class="mar">
-            <el-input type="textarea"
-                      autosize
-                      v-model="item.content"
-                      placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" >
+          <!--prop="'list_json[index].'+index+'.content'"-->
+          <el-form-item
+            label="施工内容"
+            :prop="'list_json['+ index +'].content'"
+            class="mar"
+            :rules="{required: true, message: '施工不能为空', trigger: 'blur'}"
+          >
+            <el-input
+              type="textarea"
+              autosize
+              v-model="item.content"
+              placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" >
             </el-input>
           </el-form-item>
-          <el-form-item  label="单位">
-            <el-input v-model="item.unit" placeholder="m2" ></el-input>
+          <el-form-item
+            label="单位"
+            :prop="'list_json['+ index +'].unit'"
+            :rules="[
+              { required: true, message: '单位不能为空', trigger: 'blur'}
+             ]"
+          >
+            <el-input  v-model="item.unit" placeholder="m2" ></el-input>
           </el-form-item>
-          <el-form-item label="数量">
+          <el-form-item
+            label="数量"
+            :prop="'list_json['+ index +'].amount'"
+            :rules="[
+              { required: true, message: '数量不能为空', trigger: 'blur'}
+             ]"
+          >
             <el-input v-model="item.amount" @change="checkAmount(item)"></el-input>
           </el-form-item>
-          <el-form-item label="单价">
+          <el-form-item
+            label="单价"
+            :prop="'list_json['+ index +'].unit_price'"
+            :rules="[
+              { required: true, message: '单价不能为空', trigger: 'blur'}
+             ]"
+          >
             <el-input v-model="item.unit_price" @change="checkUnit(item)"></el-input>
           </el-form-item>
           <el-form-item label="合计" class="automatic">
             <!--<input type="tel" class="el-input__inner" :readonly="true" v-model="item.sum_price">-->
             {{item.amount&&item.unit_price!=''?Math.round(parseFloat(item.amount*item.unit_price)*100)/100:'自动计算'}}
           </el-form-item>
-          <el-form-item label="备注" >
+          <el-form-item
+            label="备注"
+            :prop="'list_json['+ index +'].remarks'"
+            :rules="[
+              { required: true, message: '备注不能为空', trigger: 'blur'}
+             ]"
+          >
             <el-input v-model="item.remarks" ></el-input>
           </el-form-item>
         </li>
@@ -64,51 +96,78 @@
           {{sum_Team!=''?sum_Team:'自动计算'}}
         </el-form-item>
         <div>
-          <el-button class="addconstrution" type="info" plain>已支付</el-button>
+          <el-button class="addconstrution mar" type="info"  size="small" >已支付</el-button>
+          <!--<el-button class="addconstrution" type="info" plain>已支付</el-button>-->
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsds" >添加支付工程款</el-button>
         <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
         <li v-for="(item,index) in jsd_ruleForm.pay_list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close"  @click="closeQd_adds(index)"></i></div>
-          <el-form-item label="内容" prop="unit" class="mar">
+          <el-form-item
+            label="内容"
+            :prop="'pay_list_json['+ index +'].content'"
+            class="mar"
+            :rules="{required: true, message: '内容不能为空', trigger: 'blur'}"
+          >
             <el-input type="textarea"
                       autosize
                       v-model="item.content"
                       placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" >
             </el-input>
           </el-form-item>
-          <el-form-item  label="金额">
-            <el-input v-model="item.sum_price"></el-input>
+          <el-form-item
+            label="金额"
+            :prop="'pay_list_json['+ index +'].sum_price'"
+            :rules="[
+              { required: true, message: '金额不能为空', trigger: 'blur'},
+             ]"
+          >
+            <el-input  v-model="item.sum_price" @change="checkSum_price(item)"></el-input>
           </el-form-item>
         </li>
         <el-form-item label="累计支付工程款" class="automatic" >
           {{sum_Pay!=''?sum_Pay:'自动计算'}}
         </el-form-item>
         <div>
-          <el-button class="addconstrution" type="info" plain>扣款项</el-button>
+          <el-button class="addconstrution mar" type="info"  size="small" >基本信息</el-button>
+          <!--<el-button class="addconstrution" type="info" plain>扣款项</el-button>-->
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsdss" >添加扣款项</el-button>
         <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
         <li v-for="(item,index) in jsd_ruleForm.chargebacks_list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close"  @click="closeQd_addss(index)"></i></div>
-          <el-form-item label="内容" prop="unit" class="mar">
+          <el-form-item
+            label="内容"
+            class="mar"
+            :prop="'chargebacks_list_json['+ index +'].content'"
+            :rules="[
+              { required: true, message: '内容不能为空', trigger: 'blur'},
+             ]"
+          >
             <el-input type="textarea"
                       autosize
                       v-model="item.content"
                       placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" >
             </el-input>
           </el-form-item>
-          <el-form-item  label="金额">
-            <el-input v-model="item.sum_price"></el-input>
+          <el-form-item
+            label="金额"
+            :prop="'chargebacks_list_json['+ index +'].sum_price'"
+            :rules="[
+              { required: true, message: '金额不能为空', trigger: 'blur'},
+             ]"
+          >
+            <el-input v-model.number="item.sum_price" @change="checkSum_price(item)"></el-input>
           </el-form-item>
         </li>
         <el-form-item label="扣款项合计" class="automatic">
           {{sum_Cut!=''?sum_Cut:'自动计算'}}
         </el-form-item>
         <div>
-          <el-button class="addconstrution" type="info" plain>剩余工程款</el-button>
+          <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
+          <!--<el-button class="addconstrution" type="info" plain>剩余工程款</el-button>-->
         </div>
         <el-form-item label="剩余工程款"  class="automatic">
           <!--{{ sum_Team-sum_Pay-sum_Cut!=0?sum_Team-sum_Pay-sum_Cut:'自动计算'}}-->
@@ -123,7 +182,7 @@
           <el-button size="small" type="info" plain>上传文件</el-button>
           <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
         </el-upload>
-        <more ref="more"></more>
+        <more ref="more" ></more>
         <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
           <p>审批流程</p>
           <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -135,6 +194,7 @@
         </el-form-item>
       </el-form>
       <loading v-show="loadingShow"></loading>
+      </keep-alive>
     </div>
 </template>
 <script>
@@ -177,11 +237,22 @@
             message: '请填写合同名称',
             trigger: 'blur'
           }],
-          contract_price: [{
+          contract_price: [
+            {
+              required: true,
+              message: '请填写合同金额',
+              trigger: 'blur'
+
+           }
+          ],
+          project_manager_name:[{
             required: true,
-            message: '请填写合同金额',
+            message: '请选择项目负责人',
             trigger: 'blur'
-          }]
+          }],
+          list_json:[{}],
+          pay_list_json:[{}],
+          chargebacks_list_json:[{}]
         },
         jsd_ruleForm:{
           project_name:'',
@@ -305,7 +376,8 @@
               return false;
             }
           });
-        },500)
+        },500);
+
       },
       handlePreview(file, fileList){
         if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
@@ -371,6 +443,28 @@
             type: 'error'
           })
           data.unit_price="";
+        }
+      },
+      checkSum_price(data){
+        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+        if(!priceReg.test(data.sum_price)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          data.sum_price="";
+        }
+      },
+      checkContract_price(data){
+        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
+        if(!priceReg.test(data.contract_price)){
+          this.$message({
+            showClose: true,
+            message: '格式错误',
+            type: 'error'
+          })
+          data.contract_price="";
         }
       },
       dx:function (n) {
@@ -863,6 +957,7 @@
       btnShow:{
         default:false
       }
+
     },
     computed: {
       ...mapGetters([
@@ -1028,6 +1123,9 @@
       }
     }
   }
+  .el-ml{
+    margin-left: 5px !important;
+  }
   .mar{
     width: 100%!important;
   }
@@ -1036,5 +1134,9 @@
   }
   .automatic{
     color: #409EFF;
+  }
+  .addconstrution{
+    clear: both;
+    margin: 10px 0 7px 5px;
   }
 </style>
