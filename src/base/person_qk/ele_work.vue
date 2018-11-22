@@ -14,10 +14,10 @@
             <el-input v-model="todo.project_construction_name"></el-input>
           </el-form-item>
           <el-form-item label="施工人员"  prop="name" class="cl" >
-            <el-input v-model="todo.name"  @change.native="getNmae('姓名')" :editable="false" :clearable="false"></el-input>
+            <el-input v-model="todo.name" readonly="readonly"  @click.native="getNmae('姓名')" :editable="false" :clearable="false"></el-input>
           </el-form-item>
           <el-form-item label="联系方式" prop="phone">
-            <el-input v-model="todo.phone" @change.native="getNmae('姓名')" :editable="false" :clearable="false"></el-input>
+            <el-input v-model="todo.phone" readonly="readonly" @click.native="getNmae('姓名')" :editable="false" :clearable="false"></el-input>
           </el-form-item>
           <el-form-item label="开户行"  prop="bank_name">
             <el-input v-model="todo.bank_name"></el-input>
@@ -90,10 +90,10 @@
             {{sum_rest>=0||sum_rest<0?sum_rest:'自动计算'}}
           </el-form-item>
           <el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>
-          <el-form-item label="班组确认人" prop="thr_true_people">
+          <el-form-item label="班组确认人" readonly="readonly" prop="thr_true_people">
             <el-input v-model="todo.thr_true_people" @click.native="getNmae('确认人')"></el-input>
           </el-form-item>
-          <el-form-item label="项目负责人" prop="true_people">
+          <el-form-item label="项目负责人" readonly="readonly" prop="true_people">
             <el-input v-model="todo.true_people" @click.native="getNmae('负责人')" ></el-input>
           </el-form-item>
           <el-upload style="margin-left: 10px" class="upload-demo"  ref="res" id="picc" v-model="todo.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="todo.fileList" :auto-upload="false">

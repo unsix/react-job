@@ -113,7 +113,8 @@
             <el-input type="textarea"
                       autosize
                       v-model="item.content"
-                      placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成" >
+                      placeholder="例子:2-17楼户内墙砖完成，2-楼户内地砖完成"
+            >
             </el-input>
           </el-form-item>
           <el-form-item
@@ -130,7 +131,7 @@
           {{sum_Pay!=''?sum_Pay:'自动计算'}}
         </el-form-item>
         <div>
-          <el-button class="addconstrution mar" type="info"  size="small" >基本信息</el-button>
+          <el-button class="addconstrution mar" type="info"  size="small" >扣款项</el-button>
           <!--<el-button class="addconstrution" type="info" plain>扣款项</el-button>-->
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsdss" >添加扣款项</el-button>

@@ -9,6 +9,7 @@
         <p>发起人：{{content.initiator_name}}</p>
       </div>
       <div class="main">
+        <el-button class="addconstrution mar" type="info"  size="small" >基本信息</el-button>
         <p>工程项目名称:<span>{{detail.project_name}}</span></p>
         <p>施工位置:<span>{{detail.project_adress}}</span></p>
         <p>施工班组:<span>{{detail.project_construction_name}}</span></p>
@@ -27,7 +28,9 @@
         <!--<p>奖罚￥:<span>{{detail.sanction_price}}</span></p>-->
         <!--<p>已领金额￥:<span>{{detail.received_price}}</span></p>-->
         <!--<p>应付金额:<span>{{detail.should_pay_price}}</span></p>-->
+        <el-button class="addconstrution mar" type="info"  size="small" >累计工资</el-button>
         <li v-for = '(item,index) in detail.payroll_list_json'>
+          <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <p>施工内容:<span>{{item.content}}</span></p>
           <p>单位:<span>{{item.unit}}</span></p>
           <p>数量:<span>{{item.amount}}</span></p>
@@ -36,11 +39,14 @@
           <p>备注:<span>{{item.remarks}}</span></p>
         </li>
         <p>工人产值工资合计:<span>{{detail.total_price}}</span></p>
+        <el-button class="addconstrution mar" type="info"  size="small" >累计已领金额</el-button>
         <p>累计收到工资合计:<span>{{detail.payroll_receive_total_price}}</span></p>
+        <el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>
         <p>班组确认人:<span>{{detail.team_name}}</span></p>
         <p>第三方确认人:<span>{{detail.third_name}}</span></p>
       </div>
       <div class="enclosure">
+        <!--<el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>-->
         <p>附件：质量验收单，完工图片，合同</p>
         <div v-if="detail.imgs">
           <span>图片附件：</span>
@@ -82,15 +88,15 @@
         pic_index: 0,
         pic_show: false,
         arr_list: [],
-        loadingShow:false
+        loadingShow:false,
       }
     },
     methods:{
       change_data(){
         if(this.content.type == '3'){
           this.title = '个人劳务承包请款单'
-        }else if(this.content.type == '2'){
-          this.title = '点工月工资请款单'
+        }else if(this.content.type == '4'){
+          this.title = '班组工人工资进度请款单'
         }
         if(this.content.detail){
           this.detail = this.content.detail
@@ -270,6 +276,9 @@
 
 <style lang="scss">
   .box{
+    li{
+      list-style: none;
+    }
     width: 100%;
     background: #FFF;
     padding-top: 10px;
@@ -285,9 +294,12 @@
       margin-left: 20px;
       line-height: 20px;
       font-size: 14px;
-      span{
-        color: #A3D7FF;
-        margin-left: 5px;
+      p{
+        span{
+          color: blue;
+          margin-left: 5px;
+          line-height: 1.8;
+        }
       }
     }
     .enclosure{
@@ -342,5 +354,13 @@
       align-items: center;
       align-content: center;
     }
+    .mar{
+      width: 94%!important;
+    }
+    .addconstrution{
+      clear: both;
+      margin: 10px 0 7px 0;
+    }
+
   }
 </style>
