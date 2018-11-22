@@ -183,7 +183,7 @@
           <el-button size="small" type="info" plain>上传文件</el-button>
           <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
         </el-upload>
-        <more ref="more" ></more>
+        <more ref="more"  ></more>
         <div style="color: #5a5e66;font-size: 14px;margin-top: 10px">
           <p>审批流程</p>
           <li v-for="(item,index) in userList" style="list-style: none;margin-top: 5px;margin-left: 10px">
@@ -195,7 +195,6 @@
         </el-form-item>
       </el-form>
       <loading v-show="loadingShow"></loading>
-      </keep-alive>
     </div>
 </template>
 <script>
@@ -204,6 +203,7 @@
   import loading from '@/base/loading/loading'
   import * as math from 'mathjs'
   import more from '@/base/add_approval/more'
+  import name from '@/base/person_qk/Named'
   export default {
     data(){
       return{
@@ -957,8 +957,7 @@
       },
       btnShow:{
         default:false
-      }
-
+      },
     },
     computed: {
       ...mapGetters([

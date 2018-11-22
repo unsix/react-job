@@ -598,6 +598,7 @@
     },
     props:{
       title:{},
+
     },
     created(){
       this.choose()

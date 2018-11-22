@@ -191,7 +191,7 @@
 
   <add_ysd v-if="add_ysd_show_cr" :inset='inset' :sec_title="con_title" :linked="linked"></add_ysd>
 
-  <addJsd v-if="jsd_show" :qkd_status="title" :contract_name="jsd_data.contract_name" :inset="jsd_data"></addJsd>
+  <addJsd v-if="jsd_show" :qkd_status="title" :contract_name="jsd_data.contract_name"  :inset="jsd_data"></addJsd>
 
   <comYsd v-if="add_qkd_show_cr" :inset='inset' :qkd_status="qkd_son" :contract_name="contract_name"></comYsd>
 </div>

@@ -6,20 +6,17 @@
         <p>{{qkd_status}}</p>
         <b @click="show_sign" v-show="qkd_status!='工作联系单'">去复制</b>
       </div>
-      <keep-alive>
       <addQkd v-if="qkd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :link="true" :btn_show="false" :contract_name="contract_name" :contract="inset.contract_temp_id" ref="scse"  @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
       <addJsd v-if="jsd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :btnShow="true" @return_exam="return_Add" :contract_name="contract_name" :contract="inset.contract_temp_id"></addJsd>
       <addYsd v-if="ysd_show" class="qingkuan" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id" @return_exam="return_Add"></addYsd>
       <addLxd v-if="lxd_show" class="qingkuan" :approval_id="inset.contract_temp_id" @return_exam="return_Add"></addLxd>
-      </keep-alive>
     </div>
     <chooseTemplate v-if="chooseTemShow" :link="true" style="background: #FFF"  @returnForm="returnForm" :insert="0" @viewInfo="viewInfo" :approval_type="approval_type" @useInfo="useInfo"></chooseTemplate>
     <comJsd  v-if="jsd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" :pset="false" @return_psb="returnList" :file_arr="file_arr"></comJsd>
     <comQkd :change_type="change_type" v-if="qkd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" :pset="false" @return_psb="returnList" :file_arr="file_arr"></comQkd>
     <comYsd v-if="ysd_show_if" :form_Lista="form_Lista" :form_Listb="form_Listb" :handle_show="false" @return_psb="returnList" :file_arr="file_arr"></comYsd>
   </div>
-  <cho v-else :title="tips">
-  </cho>
+  <cho v-else  :title="tips"></cho>
 </template>
 
 <script>
@@ -579,7 +576,7 @@
       },
       contract_name:{
 
-      }
+      },
     },
     created(){
       this.change_types()

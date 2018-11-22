@@ -20,14 +20,6 @@
         <p>身份证号:<span>{{detail.id_card}}</span></p>
         <p>施工进场时间:<span>{{detail.project_start_time}}</span></p>
         <p>截止时间:<span>{{detail.project_end_time}}</span></p>
-        <!--<p v-if="content.type == '3'">承包单价（元/平方）:<span>{{detail.contract_unit_price}}</span></p>-->
-        <!--<p v-if="content.type == '3'">本次完成面积（平方）:<span>{{detail.complete_area}}</span></p>-->
-        <!--<p v-if="content.type == '2'">日工资￥：<span>{{detail.daily_wages}}</span></p>-->
-        <!--<p v-if="content.type == '2'">工作天数：<span>{{detail.working_days}}</span></p>-->
-        <!--<p>金额￥:<span>{{detail.price}}</span></p>-->
-        <!--<p>奖罚￥:<span>{{detail.sanction_price}}</span></p>-->
-        <!--<p>已领金额￥:<span>{{detail.received_price}}</span></p>-->
-        <!--<p>应付金额:<span>{{detail.should_pay_price}}</span></p>-->
         <el-button class="addconstrution mar" type="info"  size="small" >累计工资</el-button>
         <li v-for = '(item,index) in detail.payroll_list_json'>
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>

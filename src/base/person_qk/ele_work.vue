@@ -53,7 +53,7 @@
               </el-input>
             </el-form-item>
             <el-form-item label="单位" prop="unit">
-              <el-input v-model="item.unit"  placeholder="m2" @change="checkUnit(item)" ></el-input>
+              <el-input v-model="item.unit"  placeholder="m2"  ></el-input>
             </el-form-item>
             <el-form-item label="数量" prop="amount">
               <el-input v-model="item.amount"  placeholder="0" @change="checkAmount(item)"></el-input>
@@ -165,17 +165,6 @@
             sum_price:'',
             remarks:''
           });
-        }
-      },
-      checkUnit(item){
-        var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
-        if(!priceReg.test(item.unit)){
-          this.$message({
-            showClose: true,
-            message: '格式错误请输入数字',
-            type: 'error'
-          })
-          item.unit="";
         }
       },
       checkAmount(item){
