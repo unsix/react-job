@@ -41,7 +41,6 @@
         <li v-for="(item,index) in jsd_ruleForm.list_json" >
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close" v-show="jsd_ruleForm.list_json.length > 1" @click="closeQd_add(index)"></i></div>
-          <!--prop="'list_json[index].'+index+'.content'"-->
           <el-form-item
             label="施工内容"
             :prop="'list_json['+ index +'].content'"
@@ -83,7 +82,6 @@
             <el-input v-model="item.unit_price" @change="checkUnit(item)"></el-input>
           </el-form-item>
           <el-form-item label="合计" class="automatic">
-            <!--<input type="tel" class="el-input__inner" :readonly="true" v-model="item.sum_price">-->
             {{item.amount&&item.unit_price!=''?Math.round(parseFloat(item.amount*item.unit_price)*100)/100:'自动计算'}}
           </el-form-item>
           <el-form-item
@@ -101,10 +99,8 @@
         </el-form-item>
         <div>
           <el-button class="addconstrution mar" type="info"  size="small" >已支付</el-button>
-          <!--<el-button class="addconstrution" type="info" plain>已支付</el-button>-->
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsds" >添加支付工程款</el-button>
-        <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
         <li v-for="(item,index) in jsd_ruleForm.pay_list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close"  @click="closeQd_adds(index)"></i></div>
@@ -136,10 +132,8 @@
         </el-form-item>
         <div>
           <el-button class="addconstrution mar" type="info"  size="small" >扣款项</el-button>
-          <!--<el-button class="addconstrution" type="info" plain>扣款项</el-button>-->
         </div>
         <el-button  type="primary" class="addconstrution"  size="small" @click="add_jsdss" >添加扣款项</el-button>
-        <!--<el-button class="addconstrution" v-show="jsd_ruleForm.add.length > 1" type="primary"  size="small" @click="closeQd(index)" >添加施工内容</el-button>-->
         <li v-for="(item,index) in jsd_ruleForm.chargebacks_list_json">
           <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
           <div class="close"><i class="fa fa-close"  @click="closeQd_addss(index)"></i></div>
@@ -172,15 +166,12 @@
         </el-form-item>
         <div>
           <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
-          <!--<el-button class="addconstrution" type="info" plain>剩余工程款</el-button>-->
         </div>
         <el-form-item label="剩余工程款"  class="automatic">
-          <!--{{ sum_Team-sum_Pay-sum_Cut!=0?sum_Team-sum_Pay-sum_Cut:'自动计算'}}-->
           {{sum_Surplus!=''?sum_Surplus:'自动计算'}}
         </el-form-item>
         <el-upload class="upload-demo" id="picc" v-model="jsd_ruleForm.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
           <i class="el-icon-plus"></i>
-          <!--<el-button size="small" type="info" plain id="juz">上传图片</el-button>-->
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
         </el-upload>
         <el-upload class="upload-demo_a" v-model="jsd_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
