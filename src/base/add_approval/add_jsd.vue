@@ -22,7 +22,11 @@
           <el-input v-model="jsd_ruleForm.contract_price" @change="checkContract_price(jsd_ruleForm)"></el-input>
         </el-form-item>
         <el-form-item label="项目负责人" class="mar" prop="project_manager_name">
-          <el-select v-model="jsd_ruleForm.project_manager_name" placeholder="请选择" @change="cpjSelectOk">
+          <el-select
+            v-model="jsd_ruleForm.project_manager_name"
+            placeholder="请选择"
+            @change="cpjSelectOk"
+            >
             <el-option v-for="item in comPersonList"
                        :key="item.personnel_id"  :label="item.name" :value="item.uid">
               <img :src="item.avatar" style="width: 30px; float: left;vertical-align: middle;margin-top: 5px; border-radius: 50%;" />
