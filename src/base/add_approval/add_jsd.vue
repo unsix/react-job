@@ -255,36 +255,7 @@
           pay_list_json:[{}],
           chargebacks_list_json:[{}]
         },
-        jsd_ruleForm:{
-          project_name:'',
-          construction_name:'',
-          contract_name:'',
-          contract_request_id:'',
-          contract_price:'',
-          project_adress:'',
-          closing_data:'',
-          pay_list_json:[],
-          chargebacks_list_json:[],
-          list_json:[{
-            content:'',
-            unit:'',
-            amount:'',
-            unit_price:'',
-            sum_price:'',
-            remarks:''
-          }],
-          total_price:'',
-          company_id:'',
-          project_manager:{},
-          many_enclosure:[{
-            type:'',
-            constract_id:'',
-            name:''
-          }],
-          pay_total_price:0,
-          chargebacks_price:'',
-          project_manager_name:''
-        },
+
         fileList:[],
         fileList_a:[],
         picArr:[],
@@ -958,6 +929,9 @@
       btnShow:{
         default:false
       },
+      jsd_ruleForm:{
+
+      }
     },
     computed: {
       ...mapGetters([

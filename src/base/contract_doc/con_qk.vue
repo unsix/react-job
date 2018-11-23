@@ -7,7 +7,7 @@
         <b @click="show_sign" v-show="qkd_status!='工作联系单'">去复制</b>
       </div>
       <addQkd v-if="qkd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :link="true" :btn_show="false" :contract_name="contract_name" :contract="inset.contract_temp_id" ref="scse"  @return_exam="return_Add"  :form_approval_id="form_approval_id"  :request_money_basis_type="request_money_basis_type"></addQkd>
-      <addJsd v-if="jsd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :btnShow="true" @return_exam="return_Add" :contract_name="contract_name" :contract="inset.contract_temp_id"></addJsd>
+      <addJsd v-if="jsd_show" class="qingkuan" :userList="user_info" :approval_id="approval_id" :btnShow="true" @return_exam="return_Add" :contract_name="contract_name" :contract="inset.contract_temp_id" :jsd_ruleForm="jsd_ruleForm" ></addJsd>
       <addYsd v-if="ysd_show" class="qingkuan" :userList="user_info" :inspection_type_id="inspection_type_id" :approval_id="approval_id" @return_exam="return_Add"></addYsd>
       <addLxd v-if="lxd_show" class="qingkuan" :approval_id="inset.contract_temp_id" @return_exam="return_Add"></addLxd>
     </div>
@@ -37,6 +37,36 @@
   export default {
     data(){
       return{
+        jsd_ruleForm:{
+          project_name:'',
+          construction_name:'',
+          contract_name:'',
+          contract_request_id:'',
+          contract_price:'',
+          project_adress:'',
+          closing_data:'',
+          pay_list_json:[],
+          chargebacks_list_json:[],
+          list_json:[{
+            content:'',
+            unit:'',
+            amount:'',
+            unit_price:'',
+            sum_price:'',
+            remarks:''
+          }],
+          total_price:'',
+          company_id:'',
+          project_manager:{},
+          many_enclosure:[{
+            type:'',
+            constract_id:'',
+            name:''
+          }],
+          pay_total_price:0,
+          chargebacks_price:'',
+          project_manager_name:''
+        },
         sign:true,
         wrapper:true,
         ys_list:[],

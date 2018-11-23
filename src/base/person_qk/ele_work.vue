@@ -91,10 +91,10 @@
           </el-form-item>
           <el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>
           <el-form-item label="班组确认人" readonly="readonly" prop="thr_true_people">
-            <el-input v-model="todo.thr_true_people" @click.native="getNmae('确认人')"></el-input>
+            <el-input v-model="todo.thr_true_people" readonly="readonly" @click.native="getNmae('确认人')"></el-input>
           </el-form-item>
           <el-form-item label="项目负责人" readonly="readonly" prop="true_people">
-            <el-input v-model="todo.true_people" @click.native="getNmae('负责人')" ></el-input>
+            <el-input v-model="todo.true_people" readonly="readonly" @click.native="getNmae('负责人')" ></el-input>
           </el-form-item>
           <el-upload style="margin-left: 10px" class="upload-demo"  ref="res" id="picc" v-model="todo.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="todo.fileList" :auto-upload="false">
             <i class="el-icon-plus" ></i>
