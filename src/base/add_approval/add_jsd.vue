@@ -21,7 +21,7 @@
         <el-form-item label="合同金额" prop="contract_price" class="mar">
           <el-input v-model="jsd_ruleForm.contract_price" @change="checkContract_price(jsd_ruleForm)"></el-input>
         </el-form-item>
-        <el-form-item label="项目负责人" class="mar" prop="project_manager_name">
+        <el-form-item label="项目负责人"  class="mar" prop="project_manager_name">
           <el-select
             v-model="jsd_ruleForm.project_manager_name"
             placeholder="请选择"
@@ -276,6 +276,25 @@
             this.$set(this.jsd_ruleForm.project_manager, 'uid', item.uid)
           }
         })
+      },
+      _project_manager(){
+        let param = new URLSearchParams()
+        param.append('company_id',this.nowCompanyId)
+        // param.append('type',this.formType)
+        let str = this.$test('/index.php/Mobile/approval/can_set_sequence')
+        this.$http.post(str,param)
+          .then((res)=>{
+            var current = this
+            var judge = res.data.code
+            this.$testLogin(judge,current)
+            if(res.data.code == 0){
+              if(res.data.data == 1){
+               console(res.data.data)
+              }else{
+                this.$message.error(res.data.message)
+              }
+            }
+          })
       },
       chooseHetong(){
         this.hetongListShow = true
@@ -537,6 +556,7 @@
                   }
                 })
               }
+
               upload_enclosure_new((name)=>{
                 let nparam = new URLSearchParams()
                 nparam.append('uid',this.user.uid)
@@ -826,18 +846,39 @@
         }
         if(this.file_time != 0 || this.pic_time != 0){
           let param = new URLSearchParams()
+
+          param.append('project_name',this.jsd_ruleForm.project_name)
+          param.append('construction_name',this.jsd_ruleForm.construction_name)
+          param.append('contract_name',this.jsd_ruleForm.contract_name)
           if(this.jsd_ruleForm.contract_id){
             param.append('approval_contract_id',this.jsd_ruleForm.contract_id)
           }else{
             param.append('contract_request_id',this.jsd_ruleForm.contract_request_id)
           }
-          param.append('project_name',this.jsd_ruleForm.project_name)
-          param.append('construction_name',this.jsd_ruleForm.construction_name)
-          param.append('contract_name',this.jsd_ruleForm.contract_name)
           param.append('contract_price',this.jsd_ruleForm.contract_price)
-          param.append('list_json',JSON.stringify(this.jsd_ruleForm.add))
-          param.append('total_price',this.jsd_ruleForm.money)
+          param.append('project_adress',this.jsd_ruleForm.project_adress)
+          param.append('closing_data',this.jsd_ruleForm.closing_data)
+          param.append('list_json',JSON.stringify(this.jsd_ruleForm.list_json))
+          param.append('pay_list_json',JSON.stringify(this.jsd_ruleForm.pay_list_json))
+          param.append('chargebacks_list_json',JSON.stringify(this.jsd_ruleForm.chargebacks_list_json))
+          param.append('total_price',this.jsd_ruleForm.total_price)
           param.append('company_id',this.nowCompanyId)
+          // param.append('project_manager',this.jsd_ruleForm.project_manager)
+          // param.append('many_enclosure',this.jsd_ruleForm.many_enclosure)
+          param.append('pay_total_price',this.jsd_ruleForm.pay_total_price)
+          param.append('chargebacks_price',this.jsd_ruleForm.chargebacks_price)
+          // if(this.jsd_ruleForm.contract_id){
+          //   param.append('approval_contract_id',this.jsd_ruleForm.contract_id)
+          // }else{
+          //   param.append('contract_request_id',this.jsd_ruleForm.contract_request_id)
+          // }
+          // param.append('project_name',this.jsd_ruleForm.project_name)
+          // param.append('construction_name',this.jsd_ruleForm.construction_name)
+          // param.append('contract_name',this.jsd_ruleForm.contract_name)
+          // param.append('contract_price',this.jsd_ruleForm.contract_price)
+          // param.append('list_json',JSON.stringify(this.jsd_ruleForm.add))
+          // param.append('total_price',this.jsd_ruleForm.money)
+          // param.append('company_id',this.nowCompanyId)
           let todo = JSON.stringify(this.jsd_ruleForm.project_manager)
           if(todo != 'null'){
             param.append("project_manager", todo);
@@ -869,18 +910,39 @@
         }
         if(this.file_time != 0 || this.pic_time != 0) {
           let param = new URLSearchParams()
+          param.append('project_name',this.jsd_ruleForm.project_name)
+          param.append('construction_name',this.jsd_ruleForm.construction_name)
+          param.append('contract_name',this.jsd_ruleForm.contract_name)
           if(this.jsd_ruleForm.contract_id){
             param.append('approval_contract_id',this.jsd_ruleForm.contract_id)
           }else{
             param.append('contract_request_id',this.jsd_ruleForm.contract_request_id)
           }
-          param.append('project_name',this.jsd_ruleForm.project_name)
-          param.append('construction_name',this.jsd_ruleForm.construction_name)
-          param.append('contract_name',this.jsd_ruleForm.contract_name)
           param.append('contract_price',this.jsd_ruleForm.contract_price)
-          param.append('list_json',JSON.stringify(this.jsd_ruleForm.add))
-          param.append('total_price',this.jsd_ruleForm.money)
+          param.append('project_adress',this.jsd_ruleForm.project_adress)
+          param.append('closing_data',this.jsd_ruleForm.closing_data)
+          param.append('list_json',JSON.stringify(this.jsd_ruleForm.list_json))
+          param.append('pay_list_json',JSON.stringify(this.jsd_ruleForm.pay_list_json))
+          param.append('chargebacks_list_json',JSON.stringify(this.jsd_ruleForm.chargebacks_list_json))
+          param.append('total_price',this.jsd_ruleForm.total_price)
           param.append('company_id',this.nowCompanyId)
+          // param.append('project_manager',this.jsd_ruleForm.project_manager)
+          // param.append('many_enclosure',this.jsd_ruleForm.many_enclosure)
+          param.append('pay_total_price',this.jsd_ruleForm.pay_total_price)
+          param.append('chargebacks_price',this.jsd_ruleForm.chargebacks_price)
+
+          // if(this.jsd_ruleForm.contract_id){
+          //   param.append('approval_contract_id',this.jsd_ruleForm.contract_id)
+          // }else{
+          //   param.append('contract_request_id',this.jsd_ruleForm.contract_request_id)
+          // }
+          // param.append('project_name',this.jsd_ruleForm.project_name)
+          // param.append('construction_name',this.jsd_ruleForm.construction_name)
+          // param.append('contract_name',this.jsd_ruleForm.contract_name)
+          // param.append('contract_price',this.jsd_ruleForm.contract_price)
+          // param.append('list_json',JSON.stringify(this.jsd_ruleForm.add))
+          // param.append('total_price',this.jsd_ruleForm.money)
+          // param.append('company_id',this.nowCompanyId)
           let todo = JSON.stringify(this.jsd_ruleForm.project_manager)
           if(todo != 'null'){
             param.append("project_manager", todo);

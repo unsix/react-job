@@ -105,7 +105,7 @@
             <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
           </el-upload>
           <span class="page_number" v-show="pages >1">{{current+1}}/{{pages}}</span>
-          <p class="page_number page_number_p">* 承诺(前端仅展示不提交,后端自行生成: 本人{{this.todo.name}}为{{this.todo.project_construction_name}}雇佣工人，在此承诺情况属实，核准无误，由此所引起的一切经济纠纷及法律责任由本人承担，与贵司无关。)</p>
+          <p class="page_number page_number_p"> 承诺: 本人{{this.todo.name}}为{{this.todo.project_construction_name}}雇佣工人，在此承诺情况属实，核准无误，由此所引起的一切经济纠纷及法律责任由本人承担，与贵司无关。</p>
         </el-form>
       </div>
     </div>
