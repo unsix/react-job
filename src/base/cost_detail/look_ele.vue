@@ -32,7 +32,9 @@
         </li>
         <p>工人产值工资合计:<span>{{detail.total_price}}</span></p>
         <el-button class="addconstrution mar" type="info"  size="small" >累计已领金额</el-button>
-        <p>累计收到工资合计:<span>{{detail.payroll_receive_total_price}}</span></p>
+        <p>累计已领内容:<span>{{detail.price_describe}}</span></p>
+        <p>截止到 {{detail.project_end_time}} 累计已领金额:<span>{{detail.payroll_receive_total_price}}</span></p>
+        <p>截止到 {{detail.project_end_time}} 工人剩余工资:<span>{{detail.rest_payroll_price}}</span></p>
         <el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>
         <p>班组确认人:<span>{{detail.team_name}}</span></p>
         <p>第三方确认人:<span>{{detail.third_name}}</span></p>
@@ -49,6 +51,7 @@
           <a v-for="(item,index) in detail.files" :href="item.address" class="file">{{item.name}}</a>
         </div>
       </div>
+
       <div class="operate">
         <ul>
           <li v-for="item in content.operate">
@@ -62,6 +65,7 @@
         <el-button type='warning' size="small" @click="refuse(content.payroll_id)">拒绝</el-button>
         <el-button type="success" size="small" @click="agree(content.payroll_id)">确认</el-button>
       </div>
+      <p class=" page_number_p"> 承诺: 本人{{detail.project_name}}为{{detail.project_construction_name}}雇佣工人，在此承诺情况属实，核准无误，由此所引起的一切经济纠纷及法律责任由本人承担，与贵司无关。</p>
     </div>
     <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
     <loading v-show="loadingShow"></loading>
@@ -352,6 +356,11 @@
     .addconstrution{
       clear: both;
       margin: 10px 0 7px 0;
+    }
+    .page_number_p{
+      margin: 0 10px 20px 10px;
+      font-size: 14px;
+      line-height: 1.3;
     }
 
   }
