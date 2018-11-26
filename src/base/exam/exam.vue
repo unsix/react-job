@@ -1043,53 +1043,76 @@
         </div>
       </div>
       <!--结算单展示-->
-      <div class="form" name="结算单" v-if="jiesuandan_show">
-        <div class="top">
-          <span class="title">结算单</span>
+      <div class="form box" name="结算单" v-if="jiesuandan_show">
+        <!--<div class="top">-->
+          <!--<span class="title">结算单</span>-->
+        <!--</div>-->
+        <div class="main">
+          <el-button class="addconstrution mar" type="info"  size="small" >基本信息</el-button>
+          <p>工程项目名称:<span>{{form_Lista.project_name}}</span></p>
+          <p>施工位置:<span>{{form_Lista.project_adress}}</span></p>
+          <p>请款施工班组:<span>{{form_Lista.construction_name}}</span></p>
+          <p>截止日期:<span>{{form_Lista.closing_data}}</span></p>
+          <p>合同金额:<span>{{form_Lista.contract_price}}</span></p>
+          <p>项目负责人:<span>{{form_Lista.project_manager_name}}</span></p>
+          <el-button class="addconstrution mar" type="info"  size="small" >产值</el-button>
+          <li v-for = '(item,index) in form_Lista.list_json'>
+            <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
+            <p>施工内容:<span>{{item.content}}</span></p>
+            <p>单位:<span>{{item.unit}}</span></p>
+            <p>数量:<span>{{item.amount}}</span></p>
+            <p>单价:<span>{{item.unit_price}}</span></p>
+            <p>合计金额:<span>{{item.sum_price}}</span></p>
+            <p>备注:<span>{{item.remarks}}</span></p>
+          </li>
+          <el-button class="addconstrution mar" type="info"  size="small" >已支付</el-button>
+          <li v-for = '(item,index) in form_Lista.pay_list_json'>
+            <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
+            <p>内容:<span>{{item.content}}</span></p>
+            <p>合计金额:<span>{{item.sum_price}}</span></p>
+          </li>
+          <el-button class="addconstrution mar" type="info"  size="small" >扣款项</el-button>
+          <li v-for = '(item,index) in form_Lista.chargebacks_list_json'>
+            <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
+            <p>内容:<span>{{item.content}}</span></p>
+            <p>合计金额:<span>{{item.sum_price}}</span></p>
+          </li>
+          <p>工人产值工资合计:<span>{{form_Lista.total_price}}</span></p>
+          <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
+          <p>截止到 {{form_Lista.closing_data}} 工人剩余工资:<span>{{form_Lista.chargebacks_price}}</span></p>
+          <div class="enclosure" style="clear:both;">
+            <span>图片附件：</span>
+            <img :src="item" alt=""  v-for="(item,index) in form_Lista.img_list"  @click="ctrl_pic_show(form_Lista.img_list,index)"/>
+            <span>附件列表：</span>
+            <a v-for="(item,index) in file_arr" :href="item.address" target="_blank" class="file">{{item.name}}</a>
+          </div>
+          <p>发起人：{form_Listb.found_name}}</p>
+          <li  v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">
+            <p>{{item}}</p>
+          </li>
         </div>
-        <div>
-          <span>工程项目名称：</span><span>{{form_Lista.project_name}}</span>
-        </div>
-        <div>
-          <span>施工队名称：</span><span>{{form_Lista.construction_name}}</span>
-        </div>
-        <div>
-          <span>合同名称：</span><span>{{form_Lista.contract_name}}</span>
-        </div>
-        <div>
-          <span>合同金额：</span><span>{{form_Lista.contract_price}}</span>
-        </div>
-        <div>
-          <span>项目负责人(部门经理)：</span><span>{{form_Lista.project_manager_name}}</span>
-        </div>
-        <div>
-          <span style="color: red;"><span>总额：</span>{{form_Lista.total_price}}</span><span style="display: block">{{form_Lista.big_money}}</span>
-        </div>
-        <div v-for="item in form_Lista.list_json" class="qingdan">
-          <h4>结算条目</h4>
-          <p>单位:<span>{{item.unit}}</span></p>
-          <p>施工内容:<span>{{item.content}}</span></p>
-          <p>数量:<span>{{item.amount}}</span></p>
-          <p>单价:<span>{{item.unit_price}}</span></p>
-          <p>合计:<span>{{item.sum_price}}</span></p>
-          <p>备注:<span>{{item.remarks}}</span></p>
-        </div>
-        <div>
-          <span>附件列表：</span>
-          <a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
-        </div>
-        <div>
-          <span>图片附件：</span>
-          <a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">
-            <img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />
-          </a>
-        </div>
-        <div>
-          <span>发起人：</span><span>{{form_Listb.found_name}}</span>
-        </div>
-        <div>
-          <span>审批人员：</span><span v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">{{item}}</span>
-        </div>
+        <!--<div class="enclosure">-->
+          <!--&lt;!&ndash;<el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>&ndash;&gt;-->
+          <!--<p>附件：质量验收单，完工图片，合同</p>-->
+          <!--<div v-if="form_Lista.imgs">-->
+            <!--<span>图片附件：</span>-->
+            <!--<img :src="item" alt=""  v-for="(item,index) in form_Lista.imgs"  @click="ctrl_pic_show(form_Lista.imgs,index)"/>-->
+          <!--</div>-->
+          <!--<div v-if="form_Lista.files">-->
+            <!--<span>附件列表：</span>-->
+            <!--<a v-for="(item,index) in form_Lista.files" :href="item.address" class="file">{{item.name}}</a>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="enclosure">-->
+          <!--<span>附件列表：</span>-->
+          <!--<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>-->
+        <!--</div>-->
+        <!--<div>-->
+          <!--<span>图片附件：</span>-->
+          <!--<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">-->
+            <!--<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />-->
+          <!--</a>-->
+        <!--</div>-->
         <div>
           <span>审批：</span>
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
@@ -4508,5 +4531,100 @@
         margin: 0 15px;
       }
     }
+  }
+
+
+  .box{
+    li{
+      list-style: none;
+    }
+    width: 100%;
+    background: #FFF;
+    padding-top: 10px;
+    overflow: hidden;
+    color: #2d2f33;
+    min-height: 700px;
+    .title{
+      line-height: 23px;
+      font-size: 15px;
+      margin-left: 15px;
+    }
+    .main{
+      margin-left: 20px;
+      line-height: 20px;
+      font-size: 14px;
+      p{
+        span{
+          color: blue;
+          margin-left: 5px;
+          line-height: 1.8;
+        }
+      }
+    }
+    .enclosure{
+      margin-top: 10px;
+      margin-left: 15px;
+      font-size: 15px;
+      div{
+        margin-top: 5px;
+        margin-left: 10px;
+      }
+      span{
+        vertical-align: top;
+        display: block;
+        width: 80px;
+        float: left;
+      }
+      a{
+        font-size: 14px;
+        margin-right: 20px;
+        display: block;
+        height: 24px;
+        width: 80%;
+        line-height: 24px;
+        color: #5A5E66;
+        border: 1px solid #F9F9F9;
+        border-radius: 4px;
+        background: #DDDDDD;
+        text-align: center;
+        float: right;
+      }
+      img{
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+      }
+    }
+    .operate{
+      font-size: 14px;
+      margin-left: 25px;
+      margin-top: 10px;
+      padding-bottom: 10px;
+      li{
+        line-height: 20px;
+      }
+    }
+    .choose_btn{
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      display: -webkit-flex;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+    .mar{
+      width: 94%!important;
+    }
+    .addconstrution{
+      clear: both;
+      margin: 10px 0 7px 0;
+    }
+    .page_number_p{
+      margin: 0 10px 20px 10px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
   }
 </style>
