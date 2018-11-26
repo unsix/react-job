@@ -166,6 +166,24 @@
             }
           })
       },
+     //获取项目负责人
+      _getComPersonList() {
+        let newparam = new URLSearchParams();
+        newparam.append("company_id", this.nowCompanyId);
+        let httpUrl = this.$test("/index.php/Mobile/user/get_company_personnel")
+        this.$http.post(httpUrl, newparam)
+          .then((res) => {
+            var judge = res.data.code
+            this.$testLogin(judge)
+            let reaDa = []
+            res.data.data.forEach((item) => {
+              item.avatar = getAvatar(item.avatar)
+              reaDa.push(item)
+            })
+            this.setComPersonList(reaDa)
+
+          })
+      },
       return_Add(){
         this.form_show = false
         this.approval_id = ''
@@ -611,6 +629,7 @@
     created(){
       this.change_types()
       console.log(this.inset)
+      this._getComPersonList()
     },
     components:{
       cho,
@@ -628,12 +647,18 @@
         'user',
         'token',
         'nowCompanyName',
+        'comPersonList',
         'userState',
         'nowCompanyId',
         'comDepartList',
         'companyList'
       ])
     },
+    watch:{
+        nowCompanyId(){
+          this._getComPersonList()
+      }
+    }
   }
 </script>
 
