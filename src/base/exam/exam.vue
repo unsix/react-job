@@ -130,13 +130,13 @@
 				<div>
 					<span>附件列表：</span>
 					<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>
-          <div v-for="item in form_Lista.app_list" v-if="form_Lista.app_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+          <div v-for="item in form_Lista.app_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
             <p>{{item.add_time}}</p>
             <p>类型：{{item.type}}</p>
             <p>标题：{{item.title}}</p>
             <p>审批进程：<span v-html="item.approval_state"></span></p>
           </div>
-          <div v-for="item in form_Lista.apple_list" v-if="form_Lista.apple_list.length > 0" style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+          <div v-for="item in form_Lista.apple_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
             <p>{{item.add_time}}</p>
             <p>{{item.name}}{{item.phone}}</p>s
             <p>请款月份：{{item.month}}</p>
@@ -230,7 +230,7 @@
 				</div>
 			</div>
 			<!--请购单展示-->
-			<div class="form" name="请购单" v-if="qinggoudan_show">
+			<div class="form" name="请购单" v-show="qinggoudan_show">
 
 				<div>
 					<span>工程名称：</span><span>{{form_Lista.request_contract_address}}</span>
@@ -1043,7 +1043,7 @@
         </div>
       </div>
       <!--结算单展示-->
-      <div class="form box" name="结算单" v-if="jiesuandan_show">
+      <div class="form box" name="结算单" v-show="jiesuandan_show">
         <!--<div class="top">-->
           <!--<span class="title">结算单</span>-->
         <!--</div>-->
@@ -1065,13 +1065,13 @@
             <p>合计金额:<span>{{item.sum_price}}</span></p>
             <p>备注:<span>{{item.remarks}}</span></p>
           </li>
-          <el-button class="addconstrution mar" type="info"  size="small" >已支付</el-button>
+          <el-button  class="addconstrution mar" type="info"  size="small" >已支付</el-button>
           <li v-for = '(item,index) in form_Lista.pay_list_json'>
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
             <p>内容:<span>{{item.content}}</span></p>
             <p>合计金额:<span>{{item.sum_price}}</span></p>
           </li>
-          <el-button class="addconstrution mar" type="info"  size="small" >扣款项</el-button>
+          <el-button  class="addconstrution mar"  type="info"  size="small"  >扣款项</el-button>
           <li v-for = '(item,index) in form_Lista.chargebacks_list_json'>
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
             <p>内容:<span>{{item.content}}</span></p>
@@ -1080,15 +1080,32 @@
           <p>工人产值工资合计:<span>{{form_Lista.total_price}}</span></p>
           <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
           <p>截止到 {{form_Lista.closing_data}} 工人剩余工资:<span>{{form_Lista.chargebacks_price}}</span></p>
-          <div class="enclosure" style="clear:both;">
-            <span>图片附件：</span>
-            <img :src="item" alt=""  v-for="(item,index) in form_Lista.img_list"  @click="ctrl_pic_show(form_Lista.img_list,index)"/>
-            <span>附件列表：</span>
-            <a v-for="(item,index) in file_arr" :href="item.address" target="_blank" class="file">{{item.name}}</a>
+          <div  class="upload_arr">
+            <li>
+              <span >图片附件:</span>
+              <img :src="item" alt=""  v-for="(item,index) in form_Lista.img_list"  @click="ctrl_pic_show(form_Lista.img_list,index)"/>
+            </li>
+            <li>
+              <span >附件列表:</span>
+              <!--<a v-for="(item,index) in form_Lista.many_enclosure"  target="_blank" class="file"><span>{{item.name}}</span></a>-->
+              <li v-for="item in form_Lista.app_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+                <p><span style="margin-left: 0">{{item.add_time}}</span></p>
+                <p>类型：<span>{{item.type}}</span></p>
+                <p>标题：<span>{{item.title}}</span></p>
+                <p>审批进程：<span v-html="item.approval_state"></span></p>
+              </li>
+              <li v-for="item in form_Lista.apple_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+                <p><span style="margin-left: 0">{{item.add_time}}</span></p>
+                <p><span>{{item.name}}{{item.phone}}</span></p>
+                <p>请款月份：<span>{{item.month}}</span></p>
+                <p>应付金额:<span>{{item.pay_amount}}元</span></p>
+                <p><span v-html="item.pryroll_status"></span></p>
+              </li>
+            </li>
           </div>
-          <p>发起人：{form_Listb.found_name}}</p>
-          <li  v-for="item in form_Listb.list" style="color: #444444; margin-left: 8px;">
-            <p>{{item}}</p>
+          <p>发起人:<span>{{form_Listb.found_name}}</span></p>
+          审批人员:<li  v-for="item in form_Listb.list" style=" margin-left: 8px;display: inline-block">
+          <p><span>{{item}}</span></p>
           </li>
         </div>
         <!--<div class="enclosure">-->
@@ -1621,7 +1638,7 @@
       }),
       look(item){
         this.formShow = false
-        if(item.type == '验收单' || item.type == '结算单'){
+        if(item.type == '验收单' || item.type == '结算单'|| item.type == '工资单'){
           let param = new URLSearchParams();
           param.append("uid", this.user.uid);
           param.append("approval_id", item.approval_id);
@@ -2872,6 +2889,7 @@
               this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
               this.get_img(this.form_Lista.many_enclosure)
               this.get_file(this.form_Lista.many_enclosure)
+              this.get_repal(this.form_Lista.many_enclosure)
               this.jiesuandan_show = true
             }
             this.reply = res.data.data.approval_id
@@ -4561,6 +4579,7 @@
         }
       }
     }
+
     .enclosure{
       margin-top: 10px;
       margin-left: 15px;
@@ -4569,11 +4588,15 @@
         margin-top: 5px;
         margin-left: 10px;
       }
+      .upload_arr{
+        vertical-align: top;
+        li{
+          border-bottom: 1px #e3e4e9 solid;
+        }
+      }
       span{
         vertical-align: top;
         display: block;
-        width: 80px;
-        float: left;
       }
       a{
         font-size: 14px;

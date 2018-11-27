@@ -64,7 +64,7 @@
             name:''
           }],
           pay_total_price:0,
-          chargebacks_price:'',
+          chargebacks_price:0,
           project_manager_name:''
         },
         sign:true,
