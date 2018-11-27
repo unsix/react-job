@@ -14,7 +14,7 @@
         </el-select>
       </el-form-item>
 
-      <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i><span style="color: red;display: inline-block" v-model="bxd_ruleForm.money">总额:{{bxd_ruleForm.money}}</span> <span style="color: red;display: block;margin-left: 135px" v-model="bxd_ruleForm.big_money">{{bxd_ruleForm.big_money}}</span></div>
+      <div class="add_bxd">添加报销条目 <i class="el-icon-circle-plus" @click="add_bxd"></i><span style="color: red;display: inline-block" v-model="bxd_ruleForm.money">总额:{{sum_money>0?sum_money:''}}</span> <span style="color: red;display: block;margin-left: 135px" v-model="bxd_ruleForm.big_money">{{sum_money>0?bxd_ruleForm.big_money:''}}</span></div>
       <div v-for="(item,index) in bxd_ruleForm.add" class="new_bxd">
         <div class="close"><i class="fa fa-close" v-show="bxd_ruleForm.add.length > 1" @click="closeQd(index)"></i></div>
         <el-form :inline="true" class="demo-form-inline zp">
@@ -136,7 +136,18 @@
             'nowCompanyId',
             'comDepartList',
             'token'
-          ])
+          ]),
+          sum_money(){
+            let _list = this.bxd_ruleForm.add
+            let sum = 0
+            _list.forEach((i)=>{
+              let s = i.price
+              sum += Math.round(parseFloat(s)*100)/100
+              this.bxd_ruleForm.big_money = this.dx(sum)+'整'
+              this.bxd_ruleForm.money = sum
+            })
+            return sum
+          }
         },
         components:{
           loading,
@@ -146,20 +157,20 @@
           handleRemove(file,fileList){
             this.fileList = fileList
           },
-          resetForm(){
-            this.$refs.bxd_ruleForm.resetFields()
-            this.bxd_ruleForm.money = ''
-            this.bxd_ruleForm.big_money =''
-            var arr = this.bxd_ruleForm.add
-            for(var i = 0;i<arr.length ;i++){
-              arr[i].month_day = ''
-              arr[i].content = ''
-              arr[i].amount = ''
-              arr[i].price = ''
-              arr[i].remarks = ''
-              arr[i].big_price = ''
-            }
-          },
+          // resetForm(){
+          //   this.$refs.bxd_ruleForm.resetFields()
+          //   this.bxd_ruleForm.money = ''
+          //   this.bxd_ruleForm.big_money =''
+          //   var arr = this.bxd_ruleForm.add
+          //   for(var i = 0;i<arr.length ;i++){
+          //     arr[i].month_day = ''
+          //     arr[i].content = ''
+          //     arr[i].amount = ''
+          //     arr[i].price = ''
+          //     arr[i].remarks = ''
+          //     arr[i].big_price = ''
+          //   }
+          // },
           handlePreview(file,fileList){
             if(file.name.toLowerCase().indexOf('jpg') == '-1' && file.name.toLowerCase().indexOf('png') == '-1'){
               this.$message.error('上传文件格式错误')
@@ -218,12 +229,6 @@
             for (var i = 0;i<sub.length;i++){
               tato +=Number(sub[i].price)
               val=Math.floor(tato * 100) / 100
-            }
-            this.bxd_ruleForm.money =val
-            if(val.toString().split(".")[1].length>1){
-              this.bxd_ruleForm.big_money = this.dx(val)
-            }else{
-              this.bxd_ruleForm.big_money = this.dx(val)+'整'
             }
           },
           dx:function (n) {
@@ -403,10 +408,10 @@
               message: '添加失败',
               type: 'error'
             })
-            var arr = this.bxd_ruleForm.add
-            for(var i = 0;i<arr.length;i++){
-              arr[i].month_day = ''
-            }
+            // var arr = this.bxd_ruleForm.add
+            // for(var i = 0;i<arr.length;i++){
+            //   arr[i].month_day = ''
+            // }
           },
           ctrl_pic_show(index){
             this.pic_index = index
@@ -464,7 +469,8 @@
               content:'',
               amount:'',
               price:'',
-              remarks:''
+              remarks:'',
+              big_price:''
             }
             this.bxd_ruleForm.add.push(obj)
           },
