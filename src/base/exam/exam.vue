@@ -1081,20 +1081,21 @@
           <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
           <p>截止到 {{form_Lista.closing_data}} 工人剩余工资:<span>{{form_Lista.chargebacks_price}}</span></p>
           <div  class="upload_arr">
-            <li>
+            <li class="picture">
               <span >图片附件:</span>
               <img :src="item" alt=""  v-for="(item,index) in form_Lista.img_list"  @click="ctrl_pic_show(form_Lista.img_list,index)"/>
             </li>
-            <li>
+            <li >
               <span >附件列表:</span>
               <!--<a v-for="(item,index) in form_Lista.many_enclosure"  target="_blank" class="file"><span>{{item.name}}</span></a>-->
-              <li v-for="item in form_Lista.app_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+              <li  v-for="item in form_Lista.app_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
                 <p><span style="margin-left: 0">{{item.add_time}}</span></p>
                 <p>类型：<span>{{item.type}}</span></p>
                 <p>标题：<span>{{item.title}}</span></p>
                 <p>审批进程：<span v-html="item.approval_state"></span></p>
               </li>
-              <li v-for="item in form_Lista.apple_list"  style="font-size: 14px;margin: 5px 10px;cursor: pointer;" @click="look(item)">
+              <li class="apple_list" v-for="item in form_Lista.apple_list"   @click="look(item)">
+                <img class="avatar" :src="item.avatar" alt="">
                 <p><span style="margin-left: 0">{{item.add_time}}</span></p>
                 <p><span>{{item.name}}{{item.phone}}</span></p>
                 <p>请款月份：<span>{{item.month}}</span></p>
@@ -3048,6 +3049,7 @@
                     if(res.data.code == 0){
                       res.data.data.forEach((item)=>{
                         item.pryroll_status = get_states(item.pryroll_status)
+                        item.avatar = getAvatar(item.avatar)
                         arr.push(item)
                       })
                       this.$set(this.form_Lista, 'apple_list', arr)
@@ -4568,12 +4570,6 @@
         margin-top: 5px;
         margin-left: 10px;
       }
-      .upload_arr{
-        vertical-align: top;
-        li{
-          border-bottom: 1px #e3e4e9 solid;
-        }
-      }
       span{
         vertical-align: top;
         display: block;
@@ -4596,6 +4592,31 @@
         width: 50px;
         height: 50px;
         margin: 5px;
+      }
+    }
+    .upload_arr{
+      vertical-align: top;
+      li{
+        border-bottom: 1px #e3e4e9 solid;
+        line-height: 2;
+      }
+      .picture{
+        border: none;
+      }
+      .apple_list{
+        display: inline-block;
+        font-size: 14px;
+        margin: 18px 21px;
+        cursor: pointer;
+        text-align: center;
+        img{
+          width: 50px!important;
+          height: 50px;
+          margin: 0 0 10px 0
+        }
+      }
+      .avatar{
+        border-radius: 50% ;
       }
     }
     .operate{
