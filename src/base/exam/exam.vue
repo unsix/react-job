@@ -1043,7 +1043,7 @@
         </div>
       </div>
       <!--结算单展示-->
-      <div class="form box" name="结算单" v-show="jiesuandan_show">
+      <div class="form box" name="结算单" v-if="jiesuandan_show">
         <!--<div class="top">-->
           <!--<span class="title">结算单</span>-->
         <!--</div>-->
@@ -1108,28 +1108,6 @@
           <p><span>{{item}}</span></p>
           </li>
         </div>
-        <!--<div class="enclosure">-->
-          <!--&lt;!&ndash;<el-button class="addconstrution mar" type="info"  size="small" >确认人</el-button>&ndash;&gt;-->
-          <!--<p>附件：质量验收单，完工图片，合同</p>-->
-          <!--<div v-if="form_Lista.imgs">-->
-            <!--<span>图片附件：</span>-->
-            <!--<img :src="item" alt=""  v-for="(item,index) in form_Lista.imgs"  @click="ctrl_pic_show(form_Lista.imgs,index)"/>-->
-          <!--</div>-->
-          <!--<div v-if="form_Lista.files">-->
-            <!--<span>附件列表：</span>-->
-            <!--<a v-for="(item,index) in form_Lista.files" :href="item.address" class="file">{{item.name}}</a>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="enclosure">-->
-          <!--<span>附件列表：</span>-->
-          <!--<a :href="item.address" v-for="(item,index) in file_arr" target="_blank" class="file">{{item.name}}</a>-->
-        <!--</div>-->
-        <!--<div>-->
-          <!--<span>图片附件：</span>-->
-          <!--<a v-for="(item,index) in form_Lista.img_list" v-if="form_Lista.img_list">-->
-            <!--<img :src="item" alt="" @click="ctrl_pic_show(form_Lista.img_list,index)" />-->
-          <!--</a>-->
-        <!--</div>-->
         <div>
           <span>审批：</span>
           <div v-for="item in form_Listb.content" v-show="form_Listb.content.length > 0" class="exam_info">
@@ -1931,6 +1909,7 @@
                 this.pingshenbiao_show = false
                 this.gongzhang_show = false
                 this.baoxiaodan_show = false
+                this.jiesuandan_show = false
                 if(res.data.code === 0){
                   this.$message({
                         message: '撤销成功',
@@ -2773,6 +2752,7 @@
 				this.pingshenbiao_show = false
         this.baoxiaodan_show = false
 				this.gongzhang_show = false
+        this.jiesuandan_show = false
         this.reply = ''
         this.list = ''
         this.mands = []
