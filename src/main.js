@@ -17,8 +17,7 @@ import 'vue-croppa/dist/vue-croppa.css'
 import croppa from 'vue-croppa'
 import getPost from '@/common/js/http'
 import getCro from '@/common/js/crowd'
-import Viewer from 'v-viewer'
-import 'viewerjs/dist/viewer.css'
+import './assets/icon/iconfont.css'
 Vue.prototype.$test = getPost
 Vue.prototype.$testLogin = getCro
 Vue.use(croppa)
