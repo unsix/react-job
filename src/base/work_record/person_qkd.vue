@@ -137,6 +137,7 @@
               this._return()
             }
           })
+        //根据type不同获取详情页的显示
         function change_Data(pr,that) {
           switch (pr) {
             case '1':
@@ -148,6 +149,9 @@
             case '3':
               that.detail_ele_show = true
               break;
+            case '4':
+              that.detail_ele_show = true
+              break
           }
         }
       }
