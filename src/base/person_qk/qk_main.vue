@@ -18,7 +18,7 @@
       <!--<fix v-if="fix_show" v-for="(item,idx) in add_fix" :todo="item" :key="idx" ref="fix" @submit_ele_son="submit_fix_son" :current="idx" :pages="add_fix.length"></fix>-->
     </div>
     <div class="buttons" v-show="buttonShow">
-      <!--<el-button type="primary" size="small" @click="add_from">添加</el-button>-->
+      <el-button type="primary" size="small" @click="add_from">添加</el-button>
       <el-button type="warning" size="small" @click="submit">发送</el-button>
     </div>
     <div class="listss" v-show="listShow">
@@ -276,27 +276,52 @@
       },
       add_ele_once(){
         let obj = {
-          uid:'',
-          name:'',
-          phone:'',
+          // uid:'',
+          // name:'',
+          // phone:'',
+          // bank_name:'',
+          // bank_account:'',
+          // id_card:'',
+          // work_type:'',
+          // month:'',
+          // unit:'',
+          // amount:'',
+          // price:'',
+          // sanction_price:'',
+          // received_price:'',
+          // should_pay_price:'',
+          // thr_true_people:'',
+          // many_enclosure:[],
+          // fileList:[],
+          // fileList_a:[],
+          // confirm_uid:'',
+          // third_uid:'',
+          // once_month:''
+          project_name:'',
+          project_adress:'',
+          project_construction_name:'',
+          confirm_uid:'',
+          id_card:'',
           bank_name:'',
           bank_account:'',
-          id_card:'',
-          work_type:'',
-          month:'',
-          unit:'',
-          amount:'',
-          price:'',
-          sanction_price:'',
-          received_price:'',
-          should_pay_price:'',
-          thr_true_people:'',
+          project_start_time:'',
+          prject_end_time:'',
+          payroll_list_json:[{
+            content:'',
+            unit:'',
+            amount:'',
+            unit_price:'',
+            sum_price:'',
+            remarks:''
+          }],
+          total_price:'',
+          price_describe:'',
+          rest_payroll_price:'',
+          team_uid:'',
+          third_uid:'',
           many_enclosure:[],
           fileList:[],
           fileList_a:[],
-          confirm_uid:'',
-          third_uid:'',
-          once_month:''
         }
         this.add_ele.push(obj)
       },
@@ -498,27 +523,31 @@
             this.buttonShow = false
             this.listShow = false
             this.add_ele = [{
-              name:'',
-              phone:'',
+              project_name:'',
+              project_adress:'',
+              project_construction_name:'',
+              confirm_uid:'',
+              id_card:'',
               bank_name:'',
               bank_account:'',
-              id_card:'',
-              work_type:'',
-              once_month:'',
-              amount:'',
-              unit:'',
-              price:'',
-              sanction_price:'',
-              received_price:'',
-              should_pay_price:'',
-              thr_true_people:'',
-              true_people:'',
+              project_start_time:'',
+              prject_end_time:'',
+              payroll_list_json:[{
+                content:'',
+                unit:'',
+                amount:'',
+                unit_price:'',
+                sum_price:'',
+                remarks:''
+              }],
+              total_price:'',
+              price_describe:'',
+              rest_payroll_price:'',
+              team_uid:'',
+              third_uid:'',
               many_enclosure:[],
               fileList:[],
               fileList_a:[],
-              uid:'',
-              confirm_uid:'',
-              third_uid:''
             }]
             this.add_lab = [{
               name:'',

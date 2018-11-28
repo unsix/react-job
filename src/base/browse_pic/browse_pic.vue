@@ -110,7 +110,7 @@ export default {
 		}
 	}
 	.close{
-		position: absolute;
+		position: fixed;
 		display: block;
 		top: 100px;
 		right:100px;
@@ -124,10 +124,10 @@ export default {
 		}
 	}
 	.refresh{
-		position: absolute;
+		position: fixed;
 		display: block;
-		top:37%;
-		right:45%;
+		top:84%;
+		right:47%;
 		i{
 			font-size: 50px;
 			color: #FFFFFF;
