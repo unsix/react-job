@@ -190,7 +190,7 @@
         this.qk_list = []
         this.add_data = pr
         let param = new URLSearchParams()
-        param.append('contract_id',pr.contract_type_id)
+        param.append('contract_id',pr.contract_temp_id)
         param.append('each',10)
         param.append('p',this.pageIndex)
         let str = this.$test('/index.php/Mobile/find/contract_request_money_list')
@@ -228,7 +228,7 @@
         this.qk_list = []
         this.add_data = pr
         let param = new URLSearchParams()
-        param.append('contract_id',pr.contract_type_id)
+        param.append('contract_id',pr.contract_temp_id)
         param.append('each',10)
         param.append('p',this.pageIndex)
         let str = this.$test('/index.php/Mobile/find/find_settle_list')
@@ -304,7 +304,7 @@
         this.qk_list = []
         this.add_data = pr
         let param = new URLSearchParams()
-        param.append('contract_id',pr.contract_type_id)
+        param.append('contract_id',pr.contract_temp_id)
         param.append('each',20)
         param.append('p',this.pageIndex)
         let str = this.$test('/index.php/Mobile/find/find_work_connect_list')

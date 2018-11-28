@@ -65,7 +65,7 @@
         <el-button type='warning' size="small" @click="refuse(content.payroll_id)">拒绝</el-button>
         <el-button type="success" size="small" @click="agree(content.payroll_id)">确认</el-button>
       </div>
-      <p class=" page_number_p"> 承诺: 本人{{detail.project_name}}为{{detail.project_construction_name}}雇佣工人，在此承诺情况属实，核准无误，由此所引起的一切经济纠纷及法律责任由本人承担，与贵司无关。</p>
+      <p class=" page_number_p"> 承诺: 本人{{content.initiator_name}}为{{detail.project_construction_name}}雇佣工人，在此承诺情况属实，核准无误，由此所引起的一切经济纠纷及法律责任由本人承担，与贵司无关。</p>
     </div>
     <browsePic :pic_index="pic_index" ref="browe" :img_arr="arr_list"  v-show="pic_show"></browsePic>
     <loading v-show="loadingShow"></loading>

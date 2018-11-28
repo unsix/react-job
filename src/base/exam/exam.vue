@@ -1065,19 +1065,20 @@
             <p>合计金额:<span>{{item.sum_price}}</span></p>
             <p>备注:<span>{{item.remarks}}</span></p>
           </li>
+          <p >截止到 {{form_Lista.closing_data}}班组产值合计:<span>{{form_Lista.total_price}}</span></p>
           <el-button  class="addconstrution mar" type="info"  size="small" >已支付</el-button>
           <li v-for = '(item,index) in form_Lista.pay_list_json'>
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
             <p>内容:<span>{{item.content}}</span></p>
             <p>合计金额:<span>{{item.sum_price}}</span></p>
           </li>
+          <p >截止到 {{form_Lista.closing_data}}累计支付工程款:<span>{{form_Lista.payroll_receive_total_price}}</span></p>
           <el-button  class="addconstrution mar"  type="info"  size="small"  >扣款项</el-button>
           <li v-for = '(item,index) in form_Lista.chargebacks_list_json'>
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
             <p>内容:<span>{{item.content}}</span></p>
             <p>合计金额:<span>{{item.sum_price}}</span></p>
           </li>
-          <p>工人产值工资合计:<span>{{form_Lista.total_price}}</span></p>
           <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
           <p>截止到 {{form_Lista.closing_data}} 工人剩余工资:<span>{{form_Lista.chargebacks_price}}</span></p>
           <div  class="upload_arr">
@@ -4553,11 +4554,14 @@
       margin-left: 20px;
       line-height: 20px;
       font-size: 14px;
+      li{
+        border-bottom: 1px #eee solid;
+      }
       p{
+        line-height: 1.8;
         span{
           color: blue;
           margin-left: 5px;
-          line-height: 1.8;
         }
       }
     }

@@ -710,15 +710,24 @@
             for (var i = 0;i<sub.length;i++){
               str += Number(sub[i].sum_price)
             }
-            this.jsd_ruleForm.money = str
-            this.jsd_ruleForm.big_money = this.dx(str)
-            this.jsd_ruleForm.add = this.form_Lista.list_json
+            // this.jsd_ruleForm.money = str
+            // this.jsd_ruleForm.big_money = this.dx(str)
+            // this.jsd_ruleForm.add = this.form_Lista.list_json
             this.jsd_ruleForm.project_name = this.form_Lista.project_name
-            this.jsd_ruleForm.project_manager = JSON.parse(this.form_Lista.project_manager)
+            this.jsd_ruleForm.project_adress = this.form_Lista.project_adress
             this.jsd_ruleForm.construction_name = this.form_Lista.construction_name
-            this.jsd_ruleForm.contract_price = this.form_Lista.contract_price
+            this.jsd_ruleForm.closing_data = this.form_Lista.closing_data
             this.jsd_ruleForm.contract_name = this.form_Lista.contract_name
+            this.jsd_ruleForm.contract_price = this.form_Lista.contract_price
+            this.jsd_ruleForm.project_manager = JSON.parse(this.form_Lista.project_manager)
             this.jsd_ruleForm.project_manager_name = this.form_Lista.project_manager_name.name
+            this.jsd_ruleForm.list_json = this.form_Lista.list_json
+            if(this.jsd_ruleForm.pay_list_json){
+              this.jsd_ruleForm.pay_list_json = this.form_Lista.pay_list_json
+            }
+            if(this.jsd_ruleForm.chargebacks_list_json){
+              this.jsd_ruleForm.chargebacks_list_json = this.form_Lista.chargebacks_list_json
+            }
             if(this.form_Lista.contract_request_id){
               this.jsd_ruleForm.contract_request_id = this.form_Lista.contract_request_id
             }else{
