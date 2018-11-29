@@ -170,11 +170,11 @@
         <el-form-item label="剩余工程款"  class="automatic">
           {{sum_Surplus!=''?sum_Surplus:'自动计算'}}
         </el-form-item>
-        <el-upload class="upload-demo" id="picc" v-model="jsd_ruleForm.many_enclosure" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
+        <el-upload class="upload-demo" id="picc" v-model="jsd_ruleForm.fileList" accept="image/jpg,image/png,image/jpeg"  multiple action="https://up.qbox.me/" :on-change="handlePreview" :on-remove="handleRemove" list-type="picture-card" :file-list="fileList" :auto-upload="false">
           <i class="el-icon-plus"></i>
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
         </el-upload>
-        <el-upload class="upload-demo_a" v-model="jsd_ruleForm.many_enclosure"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
+        <el-upload class="upload-demo_a" v-model="jsd_ruleForm.fileList_a"  multiple action="https://up.qbox.me/"  :on-change="handlePreview_a" :on-remove="handleRemove_a" list-type="text" :file-list="fileList_a" :auto-upload="false">
           <el-button size="small" type="info" plain>上传文件</el-button>
           <div slot="tip" class="el-upload__tip">信息附件上传，只传文本格式文件</div>
         </el-upload>
@@ -248,9 +248,8 @@
           }],
           list_json:[{}],
           pay_list_json:[{}],
-          chargebacks_list_json:[{}]
+          chargebacks_list_json:[{}],
         },
-
         fileList:[],
         fileList_a:[],
         picArr:[],
@@ -379,10 +378,10 @@
           }
         }
         remove(fileList,this.str)
-        this.fileList = fileList
+        this.jsd_ruleForm.fileList = fileList
       },
       handleRemove(file, fileList){
-        this.fileList = fileList
+        this.jsd_ruleForm.fileList = fileList
       },
       handlePreview_a(file, fileList_a){
         let index = file.name.lastIndexOf('.')
@@ -398,16 +397,16 @@
             this.$testLogin(judge,current)
             let attr = res.data.data.attribute
             if(attr.indexOf(attribute) !=-1){
-              this.fileList_a = fileList_a
+              this.jsd_ruleForm.fileList_a = fileList_a
             }else{
               this.$message.error('上传文件格式错误 请删除')
-              this.fileList_a = fileList_a
+              this.jsd_ruleForm.fileList_a = fileList_a
             }
 
           })
       },
       handleRemove_a(file, fileList_a){
-        this.fileList_a = fileList_a
+        this.jsd_ruleForm.fileList_a = fileList_a
       },
       checkAmount:function (data) {
         var priceReg = /^-?[1-9]+(\.\d+)?$|^-?0(\.\d+)?$|^-?[1-9]+[0-9]*(\.\d+)?$/
@@ -471,12 +470,12 @@
         if(this.jsd_ruleForm.closing_data){
           this.jsd_ruleForm.closing_data = moment(this.jsd_ruleForm.closing_data).format('YYYY-MM-DD')
         }
-        this.fileList.forEach((item) => {
+        this.jsd_ruleForm.fileList.forEach((item) => {
           if(item.name.indexOf('jpg') != '-1' || item.name.indexOf('png') != '-1' || item.name.indexOf("图像") != '-1') {
             this.picArr.push(item)
           }
         })
-        this.fileList_a.forEach((item) =>{
+        this.jsd_ruleForm.fileList_a.forEach((item) =>{
           this.fileArr.push(item)
         })
         this.pic_hash_arr = []
@@ -754,7 +753,7 @@
                       obj.hash = item
                       obj.name = img_name
                       obj.url = img_add
-                      this.fileList.push(obj)
+                      this.jsd_ruleForm.fileList.push(obj)
                     })
                   })
               }else if(item.type == 4){
@@ -775,7 +774,7 @@
                     obj.name = file_data.file_name+'.'+file_data.attribute
                     obj.address = file_add
                     obj.hash = file_data.attachments
-                    this.fileList_a.push(obj)
+                    this.jsd_ruleForm.fileList_a.push(obj)
                   })
               }else if(item.type === 5){
                 let param = new URLSearchParams();
@@ -997,7 +996,7 @@
       },
       jsd_ruleForm:{
 
-      }
+      },
     },
     computed: {
       ...mapGetters([

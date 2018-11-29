@@ -1072,7 +1072,7 @@
             <p>内容:<span>{{item.content}}</span></p>
             <p>合计金额:<span>{{item.sum_price}}</span></p>
           </li>
-          <p >截止到 {{form_Lista.closing_data}}累计支付工程款:<span>{{form_Lista.payroll_receive_total_price}}</span></p>
+          <p >截止到 {{form_Lista.closing_data}}累计支付工程款:<span>{{form_Lista.pay_total_price}}</span></p>
           <el-button  class="addconstrution mar"  type="info"  size="small"  >扣款项</el-button>
           <li v-for = '(item,index) in form_Lista.chargebacks_list_json'>
             <el-button class="addconstrution" type="primary"  size="small"  >{{index+1}}</el-button>
@@ -1080,7 +1080,7 @@
             <p>合计金额:<span>{{item.sum_price}}</span></p>
           </li>
           <el-button class="addconstrution mar" type="info"  size="small" >剩余工程款</el-button>
-          <p>截止到 {{form_Lista.closing_data}} 工人剩余工资:<span>{{form_Lista.chargebacks_price}}</span></p>
+          <p>截止到 {{form_Lista.closing_data}} 班组剩余工程款:<span>{{form_Lista.chargebacks_price}}</span></p>
           <div  class="upload_arr">
             <li class="picture">
               <span >图片附件:</span>
@@ -1095,7 +1095,7 @@
                 <p>标题：<span>{{item.title}}</span></p>
                 <p>审批进程：<span v-html="item.approval_state"></span></p>
               </li>
-              <li class="apple_list" v-for="item in form_Lista.apple_list"   @click="look(item)">
+              <li class="apple_list" v-for="item in form_Lista.apple_list"  @click="look(item)">
                 <img class="avatar" :src="item.avatar" alt="">
                 <p><span style="margin-left: 0">{{item.add_time}}</span></p>
                 <p><span>{{item.name}}{{item.phone}}</span></p>

@@ -65,7 +65,9 @@
           }],
           pay_total_price:0,
           chargebacks_price:0,
-          project_manager_name:''
+          project_manager_name:'',
+          fileList:[],
+          fileList_a:[],
         },
         sign:true,
         wrapper:true,
