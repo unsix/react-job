@@ -1331,16 +1331,20 @@ export default {
           if(item.type === '请款单') {
             this.qkd_com_if = true
             this.form_Lista = create_qingkuandan_list(res.data.data)
+            this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
             this.get_img(this.form_Lista.many_enclosure)
             this.get_file(this.form_Lista.many_enclosure)
+
           }else if(item.type == '验收单'){
             this.ysd_if = true
             this.form_Lista = res.data.data
+            this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
             this.get_img(this.form_Lista.many_enclosure)
             this.get_file(this.form_Lista.many_enclosure)
           }else if(item.type == '结算单'){
             this.jsd_if = true
             this.form_Lista = res.data.data
+            this.form_Lista.project_manager_name = this.form_Lista.project_manager_name.name
             this.get_img(this.form_Lista.many_enclosure)
             this.get_file(this.form_Lista.many_enclosure)
           }
