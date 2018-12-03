@@ -501,7 +501,7 @@
                     type:'warning'
                   }).then(()=>{
                     this.bxd_submit()
-                    this.loadingShow = false
+                    this.loadingShow = true
                   }).catch(()=>{
                     this.$message({
                       type: 'info',
